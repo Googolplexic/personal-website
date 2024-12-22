@@ -8,7 +8,11 @@ export function Home() {
             <header className="mb-12 text-center">
                 <h1 className="text-4xl font-bold mb-4 dark:text-white">Coleman Lai</h1>
                 <p className="text-xl text-gray-600 dark:text-gray-300">Not a Full Stack Developer</p>
-            </header>
+                <br />
+                <hr />
+                <br />
+                <p>This site is a work-in-progress.</p>
+            </header >
 
             <main>
                 <About />
