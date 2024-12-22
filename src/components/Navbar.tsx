@@ -1,13 +1,15 @@
+import { Link, useLocation } from 'react-router-dom'
 import { ThemeToggle } from './ThemeToggle'
+
 export function Navbar() {
     return (
-        <nav className="fixed top-0 w-full bg-gray-200 dark:bg-gray-950 shadow-sm">
+        <nav className="fixed top-0 w-full bg-gray-400 dark:bg-gray-950 shadow-sm">
             <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-                <span className="text-xl font-bold dark:text-white">CL</span>
+                <Link to="/" className="text-xl font-bold dark:text-white">CL</Link>
                 <div className="flex items-center gap-6">
-                    <NavLink href="#about">About</NavLink>
-                    <NavLink href="#skills">Skills</NavLink>
-                    <NavLink href="#contact">Contact</NavLink>
+                    <NavLink to="/">Home</NavLink>
+                    <NavLink to="/projects">Projects</NavLink>
+                    <NavLink to="/origami">Origami</NavLink>
                     <ThemeToggle />
                 </div>
             </div>
@@ -15,13 +17,17 @@ export function Navbar() {
     )
 }
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
+    const location = useLocation();
+    const isActive = location.pathname === to;
+
     return (
-        <a
-            href={href}
-            className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+        <Link
+            to={to}
+            className={`text-gray-800 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors
+        ${isActive ? 'font-semibold' : ''}`}
         >
             {children}
-        </a>
+        </Link>
     )
 }

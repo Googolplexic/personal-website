@@ -1,26 +1,24 @@
 import './App.css'
-import { About } from './components/About'
-import { Contact } from './components/Contact'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Navbar } from './components/Navbar'
-import { Skills } from './components/Skills'
+import { Home } from './pages/Home'
+import { Projects } from './pages/Projects'
+import { Origami } from './pages/Origami'
 
 function App() {
   return (
-    <div className="min-h-screen w-screen transition-all duration-200">
-      <Navbar />
-      <div className="max-w-3xl mx-auto px-4 pt-24 pb-8">
-        <header className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-4 dark:text-white">Coleman Lai</h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">Not a Full Stack Developer</p>
-        </header>
-
-        <main>
-          <About />
-          <Skills />
-          <Contact />
-        </main>
+    <BrowserRouter>
+      <div className="min-h-screen w-screen transition-all duration-200">
+        <Navbar />
+        <div className="max-w-3xl mx-auto px-4 pt-24 pb-8">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/origami" element={<Origami />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </BrowserRouter>
   )
 }
 
