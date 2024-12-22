@@ -4,7 +4,7 @@ import { ThemeContext } from '../context/ThemeContext';
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [darkMode, setDarkMode] = useState(() => {
         const savedTheme = localStorage.getItem('darkMode');
-        return savedTheme ? JSON.parse(savedTheme) : false;
+        return savedTheme ? JSON.parse(savedTheme) : true;
     });
 
     useEffect(() => {

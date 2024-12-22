@@ -6,7 +6,7 @@ export function ThemeToggle() {
     return (
         <button
             onClick={toggleDarkMode}
-            className="fixed top-5 right-5 p-2 rounded-lg bg-gray-200 dark:bg-gray-800"
+            className="fixed bottom-12 right-12 p-2 text-xl rounded-lg dark:bg-gray-300 bg-gray-800"
         >
             {darkMode ? '🌞' : '🌙'}
         </button>
