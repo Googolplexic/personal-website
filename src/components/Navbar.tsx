@@ -8,7 +8,7 @@ export function Navbar() {
                 <Link to="/" className="text-xl font-bold dark:text-white">CL</Link>
                 <div className="flex items-center gap-6">
                     <NavLink to="/">Home</NavLink>
-                    <NavLink to="/projects">Projects</NavLink>
+                    <NavLink to="/portfolio">Portfolio</NavLink>
                     <NavLink to="/origami">Origami</NavLink>
                     <ThemeToggle />
                 </div>

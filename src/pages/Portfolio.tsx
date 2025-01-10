@@ -1,7 +1,7 @@
-export function Projects() {
+export function Portfolio() {
     return (
         <div className="text-center">
-            <h1 className="text-4xl font-bold mb-8">Projects</h1>
+            <h1 className="text-4xl font-bold mb-8">Portfolio</h1>
             <p>Coming soon...</p>
             <p>
                 Check out my projects for now on{' '}

@@ -2,7 +2,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Navbar } from './components/Navbar'
 import { Home } from './pages/Home'
-import { Projects } from './pages/Projects'
+import { Portfolio } from './pages/Portfolio'
 import { Origami } from './pages/Origami'
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
         <div className="max-w-3xl mx-auto px-4 pt-24 pb-8">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/projects" element={<Projects />} />
+            <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/origami" element={<Origami />} />
           </Routes>
         </div>
