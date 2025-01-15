@@ -43,13 +43,13 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                 <>
                     <button
                         onClick={prevImage}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-r opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800 text-white p-2 rounded-r opacity-0 group-hover:opacity-100 transition-all border-none focus:outline-none"
                     >
                         ←
                     </button>
                     <button
                         onClick={nextImage}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-l opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800 text-white p-2 rounded-l opacity-0 group-hover:opacity-100 transition-all border-none focus:outline-none"
                     >
                         →
                     </button>
@@ -60,10 +60,11 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                                 title={`View image ${index + 1}`}
                                 aria-label={`View image ${index + 1}`}
                                 onClick={() => setCurrentImageIndex(index)}
-                                className={`w-12 h-1 p-2 mx-1 rounded-full ${index === currentImageIndex
-                                    ? 'bg-gray-600 dark:bg-gray-300'
-                                    : 'bg-gray-300 dark:bg-gray-600'
-                                    }`}
+                                className={`w-12 h-1 p-2 mx-1 rounded-full transition-colors border-none focus:outline-none ${
+                                    index === currentImageIndex
+                                        ? 'bg-gray-600 dark:bg-gray-300'
+                                        : 'bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500'
+                                }`}
                             />
                         ))}
                     </div>
