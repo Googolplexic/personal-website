@@ -20,6 +20,12 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
         );
     };
 
+    if (images.length === 0) {
+        return <div>
+            <h2 className='text-gray-600 dark:text-gray-500'>No images :(</h2>
+        </div>;
+    }
+
     return (
         <div className="relative mb-8 group z-0">
             <div className="max-w-[80%] h-48 mx-auto mb-4 rounded-lg flex align-middle">

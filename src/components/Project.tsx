@@ -7,8 +7,8 @@ export function Project(props: ProjectProps) {
     const projectSlug = props.title.toLowerCase().replace(/\s+/g, '-');
 
     return (
-        <Link to={projectSlug} className="block">
-            <div className="border-2 rounded-lg p-4 mb-4 dark:border-gray-700 hover:shadow-lg dark:hover:shadow-gray-500 hover:shadow-gray-400 transition-shadow">
+        <Link to={projectSlug} className="block h-fit-content">
+            <div className="border-2 rounded-lg p-4 mb-4 dark:border-gray-700 hover:shadow-lg dark:hover:shadow-gray-500 hover:shadow-gray-400 transition-shadow h-full flex justify-center flex-col">
                 {props.images && props.images.length > 0 && (
                     <div className="flex gap-2 mb-4 mx-auto justify-center">
                         <img
@@ -20,7 +20,7 @@ export function Project(props: ProjectProps) {
                 )}
                 <h2 className="text-2xl font-bold mb-2">{props.title}</h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    {props.startDate} - {props.endDate || 'Present'}
+                    {props.startDate === props.endDate ? props.startDate : `${props.startDate} - ${props.endDate || 'Present'}`}
                 </p>
                 <p className="mb-4">{props.summary}</p>
                 <ProjectTechnologies technologies={props.technologies} />

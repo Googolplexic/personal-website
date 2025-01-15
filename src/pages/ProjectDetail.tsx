@@ -22,7 +22,7 @@ export function ProjectDetail() {
             <div>
                 <h1 >{project.title}</h1>
                 <p className="text-gray-600 dark:text-gray-400 mb-2">
-                    {project.startDate} - {project.endDate || 'Present'}
+                    {project.startDate === project.endDate ? project.startDate : `${project.startDate} - ${project.endDate || 'Present'}`}
                 </p>
                 <ProjectLinks project={project} />
                 <ProjectImageCarousel images={project.images || []} title={project.title} />
