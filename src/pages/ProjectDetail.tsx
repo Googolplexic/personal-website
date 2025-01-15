@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import projects from '../assets/projects';
 import Markdown from 'react-markdown';
 import { ProjectImageCarousel } from '../components/ProjectImageCarousel';
@@ -7,12 +7,13 @@ import { ProjectTechnologies } from '../components/ProjectTechnologies';
 
 export function ProjectDetail() {
     const { projectSlug } = useParams();
-    const project = projects.find(p =>
-        p.title.toLowerCase().replace(/\s+/g, '-') === projectSlug
-    );
+    const project = projects.find(p => {
+        const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        return slug === projectSlug;
+    });
 
     if (!project) {
-        return <div>Project not found</div>;
+        return <Navigate to="/portfolio" replace />;
     }
 
     return (
