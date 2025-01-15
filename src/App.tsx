@@ -29,7 +29,7 @@ function AppContent() {
 
 function App() {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={"googolplexic.github.io"}>
             <AppContent />
         </BrowserRouter>
     );
