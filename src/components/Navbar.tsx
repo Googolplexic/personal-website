@@ -11,7 +11,7 @@ export function Navbar({ returnTo }: NavbarProps) {
     
     return (
         <nav className="fixed top-0 w-full bg-gray-400 dark:bg-gray-950 shadow-sm z-50">
-            <div className="max-w-5xl mx-auto px-12 py-4 flex justify-between items-center">
+            <div className="max-w-5xl mx-auto sm:px-12 px-4 py-4 flex justify-between items-center">
                 <div className="flex items-center gap-4 w-48">
                     <Link to="/" className="text-xl font-bold dark:text-white">CL</Link>
                     {returnTo && (
@@ -20,7 +20,7 @@ export function Navbar({ returnTo }: NavbarProps) {
                         </NavLink>
                     )}
                 </div>
-                <div className="flex items-center gap-6">
+                <div className="flex items-center sm:gap-6 gap-3">
                     <NavLink to="/">Home</NavLink>
                     <NavLink to="/portfolio">Portfolio</NavLink>
                     <NavLink to="/origami">Origami</NavLink>
