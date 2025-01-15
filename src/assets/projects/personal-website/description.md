@@ -1,0 +1,1 @@
+This site was created for centralized location
