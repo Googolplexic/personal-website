@@ -1,11 +1,10 @@
-## My own personal website, made via TypeScript-React
+## My own personal website, made via TypeScript + React
 
 This website serves as my personal portfolio and was built using TypeScript and React. The site is hosted on GitHub Pages (and my domain *colemanlai.com*). Some key features I was focussing on:
 
 - Dark mode support using Tailwind CSS
   - Easy access button to switch between modes
 - Responsive design that works well on both mobile and desktop 
-  - Not fully implemented yet
 - Portfolio project listing
   - Project showcase with image galleries
   - Markdown support for project descriptions

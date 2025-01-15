@@ -18,7 +18,7 @@ export function ProjectDetail() {
     }
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12 gap-0">
             <div>
                 <h1 >{project.title}</h1>
                 <p className="text-gray-600 dark:text-gray-400 mb-2">
