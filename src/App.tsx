@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar'
 import { Home } from './pages/Home'
 import { Portfolio } from './pages/Portfolio'
 import { Origami } from './pages/Origami'
+import { NotFound } from './pages/NotFound'
 
 function AppContent() {
     const location = useLocation();
@@ -21,6 +22,7 @@ function AppContent() {
                     <Route path="/" element={<Home />} />
                     <Route path="/portfolio/*" element={<Portfolio />} />
                     <Route path="/origami" element={<Origami />} />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>
         </div>
