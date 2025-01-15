@@ -1,9 +1,10 @@
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import projects from '../assets/projects';
 import Markdown from 'react-markdown';
 import { ProjectImageCarousel } from '../components/ProjectImageCarousel';
 import { ProjectLinks } from '../components/ProjectLinks';
 import { ProjectTechnologies } from '../components/ProjectTechnologies';
+import { NotFound } from './NotFound';
 
 export function ProjectDetail() {
     const { projectSlug } = useParams();
@@ -13,7 +14,7 @@ export function ProjectDetail() {
     });
 
     if (!project) {
-        return <Navigate to="/portfolio" replace />;
+        return <NotFound />;
     }
 
     return (

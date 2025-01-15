@@ -5,10 +5,18 @@ import { Home } from './pages/Home'
 import { Portfolio } from './pages/Portfolio'
 import { Origami } from './pages/Origami'
 import { NotFound } from './pages/NotFound'
+import projects from './assets/projects';
 
 function AppContent() {
     const location = useLocation();
-    const showReturnButton = location.pathname.includes('/portfolio/') && location.pathname !== '/portfolio';
+    const projectSlug = location.pathname.split('/portfolio/')[1];
+    const projectExists = projectSlug ? projects.some(p => 
+        p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === projectSlug
+    ) : false;
+    
+    const showReturnButton = location.pathname.includes('/portfolio/') 
+        && location.pathname !== '/portfolio'
+        && projectExists;
 
     const navbarProps = showReturnButton
         ? { returnTo: { path: '/portfolio' } }
