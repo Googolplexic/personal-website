@@ -10,8 +10,14 @@
   :root.dark {
     @apply bg-gray-900 text-gray-100;
   }
-}
+  h1{
+    @apply text-4xl font-bold mb-4;
+  }
+  h2 {
+    @apply text-2xl font-bold mb-4;
+  }
 
+}
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -31,10 +37,7 @@ body {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+
 
 button {
   border-radius: 8px;

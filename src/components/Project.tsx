@@ -1,9 +1,11 @@
 import { ProjectProps } from '../types';
 import { Link } from 'react-router-dom';
+import { ProjectLinks } from './ProjectLinks';
+import { ProjectTechnologies } from './ProjectTechnologies';
 
 export function Project(props: ProjectProps) {
     const projectSlug = props.title.toLowerCase().replace(/\s+/g, '-');
-    
+
     return (
         <Link to={projectSlug} className="block">
             <div className="border-2 rounded-lg p-4 mb-4 dark:border-gray-700 hover:shadow-lg dark:hover:shadow-gray-500 hover:shadow-gray-400 transition-shadow">
@@ -21,35 +23,8 @@ export function Project(props: ProjectProps) {
                     {props.startDate} - {props.endDate || 'Present'}
                 </p>
                 <p className="mb-4">{props.summary}</p>
-                <div className="flex flex-wrap gap-2 mb-4 justify-center">
-                    {props.technologies.map((tech, index) => (
-                        <span key={index} className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
-                            {tech}
-                        </span>
-                    ))}
-                </div>
-                <div className="flex gap-4 justify-center">
-                    <a
-                        href={props.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 dark:text-blue-400 hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        GitHub
-                    </a>
-                    {props.liveUrl && (
-                        <a
-                            href={props.liveUrl}
-                            target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 dark:text-blue-400 hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                        >
-                            View Site
-                        </a>
-                    )}
-                </div>
+                <ProjectTechnologies technologies={props.technologies} />
+                <ProjectLinks project={props} />
             </div>
         </Link>
     );
