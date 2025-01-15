@@ -26,7 +26,7 @@ const routeChangeFreq = {
 }
 
 const getLastModTime = (path: string) => {
-  const fullPath = resolve(__dirname, "src\\" + path)
+  const fullPath = resolve(__dirname, "src/" + path)
   const stats = statSync(fullPath)
   if (stats.isDirectory()) {
     const files = readdirSync(fullPath)
