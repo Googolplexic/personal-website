@@ -1,6 +1,6 @@
 ## My own personal website, made via TypeScript + React
 
-This website serves as my personal portfolio and was built using TypeScript and React. The site is hosted on GitHub Pages (and my domain *colemanlai.com*). Some key features I was focussing on:
+This website serves as my personal portfolio and was built using TypeScript and React. The site is hosted on Vercel (and my domain *colemanlai.com*). Some key features I was focussing on:
 
 - Dark mode support using Tailwind CSS
   - Easy access button to switch between modes
@@ -23,7 +23,7 @@ The project uses several modern web technologies and practices:
 - **React Router** for client-side navigation
 - **React Markdown** for rendering project descriptions without the hassle of HTML
 - **Vite** as the build tool for faster development
-- **GitHub Actions** for automated deployment
+- **Vercel** for automated deployment
 - **GitHub Copilot** for doing some of the tedious work for me
 
 ### In Progress

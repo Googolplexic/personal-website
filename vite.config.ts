@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import Sitemap from 'vite-plugin-sitemap'
+import { statSync, readdirSync } from 'fs'
+import { resolve } from 'path'
 
 const names = [
   'origami',
@@ -23,11 +25,24 @@ const routeChangeFreq = {
   '/portfolio/personal-website': 'monthly',
 }
 
+const getLastModTime = (path: string) => {
+  const fullPath = resolve(__dirname, "src\\" + path)
+  const stats = statSync(fullPath)
+  if (stats.isDirectory()) {
+    const files = readdirSync(fullPath)
+    return files.reduce((latest, file) => {
+      const fileStats = statSync(resolve(fullPath, file))
+      return fileStats.mtime > latest ? fileStats.mtime : latest
+    }, new Date(0))
+  }
+  return stats.mtime
+}
+
 const routeLastMod = {
-  '/': new Date('2025-01-15T08:39:00.000Z'),
-  '/origami': new Date('2024-12-28T08:36:01.794Z'),
-  '/portfolio': new Date('2025-01-15T08:39:00.000Z'),
-  '/portfolio/personal-website': new Date('2025-01-15T08:39:00.000Z'),
+  '/': getLastModTime('pages/Home.tsx'),
+  '/origami': getLastModTime('pages/Origami.tsx'),
+  '/portfolio': getLastModTime('pages/Portfolio.tsx'),
+  '/portfolio/personal-website': getLastModTime('assets/projects/personal-website'),
 }
 
 export default defineConfig({

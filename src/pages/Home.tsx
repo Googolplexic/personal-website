@@ -11,7 +11,7 @@ export function Home() {
                 <br />
                 <hr />
                 <br />
-                <p>This site is a work-in-progress.</p>
+                <p>This site is a work-in-progress. More to come!</p>
             </header >
 
             <main>
