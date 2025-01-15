@@ -8,8 +8,8 @@ import { Origami } from './pages/Origami'
 function AppContent() {
     const location = useLocation();
     const showReturnButton = location.pathname.includes('/portfolio/') && location.pathname !== '/portfolio';
-    
-    const navbarProps = showReturnButton 
+
+    const navbarProps = showReturnButton
         ? { returnTo: { path: '/portfolio' } }
         : {};
 
@@ -29,7 +29,7 @@ function AppContent() {
 
 function App() {
     return (
-        <BrowserRouter basename={"googolplexic.github.io"}>
+        <BrowserRouter>
             <AppContent />
         </BrowserRouter>
     );
