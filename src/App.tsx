@@ -25,7 +25,7 @@ function AppContent() {
     return (
         <div className="min-h-screen w-screen transition-all duration-200 md:text-base text-sm">
             <Navbar {...navbarProps} />
-            <div className="max-w-3xl lg:max-w-7xl mx-auto md:px-16 px-8 py-36">
+            <div className="max-w-3xl lg:max-w-7xl mx-auto md:px-16 px-4 py-36">
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/portfolio/*" element={<Portfolio />} />
