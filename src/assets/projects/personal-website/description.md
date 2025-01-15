@@ -24,7 +24,7 @@ The project uses several modern web technologies and practices:
 - **React Markdown** for rendering project descriptions without the hassle of HTML
 - **Vite** as the build tool for faster development
 - **GitHub Actions** for automated deployment
-- **GitHub Copilot**: doing some of the tedious work for me
+- **GitHub Copilot** for doing some of the tedious work for me
 
 ### In Progress
 - Adding more projects to the portfolio
