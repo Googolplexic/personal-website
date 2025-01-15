@@ -6,13 +6,16 @@ interface ProjectLinksProps {
 }
 
 export function ProjectLinks({ project }: ProjectLinksProps) {
+    const handleLinkClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    };
+
     return (
-        <div className="flex gap-8 justify-center mb-6">
+        <div className="flex gap-8 justify-center mb-6" onClick={handleLinkClick}>
             <a
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
                 className="text-blue-700 dark:text-blue-300 font-bold"
             >
                 GitHub
@@ -22,7 +25,6 @@ export function ProjectLinks({ project }: ProjectLinksProps) {
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
                     className="text-blue-700 dark:text-blue-300 font-bold"
                 >
                     View Site
