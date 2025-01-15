@@ -16,6 +16,7 @@
     "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-helmet": "^6.1.0",
     "react-markdown": "^9.0.3",
     "react-router": "^7.1.1",
     "react-router-dom": "^7.1.1",
@@ -33,6 +34,7 @@
     "globals": "^15.13.0",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.1",
-    "vite": "^6.0.3"
+    "vite": "^6.0.3",
+    "vite-plugin-sitemap": "^0.7.1"
   }
 }
