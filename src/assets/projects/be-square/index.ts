@@ -6,7 +6,7 @@ const sortedImages = Object.values(import.meta.glob('./images/*.(png|jpg|jpeg)',
 
 export default {
     title: "Be Square",
-    summary: "AI element generation/modification in Adobe Express",
+    summary: "AI element generation/modification in Adobe Express. Winner of best AI hack!",
     description: description,
     technologies: ['JavaScript', 'HTML/CSS', 'Adobe Creative SDK', 'Adobe Express', 'OpenAI  Whisper API', 'OpenAI GPT API', 'Node.js', 'Websockets'],
     githubUrl: "https://github.com/Googolplexic/beSquare",
