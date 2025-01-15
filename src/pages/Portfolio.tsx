@@ -23,7 +23,7 @@ export function Portfolio() {
     return (
         <Routes>
             <Route index element={<PortfolioGrid />} />
-            <Route path="/:projectSlug" element={<ProjectDetail />} />
+            <Route path=":projectSlug" element={<ProjectDetail />} />
         </Routes>
     );
 }
