@@ -1,5 +1,5 @@
 export function Skills() {
-    const skills = ['Sleeping', 'Not Coding', 'Origami']
+    const skills = ['Web Development', 'Computational Origami Design', 'Origami Folding', 'Teaching Youth']
 
     return (
         <section id="skills" className="mb-12">
