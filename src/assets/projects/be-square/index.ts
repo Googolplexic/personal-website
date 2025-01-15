@@ -8,7 +8,7 @@ export default {
     title: "Be Square",
     summary: "AI element generation/modification in Adobe Express",
     description: description,
-    technologies: ['JavaScript', 'Adobe Creative SDK', 'Adobe Express', 'OpenAI  Whisper API', 'OpenAI GPT API'],
+    technologies: ['JavaScript', 'HTML/CSS', 'Adobe Creative SDK', 'Adobe Express', 'OpenAI  Whisper API', 'OpenAI GPT API', 'Node.js', 'Websockets'],
     githubUrl: "https://github.com/Googolplexic/beSquare",
     liveUrl: "",
     images: sortedImages,
