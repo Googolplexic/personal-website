@@ -1,11 +1,14 @@
 ---
-title: "Project Title"
-summary: "A brief summary of the project."
-technologies: ["Technology1", "Technology2", "Technology3"]
-githubUrl: "https://github.com/username/repository"
-liveUrl: "https://username.github.io/project"
-startDate: "YYYY-MM"
-endDate: "YYYY-MM"
+title: Project Title
+summary: A brief summary of the project.
+technologies: 
+- Technology 1
+- Technology 2
+- Technology 3
+githubUrl: https://github.com/username/repository
+liveUrl: https://username.github.io/project
+startDate: YYYY-MM
+endDate: YYYY-MM
 ---
 
 ## Summary

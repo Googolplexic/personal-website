@@ -2,15 +2,14 @@
 title: Be Square
 summary: AI element generation/modification in Adobe Express. Winner of best AI hack!
 technologies:
-  - JavaScript
-  - HTML/CSS
-  - Adobe SDK
-  - OpenAI Whisper
-  - OpenAI GPT
-  - Node.js
-  - Websockets
+- JavaScript
+- HTML/CSS
+- Adobe SDK
+- OpenAI Whisper
+- OpenAI GPT
+- Node.js
+- Websocket
 githubUrl: https://github.com/Googolplexic/beSquare
-liveUrl: ""
 startDate: 2024-10
 endDate: 2024-10
 ---

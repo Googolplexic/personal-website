@@ -1,10 +1,18 @@
 ---
-title: "SFU Scheduler"
-summary: "A web app for SFU students to plan their courses. Made for CMPT 276 at SFU."
-technologies: ["JavaScript", "Node.js", "REST API", "HTML/CSS", "Bootstrap CSS", "Firebase Functions", "Firebase Realtime Database", "Firebase Hosting"]
-liveUrl: "https://sfuscheduler.web.app"
-startDate: "2024-09"
-endDate: "2024-12"
+title: SFU Scheduler
+summary: A web app for SFU students to plan their courses. Made for CMPT 276 at SFU.
+technologies:
+- JavaScript
+- Node.js
+- REST API
+- HTML/CSS
+- Bootstrap CSS
+- Firebase Functions
+- Firebase Realtime Database
+- Firebase Hosting
+liveUrl: https://sfuscheduler.web.app
+startDate: 2024-09
+endDate: 2024-12
 ---
 
 ## A web app for SFU students to plan their courses and view course offerings and information

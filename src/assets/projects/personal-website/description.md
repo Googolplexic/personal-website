@@ -2,11 +2,11 @@
 title: Personal Website
 summary: This site, right here!
 technologies:
-  - React
-  - TypeScript
-  - Vite
-  - Tailwind CSS
-  - React Router
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
 githubUrl: https://github.com/googolplexic/personal-website
 liveUrl: https://www.colemanlai.com
 startDate: 2024-12
