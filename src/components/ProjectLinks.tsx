@@ -3,15 +3,16 @@ interface ProjectLinksProps {
         githubUrl: string;
         liveUrl?: string;
     };
+    className?: string;
 }
 
-export function ProjectLinks({ project }: ProjectLinksProps) {
+export function ProjectLinks({ project, className }: ProjectLinksProps) {
     const handleLinkClick = (e: React.MouseEvent) => {
         e.stopPropagation();
     };
 
     return (
-        <div className="flex gap-8 justify-center mb-6" onClick={handleLinkClick}>
+        <div className={`flex gap-8 justify-center ${className}`} onClick={handleLinkClick}>
 
             {project.githubUrl &&
                 <a

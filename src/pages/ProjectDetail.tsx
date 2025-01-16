@@ -24,7 +24,7 @@ export function ProjectDetail() {
                 <p className="text-gray-600 dark:text-gray-400 mb-2">
                     {project.startDate === project.endDate ? project.startDate : `${project.startDate} - ${project.endDate || 'Present'}`}
                 </p>
-                <ProjectLinks project={project} />
+                <ProjectLinks project={project} className='mb-6'/>
                 <ProjectImageCarousel images={project.images || []} title={project.title} />
                 <h2>Technologies Used</h2>
                 <ProjectTechnologies technologies={project.technologies} />
