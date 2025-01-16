@@ -1,8 +1,17 @@
-# Personal Website
+---
+title: "Project Title"
+summary: "A brief summary of the project."
+technologies: ["Technology1", "Technology2", "Technology3"]
+githubUrl: "https://github.com/username/repository"
+liveUrl: "https://username.github.io/project"
+startDate: "YYYY-MM-DD"
+endDate: "YYYY-MM-DD"
+---
 
-A portfolio website built to showcase my projects and skills. The site features:
-- Responsive design
-- Dark/Light mode
-- Built with modern web technologies
-- Clean, *minimalist* interface
-  - Markdown-enabled project descriptions
+## Project Title
+
+A brief summary of the project. The project features:
+- Feature 1
+- Feature 2
+- Feature 3
+  - Additional details

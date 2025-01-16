@@ -1,17 +1,14 @@
 import { ProjectProps } from '../../../types';
 import description from './description.md?raw';
+import matter from 'front-matter';
 
 const sortedImages = Object.values(import.meta.glob('./images/*.(png|jpg|jpeg)', { eager: true, import: 'default' }))
     .sort((a, b) => (a as string).localeCompare(b as string)) as string[];
 
+const { attributes, body } = matter<ProjectProps>(description);
+
 export default {
-    title: "Be Square",
-    summary: "AI element generation/modification in Adobe Express. Winner of best AI hack!",
-    description: description,
-    technologies: ['JavaScript', 'HTML/CSS', 'Adobe Creative SDK', 'Adobe Express', 'OpenAI  Whisper API', 'OpenAI GPT API', 'Node.js', 'Websockets'],
-    githubUrl: "https://github.com/Googolplexic/beSquare",
-    liveUrl: "",
+    ...attributes as object,
+    description: body,
     images: sortedImages,
-    startDate: "2024-10",
-    endDate: "2024-10"
 } as ProjectProps;

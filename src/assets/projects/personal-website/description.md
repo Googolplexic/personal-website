@@ -1,3 +1,17 @@
+---
+title: Personal Website
+summary: This site, right here!
+technologies:
+  - React
+  - TypeScript
+  - Vite
+  - Tailwind CSS
+  - React Router
+githubUrl: https://github.com/googolplexic/personal-website
+liveUrl: https://www.colemanlai.com
+startDate: 2024-12
+---
+
 ## My own personal website, made via TypeScript + React
 
 This website serves as my personal portfolio and was built using TypeScript and React. The site is hosted on Vercel (and my domain *colemanlai.com*). Some key features I was focussing on:

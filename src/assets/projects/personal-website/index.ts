@@ -1,16 +1,14 @@
 import { ProjectProps } from '../../../types';
 import description from './description.md?raw';
+import matter from 'front-matter';
 
 const sortedImages = Object.values(import.meta.glob('./images/*.(png|jpg|jpeg)', { eager: true, import: 'default' }))
     .sort((a, b) => (a as string).localeCompare(b as string)) as string[];
-    
+
+const { attributes, body } = matter<ProjectProps>(description);
+
 export default {
-    title: "Personal Website",
-    summary: "This site, right here!",
-    description: description,
-    technologies: ["React", "TypeScript", "Vite", "Tailwind CSS, React Router"],
-    githubUrl: "https://github.com/googolplexic/personal-website",
-    liveUrl: "https://www.colemanlai.com",
+    ...attributes as object,
+    description: body,
     images: sortedImages,
-    startDate: "2024-12",
 } as ProjectProps;
