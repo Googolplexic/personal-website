@@ -12,9 +12,11 @@ export function ProjectLinks({ project, className }: ProjectLinksProps) {
     };
 
     return (
-        <div className={`flex gap-8 justify-center ${className}`} onClick={handleLinkClick}>
-
-            {project.githubUrl &&
+        <div
+            className={`flex gap-8 justify-center ${className}`}
+            {...(className && { onClick: handleLinkClick })}
+        >
+            {project.githubUrl && (
                 <a
                     href={project.githubUrl}
                     target="_blank"
@@ -23,7 +25,7 @@ export function ProjectLinks({ project, className }: ProjectLinksProps) {
                 >
                     GitHub
                 </a>
-            }
+            )}
             {project.liveUrl && (
                 <a
                     href={project.liveUrl}

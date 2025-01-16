@@ -8,6 +8,7 @@ export function Project(props: ProjectProps) {
     const projectSlug = props.title.toLowerCase().replace(/\s+/g, '-');
 
     const handleClick = (e: React.MouseEvent) => {
+        console.log(e.target);
         if (!(e.target as HTMLElement).closest('a')) {
             navigate(projectSlug);
         }
