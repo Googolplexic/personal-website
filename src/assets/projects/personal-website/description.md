@@ -18,11 +18,11 @@ This website serves as my personal portfolio and was built using TypeScript and 
 
 - Dark mode support using Tailwind CSS
   - Easy access button to switch between modes
-- Responsive design that works well on both mobile and desktop 
+- Responsive design that works well on both mobile and desktop
 - Portfolio project listing
   - Project showcase with image galleries
   - Markdown support for project descriptions
-    - Using [`react-markdown`](https://github.com/remarkjs/react-markdown) for content rendering 
+    - Using [`react-markdown`](https://github.com/remarkjs/react-markdown) for content rendering
 - Clean and simple navigation
 - A place to showcase my origami in addition to my [Instagram](https://www.instagram.com/12googolplex) (@12googolplex)
   - Not fully implemented yet
@@ -41,10 +41,10 @@ The project uses several modern web technologies and practices:
 - **GitHub Copilot** for doing some of the tedious work for me
 
 ### In Progress
+
 - Adding more projects to the portfolio
 - Building the origami gallery/page(s)
 - Adding my resume to the site, or at some experience section
 - Updating mobile responsiveness
 - Rewriting the homepage
 - Currently this looks a bit simple. In the future, I want to make this look unique and themed.
-

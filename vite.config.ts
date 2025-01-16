@@ -6,7 +6,8 @@ import { resolve } from 'path'
 
 const portfolioProjects = {
   'personal-website': { priority: 0.7, changefreq: 'monthly' },
-  'be-square': { priority: 0.7, changefreq: 'yearly' }
+  'be-square': { priority: 0.7, changefreq: 'yearly' },
+  'sfu-scheduler': { priority: 0.7, changefreq: 'yearly' },
 }
 
 const names = [
@@ -73,7 +74,12 @@ const routeLastMod = {
   '/': cache['pages/Home.tsx'] || getLastModTime('pages/Home.tsx'),
   '/origami': cache['pages/Origami.tsx'] || getLastModTime('pages/Origami.tsx'),
   '/portfolio': cache['pages/Portfolio.tsx'] || getLastModTime('pages/Portfolio.tsx'),
-  '/portfolio/personal-website': cache['assets/projects/personal-website'] || getLastModTime('assets/projects/personal-website'),
+  ...Object.fromEntries(
+    Object.keys(portfolioProjects).map(name => {
+      const path = `assets/projects/${name}`
+      return [`/portfolio/${name}`, cache[path] || getLastModTime(path)]
+    })
+  )
 }
 
 saveCache(cache)
