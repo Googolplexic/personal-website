@@ -1,6 +1,12 @@
 ---
 title: Project Title
 summary: A brief summary of the project.
+SEOdescription: A detailed SEO description of the project for search engines and social sharing.
+keywords:
+- keyword1
+- keyword2
+- keyword3
+- relevant search term
 technologies: 
 - Technology 1
 - Technology 2

@@ -1,6 +1,16 @@
 ---
 title: SFU Scheduler
 summary: A web app for SFU students to plan their courses. Made for CMPT 276 at SFU.
+SEOdescription: Portfolio showcase of SFU Scheduler - a comprehensive course planning tool created for Simon Fraser University students. View project details, features, and implementation of this academic scheduling application.
+keywords:
+- SFU course planner
+- university schedule maker
+- Simon Fraser University
+- course registration tool
+- academic planning
+- student timetable
+- university course scheduler
+- SFU class finder
 technologies:
 - JavaScript
 - Node.js
@@ -67,4 +77,3 @@ Here are some of the features and functions of the project:
   - User-friendly interface
   - Robust error handling
   - Complex algorithm implementation for schedule generation
-  

@@ -7,7 +7,7 @@ import { Origami } from './pages/Origami'
 import { NotFound } from './pages/NotFound'
 import projects from './assets/projects';
 import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from "@vercel/speed-insights/react"
+import { HelmetProvider } from 'react-helmet-async';
 
 function AppContent() {
     const location = useLocation();
@@ -36,7 +36,6 @@ function AppContent() {
                 </Routes>
             </div>
             <Analytics />
-            <SpeedInsights />
         </div>
     );
 }
@@ -44,7 +43,9 @@ function AppContent() {
 function App() {
     return (
         <BrowserRouter>
-            <AppContent />
+            <HelmetProvider>
+                <AppContent />
+            </HelmetProvider>
         </BrowserRouter>
     );
 }

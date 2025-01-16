@@ -12,4 +12,6 @@ export type ProjectProps = {
     images?: string[];
     startDate: string; 
     endDate?: string; 
+    SEOdescription?: string;  // SEO description
+    keywords?: string[];   // SEO keywords as array
 }

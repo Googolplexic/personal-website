@@ -1,7 +1,8 @@
 import { Project } from "../components/Project";
 import projects from "../assets/projects";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ProjectDetail } from "./ProjectDetail";
+import { SEO } from "../components/SEO";
 
 function PortfolioGrid() {
     return (
@@ -21,10 +22,41 @@ function PortfolioGrid() {
 }
 
 export function Portfolio() {
+    const location = useLocation();
+    const projectSlug = location.pathname.split('/portfolio/')[1];
+    
+    // Find current project if we're on a project detail page
+    const currentProject = projectSlug ? projects.find(p => 
+        p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === projectSlug
+    ) : null;
+
     return (
-        <Routes>
-            <Route index element={<PortfolioGrid />} />
-            <Route path=":projectSlug/*" element={<ProjectDetail />} />
-        </Routes>
+        <>
+            <SEO 
+                title={currentProject 
+                    ? `${currentProject.title} | Coleman Lai`
+                    : "Software Portfolio | Coleman Lai"
+                }
+                description={currentProject
+                    ? (currentProject.description || currentProject.summary)
+                    : "Browse my software development projects, including web applications, AI implementations, and technical solutions. SFU Computing Science student portfolio."
+                }
+                keywords={currentProject?.keywords || [
+                    "software portfolio",
+                    "full-stack development",
+                    "web applications",
+                    "React",
+                    "TypeScript",
+                    "Node.js",
+                    "student projects",
+                    "SFU"
+                ]}
+                pathname={currentProject ? `/portfolio/${projectSlug}` : "/portfolio"}
+            />
+            <Routes>
+                <Route index element={<PortfolioGrid />} />
+                <Route path=":projectSlug/*" element={<ProjectDetail />} />
+            </Routes>
+        </>
     );
 }

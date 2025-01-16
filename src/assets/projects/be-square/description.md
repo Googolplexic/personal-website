@@ -1,6 +1,16 @@
 ---
 title: Be Square
 summary: AI element generation/modification in Adobe Express. Winner of best AI hack!
+SEOdescription: Portfolio showcase of Be Square - an award-winning Adobe Express AI plugin developed at StormHacks V2. View the implementation details of this hackathon project utilizing OpenAI's GPT and Whisper APIs.
+keywords:
+- Adobe Express plugin
+- AI design tool
+- OpenAI integration
+- voice-to-text design
+- hackathon winner
+- AI assistant Doug
+- creative design automation
+- Adobe add-on
 technologies:
 - JavaScript
 - HTML/CSS
