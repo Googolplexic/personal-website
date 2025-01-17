@@ -6,9 +6,9 @@ import { resolve } from 'path'
 
 const portfolioProjects = {
   'personal-website': { priority: 0.7, changefreq: 'monthly' },
-  'be-square': { priority: 0.7, changefreq: 'yearly' },
-  'sfu-scheduler': { priority: 0.7, changefreq: 'yearly' },
-  'machi-ne': { priority: 0.7, changefreq: 'yearly' },  // Changed from 'machine' to 'machi-ne'
+  'be-square': { priority: 0.7, changefreq: 'monthly' },
+  'sfu-scheduler': { priority: 0.7, changefreq: 'monthly' },
+  'machi-ne': { priority: 0.7, changefreq: 'monthly' }, 
 }
 
 const names = [
@@ -30,9 +30,9 @@ const routePriorities = {
 }
 
 const routeChangeFreq = {
-  '/': 'monthly',
+  '/': 'weekly',
   '/origami': 'monthly',
-  '/portfolio': 'monthly',
+  '/portfolio': 'weekly',
   ...Object.fromEntries(
     Object.entries(portfolioProjects).map(([name, data]) =>
       [`/portfolio/${name}`, data.changefreq]
