@@ -10,7 +10,7 @@ interface NavbarProps {
 export function Navbar({ returnTo }: NavbarProps) {
     
     return (
-        <nav className="fixed top-0 w-full bg-gray-400 dark:bg-gray-950 shadow-sm z-50">
+        <nav className="fixed top-0 w-full bg-gray-300 dark:bg-gray-950 shadow-sm z-50">
             <div className="max-w-5xl mx-auto sm:px-12 px-4 py-4 flex justify-between items-center">
                 <div className="flex items-center gap-4 w-48">
                     <Link to="/" className="text-xl font-bold text-gray-900 dark:text-white">CL</Link>

@@ -12,7 +12,7 @@ function PortfolioGrid() {
             <br />
             <hr />
             <br />
-            <p className="mb-8">These project pages are all dynamically generated! See my <a href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">personal website</a> page for more detail</p>
+            <p className="mb-8">These project pages are all dynamically generated! See my <a href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">personal website</a> page for more detail.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-8 md:mx-0">
                 {projects.map((project, index) => (
                     <Project
