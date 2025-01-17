@@ -35,7 +35,7 @@ MACHI-NE- is a client-side emergency reporting system developed for CMPT 272 at 
 The project features:
 
 - **Emergency Reporting System**
-  - A user can report an incident the following parameters:
+  - A user can report an incident with the following parameters:
     - Incident type
       - Allows for custom incident types
     - Location
