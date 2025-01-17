@@ -8,6 +8,7 @@ import { NotFound } from './pages/NotFound'
 import projects from './assets/projects';
 import { Analytics } from '@vercel/analytics/react';
 import { HelmetProvider } from 'react-helmet-async';
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 function AppContent() {
     const location = useLocation();
@@ -36,6 +37,7 @@ function AppContent() {
                 </Routes>
             </div>
             <Analytics />
+            <SpeedInsights />
         </div>
     );
 }
