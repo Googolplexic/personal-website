@@ -5,7 +5,7 @@ export function About() {
             <p>
                 Hi! I'm a second-year Computing Science at Simon Fraser University.
                 You can find more about my projects on my GitHub profile at{' '}
-                <a href="https://github.com/Googolplexic" target="_blank" rel="noopener" className="text-blue-600 dark:text-blue-400 hover:underline">
+                <a href="https://github.com/Googolplexic" target="_blank" rel="noopener" >
                     https://github.com/Googolplexic
                 </a>.
             </p>

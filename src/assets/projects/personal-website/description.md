@@ -34,6 +34,10 @@ This website serves as my personal portfolio and was built using TypeScript and 
   - Project showcase with image galleries
   - Markdown support for project descriptions
     - Using [`react-markdown`](https://github.com/remarkjs/react-markdown) for content rendering
+  - **Project pages are dynamically generated!**
+    - No need to manually create a new page for each project
+    - Just add a new markdown file + any images to the project directory + update the SEO metadata
+      - It will automatically be added to the project listing, showing up in the [portfolio](https://www.colemanlai.com/portfolio) page, and have its own page with the project details as well
 - Clean and simple navigation
 - A place to showcase my origami in addition to my [Instagram](https://www.instagram.com/12googolplex) (@12googolplex)
   - Not fully implemented yet
