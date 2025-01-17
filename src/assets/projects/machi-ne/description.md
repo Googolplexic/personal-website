@@ -21,7 +21,7 @@ technologies:
 - Leaflet
 - DOM Storage API
 githubUrl: https://github.com/MACHI-NE/MACHI-NE-
-liveUrl: https://www.machine.colemanlai.com/
+liveUrl: https://machine.colemanlai.com/
 startDate: 2024-11
 endDate: 2024-12
 ---

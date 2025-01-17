@@ -20,7 +20,7 @@ technologies:
 - Firebase Functions
 - Firebase Realtime Database
 - Firebase Hosting
-liveUrl: https://sfuscheduler.web.app
+liveUrl: https://sfuscheduler.colemanlai.com/
 startDate: 2024-09
 endDate: 2024-12
 ---
