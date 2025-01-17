@@ -1,9 +1,6 @@
 import { ProjectProps } from '../../types';
 
-const getMostRecentDate = (project: ProjectProps) => {
-    if (!project.endDate) return new Date(); 
-    return new Date(project.endDate);
-};
+const getMostRecentDate = (project: ProjectProps) => new Date(project.endDate || Date.now());
 
 const modules = import.meta.glob('./**/index.ts', { eager: true });
 const projects: ProjectProps[] = Object.entries(modules)

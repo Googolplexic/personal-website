@@ -11,6 +11,7 @@ keywords:
 - student timetable
 - university course scheduler
 - SFU class finder
+- SFU scheduler
 technologies:
 - JavaScript
 - Node.js

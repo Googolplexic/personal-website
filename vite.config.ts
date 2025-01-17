@@ -5,10 +5,12 @@ import { statSync, readdirSync, readFileSync, writeFileSync, existsSync } from '
 import { resolve } from 'path'
 
 const portfolioProjects = {
-  'personal-website': { priority: 0.7, changefreq: 'monthly' },
-  'be-square': { priority: 0.7, changefreq: 'monthly' },
-  'sfu-scheduler': { priority: 0.7, changefreq: 'monthly' },
-  'machi-ne': { priority: 0.7, changefreq: 'monthly' }, 
+  'personal-website': { priority: 0.7, changefreq: 'weekly' },
+  'be-square': { priority: 0.7, changefreq: 'weekly' },
+  'sfu-scheduler': { priority: 0.7, changefreq: 'weekly' },
+  'machi-ne': { priority: 0.6, changefreq: 'weekly' },
+  'salmon-run': { priority: 0.3, changefreq: 'weekly' },
+  'origami-fractions': { priority: 0.7, changefreq: 'weekly' },
 }
 
 const names = [
@@ -20,8 +22,8 @@ const dynamicRoutes = names.map(name => `/${name}`)
 
 const routePriorities = {
   '/': 1.0,
-  '/origami': 0.9,
-  '/portfolio': 0.8,
+  '/origami': 0.8,
+  '/portfolio': 0.9,
   ...Object.fromEntries(
     Object.entries(portfolioProjects).map(([name, data]) =>
       [`/portfolio/${name}`, data.priority]
@@ -32,7 +34,7 @@ const routePriorities = {
 const routeChangeFreq = {
   '/': 'weekly',
   '/origami': 'monthly',
-  '/portfolio': 'weekly',
+  '/portfolio': 'daily',
   ...Object.fromEntries(
     Object.entries(portfolioProjects).map(([name, data]) =>
       [`/portfolio/${name}`, data.changefreq]

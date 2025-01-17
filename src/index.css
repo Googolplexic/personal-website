@@ -5,7 +5,7 @@
 @layer base {
   :root {
     @apply bg-gray-100 text-gray-900;
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: Candara, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
     font-synthesis: none;

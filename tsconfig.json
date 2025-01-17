@@ -1,7 +1,14 @@
 {
   "compilerOptions": {
     "strict": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules"
+    ],
+    "types": [
+      "vite/client"
+    ]
   },
   "files": [],
   "references": [
@@ -11,5 +18,5 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ]
+  ],
 }
