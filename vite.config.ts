@@ -8,6 +8,7 @@ const portfolioProjects = {
   'personal-website': { priority: 0.7, changefreq: 'monthly' },
   'be-square': { priority: 0.7, changefreq: 'yearly' },
   'sfu-scheduler': { priority: 0.7, changefreq: 'yearly' },
+  'machi-ne': { priority: 0.7, changefreq: 'yearly' },  // Changed from 'machine' to 'machi-ne'
 }
 
 const names = [

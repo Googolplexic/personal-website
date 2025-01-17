@@ -25,10 +25,8 @@ export function Portfolio() {
     const location = useLocation();
     const projectSlug = location.pathname.split('/portfolio/')[1];
     
-    // Find current project if we're on a project detail page
-    const currentProject = projectSlug ? projects.find(p => 
-        p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === projectSlug
-    ) : null;
+    const currentProject = projectSlug ? projects.find(p => p.slug === projectSlug) : null;
+    console.log(projectSlug, currentProject);
 
     return (
         <>

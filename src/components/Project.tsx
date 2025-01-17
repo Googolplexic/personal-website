@@ -5,7 +5,7 @@ import { ProjectTechnologies } from './ProjectTechnologies';
 
 export function Project(props: ProjectProps) {
     const navigate = useNavigate();
-    const projectSlug = props.title.toLowerCase().replace(/\s+/g, '-');
+    const projectSlug = props.slug
 
     const handleClick = (e: React.MouseEvent) => {
         console.log(e.target);

@@ -6,12 +6,10 @@ import { ProjectLinks } from '../components/ProjectLinks';
 import { ProjectTechnologies } from '../components/ProjectTechnologies';
 import { NotFound } from './NotFound';
 
+
 export function ProjectDetail() {
     const { projectSlug } = useParams();
-    const project = projects.find(p => {
-        const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        return slug === projectSlug;
-    });
+    const project = projects.find(p => p.slug === projectSlug);
 
     if (!project) {
         return <NotFound />;

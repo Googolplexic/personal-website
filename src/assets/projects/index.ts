@@ -8,7 +8,10 @@ const getMostRecentDate = (project: ProjectProps) => {
 const modules = import.meta.glob('./**/index.ts', { eager: true });
 const projects: ProjectProps[] = Object.entries(modules)
     .filter(([path]) => !path.includes('/template/'))
-    .map(([, module]) => (module as { default: ProjectProps }).default)
+    .map(([path, module]) => ({
+        ...(module as { default: ProjectProps }).default,
+        slug: path.split('/')[1] 
+    }))
     .filter(project => project !== undefined)
     .sort((a, b) => {
         const dateA = getMostRecentDate(a);

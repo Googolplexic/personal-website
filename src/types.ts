@@ -12,6 +12,7 @@ export type ProjectProps = {
     images?: string[];
     startDate: string; 
     endDate?: string; 
+    slug: string; // Extract folder name as slug
     SEOdescription?: string;  // SEO description
     keywords?: string[];   // SEO keywords as array
 }
