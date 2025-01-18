@@ -1,7 +1,7 @@
 ---
 title: box-pleating
 summary: A Python package for creating, analyzing, and validating box-pleated origami patterns.
-SEOdescription: A comprehensive Python library for working with box-pleated origami patterns, featuring FOLD format support and flat-foldability validation.
+SEOdescription: Portfolio showcase of Python library for working with box-pleated origami patterns, featuring FOLD format support and flat-foldability validation.
 keywords:
 - box pleating
 - crease pattern

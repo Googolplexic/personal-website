@@ -1,7 +1,7 @@
 ---
 title: Origami Fractions
 summary: A web application that generates step-by-step origami folding sequences to mark any fraction on a square piece of paper.
-SEOdescription: Input any fraction to get step-by-step folding sequences that will help you mark that fraction on a square piece of paper using different origami methods.
+SEOdescription: Portfolio showcase for Origami Fractions. Input any fraction to get step-by-step folding sequences that will help you mark that fraction on a square piece of paper using different origami methods.
 keywords:
 - origami folding sequences
 - fraction marking
