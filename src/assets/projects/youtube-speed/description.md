@@ -1,5 +1,5 @@
 ---
-title: Speed-based YouTube Quality Adjuster
+title: Speed-Based YouTube Quality Adjuster
 summary: A browser extension that adjusts YouTube video quality based on video speed.
 SEOdescription: Portfolio showcase of a browser extension that adjusts YouTube video quality based on video speed. Can help save data and improve video playback.
 keywords:
