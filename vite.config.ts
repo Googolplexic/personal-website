@@ -11,6 +11,7 @@ const portfolioProjects = {
   'machi-ne': { priority: 0.6, changefreq: 'weekly' },
   'salmon-run': { priority: 0.3, changefreq: 'weekly' },
   'origami-fractions': { priority: 0.7, changefreq: 'weekly' },
+  'box-pleating': { priority: 0.6, changefreq: 'weekly' },
 }
 
 const names = [
