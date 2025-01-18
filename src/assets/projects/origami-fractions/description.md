@@ -24,7 +24,7 @@ startDate: 2024-07
 endDate: 2024-07
 ---
 
-## My first project
+## My first actual project
 
 A web-based tool that helps users mark fractions on square paper using origami folding techniques. Users can input any fraction, and the application will generate visual step-by-step folding sequences.
 
