@@ -13,6 +13,8 @@ const portfolioProjects = {
   'origami-fractions': { priority: 0.7, changefreq: 'weekly' },
   'box-pleating': { priority: 0.6, changefreq: 'weekly' },
   'fold-preview': { priority: 0.6, changefreq: 'weekly' },
+  'pdf-merge': { priority: 0.3, changefreq: 'weekly' },
+  'youtube-speed': { priority: 0.3, changefreq: 'weekly' },
 }
 
 const names = [
