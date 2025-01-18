@@ -11,6 +11,7 @@ export function Project(props: ProjectProps) {
         console.log(e.target);
         if (!(e.target as HTMLElement).closest('a')) {
             navigate(projectSlug);
+            window.scrollTo(0, 0);
         }
     };
 
