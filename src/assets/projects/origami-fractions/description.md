@@ -16,8 +16,7 @@ keywords:
 technologies: 
 - JavaScript
 - SVG
-- HTML
-- CSS
+- HTML/CSS
 githubUrl: https://github.com/Googolplexic/origami-fractions
 liveUrl: https://origamifractions.colemanlai.com/
 startDate: 2024-07
