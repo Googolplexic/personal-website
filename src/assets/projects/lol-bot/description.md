@@ -10,7 +10,7 @@ keywords:
 technologies: 
 - Discord API
 - Nextcord
-- JavaScript
+- Python
 githubUrl: https://github.com/Googolplexic/LoL-discord-bot
 
 startDate: 2024-05
@@ -22,4 +22,3 @@ endDate: 2024-05
 this was for a hackathon.
 
 i have not played a game of league of legends in my life.
-  
