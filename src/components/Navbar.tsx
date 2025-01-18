@@ -38,6 +38,7 @@ function NavLink({ to, children, className }: { to: string; children: React.Reac
     return (
         <Link
             to={to}
+            onClick={() => window.scrollTo(0, 0)}
             className={`text-gray-800 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors
         ${isActive ? 'font-semibold' : ''} ${className || ''}`}
         >
