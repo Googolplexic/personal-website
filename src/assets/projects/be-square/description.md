@@ -18,7 +18,7 @@ technologies:
 - OpenAI Whisper
 - OpenAI GPT
 - Node.js
-- Websocket
+- WebSocket
 githubUrl: https://github.com/Googolplexic/beSquare
 startDate: 2024-10
 endDate: 2024-10
