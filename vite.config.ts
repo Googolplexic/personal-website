@@ -16,6 +16,7 @@ const portfolioProjects = {
   'pdf-merge': { priority: 0.3, changefreq: 'weekly' },
   'youtube-speed': { priority: 0.3, changefreq: 'weekly' },
   'lol-bot': { priority: 0.1, changefreq: 'never' },
+  'data-dave': { priority: 0.8, changefreq: 'weekly' },
 }
 
 const names = [
