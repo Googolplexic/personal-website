@@ -16,9 +16,9 @@ export function Project(props: ProjectProps) {
     };
 
     return (
-        <div 
+        <div
             onClick={handleClick}
-            className="cursor-pointer border-2 rounded-lg lg:p-12 p-6 mb-4 dark:border-gray-700 hover:[box-shadow:0_0_15px_2px_rgba(0,0,0,0.2)] dark:hover:[box-shadow:0_0_15px_2px_rgba(255,255,255,0.2)] transition-shadow h-full flex justify-center flex-col"
+            className="cursor-pointer border-2 rounded-lg lg:p-12 p-6 mb-4 dark:border-gray-700 border-gray-400 hover:[box-shadow:0_0_15px_2px_rgba(0,0,0,0.2)] dark:hover:[box-shadow:0_0_15px_2px_rgba(255,255,255,0.2)] transition-all hover:scale-[1.02] h-full flex justify-center flex-col"
         >
             {props.images && props.images.length > 0 && (
                 <div className="flex gap-2 mb-4 mx-auto justify-center">
