@@ -3,14 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { ProjectLinks } from './ProjectLinks';
 import { ProjectTechnologies } from './ProjectTechnologies';
 
-export function Project(props: ProjectProps) {
+interface ProjectWithBasePath extends ProjectProps {
+    basePath?: string;
+}
+
+export function Project({ basePath = '/portfolio', ...props }: ProjectWithBasePath) {
     const navigate = useNavigate();
-    const projectSlug = props.slug
+    const projectPath = `${basePath}/${props.slug}`;
 
     const handleClick = (e: React.MouseEvent) => {
-        console.log(e.target);
         if (!(e.target as HTMLElement).closest('a')) {
-            navigate(projectSlug);
+            navigate(projectPath);
             window.scrollTo(0, 0);
         }
     };

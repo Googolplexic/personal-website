@@ -2,8 +2,8 @@ import { About } from '../components/About'
 import { Contact } from '../components/Contact'
 import { Skills } from '../components/Skills'
 import { SEO } from '../components/SEO'
-import { FeaturedProjects } from '../components/FeaturedProjects'
 import { ResumeSection } from '../components/ResumeSection'
+import { ProjectGrid } from '../components/ProjectGrid'
 
 export function Home() {
     const featuredSlugs = ['data-dave', 'personal-website', 'be-square'];
@@ -36,7 +36,10 @@ export function Home() {
                 </main>
 
                 <section className="mt-16 mb-12">
-                    <FeaturedProjects featuredSlugs={featuredSlugs} />
+                    <ProjectGrid 
+                        featuredSlugs={featuredSlugs} 
+                        title="Featured Projects"
+                    />
                 </section>
             </div>
         </>
