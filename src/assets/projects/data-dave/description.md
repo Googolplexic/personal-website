@@ -26,7 +26,7 @@ endDate: 2025-01
 tags:
 - hackathon
 - ai
-- data-analysis
+- full-stack
 ---
 
 ## AI-powered CSV analysis tool for instant insights

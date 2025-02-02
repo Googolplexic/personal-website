@@ -14,6 +14,9 @@ technologies:
 githubUrl: https://github.com/Googolplexic/YT-speed-based-quality
 startDate: 2024-06
 endDate: 2024-06
+tags:
+- personal-project
+- frontend
 ---
 
 ## A browser extension that adjusts YouTube video quality based on video speed

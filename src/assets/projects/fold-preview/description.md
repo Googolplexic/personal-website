@@ -21,6 +21,9 @@ githubUrl: https://github.com/Googolplexic/vscode-fold-preview
 liveUrl: https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview
 startDate: 2024-11
 endDate: 2024-11
+tags:
+- origami
+- personal-project
 ---
 
 ## VS Code extension for previewing and visualizing FOLD format files

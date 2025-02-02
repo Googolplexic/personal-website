@@ -23,6 +23,10 @@ githubUrl: https://github.com/Googolplexic/box-pleating
 liveUrl: https://pypi.org/project/box-pleating/1.0.1/
 startDate: 2024-11
 endDate: 2024-11
+tags:
+- library
+- origami
+- personal-project
 ---
 
 ## A Python package for creating and validating box-pleated origami patterns

@@ -21,6 +21,9 @@ technologies:
 githubUrl: https://github.com/googolplexic/personal-website
 liveUrl: https://www.colemanlai.com
 startDate: 2024-12
+tags:
+- personal-project
+- frontend
 ---
 
 ## My own personal website, made via TypeScript + React

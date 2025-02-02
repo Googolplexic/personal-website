@@ -15,6 +15,10 @@ githubUrl: https://github.com/username/repository
 liveUrl: https://username.github.io/project
 startDate: YYYY-MM
 endDate: YYYY-MM
+tags:
+- tag1
+- tag2
+- tag3
 ---
 
 ## Summary

@@ -21,6 +21,10 @@ githubUrl: https://github.com/Googolplexic/origami-fractions
 liveUrl: https://origamifractions.colemanlai.com/
 startDate: 2024-07
 endDate: 2024-07
+tags:
+- origami
+- frontend
+- personal-project
 ---
 
 ## My first actual project

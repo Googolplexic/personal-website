@@ -24,6 +24,9 @@ technologies:
 liveUrl: https://sfuscheduler.colemanlai.com/
 startDate: 2024-09
 endDate: 2024-12
+tags:
+- school-project
+- full-stack
 ---
 
 ## A web app for SFU students to plan their courses and view course offerings and information

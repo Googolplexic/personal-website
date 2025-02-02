@@ -12,6 +12,9 @@ technologies:
 - Nextcord
 - Python
 githubUrl: https://github.com/Googolplexic/LoL-discord-bot
+tags:
+- hackathon
+- backend
 
 startDate: 2024-05
 endDate: 2024-05

@@ -13,6 +13,9 @@ technologies:
 - Blender
 githubUrl: https://github.com/Marcetho/salmon-run/
 startDate: 2024-11
+tags:
+- game-dev
+- school-project
 ---
 
 ## Still in early development

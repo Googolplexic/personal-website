@@ -14,6 +14,8 @@ technologies:
 githubUrl: https://github.com/Googolplexic/windowsMergePDF
 startDate: 2024-08
 endDate: 2024-08
+tags:
+- personal-project
 ---
 
 ## A simple tool for merging PDF files on Windows

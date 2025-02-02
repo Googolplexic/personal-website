@@ -22,6 +22,10 @@ technologies:
 githubUrl: https://github.com/Googolplexic/beSquare
 startDate: 2024-10
 endDate: 2024-10
+tags:
+- hackathon
+- ai
+- full-stack
 ---
 
 ## AI element generation in Adobe Express

@@ -24,6 +24,9 @@ githubUrl: https://github.com/MACHI-NE/MACHI-NE-
 liveUrl: https://machine.colemanlai.com/
 startDate: 2024-11
 endDate: 2024-12
+tags:
+- school-project
+- frontend
 ---
 
 ## A web-based emergency reporting system
