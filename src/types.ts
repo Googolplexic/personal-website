@@ -10,9 +10,10 @@ export type ProjectProps = {
     githubUrl: string;
     liveUrl?: string;
     images?: string[];
-    startDate: string; 
-    endDate?: string; 
+    startDate: string;
+    endDate?: string;
     slug: string; // Extract folder name as slug
     SEOdescription?: string;  // SEO description
     keywords?: string[];   // SEO keywords as array
+    tags?: string[];  // Add this new field
 }

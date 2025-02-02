@@ -62,6 +62,7 @@ export function Origami() {
                             <ProjectGrid 
                                 featuredSlugs={origamiProjects} 
                                 title="Origami Software"
+                                hideControls
                             />
                         </div>
                     </section>

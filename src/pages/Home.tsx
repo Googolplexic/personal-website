@@ -39,6 +39,7 @@ export function Home() {
                     <ProjectGrid 
                         featuredSlugs={featuredSlugs} 
                         title="Featured Projects"
+                        hideControls
                     />
                 </section>
             </div>

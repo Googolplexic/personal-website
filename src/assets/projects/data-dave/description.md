@@ -23,6 +23,10 @@ githubUrl: https://github.com/IsithaT/DataDave
 liveUrl: https://datadave.colemanlai.com
 startDate: 2025-01
 endDate: 2025-01
+tags:
+- hackathon
+- ai
+- data-analysis
 ---
 
 ## AI-powered CSV analysis tool for instant insights
