@@ -2,14 +2,16 @@ import { ProjectProps } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { ProjectLinks } from './ProjectLinks';
 import { ProjectTechnologies } from './ProjectTechnologies';
+import { HighlightedText } from './HighlightedText';
 
 interface ProjectWithBasePath extends ProjectProps {
     basePath?: string;
+    searchTerm?: string;
 }
 
-export function Project({ basePath = '/portfolio', ...props }: ProjectWithBasePath) {
+export function Project({ basePath = '/portfolio', searchTerm = '', ...props }: ProjectWithBasePath) {
     const navigate = useNavigate();
-    const projectPath = `${basePath}/${props.slug}`;
+    const projectPath = `${basePath}/${props.slug}${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
 
     const handleClick = (e: React.MouseEvent) => {
         if (!(e.target as HTMLElement).closest('a')) {
@@ -32,12 +34,16 @@ export function Project({ basePath = '/portfolio', ...props }: ProjectWithBasePa
                     />
                 </div>
             )}
-            <h2 className="text-2xl font-bold mb-2">{props.title}</h2>
+            <h2 className="text-2xl font-bold mb-2">
+                <HighlightedText text={props.title} searchTerm={searchTerm} />
+            </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                 {props.startDate === props.endDate ? props.startDate : `${props.startDate} - ${props.endDate || 'Present'}`}
             </p>
-            <p className="">{props.summary}</p>
-            <ProjectTechnologies technologies={props.technologies} />
+            <p>
+                <HighlightedText text={props.summary} searchTerm={searchTerm} />
+            </p>
+            <ProjectTechnologies technologies={props.technologies} searchTerm={searchTerm} />
             <ProjectLinks project={props} />
         </div>
     );
