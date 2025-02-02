@@ -22,11 +22,11 @@ export function Carousel({ modelImages, title, creasePattern }: CarouselProps) {
             <h3 className="text-xl font-semibold mb-4">{title}</h3>
             <div className={`grid gap-4 ${creasePattern ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto'}`}>
                 <div className="relative group">
-                    <div className="max-w-[80%] h-48 mx-auto rounded-lg flex items-center justify-center bg-transparent">
+                    <div className="max-w-[80%] h-96 mx-auto rounded-lg flex items-center justify-center bg-transparent">
                         <img
                             src={modelImages[selectedImage]}
                             alt={`${title} - Model View ${selectedImage + 1}`}
-                            className="max-h-48 w-auto object-contain rounded-lg cursor-pointer"
+                            className="max-h-96 w-auto object-contain rounded-lg cursor-pointer"
                             onClick={() => window.open(modelImages[selectedImage], '_blank')}
                         />
                     </div>
@@ -64,11 +64,11 @@ export function Carousel({ modelImages, title, creasePattern }: CarouselProps) {
                 </div>
                 
                 {creasePattern && (
-                    <div className="max-w-[80%] h-48 mx-auto rounded-lg flex items-center justify-center bg-transparent">
+                    <div className="max-w-[80%] h-96 mx-auto rounded-lg flex items-center justify-center bg-transparent">
                         <img
                             src={creasePattern}
                             alt={`${title} - Crease Pattern`}
-                            className="max-h-48 w-auto object-contain rounded-lg cursor-pointer"
+                            className="max-h-96 w-auto object-contain rounded-lg cursor-pointer"
                             onClick={() => window.open(creasePattern, '_blank')}
                         />
                     </div>
