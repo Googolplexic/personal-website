@@ -11,7 +11,7 @@ export function ResumeSection() {
                 className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors no-underline dark:text-white"
             >
                 <FiDownload className="w-5 h-5" />
-                <span>Download Resume</span>
+                <span>View Resume</span>
             </a>
         </section>
     );
