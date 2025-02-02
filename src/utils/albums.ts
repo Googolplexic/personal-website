@@ -32,7 +32,7 @@ function processImages(context: Record<string, { default: string }>, baseFolder:
         }
         
         const albumData = albums.get(albumName)!;
-        if (fileName.includes('-cp.')) {
+        if (fileName.includes('-creasepattern.')) {
             albumData.creasePattern = module.default;
         } else {
             albumData.modelImages.push(module.default);
