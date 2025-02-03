@@ -2,11 +2,10 @@ import { useState } from 'react';
 
 interface CarouselProps {
     modelImages: string[];
-    title: string;
     creasePattern?: string;
 }
 
-export function Carousel({ modelImages, title, creasePattern }: CarouselProps) {
+export function Carousel({ modelImages, creasePattern }: CarouselProps) {
     const [selectedImage, setSelectedImage] = useState(0);
 
     const nextImage = () => {
@@ -18,14 +17,13 @@ export function Carousel({ modelImages, title, creasePattern }: CarouselProps) {
     };
 
     return (
-        <div className="w-full mb-8 group">
-            <h3 className="text-xl font-semibold mb-4">{title}</h3>
+        <div className="w-full group">
             <div className={`grid gap-4 ${creasePattern ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto'}`}>
                 <div className="relative group">
                     <div className="max-w-[80%] h-96 mx-auto rounded-lg flex items-center justify-center bg-transparent">
                         <img
                             src={modelImages[selectedImage]}
-                            alt={`${title} - Model View ${selectedImage + 1}`}
+                            alt={`Model View ${selectedImage + 1}`}
                             className="max-h-96 w-auto object-contain rounded-lg cursor-pointer"
                             onClick={() => window.open(modelImages[selectedImage], '_blank')}
                         />
@@ -67,7 +65,7 @@ export function Carousel({ modelImages, title, creasePattern }: CarouselProps) {
                     <div className="max-w-[80%] h-96 mx-auto rounded-lg flex items-center justify-center bg-transparent">
                         <img
                             src={creasePattern}
-                            alt={`${title} - Crease Pattern`}
+                            alt={`Crease Pattern`}
                             className="max-h-96 w-auto object-contain rounded-lg cursor-pointer"
                             onClick={() => window.open(creasePattern, '_blank')}
                         />

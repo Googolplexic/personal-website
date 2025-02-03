@@ -115,5 +115,6 @@ export default defineConfig({
         manualChunks: undefined
       }
     }
-  }
+  },
+  assetsInclude: ['**/*.md'],
 })

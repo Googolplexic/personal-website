@@ -1,5 +1,5 @@
 import { SEO } from '../components/SEO';
-import { Carousel } from '../components/Carousel';
+import { OrigamiModel } from '../components/OrigamiModel';
 import { myDesigns, otherDesigns } from '../utils/albums';
 import { ProjectGrid } from '../components/ProjectGrid';
 
@@ -34,11 +34,13 @@ export function Origami() {
                         {/* Make my designs take full width */}
                         <div className="max-w-5xl mx-auto">
                             {myDesigns.albums.map((album) => (
-                                <Carousel
+                                <OrigamiModel
                                     key={album.title}
-                                    modelImages={album.modelImages}
                                     title={album.title}
+                                    description={album.description}
+                                    modelImages={album.modelImages}
                                     creasePattern={album.creasePattern}
+                                    date={album.date}
                                 />
                             ))}
                         </div>
@@ -48,10 +50,12 @@ export function Origami() {
                         <h2>Other Artists' Work</h2>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
                             {otherDesigns.albums.map((album) => (
-                                <Carousel
+                                <OrigamiModel
                                     key={album.title}
-                                    modelImages={album.modelImages}
                                     title={album.title}
+                                    description={album.description}
+                                    modelImages={album.modelImages}
+                                    date={album.date}
                                 />
                             ))}
                         </div>
