@@ -47,7 +47,7 @@ export function Origami() {
                     </section>
 
                     <section>
-                        <h2>Other Artists' Work</h2>
+                        <h2>Models Designed by Other Artists</h2>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
                             {otherDesigns.albums.map((album) => (
                                 <OrigamiModel

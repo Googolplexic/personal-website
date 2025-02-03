@@ -76,7 +76,7 @@ function processImages(metadataContext: Record<string, string>, imagesContext: R
         }
 
         const albumData = albums.get(albumName)!;
-        if (fileName.includes('-creasepattern.')) {
+        if (fileName.includes('pattern.')) {
             albumData.creasePattern = url;
         } else {
             albumData.modelImages.push(url);
