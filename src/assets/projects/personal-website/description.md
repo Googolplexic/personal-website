@@ -80,4 +80,5 @@ The project uses several modern web technologies and practices:
 ### In Progress
 
 - Building the origami gallery
+  - Maybe a FOLD visualization for crease patterns instead of just displaying the image
 - Currently this looks a bit simple. In the future, I want to make this look unique and themed. However, this is a low priority for now as the main focus is on functionality and content.
