@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useImagePreloader } from './useImagePreloader';
 
 interface CarouselProps {
     modelImages: string[];
@@ -7,6 +8,7 @@ interface CarouselProps {
 
 export function Carousel({ modelImages, creasePattern }: CarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    useImagePreloader([...modelImages, ...(creasePattern ? [creasePattern] : [])]);
 
     const changeImage = (newIndex: number) => {
         setCurrentImageIndex(newIndex);

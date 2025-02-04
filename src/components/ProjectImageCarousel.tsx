@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useImagePreloader } from './useImagePreloader';
 
 interface ProjectImageCarouselProps {
     images: string[];
@@ -7,6 +8,7 @@ interface ProjectImageCarouselProps {
 
 export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    useImagePreloader(images);
 
     const changeImage = (newIndex: number) => {
         setCurrentImageIndex(newIndex);
@@ -44,7 +46,7 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                         onClick={() => changeImage(currentImageIndex === images.length - 1 ? 0 : currentImageIndex + 1)}
                         className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800 text-white p-2 rounded-l opacity-0 group-hover:opacity-100 transition-all border-none focus:outline-none"
                     >
-                        →
+                        → 
                     </button>
                     <div>
                         {images.map((_, index) => (
