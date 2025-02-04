@@ -27,6 +27,9 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                     title={`${title} - Image ${currentImageIndex + 1}${images.length > 1 ? ` of ${images.length}` : ''}`}
                     className="mx-auto max-h-48 object-contain rounded-lg my-auto cursor-pointer"
                     onClick={() => window.open(images[currentImageIndex], '_blank')}
+                    loading="eager"
+                    width="640"
+                    height="192"
                 />
             </div>
             {images.length > 1 && (

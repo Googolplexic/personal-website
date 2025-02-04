@@ -22,6 +22,9 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                             alt={`Model View ${currentImageIndex + 1}`}
                             className="max-h-72 w-auto object-contain rounded-lg cursor-pointer"
                             onClick={() => window.open(modelImages[currentImageIndex], '_blank')}
+                            loading="eager"
+                            width="640"
+                            height="288"
                         />
                     </div>
                     {modelImages.length > 1 && (
@@ -63,6 +66,9 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                             alt="Crease Pattern"
                             className="max-h-72 w-auto object-contain rounded-lg cursor-pointer"
                             onClick={() => window.open(creasePattern, '_blank')}
+                            loading="eager"
+                            width="640"
+                            height="288"
                         />
                     </div>
                 )}

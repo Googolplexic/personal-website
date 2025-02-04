@@ -114,7 +114,11 @@ export default defineConfig({
       output: {
         manualChunks: undefined
       }
-    }
+    },
+    assetsInlineLimit: 4096, // Inline small images as base64
   },
   assetsInclude: ['**/*.md'],
+  optimizeDeps: {
+    include: ['react', 'react-dom'], // Ensure React is pre-bundled
+  }
 })
