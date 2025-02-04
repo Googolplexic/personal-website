@@ -33,8 +33,16 @@ This website serves as my personal portfolio and was built using TypeScript and 
 - Dark mode support using Tailwind CSS
   - Easy access button to switch between modes
 - Responsive design that works well on both mobile and desktop
-- Portfolio project listing
-  - Project showcase with image galleries
+- Project portfolio showcase
+  - Project listing with filtering and search capabilities
+    - Search bar
+      - With real-time text highlighting
+        - Searches in project titles, descriptions, and technologies
+        - Highlights even after clicking on a project
+    - Filter projects by tags, technologies, and date
+    - Sort projects by various criteria
+  - Project tagging system for better organization
+  - Image galleries with thumbnails
   - Markdown support for project descriptions
     - Using [`react-markdown`](https://github.com/remarkjs/react-markdown) for content rendering
   - **Project pages are dynamically generated!**
@@ -42,8 +50,17 @@ This website serves as my personal portfolio and was built using TypeScript and 
     - Just add a new markdown file + any images to the project directory + update the SEO metadata
       - It will automatically be added to the project listing, showing up in the [portfolio](https://www.colemanlai.com/portfolio) page, and have its own page with the project details as well
 - Clean and simple navigation
-- A place to showcase my origami in addition to my [Instagram](https://www.instagram.com/12googolplex) (@12googolplex)
-  - Not fully implemented yet
+- Homepage with:
+  - Featured project section
+  - Resume
+  - Skills, about, contact, etc.
+- **Dynamically generated origami gallery**
+  - Automatic album generation from image collections
+    - Just plug in images + metadata and it will be added to the gallery automatically
+  - Separate sections for original designs and folded models
+  - Allow for crease patterns to be displayed separately
+    - This is done automatically by checking for a `pattern` ending in the image filename
+  - Integration with portfolio for origami-related software projects
 
 ### Technical Implementation
 
@@ -55,15 +72,12 @@ The project uses several modern web technologies and practices:
 - **React Router** for client-side navigation
 - **React Markdown** for rendering project descriptions without the hassle of HTML
 - **React Helmet** for managing SEO metadata
+- **Frontmatter** for project and origami gallery metadata
 - **Vite** as the build tool for faster development
 - **Vercel** for automated deployment
 - **GitHub Copilot** for doing some of the tedious work for me
 
 ### In Progress
 
-- Adding more projects to the portfolio
-- Building the origami gallery/page(s)
-- Adding my resume to the site, or at some experience section
-- Updating mobile responsiveness
-- Rewriting the homepage
-- Currently this looks a bit simple. In the future, I want to make this look unique and themed.
+- Building the origami gallery
+- Currently this looks a bit simple. In the future, I want to make this look unique and themed. However, this is a low priority for now as the main focus is on functionality and content.

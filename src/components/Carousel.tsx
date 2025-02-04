@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useImagePreloader } from './useImagePreloader';
+import { useImagePreloader } from '../utils/useImagePreloader';
 
 interface CarouselProps {
     modelImages: string[];
@@ -48,11 +48,10 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                                     <button
                                         key={index}
                                         onClick={() => changeImage(index)}
-                                        className={`w-12 h-1 mx-1 rounded-full transition-colors border-none focus:outline-none ${
-                                            index === currentImageIndex
+                                        className={`w-12 h-1 mx-1 rounded-full transition-colors border-none focus:outline-none ${index === currentImageIndex
                                                 ? 'bg-gray-600 dark:bg-gray-300'
                                                 : 'bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500'
-                                        }`}
+                                            }`}
                                         aria-label={`View image ${index + 1}`}
                                     />
                                 ))}
@@ -60,7 +59,7 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                         </>
                     )}
                 </div>
-                
+
                 {creasePattern && (
                     <div className="max-w-[80%] h-72 mx-auto rounded-lg flex items-center justify-center bg-transparent">
                         <img

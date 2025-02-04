@@ -17,17 +17,23 @@ export function Origami() {
                 pathname="/origami"
             />
             <div className="max-w-6xl mx-auto px-4">
-                <h1 className="">Origami</h1>
-                Images are coming soon! In the meantime, please visit{' '}
-                <a
-                    href="https://www.instagram.com/12googolplex"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold underline hover:text-blue-600 dark:hover:text-blue-300"
-                >
-                    @12googolplex
-                </a>
-                <br /><br />
+                <h1>Origami</h1>
+                <p>
+                    More images are coming soon! In the meantime, please visit{' '}
+                    <a
+                        href="https://www.instagram.com/12googolplex"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold underline hover:text-blue-600 dark:hover:text-blue-300"
+                    >
+                        @12googolplex
+                    </a>
+                </p>
+                <p className='mb-8'>
+                    These image albums are all dynamically generated! See my{' '}
+                    <a href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">personal website</a> page for more detail.
+                    
+                </p>
                 <div className="space-y-16">
                     <section>
                         <h2>My Designs</h2>
@@ -63,8 +69,8 @@ export function Origami() {
 
                     <section>
                         <div className="max-w-5xl mx-auto">
-                            <ProjectGrid 
-                                featuredSlugs={origamiProjects} 
+                            <ProjectGrid
+                                featuredSlugs={origamiProjects}
                                 title="Origami Software"
                                 hideControls
                             />
