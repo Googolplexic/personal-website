@@ -8,16 +8,8 @@ interface ProjectImageCarouselProps {
 export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-    const nextImage = () => {
-        setCurrentImageIndex((prev) =>
-            prev === images.length - 1 ? 0 : prev + 1
-        );
-    };
-
-    const prevImage = () => {
-        setCurrentImageIndex((prev) =>
-            prev === 0 ? images.length - 1 : prev - 1
-        );
+    const changeImage = (newIndex: number) => {
+        setCurrentImageIndex(newIndex);
     };
 
     if (images.length === 0) {
@@ -34,21 +26,19 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                     alt={`${title} - Image ${currentImageIndex + 1}`}
                     title={`${title} - Image ${currentImageIndex + 1}${images.length > 1 ? ` of ${images.length}` : ''}`}
                     className="mx-auto max-h-48 object-contain rounded-lg my-auto cursor-pointer"
-                    onClick={() => {
-                        window.open(images[currentImageIndex], '_blank');
-                    }}
+                    onClick={() => window.open(images[currentImageIndex], '_blank')}
                 />
             </div>
             {images.length > 1 && (
                 <>
                     <button
-                        onClick={prevImage}
+                        onClick={() => changeImage(currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1)}
                         className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800 text-white p-2 rounded-r opacity-0 group-hover:opacity-100 transition-all border-none focus:outline-none"
                     >
                         ←
                     </button>
                     <button
-                        onClick={nextImage}
+                        onClick={() => changeImage(currentImageIndex === images.length - 1 ? 0 : currentImageIndex + 1)}
                         className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800 text-white p-2 rounded-l opacity-0 group-hover:opacity-100 transition-all border-none focus:outline-none"
                     >
                         →
@@ -59,7 +49,7 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                                 key={index}
                                 title={`View image ${index + 1}`}
                                 aria-label={`View image ${index + 1}`}
-                                onClick={() => setCurrentImageIndex(index)}
+                                onClick={() => changeImage(index)}
                                 className={`w-12 h-1 p-2 mx-1 rounded-full transition-colors border-none focus:outline-none ${
                                     index === currentImageIndex
                                         ? 'bg-gray-600 dark:bg-gray-300'
