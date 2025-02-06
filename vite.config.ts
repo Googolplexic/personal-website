@@ -39,8 +39,8 @@ const routePriorities = {
 
 const routeChangeFreq = {
   '/': 'weekly',
-  '/origami': 'monthly',
-  '/portfolio': 'daily',
+  '/origami': 'weekly',
+  '/portfolio': 'monthly',
   ...Object.fromEntries(
     Object.entries(portfolioProjects).map(([name, data]) =>
       [`/portfolio/${name}`, data.changefreq]
