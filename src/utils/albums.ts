@@ -11,6 +11,7 @@ export interface Album {
     description?: string;
     date?: string;
     slug: string;
+    designer?: string;
 }
 
 interface AlbumSection {
@@ -22,6 +23,7 @@ interface AlbumMetadata {
     title: string;
     date: string;
     description?: string;
+    designer?: string;
 }
 
 const myDesignsMetadata = import.meta.glob('../assets/origami/my-designs/**/info.md', {
@@ -96,6 +98,7 @@ function processImages(metadataContext: Record<string, string>, imagesContext: R
                 creasePattern: data.creasePattern,
                 date: data.metadata?.date || '2000-01',
                 description: data.metadata?.description,
+                designer: data.metadata?.designer,
                 slug
             };
         });

@@ -1,5 +1,6 @@
 ---
 title: Walking in the Rain
 date: 2024-04
-description: Designed by Chen Xiao. This is a refold.
+description: One of my favorite designs. This particular image is a refold.
+designer: Chen Xiao
 ---

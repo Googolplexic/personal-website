@@ -6,7 +6,8 @@ import { ProjectGrid } from '../components/ProjectGrid';
 export function Origami() {
     const origamiProjects = ['fold-preview', 'box-pleating', 'origami-fractions'];
 
-    console.log('My Designs Albums:', myDesigns.albums); // Debug log
+    console.log('My Designs Albums:', myDesigns.albums); 
+    console.log('Other Designs Albums:', otherDesigns.albums);
 
     return (
         <>
@@ -32,7 +33,7 @@ export function Origami() {
                 <p className='mb-8'>
                     These image albums are all dynamically generated! See my{' '}
                     <a href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">personal website</a> page for more detail.
-                    
+
                 </p>
                 <div className="space-y-16">
                     <section>
@@ -46,7 +47,7 @@ export function Origami() {
                                     description={album.description}
                                     modelImages={album.modelImages}
                                     creasePattern={album.creasePattern}
-                                    date={album.date}
+                                    date={album.date} 
                                 />
                             ))}
                         </div>
@@ -62,6 +63,7 @@ export function Origami() {
                                     description={album.description}
                                     modelImages={album.modelImages}
                                     date={album.date}
+                                    designer={album.designer}
                                 />
                             ))}
                         </div>

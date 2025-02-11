@@ -4,7 +4,7 @@ export function About() {
     return (
         <section id="about" className="mb-12">
             <h2 className="text-2xl font-semibold mb-4 dark:text-white">About Me</h2>
-            <p className="space-y-4">
+            <div className="space-y-4">
                 <p>
                     Hi! I'm a second-year Computing Science student at Simon Fraser University, passionate about building intuitive user interfaces and efficient solutions.
                 </p>
@@ -22,7 +22,7 @@ export function About() {
                     <Link to="/origami" onClick={() => window.scrollTo(0, 0)}>origami models</Link>
                     {' '}in my free time. Come check my work out!
                 </p>
-            </p>
+            </div>
         </section>
     )
 }
