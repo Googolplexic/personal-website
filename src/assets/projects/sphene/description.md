@@ -1,6 +1,6 @@
 ---
 title: Project SPHENE
-summary: Asynchronous collaborative note-taking web application through formatted AI suggestions 
+summary: Asynchronous collaborative note-taking web application through formatted AI suggestions. Winner of Most Original award at DreamHacks 2025.
 SEOdescription: Portfolio showcase of Project SPHENE - an asynchronous collaborative note-taking web application that utilizes AI to provide formatted suggestions to fill in gaps in notes based on notes of other users. 
 keywords:
 - AI note-taking

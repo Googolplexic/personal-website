@@ -1,5 +1,5 @@
 ---
-title: Salmon Run
+title: The Spirit of Salmon
 summary: Educational game for teaching the dangers faced by salmon. Made for StormForge by SFU Surge. 
 SEOdescription: Portfolio showcase of Salmon Run - an educational game made in Unity, created for StormForge by SFU Surge. 
 keywords:
