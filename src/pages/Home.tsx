@@ -6,7 +6,7 @@ import { ResumeSection } from '../components/ResumeSection'
 import { ProjectGrid } from '../components/ProjectGrid'
 
 export function Home() {
-    const featuredSlugs = ['data-dave', 'personal-website', 'be-square'];
+    const featuredSlugs = ['hermes', 'personal-website', 'be-square', 'origami-fractions'];
 
     return (
         <>
