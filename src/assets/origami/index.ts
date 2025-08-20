@@ -1,3 +1,4 @@
+import { testDesign } from './test';
 import { OrigamiProps } from '../../types';
 import myDesigns from './my-designs';
 import otherDesigns from './other-designs';
@@ -18,3 +19,7 @@ allOrigami.sort((a, b) => {
 
 export default allOrigami;
 export { myDesigns, otherDesigns };
+
+export const origami: OrigamiDesign[] = [
+  testDesign
+];
