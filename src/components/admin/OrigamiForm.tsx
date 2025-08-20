@@ -74,20 +74,22 @@ export function OrigamiForm({ sessionId }: OrigamiFormProps) {
         }
 
         try {
-            const submitData = new FormData();
-
-            // Add form data
-            Object.entries(formData).forEach(([key, value]) => {
-                submitData.append(key, value);
-            });
-
-            // Don't send type for new origami - only for image uploads to existing origami
-
-            // Add images
+            // Convert images to base64 if present
+            const imageData = [];
             if (images) {
-                Array.from(images).forEach((file) => {
-                    submitData.append('images', file);
-                });
+                for (const file of Array.from(images)) {
+                    const base64 = await new Promise<string>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result as string);
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    imageData.push({
+                        data: base64,
+                        ext: file.name.split('.').pop(),
+                        isPattern: file.name.toLowerCase().includes('pattern')
+                    });
+                }
             }
 
             const response = await fetch(apiUrl('/create-content'), {
@@ -103,7 +105,7 @@ export function OrigamiForm({ sessionId }: OrigamiFormProps) {
                     category: formData.category,
                     designer: formData.designer,
                     date: formData.date || new Date().toISOString().slice(0, 7),
-                    // Convert form data to expected format for serverless function
+                    images: imageData,
                 }),
             });
 

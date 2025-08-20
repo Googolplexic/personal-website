@@ -171,9 +171,18 @@ export function ContentList({ sessionId }: ContentListProps) {
                 }
 
                 const projects = await projectsResponse.json();
-                const origami = await origamiResponse.json();
+                const origamiData = await origamiResponse.json();
 
-                setContent({ projects, origami });
+                // Process origami data to separate by category
+                const origami = {
+                    myDesigns: origamiData.items?.filter((item: { category?: string }) => item.category === 'my-designs') || [],
+                    otherDesigns: origamiData.items?.filter((item: { category?: string }) => item.category === 'other-designs') || []
+                };
+
+                setContent({ 
+                    projects: projects.items || [], 
+                    origami 
+                });
             } catch (error) {
                 setError('Failed to load content');
                 console.error('Fetch error:', error);
@@ -204,9 +213,18 @@ export function ContentList({ sessionId }: ContentListProps) {
             }
 
             const projects = await projectsResponse.json();
-            const origami = await origamiResponse.json();
+            const origamiData = await origamiResponse.json();
 
-            setContent({ projects, origami });
+            // Process origami data to separate by category
+            const origami = {
+                myDesigns: origamiData.items?.filter((item: { category?: string }) => item.category === 'my-designs') || [],
+                otherDesigns: origamiData.items?.filter((item: { category?: string }) => item.category === 'other-designs') || []
+            };
+
+            setContent({ 
+                projects: projects.items || [], 
+                origami 
+            });
         } catch (error) {
             setError('Failed to load content');
             console.error('Fetch error:', error);

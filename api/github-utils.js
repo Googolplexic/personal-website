@@ -17,7 +17,7 @@ export function validateSessionToken(authHeader) {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return false;
     }
-    
+
     try {
         const token = authHeader.substring(7);
         const decoded = Buffer.from(token, 'base64').toString();
@@ -25,7 +25,7 @@ export function validateSessionToken(authHeader) {
         const tokenTime = parseInt(timestamp);
         const now = Date.now();
         const twentyFourHours = 24 * 60 * 60 * 1000;
-        
+
         return now - tokenTime < twentyFourHours;
     } catch (error) {
         return false;

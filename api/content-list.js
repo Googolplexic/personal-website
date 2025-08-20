@@ -55,7 +55,7 @@ export default async function handler(req, res) {
             } else if (type === 'origami') {
                 // Get both my-designs and other-designs
                 const categories = ['my-designs', 'other-designs'];
-                
+
                 for (const category of categories) {
                     try {
                         const response = await octokit.rest.repos.getContent({

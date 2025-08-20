@@ -46,7 +46,7 @@ export default async function handler(req, res) {
 
             const fullPath = `${basePath}/${file}`;
             const fileData = await getFileFromGitHub(fullPath);
-            
+
             if (!fileData) {
                 return res.status(404).json({ error: 'Image not found' });
             }

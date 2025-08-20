@@ -91,24 +91,21 @@ export function ProjectForm({ sessionId }: ProjectFormProps) {
         }
 
         try {
-            const submitData = new FormData();
-
-            // Add form data
-            Object.entries(formData).forEach(([key, value]) => {
-                if (Array.isArray(value)) {
-                    submitData.append(key, JSON.stringify(value));
-                } else {
-                    submitData.append(key, value);
-                }
-            });
-
-            // Don't send type for new projects - only for image uploads to existing projects
-
-            // Add images
+            // Convert images to base64 if present
+            const imageData = [];
             if (images) {
-                Array.from(images).forEach((file) => {
-                    submitData.append('images', file);
-                });
+                for (const file of Array.from(images)) {
+                    const base64 = await new Promise<string>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result as string);
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    imageData.push({
+                        data: base64,
+                        ext: file.name.split('.').pop()
+                    });
+                }
             }
 
             const response = await fetch(apiUrl('/create-content'), {
@@ -125,7 +122,7 @@ export function ProjectForm({ sessionId }: ProjectFormProps) {
                     technologies: formData.technologies,
                     githubUrl: formData.githubUrl,
                     liveUrl: formData.liveUrl,
-                    // Convert form data to expected format for serverless function
+                    images: imageData,
                 }),
             });
 

@@ -41,7 +41,7 @@ export default async function handler(req, res) {
                 const tokenTime = parseInt(timestamp);
                 const now = Date.now();
                 const twentyFourHours = 24 * 60 * 60 * 1000;
-                
+
                 if (now - tokenTime < twentyFourHours) {
                     return res.status(200).json({ valid: true });
                 }

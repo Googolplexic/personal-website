@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         if (req.method === 'GET') {
             // Read file content
             const fileData = await getFileFromGitHub(fullPath);
-            
+
             if (!fileData) {
                 return res.status(404).json({ error: 'File not found' });
             }

@@ -63,9 +63,9 @@ export default async function handler(req, res) {
                 .map(item => ({
                     name: item.name,
                     path: item.path,
-                    type: item.name.endsWith('.md') ? 'markdown' : 
-                          item.name.endsWith('.ts') ? 'typescript' :
-                          item.name.match(/\.(png|jpg|jpeg|webp)$/i) ? 'image' : 'other'
+                    type: item.name.endsWith('.md') ? 'markdown' :
+                        item.name.endsWith('.ts') ? 'typescript' :
+                            item.name.match(/\.(png|jpg|jpeg|webp)$/i) ? 'image' : 'other'
                 }));
 
             const directories = response.data
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
                     type: 'directory'
                 }));
 
-            return res.status(200).json({ 
+            return res.status(200).json({
                 files: [...files, ...directories]
             });
 

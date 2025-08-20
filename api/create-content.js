@@ -100,7 +100,7 @@ async function createOrigami(data) {
     if (images && images.length > 0) {
         for (let i = 0; i < images.length; i++) {
             const image = images[i];
-            const fileName = image.isPattern 
+            const fileName = image.isPattern
                 ? `${slug}-pattern.${image.ext}`
                 : `${String(i + 1).padStart(2, '0')}-${slug}.${image.ext}`;
             const imagePath = `${structure.basePath}/${fileName}`;
