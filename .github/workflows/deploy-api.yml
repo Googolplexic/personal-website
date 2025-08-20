@@ -1,10 +1,7 @@
-name: Deploy API to Vercel
+name: Deploy API to Vercel (DISABLED)
 
 on:
-  push:
-    branches: [ main ]
-    paths: [ 'server/**' ]
-  workflow_dispatch:
+  workflow_dispatch: # Manual trigger only
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}

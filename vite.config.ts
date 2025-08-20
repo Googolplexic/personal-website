@@ -12,7 +12,7 @@ const portfolioProjects = {
   'be-square': { priority: 0.7, changefreq: 'weekly' },
   'sfu-scheduler': { priority: 0.7, changefreq: 'weekly' },
   'machi-ne': { priority: 0.6, changefreq: 'weekly' },
-  'salmon-run': { priority: 0.3, changefreq: 'weekly' },
+  'spirit-of-salmon': { priority: 0.3, changefreq: 'weekly' },
   'origami-fractions': { priority: 0.7, changefreq: 'weekly' },
   'box-pleating': { priority: 0.6, changefreq: 'weekly' },
   'fold-preview': { priority: 0.6, changefreq: 'weekly' },
@@ -68,28 +68,46 @@ const cache = loadCache()
 
 const getLastModTime = (path: string) => {
   const fullPath = resolve(__dirname, "src/" + path)
-  const stats = statSync(fullPath)
-  if (stats.isDirectory()) {
-    const files = readdirSync(fullPath)
-    const latest = files.reduce((latest: Date, file: string) => {
-      const fileStats = statSync(resolve(fullPath, file))
-      return fileStats.mtime > latest ? fileStats.mtime : latest
-    }, new Date(0))
-    cache[path] = latest
-    return latest
+  try {
+    const stats = statSync(fullPath)
+    if (stats.isDirectory()) {
+      const files = readdirSync(fullPath)
+      const latest = files.reduce((latest: Date, file: string) => {
+        try {
+          const fileStats = statSync(resolve(fullPath, file))
+          return fileStats.mtime > latest ? fileStats.mtime : latest
+        } catch (err) {
+          console.warn(`Could not stat file ${file} in ${fullPath}:`, err)
+          return latest
+        }
+      }, new Date(0))
+      return latest
+    }
+    return stats.mtime
+  } catch (err) {
+    console.warn(`Could not stat path ${fullPath}:`, err)
+    return new Date() // Return current time as fallback
   }
-  cache[path] = stats.mtime
-  return stats.mtime
+}
+
+const getUpdatedLastModTime = (path: string) => {
+  const currentMtime = getLastModTime(path)
+  const cachedMtime = cache[path] ? new Date(cache[path]) : new Date(0)
+
+  // Use the newer of cached vs current modification time
+  const finalMtime = currentMtime > cachedMtime ? currentMtime : cachedMtime
+  cache[path] = finalMtime
+  return finalMtime
 }
 
 const routeLastMod = {
-  '/': cache['pages/Home.tsx'] || getLastModTime('pages/Home.tsx'),
-  '/origami': cache['pages/Origami.tsx'] || getLastModTime('pages/Origami.tsx'),
-  '/portfolio': cache['pages/Portfolio.tsx'] || getLastModTime('pages/Portfolio.tsx'),
+  '/': getUpdatedLastModTime('pages/Home.tsx'),
+  '/origami': getUpdatedLastModTime('pages/Origami.tsx'),
+  '/portfolio': getUpdatedLastModTime('pages/Portfolio.tsx'),
   ...Object.fromEntries(
     Object.keys(portfolioProjects).map(name => {
       const path = `assets/projects/${name}`
-      return [`/portfolio/${name}`, cache[path] || getLastModTime(path)]
+      return [`/portfolio/${name}`, getUpdatedLastModTime(path)]
     })
   )
 }

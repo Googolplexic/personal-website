@@ -1,10 +1,7 @@
-name: Deploy to Vercel
+name: Deploy to Vercel (DISABLED)
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch: # Manual trigger only
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
