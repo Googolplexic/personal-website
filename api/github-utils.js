@@ -57,6 +57,34 @@ export async function getFileFromGitHub(path) {
     }
 }
 
+// Helper function to get image file content from GitHub (returns base64)
+export async function getImageFromGitHub(path) {
+    try {
+        const response = await octokit.rest.repos.getContent({
+            owner: REPO_OWNER,
+            repo: REPO_NAME,
+            path: path,
+            ref: BRANCH,
+        });
+
+        if (response.data.type === 'file') {
+            // For images, return the base64 content directly (GitHub API returns it base64 encoded)
+            // Remove any newlines that GitHub might add
+            const cleanBase64 = response.data.content.replace(/\n/g, '');
+            return {
+                content: cleanBase64,
+                sha: response.data.sha,
+            };
+        }
+        return null;
+    } catch (error) {
+        if (error.status === 404) {
+            return null; // File doesn't exist
+        }
+        throw error;
+    }
+}
+
 // Helper function to create/update file in GitHub
 export async function updateFileInGitHub(path, content, message, sha = null) {
     const params = {

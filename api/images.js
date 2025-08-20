@@ -1,5 +1,5 @@
 // Vercel serverless function to manage images via GitHub API
-import { getFileFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, validateSessionToken } from './github-utils.js';
+import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, validateSessionToken } from './github-utils.js';
 
 export default async function handler(req, res) {
     // Enable CORS
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
             }
 
             const fullPath = `${basePath}/${file}`;
-            const fileData = await getFileFromGitHub(fullPath);
+            const fileData = await getImageFromGitHub(fullPath);
 
             if (!fileData) {
                 return res.status(404).json({ error: 'Image not found' });
