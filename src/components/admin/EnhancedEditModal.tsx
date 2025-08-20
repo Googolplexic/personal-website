@@ -94,19 +94,24 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                             });
                             if (response.ok) {
                                 const data = await response.json();
-                                
+
                                 // Determine MIME type from file extension
-                                const extension = imageObj.name.toLowerCase().split('.').pop();
-                                let mimeType = 'image/jpeg'; // default
-                                if (extension === 'png') mimeType = 'image/png';
-                                else if (extension === 'gif') mimeType = 'image/gif';
-                                else if (extension === 'webp') mimeType = 'image/webp';
-                                else if (extension === 'svg') mimeType = 'image/svg+xml';
+                                const fileName = imageObj.name.toLowerCase();
+                                console.log('Processing image file:', fileName);
                                 
+                                let mimeType = 'image/jpeg'; // default
+                                if (fileName.endsWith('.png')) mimeType = 'image/png';
+                                else if (fileName.endsWith('.gif')) mimeType = 'image/gif';
+                                else if (fileName.endsWith('.webp')) mimeType = 'image/webp';
+                                else if (fileName.endsWith('.svg')) mimeType = 'image/svg+xml';
+                                else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) mimeType = 'image/jpeg';
+                                
+                                console.log('Detected MIME type:', mimeType, 'for file:', fileName);
+
                                 // Ensure base64 data is clean (no extra encoding)
                                 const base64Data = data.content;
                                 console.log('Image data for', imageObj.name, ':', base64Data.substring(0, 50) + '...');
-                                
+
                                 // Convert base64 to data URL
                                 imageObj.url = `data:${mimeType};base64,${base64Data}`;
                             } else {
@@ -267,15 +272,16 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                             });
                             if (response.ok) {
                                 const data = await response.json();
-                                
+
                                 // Determine MIME type from file extension
-                                const extension = imageObj.name.toLowerCase().split('.').pop();
+                                const fileName = imageObj.name.toLowerCase();
                                 let mimeType = 'image/jpeg'; // default
-                                if (extension === 'png') mimeType = 'image/png';
-                                else if (extension === 'gif') mimeType = 'image/gif';
-                                else if (extension === 'webp') mimeType = 'image/webp';
-                                else if (extension === 'svg') mimeType = 'image/svg+xml';
-                                
+                                if (fileName.endsWith('.png')) mimeType = 'image/png';
+                                else if (fileName.endsWith('.gif')) mimeType = 'image/gif';
+                                else if (fileName.endsWith('.webp')) mimeType = 'image/webp';
+                                else if (fileName.endsWith('.svg')) mimeType = 'image/svg+xml';
+                                else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) mimeType = 'image/jpeg';
+
                                 imageObj.url = `data:${mimeType};base64,${data.content}`;
                             }
                         } catch (error) {
@@ -397,15 +403,16 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                             });
                             if (response.ok) {
                                 const data = await response.json();
-                                
+
                                 // Determine MIME type from file extension
-                                const extension = imageObj.name.toLowerCase().split('.').pop();
+                                const fileName = imageObj.name.toLowerCase();
                                 let mimeType = 'image/jpeg'; // default
-                                if (extension === 'png') mimeType = 'image/png';
-                                else if (extension === 'gif') mimeType = 'image/gif';
-                                else if (extension === 'webp') mimeType = 'image/webp';
-                                else if (extension === 'svg') mimeType = 'image/svg+xml';
-                                
+                                if (fileName.endsWith('.png')) mimeType = 'image/png';
+                                else if (fileName.endsWith('.gif')) mimeType = 'image/gif';
+                                else if (fileName.endsWith('.webp')) mimeType = 'image/webp';
+                                else if (fileName.endsWith('.svg')) mimeType = 'image/svg+xml';
+                                else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) mimeType = 'image/jpeg';
+
                                 imageObj.url = `data:${mimeType};base64,${data.content}`;
                             }
                         } catch (error) {
