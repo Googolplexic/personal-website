@@ -13,6 +13,7 @@
     "deploy:preview": "vercel"
   },
   "dependencies": {
+    "@octokit/rest": "^20.0.2",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
     "autoprefixer": "^10.4.20",
