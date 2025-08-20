@@ -76,8 +76,33 @@ export default async function handler(req, res) {
                     type: 'directory'
                 }));
 
+            // For projects, also get files from the images subdirectory
+            let imageFiles = [];
+            if (requestPath.startsWith('project/')) {
+                try {
+                    const imagesResponse = await octokit.rest.repos.getContent({
+                        owner: REPO_OWNER,
+                        repo: REPO_NAME,
+                        path: `${fullPath}/images`,
+                    });
+
+                    if (Array.isArray(imagesResponse.data)) {
+                        imageFiles = imagesResponse.data
+                            .filter(item => item.type === 'file' && item.name.match(/\.(png|jpg|jpeg|webp)$/i))
+                            .map(item => ({
+                                name: `images/${item.name}`, // Prefix with images/ so frontend knows the structure
+                                path: item.path,
+                                type: 'image'
+                            }));
+                    }
+                } catch (error) {
+                    // Images directory might not exist, that's ok
+                    console.log('No images directory found for project:', requestPath);
+                }
+            }
+
             return res.status(200).json({
-                files: [...files, ...directories]
+                files: [...files, ...directories, ...imageFiles]
             });
 
         } catch (error) {

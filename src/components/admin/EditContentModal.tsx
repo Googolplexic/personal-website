@@ -98,9 +98,12 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${sessionId}`,
-                    'Content-Type': 'text/plain'
+                    'Content-Type': 'application/json'
                 },
-                body: content
+                body: JSON.stringify({
+                    content: content,
+                    sha: null // For now, since we don't track SHA in this component
+                })
             });
 
             if (response.ok) {

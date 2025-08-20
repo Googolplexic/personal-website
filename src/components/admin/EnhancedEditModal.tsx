@@ -74,9 +74,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         // Create API URL for fetching image data, not for direct display
                         let imageApiUrl;
                         if (type === 'project') {
-                            // For projects, if file already includes "images/" prefix, don't add it again
-                            const fileName = file.name.startsWith('images/') ? file.name.substring(7) : file.name;
-                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=images/${fileName}`);
+                            // For projects, file.name already includes "images/" prefix from the API
+                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=${file.name}`);
                         } else {
                             imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
                         }
@@ -161,9 +160,12 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${sessionId}`,
-                    'Content-Type': 'text/plain'
+                    'Content-Type': 'application/json'
                 },
-                body: content
+                body: JSON.stringify({
+                    content: content,
+                    sha: null // For now, since we don't track SHA in this component
+                })
             });
 
             if (response.ok) {
@@ -230,9 +232,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
                         let imageApiUrl;
                         if (type === 'project') {
-                            // For projects, if file already includes "images/" prefix, don't add it again
-                            const fileName = file.name.startsWith('images/') ? file.name.substring(7) : file.name;
-                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=images/${fileName}`);
+                            // For projects, file.name already includes "images/" prefix from the API
+                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=${file.name}`);
                         } else {
                             imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
                         }
@@ -353,8 +354,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
                         let imageApiUrl;
                         if (type === 'project') {
-                            const fileName = file.name.startsWith('images/') ? file.name.substring(7) : file.name;
-                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=images/${fileName}`);
+                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=${file.name}`);
                         } else {
                             imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
                         }
