@@ -33,14 +33,15 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
                     headers: { 'Authorization': `Bearer ${sessionId}` }
                 });
                 if (response.ok) {
-                    const fileList = await response.json();
+                    const fileData = await response.json();
+                    const fileList = fileData.files || [];
                     // Filter to only markdown files that can be edited
-                    const editableFiles = fileList.filter((file: string) =>
-                        file.endsWith('.md')
+                    const editableFiles = fileList.filter((file: { name: string; type: string }) =>
+                        file.name && file.name.endsWith('.md')
                     );
-                    setFiles(editableFiles);
+                    setFiles(editableFiles.map((f: { name: string; type: string }) => f.name));
                     if (editableFiles.length > 0) {
-                        setSelectedFile(editableFiles[0]);
+                        setSelectedFile(editableFiles[0].name);
                     }
                 }
             } catch (error) {

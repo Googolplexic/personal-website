@@ -50,7 +50,8 @@ function FileViewModal({ isOpen, onClose, title, path, type, category }: FileVie
                     headers: { 'Authorization': `Bearer ${sessionId}` }
                 });
                 if (response.ok) {
-                    const fileList = await response.json();
+                    const fileData = await response.json();
+                    const fileList = fileData.files || [];
                     setFiles(fileList);
                 }
             } catch (error) {

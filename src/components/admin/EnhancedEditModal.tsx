@@ -29,7 +29,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [selectedFile, setSelectedFile] = useState('');
-    const [markdownFiles, setMarkdownFiles] = useState<string[]>([]);
+    const [markdownFiles, setMarkdownFiles] = useState<{ name: string; type: string }[]>([]);
     const [images, setImages] = useState<ImageFile[]>([]);
     const [uploading, setUploading] = useState(false);
     const [activeTab, setActiveTab] = useState<'edit' | 'images'>('edit');
@@ -50,32 +50,33 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     headers: { 'Authorization': `Bearer ${sessionId}` }
                 });
                 if (response.ok) {
-                    const fileList = await response.json();
+                    const fileData = await response.json();
+                    const fileList = fileData.files || [];
 
                     // Filter markdown files
-                    const mdFiles = fileList.filter((file: string) => file.endsWith('.md'));
+                    const mdFiles = fileList.filter((file: { name: string; type: string }) => file.name && file.name.endsWith('.md'));
                     setMarkdownFiles(mdFiles);
                     if (mdFiles.length > 0) {
-                        setSelectedFile(mdFiles[0]);
+                        setSelectedFile(mdFiles[0].name);
                     }
 
                     // Filter image files
-                    const imageFiles = fileList.filter((file: string) =>
-                        file.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
+                    const imageFiles = fileList.filter((file: { name: string; type: string }) =>
+                        file.name && file.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
                     );
 
                     // Create image objects with URLs
-                    const imageObjects = imageFiles.map((file: string) => {
+                    const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
                         let url;
                         if (type === 'project') {
                             // For projects, if file already includes "images/" prefix, don't add it again
-                            const fileName = file.startsWith('images/') ? file.substring(7) : file;
+                            const fileName = file.name.startsWith('images/') ? file.name.substring(7) : file.name;
                             url = apiUrl(`/images?path=project/${path}&file=images/${fileName}`);
                         } else {
-                            url = apiUrl(`/images?path=origami/${category}/${path}&file=${file}`);
+                            url = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
                         }
                         return {
-                            name: file,
+                            name: file.name,
                             url: url
                         };
                     });
@@ -195,21 +196,22 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 });
 
                 if (refreshResponse.ok) {
-                    const fileList = await refreshResponse.json();
-                    const imageFiles = fileList.filter((file: string) =>
-                        file.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
+                    const fileData = await refreshResponse.json();
+                    const fileList = fileData.files || [];
+                    const imageFiles = fileList.filter((file: { name: string; type: string }) =>
+                        file.name && file.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
                     );
 
-                    const imageObjects = imageFiles.map((file: string) => {
+                    const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
                         let url;
                         if (type === 'project') {
                             // For projects, if file already includes "images/" prefix, don't add it again
-                            const fileName = file.startsWith('images/') ? file.substring(7) : file;
+                            const fileName = file.name.startsWith('images/') ? file.name.substring(7) : file.name;
                             url = `http://localhost:3001/api/images/project/${path}/images/${fileName}`;
                         } else {
-                            url = `http://localhost:3001/api/images/origami/${category}/${path}/${file}`;
+                            url = `http://localhost:3001/api/images/origami/${category}/${path}/${file.name}`;
                         }
-                        return { name: file, url: url };
+                        return { name: file.name, url: url };
                     });
                     setImages(imageObjects);
                 }
@@ -295,20 +297,21 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 });
 
                 if (response.ok) {
-                    const fileList = await response.json();
-                    const imageFiles = fileList.filter((file: string) =>
-                        file.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
+                    const fileData = await response.json();
+                    const fileList = fileData.files || [];
+                    const imageFiles = fileList.filter((file: { name: string; type: string }) =>
+                        file.name && file.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
                     );
 
-                    const imageObjects = imageFiles.map((file: string) => {
+                    const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
                         let url;
                         if (type === 'project') {
-                            const fileName = file.startsWith('images/') ? file.substring(7) : file;
+                            const fileName = file.name.startsWith('images/') ? file.name.substring(7) : file.name;
                             url = `http://localhost:3001/api/images/project/${path}/images/${fileName}`;
                         } else {
-                            url = `http://localhost:3001/api/images/origami/${category}/${path}/${file}`;
+                            url = `http://localhost:3001/api/images/origami/${category}/${path}/${file.name}`;
                         }
-                        return { name: file, url: url };
+                        return { name: file.name, url: url };
                     });
                     setImages(imageObjects);
                 }
@@ -341,7 +344,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                         title="Select markdown file to edit"
                                     >
                                         {markdownFiles.map(file => (
-                                            <option key={file} value={file}>{file}</option>
+                                            <option key={file.name} value={file.name}>{file.name}</option>
                                         ))}
                                     </select>
                                 </div>
