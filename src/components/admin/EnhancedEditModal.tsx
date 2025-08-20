@@ -25,6 +25,7 @@ const removeFrontmatter = (content: string): string => {
 
 export function EnhancedEditModal({ isOpen, onClose, title, path, type, category, onSave }: EnhancedEditModalProps) {
     const [content, setContent] = useState('');
+    const [currentSha, setCurrentSha] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
@@ -153,6 +154,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 if (response.ok) {
                     const data = await response.json();
                     setContent(data.content);
+                    setCurrentSha(data.sha);
                 } else {
                     setError('Failed to load file content');
                 }
@@ -184,11 +186,16 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 },
                 body: JSON.stringify({
                     content: content,
-                    sha: null // For now, since we don't track SHA in this component
+                    sha: currentSha // Use the SHA we fetched when loading content
                 })
             });
 
             if (response.ok) {
+                // Update the SHA after successful save
+                const responseData = await response.json();
+                if (responseData.sha) {
+                    setCurrentSha(responseData.sha);
+                }
                 onSave?.();
                 // Don't close automatically, let user continue editing
             } else {
