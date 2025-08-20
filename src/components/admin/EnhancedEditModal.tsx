@@ -58,7 +58,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     setMarkdownFiles(mdFiles);
                     if (mdFiles.length > 0) {
                         // For origami, prefer info.md; for projects, prefer description.md
-                        const preferredFile = type === 'project' 
+                        const preferredFile = type === 'project'
                             ? mdFiles.find((f: { name: string; type: string }) => f.name === 'description.md') || mdFiles[0]
                             : mdFiles.find((f: { name: string; type: string }) => f.name === 'info.md') || mdFiles[0];
                         setSelectedFile(preferredFile.name);
@@ -85,7 +85,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                             url: null as string | null // Will be set later with base64 data
                         };
                     });
-                    
+
                     // Load image data and convert to data URLs
                     const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
                         try {
@@ -94,15 +94,30 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                             });
                             if (response.ok) {
                                 const data = await response.json();
+                                
+                                // Determine MIME type from file extension
+                                const extension = imageObj.name.toLowerCase().split('.').pop();
+                                let mimeType = 'image/jpeg'; // default
+                                if (extension === 'png') mimeType = 'image/png';
+                                else if (extension === 'gif') mimeType = 'image/gif';
+                                else if (extension === 'webp') mimeType = 'image/webp';
+                                else if (extension === 'svg') mimeType = 'image/svg+xml';
+                                
+                                // Ensure base64 data is clean (no extra encoding)
+                                const base64Data = data.content;
+                                console.log('Image data for', imageObj.name, ':', base64Data.substring(0, 50) + '...');
+                                
                                 // Convert base64 to data URL
-                                imageObj.url = `data:image/jpeg;base64,${data.content}`;
+                                imageObj.url = `data:${mimeType};base64,${base64Data}`;
+                            } else {
+                                console.error('Failed to fetch image:', imageObj.name, 'Status:', response.status);
                             }
                         } catch (error) {
                             console.error('Failed to load image:', imageObj.name, error);
                         }
                         return imageObj;
                     });
-                    
+
                     const loadedImages = await Promise.all(loadImagePromises);
                     setImages(loadedImages);
                 }
@@ -237,13 +252,13 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         } else {
                             imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
                         }
-                        return { 
-                            name: file.name, 
+                        return {
+                            name: file.name,
                             apiUrl: imageApiUrl,
                             url: null as string | null
                         };
                     });
-                    
+
                     // Load image data and convert to data URLs
                     const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
                         try {
@@ -252,14 +267,23 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                             });
                             if (response.ok) {
                                 const data = await response.json();
-                                imageObj.url = `data:image/jpeg;base64,${data.content}`;
+                                
+                                // Determine MIME type from file extension
+                                const extension = imageObj.name.toLowerCase().split('.').pop();
+                                let mimeType = 'image/jpeg'; // default
+                                if (extension === 'png') mimeType = 'image/png';
+                                else if (extension === 'gif') mimeType = 'image/gif';
+                                else if (extension === 'webp') mimeType = 'image/webp';
+                                else if (extension === 'svg') mimeType = 'image/svg+xml';
+                                
+                                imageObj.url = `data:${mimeType};base64,${data.content}`;
                             }
                         } catch (error) {
                             console.error('Failed to load image:', imageObj.name, error);
                         }
                         return imageObj;
                     });
-                    
+
                     const loadedImages = await Promise.all(loadImagePromises);
                     setImages(loadedImages);
                 }
@@ -358,13 +382,13 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         } else {
                             imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
                         }
-                        return { 
-                            name: file.name, 
+                        return {
+                            name: file.name,
                             apiUrl: imageApiUrl,
                             url: null as string | null
                         };
                     });
-                    
+
                     // Load image data and convert to data URLs
                     const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
                         try {
@@ -373,14 +397,23 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                             });
                             if (response.ok) {
                                 const data = await response.json();
-                                imageObj.url = `data:image/jpeg;base64,${data.content}`;
+                                
+                                // Determine MIME type from file extension
+                                const extension = imageObj.name.toLowerCase().split('.').pop();
+                                let mimeType = 'image/jpeg'; // default
+                                if (extension === 'png') mimeType = 'image/png';
+                                else if (extension === 'gif') mimeType = 'image/gif';
+                                else if (extension === 'webp') mimeType = 'image/webp';
+                                else if (extension === 'svg') mimeType = 'image/svg+xml';
+                                
+                                imageObj.url = `data:${mimeType};base64,${data.content}`;
                             }
                         } catch (error) {
                             console.error('Failed to load image:', imageObj.name, error);
                         }
                         return imageObj;
                     });
-                    
+
                     const loadedImages = await Promise.all(loadImagePromises);
                     setImages(loadedImages);
                 }
