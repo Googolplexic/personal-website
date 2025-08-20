@@ -4,7 +4,7 @@ import { Skills } from '../components/sections/Skills'
 import { SEO } from '../components/layout/SEO'
 import { ResumeSection } from '../components/sections/ResumeSection'
 import { ProjectGrid } from '../components/portfolio/ProjectGrid'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 export function Home() {
     const featuredSlugs = ['hermes', 'personal-website', 'be-square', 'origami-fractions'];
