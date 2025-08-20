@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiUrl } from '../../config/api';
 
 interface AdminLoginProps {
     onLogin: (sessionId: string) => void;
@@ -15,7 +16,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:3001/api/login', {
+            const response = await fetch(apiUrl('/api/login'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

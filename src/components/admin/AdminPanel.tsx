@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AdminLogin } from './AdminLogin';
 import { AdminDashboard } from './AdminDashboard';
+import { apiUrl } from '../../config/api';
 
 export function AdminPanel() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -8,7 +9,7 @@ export function AdminPanel() {
 
     const validateSession = useCallback(async (sessionId: string) => {
         try {
-            const response = await fetch('http://localhost:3001/api/validate-session', {
+            const response = await fetch(apiUrl('/api/validate-session'), {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${sessionId}`
@@ -34,7 +35,7 @@ export function AdminPanel() {
 
     const checkServerAvailability = useCallback(async () => {
         try {
-            await fetch('http://localhost:3001/api/validate-session', {
+            await fetch(apiUrl('/api/validate-session'), {
                 method: 'GET'
             });
 
@@ -49,9 +50,7 @@ export function AdminPanel() {
             // Server is not running, redirect to the special route
             window.location.href = '/?to=screwyounoadminforyou';
         }
-    }, [validateSession]);
-
-    useEffect(() => {
+    }, [validateSession]); useEffect(() => {
         // First check if server is running, then validate session
         checkServerAvailability();
     }, [checkServerAvailability]);
@@ -64,7 +63,7 @@ export function AdminPanel() {
 
     const handleLogout = async () => {
         try {
-            await fetch('http://localhost:3001/api/logout', {
+            await fetch(apiUrl('/api/logout'), {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${sessionId}`

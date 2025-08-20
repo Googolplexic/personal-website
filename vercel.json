@@ -1,5 +1,11 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    }
+  ],
   "routes": [
     {
       "handle": "filesystem"
@@ -7,6 +13,39 @@
     {
       "src": "/.*",
       "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_API_URL": "https://api.colemanlai.com/api"
+  },
+  "domains": [
+    "www.colemanlai.com",
+    "colemanlai.com"
+  ],
+  "redirects": [
+    {
+      "source": "https://colemanlai.com/(.*)",
+      "destination": "https://www.colemanlai.com/$1",
+      "statusCode": 301
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
     }
   ]
 }

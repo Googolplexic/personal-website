@@ -12,6 +12,9 @@ import fs from 'fs-extra';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,11 +23,20 @@ const __dirname = path.dirname(__filename);
 fs.ensureDirSync(path.join(__dirname, 'temp-uploads'));
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
+const HOST = process.env.HOST || '0.0.0.0'; // Bind to all interfaces by default
 
 // Enable CORS for frontend
 app.use(cors({
-    origin: 'http://localhost:5173', // Vite dev server
+    origin: [
+        'http://localhost:5173', // Vite dev server
+        'http://localhost:4173', // Vite preview
+        /^https?:\/\/.*\.vercel\.app$/, // Vercel deployments
+        /^https?:\/\/.*\.netlify\.app$/, // Netlify deployments
+        /^https?:\/\/localhost:\d+$/, // Any localhost port
+        /^https?:\/\/127\.0\.0\.1:\d+$/, // Any 127.0.0.1 port
+        process.env.FRONTEND_URL // Custom frontend URL from environment
+    ].filter(Boolean), // Remove undefined values
     credentials: true
 }));
 
@@ -730,7 +742,8 @@ const cleanupTempFiles = async () => {
 // Clean up temp files every hour
 setInterval(cleanupTempFiles, 60 * 60 * 1000);
 
-app.listen(PORT, () => {
-    console.log(`Admin server running on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+    console.log(`Admin server running on http://${HOST}:${PORT}`);
+    console.log(`Admin server also accessible on http://localhost:${PORT}`);
     console.log(`Admin password: ${process.env.ADMIN_PASSWORD || 'admin123'}`);
 });
