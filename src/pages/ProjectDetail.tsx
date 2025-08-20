@@ -1,11 +1,11 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import projects from '../assets/projects';
 import Markdown from 'react-markdown';
-import { ProjectImageCarousel } from '../components/ProjectImageCarousel';
-import { ProjectLinks } from '../components/ProjectLinks';
-import { ProjectTechnologies } from '../components/ProjectTechnologies';
+import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
+import { ProjectLinks } from '../components/portfolio/ProjectLinks';
+import { ProjectTechnologies } from '../components/portfolio/ProjectTechnologies';
 import { NotFound } from './NotFound';
-import { HighlightedText } from '../components/HighlightedText';
+import { HighlightedText } from '../components/ui/HighlightedText';
 import React from 'react';
 
 export function ProjectDetail() {
@@ -21,8 +21,8 @@ export function ProjectDetail() {
     const components = {
         p: ({ children, ...props }: React.HTMLProps<HTMLParagraphElement>) => (
             <p {...props}>
-                {React.Children.map(children, child => 
-                    typeof child === 'string' 
+                {React.Children.map(children, child =>
+                    typeof child === 'string'
                         ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
                         : child
                 )}
@@ -30,8 +30,8 @@ export function ProjectDetail() {
         ),
         h1: ({ children, ...props }: React.HTMLProps<HTMLHeadingElement>) => (
             <h1 {...props}>
-                {React.Children.map(children, child => 
-                    typeof child === 'string' 
+                {React.Children.map(children, child =>
+                    typeof child === 'string'
                         ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
                         : child
                 )}
@@ -39,8 +39,8 @@ export function ProjectDetail() {
         ),
         h2: ({ children, ...props }: React.HTMLProps<HTMLHeadingElement>) => (
             <h2 {...props}>
-                {React.Children.map(children, child => 
-                    typeof child === 'string' 
+                {React.Children.map(children, child =>
+                    typeof child === 'string'
                         ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
                         : child
                 )}
@@ -48,8 +48,8 @@ export function ProjectDetail() {
         ),
         h3: ({ children, ...props }: React.HTMLProps<HTMLHeadingElement>) => (
             <h3 {...props}>
-                {React.Children.map(children, child => 
-                    typeof child === 'string' 
+                {React.Children.map(children, child =>
+                    typeof child === 'string'
                         ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
                         : child
                 )}
@@ -57,8 +57,8 @@ export function ProjectDetail() {
         ),
         li: ({ children, ...props }: React.HTMLProps<HTMLLIElement>) => (
             <li {...props}>
-                {React.Children.map(children, child => 
-                    typeof child === 'string' 
+                {React.Children.map(children, child =>
+                    typeof child === 'string'
                         ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
                         : child
                 )}
@@ -73,7 +73,7 @@ export function ProjectDetail() {
                 <p className="text-gray-600 dark:text-gray-400 mb-2">
                     {project.startDate === project.endDate ? project.startDate : `${project.startDate} - ${project.endDate || 'Present'}`}
                 </p>
-                <ProjectLinks project={project} className='mb-6'/>
+                <ProjectLinks project={project} className='mb-6' />
                 <ProjectImageCarousel images={project.images || []} title={project.title} />
                 <h2>Technologies Used</h2>
                 <ProjectTechnologies technologies={project.technologies} searchTerm={searchTerm} />

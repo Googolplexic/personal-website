@@ -7,7 +7,8 @@ const projects: ProjectProps[] = Object.entries(modules)
     .filter(([path]) => !path.includes('/template/'))
     .map(([path, module]) => ({
         ...(module as { default: ProjectProps }).default,
-        slug: path.split('/')[1] 
+        slug: path.split('/')[1],
+        type: 'project' as const
     }))
     .filter(project => project !== undefined)
     .sort((a, b) => {

@@ -1,0 +1,1 @@
+export { OrigamiCard } from './OrigamiCard';

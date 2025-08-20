@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Home } from '../pages/Home';
+import { Home } from '../../pages/Home';
 
 const RICK_ROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 

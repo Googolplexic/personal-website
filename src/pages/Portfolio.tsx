@@ -1,8 +1,8 @@
 import projects from "../assets/projects";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { ProjectDetail } from "./ProjectDetail";
-import { SEO } from "../components/SEO";
-import { ProjectGrid } from "../components/ProjectGrid";
+import { SEO } from "../components/layout/SEO";
+import { ProjectGrid } from "../components/portfolio/ProjectGrid";
 
 
 function PortfolioGrid() {
@@ -18,14 +18,14 @@ function PortfolioGrid() {
 export function Portfolio() {
     const location = useLocation();
     const projectSlug = location.pathname.split('/portfolio/')[1];
-    
+
     const currentProject = projectSlug ? projects.find(p => p.slug === projectSlug) : null;
     console.log(projectSlug, currentProject);
 
     return (
         <>
-            <SEO 
-                title={currentProject 
+            <SEO
+                title={currentProject
                     ? `${currentProject.title} | Coleman Lai`
                     : "Software Portfolio | Coleman Lai"
                 }

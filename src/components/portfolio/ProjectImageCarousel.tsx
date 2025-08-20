@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useImagePreloader } from '../utils/useImagePreloader';
+import { useImagePreloader } from '../../utils/useImagePreloader';
 
 interface ProjectImageCarouselProps {
     images: string[];
@@ -56,8 +56,8 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                                 aria-label={`View image ${index + 1}`}
                                 onClick={() => changeImage(index)}
                                 className={`w-12 h-1 p-2 mx-1 rounded-full transition-colors border-none focus:outline-none ${index === currentImageIndex
-                                        ? 'bg-gray-600 dark:bg-gray-300'
-                                        : 'bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500'
+                                    ? 'bg-gray-600 dark:bg-gray-300'
+                                    : 'bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500'
                                     }`}
                             />
                         ))}

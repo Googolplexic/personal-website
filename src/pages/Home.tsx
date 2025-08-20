@@ -1,9 +1,9 @@
-import { About } from '../components/About'
-import { Contact } from '../components/Contact'
-import { Skills } from '../components/Skills'
-import { SEO } from '../components/SEO'
-import { ResumeSection } from '../components/ResumeSection'
-import { ProjectGrid } from '../components/ProjectGrid'
+import { About } from '../components/sections/About'
+import { Contact } from '../components/sections/Contact'
+import { Skills } from '../components/sections/Skills'
+import { SEO } from '../components/layout/SEO'
+import { ResumeSection } from '../components/sections/ResumeSection'
+import { ProjectGrid } from '../components/portfolio/ProjectGrid'
 
 export function Home() {
     const featuredSlugs = ['hermes', 'personal-website', 'be-square', 'origami-fractions'];
@@ -36,8 +36,8 @@ export function Home() {
                 </main>
 
                 <section className="mt-16 mb-12">
-                    <ProjectGrid 
-                        featuredSlugs={featuredSlugs} 
+                    <ProjectGrid
+                        featuredSlugs={featuredSlugs}
                         title="Featured Projects"
                         hideControls
                     />

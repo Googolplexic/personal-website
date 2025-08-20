@@ -1,4 +1,4 @@
-import { HighlightedText } from './HighlightedText';
+import { HighlightedText } from '../ui/HighlightedText';
 
 interface ProjectTechnologiesProps {
     technologies: string[];

@@ -1,13 +1,13 @@
 import './App.css'
-import { Routes, Route,BrowserRouter } from 'react-router-dom'
-import { Navbar } from './components/Navbar'
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
+import { Navbar } from './components/layout/Navbar'
 import { Portfolio } from './pages/Portfolio'
 import { Origami } from './pages/Origami'
 import { NotFound } from './pages/NotFound'
 import { Analytics } from '@vercel/analytics/react';
 import { HelmetProvider } from 'react-helmet-async';
 import { SpeedInsights } from "@vercel/speed-insights/react"
-import { RootRoute } from './components/RootRoute'
+import { RootRoute } from './components/layout/RootRoute'
 
 function AppContent() {
     return (
