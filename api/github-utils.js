@@ -12,6 +12,26 @@ const REPO_OWNER = 'Googolplexic';
 const REPO_NAME = 'personal-website';
 const BRANCH = 'main';
 
+// Helper function to validate session token
+export function validateSessionToken(authHeader) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return false;
+    }
+    
+    try {
+        const token = authHeader.substring(7);
+        const decoded = Buffer.from(token, 'base64').toString();
+        const [timestamp] = decoded.split('-');
+        const tokenTime = parseInt(timestamp);
+        const now = Date.now();
+        const twentyFourHours = 24 * 60 * 60 * 1000;
+        
+        return now - tokenTime < twentyFourHours;
+    } catch (error) {
+        return false;
+    }
+}
+
 // Helper function to get file content from GitHub
 export async function getFileFromGitHub(path) {
     try {

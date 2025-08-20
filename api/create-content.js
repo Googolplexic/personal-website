@@ -1,5 +1,5 @@
 // Vercel serverless function to create projects/origami via GitHub API
-import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, uploadImageToGitHub, getFileFromGitHub } from './github-utils.js';
+import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, uploadImageToGitHub, getFileFromGitHub, validateSessionToken } from './github-utils.js';
 
 export default async function handler(req, res) {
     // Enable CORS
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     // Simple auth check
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!validateSessionToken(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -100,7 +100,7 @@ async function createOrigami(data) {
     if (images && images.length > 0) {
         for (let i = 0; i < images.length; i++) {
             const image = images[i];
-            const fileName = image.isPattern
+            const fileName = image.isPattern 
                 ? `${slug}-pattern.${image.ext}`
                 : `${String(i + 1).padStart(2, '0')}-${slug}.${image.ext}`;
             const imagePath = `${structure.basePath}/${fileName}`;

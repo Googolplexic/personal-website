@@ -1,5 +1,6 @@
 // Vercel serverless function to get file lists via GitHub API
 import { Octokit } from '@octokit/rest';
+import { validateSessionToken } from './github-utils.js';
 
 const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
 
     // Simple auth check
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!validateSessionToken(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -62,9 +63,9 @@ export default async function handler(req, res) {
                 .map(item => ({
                     name: item.name,
                     path: item.path,
-                    type: item.name.endsWith('.md') ? 'markdown' :
-                        item.name.endsWith('.ts') ? 'typescript' :
-                            item.name.match(/\.(png|jpg|jpeg|webp)$/i) ? 'image' : 'other'
+                    type: item.name.endsWith('.md') ? 'markdown' : 
+                          item.name.endsWith('.ts') ? 'typescript' :
+                          item.name.match(/\.(png|jpg|jpeg|webp)$/i) ? 'image' : 'other'
                 }));
 
             const directories = response.data
@@ -75,7 +76,7 @@ export default async function handler(req, res) {
                     type: 'directory'
                 }));
 
-            return res.status(200).json({
+            return res.status(200).json({ 
                 files: [...files, ...directories]
             });
 

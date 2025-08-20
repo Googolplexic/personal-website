@@ -118,10 +118,13 @@ export function ProjectForm({ sessionId }: ProjectFormProps) {
                     'Authorization': `Bearer ${sessionId}`,
                 },
                 body: JSON.stringify({
-                    type: 'projects',
+                    type: 'project',
                     title: formData.title,
                     description: formData.description,
+                    summary: formData.summary,
                     technologies: formData.technologies,
+                    githubUrl: formData.githubUrl,
+                    liveUrl: formData.liveUrl,
                     // Convert form data to expected format for serverless function
                 }),
             });

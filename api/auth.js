@@ -30,13 +30,26 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'GET') {
-        // Simple session validation - in production you'd want better validation
+        // Simple session validation - check if token exists and is not expired
         const authHeader = req.headers.authorization;
         if (authHeader && authHeader.startsWith('Bearer ')) {
-            return res.status(200).json({ valid: true });
-        } else {
-            return res.status(401).json({ valid: false });
+            const token = authHeader.substring(7);
+            try {
+                // Decode the token and check if it's not too old (24 hours)
+                const decoded = Buffer.from(token, 'base64').toString();
+                const [timestamp] = decoded.split('-');
+                const tokenTime = parseInt(timestamp);
+                const now = Date.now();
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+                
+                if (now - tokenTime < twentyFourHours) {
+                    return res.status(200).json({ valid: true });
+                }
+            } catch (error) {
+                // Invalid token format
+            }
         }
+        return res.status(401).json({ valid: false });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

@@ -1,5 +1,6 @@
 // Vercel serverless function to get content list via GitHub API
 import { Octokit } from '@octokit/rest';
+import { validateSessionToken } from './github-utils.js';
 
 const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
 
     // Simple auth check
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!validateSessionToken(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -32,39 +33,49 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Invalid type parameter' });
             }
 
-            // Get directory contents from GitHub
-            const response = await octokit.rest.repos.getContent({
-                owner: REPO_OWNER,
-                repo: REPO_NAME,
-                path: `src/assets/${type}`,
-            });
-
             const items = [];
 
-            for (const item of response.data) {
-                if (item.type === 'dir') {
-                    try {
-                        // Get the index.ts file for each project/origami
-                        const indexResponse = await octokit.rest.repos.getContent({
-                            owner: REPO_OWNER,
-                            repo: REPO_NAME,
-                            path: `${item.path}/index.ts`,
-                        });
+            if (type === 'projects') {
+                // Get projects directory
+                const response = await octokit.rest.repos.getContent({
+                    owner: REPO_OWNER,
+                    repo: REPO_NAME,
+                    path: `src/assets/projects`,
+                });
 
-                        const content = Buffer.from(indexResponse.data.content, 'base64').toString('utf-8');
-
-                        // Parse basic info from the TypeScript file
-                        const titleMatch = content.match(/title: '([^']+)'/);
-                        const title = titleMatch ? titleMatch[1] : item.name;
-
+                for (const item of response.data) {
+                    if (item.type === 'dir' && !item.name.includes('template')) {
                         items.push({
                             slug: item.name,
-                            title: title,
-                            path: item.path,
+                            title: item.name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                            path: item.name,
                         });
+                    }
+                }
+            } else if (type === 'origami') {
+                // Get both my-designs and other-designs
+                const categories = ['my-designs', 'other-designs'];
+                
+                for (const category of categories) {
+                    try {
+                        const response = await octokit.rest.repos.getContent({
+                            owner: REPO_OWNER,
+                            repo: REPO_NAME,
+                            path: `src/assets/origami/${category}`,
+                        });
+
+                        for (const item of response.data) {
+                            if (item.type === 'dir' && !item.name.includes('template')) {
+                                items.push({
+                                    slug: item.name,
+                                    title: item.name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                                    path: item.name,
+                                    category: category,
+                                });
+                            }
+                        }
                     } catch (error) {
-                        // Skip items that don't have index.ts
-                        console.warn(`Skipping ${item.name}: ${error.message}`);
+                        console.warn(`Could not read ${category}:`, error.message);
                     }
                 }
             }

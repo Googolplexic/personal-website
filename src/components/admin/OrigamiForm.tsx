@@ -100,6 +100,9 @@ export function OrigamiForm({ sessionId }: OrigamiFormProps) {
                     type: 'origami',
                     title: formData.title,
                     description: formData.description,
+                    category: formData.category,
+                    designer: formData.designer,
+                    date: formData.date || new Date().toISOString().slice(0, 7),
                     // Convert form data to expected format for serverless function
                 }),
             });

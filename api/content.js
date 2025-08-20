@@ -1,5 +1,5 @@
 // Vercel serverless function to read/update content files via GitHub API
-import { getFileFromGitHub, updateFileInGitHub } from './github-utils.js';
+import { getFileFromGitHub, updateFileInGitHub, validateSessionToken } from './github-utils.js';
 
 export default async function handler(req, res) {
     // Enable CORS
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     // Simple auth check
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!validateSessionToken(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         if (req.method === 'GET') {
             // Read file content
             const fileData = await getFileFromGitHub(fullPath);
-
+            
             if (!fileData) {
                 return res.status(404).json({ error: 'File not found' });
             }

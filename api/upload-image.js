@@ -1,5 +1,5 @@
 // Vercel serverless function to upload images via GitHub API
-import { uploadImageToGitHub } from './github-utils.js';
+import { uploadImageToGitHub, validateSessionToken } from './github-utils.js';
 
 export default async function handler(req, res) {
     // Enable CORS
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     // Simple auth check
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!validateSessionToken(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
