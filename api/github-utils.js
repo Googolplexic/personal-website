@@ -84,9 +84,74 @@ export async function deleteFileFromGitHub(path, message) {
     });
 }
 
-// Generate directory structure for projects/origami
-export function generateProjectStructure(type, slug, title, description, technologies, images) {
-    const basePath = `src/assets/${type}/${slug}`;
+// Generate origami structure
+export function generateOrigamiStructure(category, slug, title, description, date, designer) {
+    const basePath = `src/assets/origami/${category}/${slug}`;
+
+    // Create info.md content with frontmatter
+    const infoMd = `---
+title: ${title}
+date: ${date}${description ? `
+description: ${description}` : ''}${designer ? `
+designer: ${designer}` : ''}
+---
+`;
+
+    // Create index.ts content matching existing structure
+    const indexTs = `import { OrigamiProps } from '../../../../types';
+import info from './info.md?raw';
+import matter from 'front-matter';
+
+interface OrigamiMetadata {
+    title: string;
+    date: string;
+    description?: string;
+    designer?: string;
+}
+
+// Load all images in this folder (excluding patterns)
+const modelImages = Object.values(import.meta.glob('./*.{png,jpg,jpeg,webp}', { 
+    eager: true, 
+    import: 'default' 
+}))
+.filter((url: unknown) => !(url as string).includes('pattern'))
+.sort((a, b) => (a as string).localeCompare(b as string)) as string[];
+
+// Load crease pattern if it exists
+const creasePatternModules = import.meta.glob('./*pattern*.{png,jpg,jpeg,webp}', { 
+    eager: true, 
+    import: 'default' 
+});
+const creasePattern = Object.values(creasePatternModules)[0] as string | undefined;
+
+// Parse metadata from info.md
+const { attributes } = matter<OrigamiMetadata>(info);
+
+export default {
+    title: attributes.title,
+    description: attributes.description,
+    date: attributes.date,
+    startDate: attributes.date,
+    designer: attributes.designer,
+    modelImages,
+    creasePattern,
+    keywords: ['origami', 'paper art', attributes.title?.toLowerCase().replace(/\\s+/g, '-')].filter(Boolean),
+    tags: ['origami', '${category === 'my-designs' ? 'my-design' : 'other-design'}']
+} as OrigamiProps;
+`;
+
+    return {
+        infoPath: `${basePath}/info.md`,
+        indexPath: `${basePath}/index.ts`,
+        infoContent: infoMd,
+        indexContent: indexTs,
+        basePath,
+    };
+}
+
+// Generate project structure
+export function generateProjectStructure(slug, title, description, technologies, githubUrl, liveUrl, summary) {
+    const basePath = `src/assets/projects/${slug}`;
 
     // Create description.md content
     const descriptionMd = `# ${title}
@@ -94,16 +159,28 @@ export function generateProjectStructure(type, slug, title, description, technol
 ${description}
 `;
 
-    // Create index.ts content
-    const indexTs = `import { ${type === 'projects' ? 'Project' : 'OrigamiDesign'} } from '../..';
+    // Create index.ts content for projects
+    const indexTs = `import { ProjectProps } from '../../../types';
 
-export const ${slug.replace(/-/g, '')}${type === 'projects' ? 'Project' : 'Design'}: ${type === 'projects' ? 'Project' : 'OrigamiDesign'} = {
-  slug: '${slug}',
-  title: '${title}',
-  technologies: [${technologies.map(tech => `'${tech}'`).join(', ')}],
-  images: [${images.map((img, i) => `'${basePath}/images/${i + 1}.${img.ext}'`).join(', ')}],
-  featured: false,
-};
+const images = Object.values(import.meta.glob('./images/*.{png,jpg,jpeg,webp}', { 
+    eager: true, 
+    import: 'default' 
+})).sort((a, b) => (a as string).localeCompare(b as string)) as string[];
+
+export default {
+    title: '${title}',
+    summary: '${summary}',
+    description: '${description}',
+    technologies: [${technologies.map(tech => `'${tech}'`).join(', ')}],
+    githubUrl: '${githubUrl}',${liveUrl ? `
+    liveUrl: '${liveUrl}',` : ''}
+    startDate: '${new Date().toISOString().split('T')[0]}',
+    slug: '${slug}',
+    images,
+    keywords: ['project', '${title.toLowerCase()}', ...${JSON.stringify(technologies.map(t => t.toLowerCase()))}],
+    tags: ${JSON.stringify(technologies)},
+    type: 'project'
+} as ProjectProps;
 `;
 
     return {

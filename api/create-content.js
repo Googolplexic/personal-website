@@ -1,5 +1,5 @@
-// Vercel serverless function to create projects via GitHub API
-import { updateFileInGitHub, generateProjectStructure, uploadImageToGitHub, getFileFromGitHub } from './github-utils.js';
+// Vercel serverless function to create projects/origami via GitHub API
+import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, uploadImageToGitHub, getFileFromGitHub } from './github-utils.js';
 
 export default async function handler(req, res) {
     // Enable CORS
@@ -19,73 +19,37 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
         try {
-            const { type, title, description, technologies, images } = req.body;
+            const { type, ...data } = req.body;
 
-            if (!type || !title || !description) {
-                return res.status(400).json({ error: 'Missing required fields' });
+            if (!type) {
+                return res.status(400).json({ error: 'Type is required' });
+            }
+
+            if (type === 'origami') {
+                await createOrigami(data);
+            } else if (type === 'project') {
+                await createProject(data);
+            } else {
+                return res.status(400).json({ error: 'Invalid type. Must be "origami" or "project"' });
             }
 
             // Generate slug from title
-            const slug = title.toLowerCase()
+            const slug = data.title.toLowerCase()
                 .replace(/[^a-z0-9\s-]/g, '')
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-')
                 .trim();
 
-            // Generate project structure
-            const structure = generateProjectStructure(
-                type,
-                slug,
-                title,
-                description,
-                technologies || [],
-                images || []
-            );
-
-            // Create description.md
-            await updateFileInGitHub(
-                structure.descriptionPath,
-                structure.descriptionContent,
-                `Add ${type.slice(0, -1)} ${title} - description`
-            );
-
-            // Create index.ts
-            await updateFileInGitHub(
-                structure.indexPath,
-                structure.indexContent,
-                `Add ${type.slice(0, -1)} ${title} - configuration`
-            );
-
-            // Create images directory if images are provided
-            if (images && images.length > 0) {
-                for (let i = 0; i < images.length; i++) {
-                    const image = images[i];
-                    const imagePath = `${structure.basePath}/images/${i + 1}.${image.ext}`;
-
-                    // Convert base64 to buffer
-                    const imageBuffer = Buffer.from(image.data.split(',')[1], 'base64');
-
-                    await uploadImageToGitHub(
-                        imagePath,
-                        imageBuffer,
-                        `Add ${type.slice(0, -1)} ${title} - image ${i + 1}`
-                    );
-                }
-            }
-
-            // Update main index.ts file to include new project/origami
-            await updateMainIndex(type, slug, title);
-
             return res.status(200).json({
                 success: true,
-                message: `${type.slice(0, -1)} created successfully`,
+                message: `${type} created successfully`,
                 slug: slug,
             });
 
         } catch (error) {
-            console.error('Error creating project:', error);
+            console.error('Error creating content:', error);
             return res.status(500).json({
-                error: 'Failed to create project',
+                error: `Failed to create ${req.body.type || 'content'}`,
                 details: error.message,
             });
         }
@@ -94,42 +58,124 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
 }
 
-async function updateMainIndex(type, slug, title) {
-    const indexPath = `src/assets/${type}/index.ts`;
-    const exportName = `${slug.replace(/-/g, '')}${type === 'projects' ? 'Project' : 'Design'}`;
+async function createOrigami(data) {
+    const { title, description, date, designer, category, images } = data;
 
-    // Get current index file
-    const currentFile = await getFileFromGitHub(indexPath);
-    let content = currentFile ? currentFile.content : '';
-
-    // Add import
-    const importLine = `import { ${exportName} } from './${slug}';`;
-
-    // Add to exports array
-    const exportPattern = new RegExp(`export const ${type}: .*?\\[(.*?)\\];`, 's');
-    const match = content.match(exportPattern);
-
-    if (match) {
-        const currentExports = match[1].trim();
-        const newExports = currentExports
-            ? `${currentExports},\n  ${exportName}`
-            : exportName;
-
-        content = content.replace(exportPattern, `export const ${type}: ${type === 'projects' ? 'Project' : 'OrigamiDesign'}[] = [\n  ${newExports}\n];`);
-    } else {
-        // Create new export if it doesn't exist
-        content += `\nexport const ${type}: ${type === 'projects' ? 'Project' : 'OrigamiDesign'}[] = [\n  ${exportName}\n];`;
+    if (!title || !category) {
+        throw new Error('Title and category are required for origami');
     }
 
-    // Add import at the top
-    if (!content.includes(importLine)) {
-        content = `${importLine}\n${content}`;
-    }
+    // Generate slug from title
+    const slug = title.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
 
-    await updateFileInGitHub(
-        indexPath,
-        content,
-        `Update ${type} index - add ${title}`,
-        currentFile ? currentFile.sha : null
+    // Generate origami structure
+    const structure = generateOrigamiStructure(
+        category,
+        slug,
+        title,
+        description,
+        date || new Date().toISOString().slice(0, 7), // YYYY-MM format
+        designer
     );
+
+    // Create info.md
+    await updateFileInGitHub(
+        structure.infoPath,
+        structure.infoContent,
+        `Add origami ${title} - info`
+    );
+
+    // Create index.ts
+    await updateFileInGitHub(
+        structure.indexPath,
+        structure.indexContent,
+        `Add origami ${title} - configuration`
+    );
+
+    // Upload images if provided
+    if (images && images.length > 0) {
+        for (let i = 0; i < images.length; i++) {
+            const image = images[i];
+            const fileName = image.isPattern 
+                ? `${slug}-pattern.${image.ext}`
+                : `${String(i + 1).padStart(2, '0')}-${slug}.${image.ext}`;
+            const imagePath = `${structure.basePath}/${fileName}`;
+
+            // Convert base64 to buffer
+            const imageBuffer = Buffer.from(image.data.split(',')[1], 'base64');
+
+            await uploadImageToGitHub(
+                imagePath,
+                imageBuffer,
+                `Add origami ${title} - ${image.isPattern ? 'pattern' : 'image'} ${i + 1}`
+            );
+        }
+    }
+
+    // Note: Index files use import.meta.glob, so no manual updates needed
 }
+
+async function createProject(data) {
+    const { title, description, summary, technologies, githubUrl, liveUrl, images } = data;
+
+    if (!title || !description || !summary) {
+        throw new Error('Title, description, and summary are required for projects');
+    }
+
+    // Generate slug from title
+    const slug = title.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+
+    // Generate project structure
+    const structure = generateProjectStructure(
+        slug,
+        title,
+        description,
+        technologies || [],
+        githubUrl,
+        liveUrl,
+        summary
+    );
+
+    // Create description.md
+    await updateFileInGitHub(
+        structure.descriptionPath,
+        structure.descriptionContent,
+        `Add project ${title} - description`
+    );
+
+    // Create index.ts
+    await updateFileInGitHub(
+        structure.indexPath,
+        structure.indexContent,
+        `Add project ${title} - configuration`
+    );
+
+    // Create images directory if images are provided
+    if (images && images.length > 0) {
+        for (let i = 0; i < images.length; i++) {
+            const image = images[i];
+            const imagePath = `${structure.basePath}/images/${String(i + 1).padStart(2, '0')}-${slug}.${image.ext}`;
+
+            // Convert base64 to buffer
+            const imageBuffer = Buffer.from(image.data.split(',')[1], 'base64');
+
+            await uploadImageToGitHub(
+                imagePath,
+                imageBuffer,
+                `Add project ${title} - image ${i + 1}`
+            );
+        }
+    }
+
+    // Note: Index files use import.meta.glob, so no manual updates needed
+}
+
+

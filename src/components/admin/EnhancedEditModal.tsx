@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiUrl } from '../../config/api';
 import { marked } from 'marked';
 
 interface EnhancedEditModalProps {
@@ -42,8 +43,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             try {
                 const sessionId = localStorage.getItem('adminSessionId');
                 const url = type === 'project'
-                    ? `http://localhost:3001/api/files/project/${path}`
-                    : `http://localhost:3001/api/files/origami/${category}/${path}`;
+                    ? apiUrl(`/files?path=project/${path}`)
+                    : apiUrl(`/files?path=origami/${category}/${path}`);
 
                 const response = await fetch(url, {
                     headers: { 'Authorization': `Bearer ${sessionId}` }
@@ -69,9 +70,9 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         if (type === 'project') {
                             // For projects, if file already includes "images/" prefix, don't add it again
                             const fileName = file.startsWith('images/') ? file.substring(7) : file;
-                            url = `http://localhost:3001/api/images/project/${path}/images/${fileName}`;
+                            url = apiUrl(`/images?path=project/${path}&file=images/${fileName}`);
                         } else {
-                            url = `http://localhost:3001/api/images/origami/${category}/${path}/${file}`;
+                            url = apiUrl(`/images?path=origami/${category}/${path}&file=${file}`);
                         }
                         return {
                             name: file,
@@ -97,8 +98,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             try {
                 const sessionId = localStorage.getItem('adminSessionId');
                 const url = type === 'project'
-                    ? `http://localhost:3001/api/content/project/${path}/${selectedFile}`
-                    : `http://localhost:3001/api/content/origami/${category}/${path}/${selectedFile}`;
+                    ? apiUrl(`/content?path=project/${path}&file=${selectedFile}`)
+                    : apiUrl(`/content?path=origami/${category}/${path}&file=${selectedFile}`);
 
                 const response = await fetch(url, {
                     headers: { 'Authorization': `Bearer ${sessionId}` }
@@ -127,8 +128,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         try {
             const sessionId = localStorage.getItem('adminSessionId');
             const url = type === 'project'
-                ? `http://localhost:3001/api/content/project/${path}/${selectedFile}`
-                : `http://localhost:3001/api/content/origami/${category}/${path}/${selectedFile}`;
+                ? apiUrl(`/content?path=project/${path}&file=${selectedFile}`)
+                : apiUrl(`/content?path=origami/${category}/${path}&file=${selectedFile}`);
 
             const response = await fetch(url, {
                 method: 'PUT',
@@ -173,9 +174,9 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 formData.append('category', category);
             }
 
-            const endpoint = type === 'project' ? '/api/projects' : '/api/origami';
+            const endpoint = type === 'project' ? '/create-content' : '/create-content';
 
-            const response = await fetch(`http://localhost:3001${endpoint}`, {
+            const response = await fetch(apiUrl(endpoint), {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${sessionId}`

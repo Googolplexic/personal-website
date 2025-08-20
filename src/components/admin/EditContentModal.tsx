@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiUrl } from '../../config/api';
 
 interface EditContentModalProps {
     isOpen: boolean;
@@ -25,8 +26,8 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
             try {
                 const sessionId = localStorage.getItem('adminSessionId');
                 const url = type === 'project'
-                    ? `http://localhost:3001/api/files/project/${path}`
-                    : `http://localhost:3001/api/files/origami/${category}/${path}`;
+                    ? apiUrl(`/files?path=project/${path}`)
+                    : apiUrl(`/files?path=origami/${category}/${path}`);
 
                 const response = await fetch(url, {
                     headers: { 'Authorization': `Bearer ${sessionId}` }
@@ -59,8 +60,8 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
             try {
                 const sessionId = localStorage.getItem('adminSessionId');
                 const url = type === 'project'
-                    ? `http://localhost:3001/api/content/project/${path}/${selectedFile}`
-                    : `http://localhost:3001/api/content/origami/${category}/${path}/${selectedFile}`;
+                    ? apiUrl(`/content?path=project/${path}&file=${selectedFile}`)
+                    : apiUrl(`/content?path=origami/${category}/${path}&file=${selectedFile}`);
 
                 const response = await fetch(url, {
                     headers: { 'Authorization': `Bearer ${sessionId}` }
@@ -89,8 +90,8 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
         try {
             const sessionId = localStorage.getItem('adminSessionId');
             const url = type === 'project'
-                ? `http://localhost:3001/api/content/project/${path}/${selectedFile}`
-                : `http://localhost:3001/api/content/origami/${category}/${path}/${selectedFile}`;
+                ? apiUrl(`/content?path=project/${path}&file=${selectedFile}`)
+                : apiUrl(`/content?path=origami/${category}/${path}&file=${selectedFile}`);
 
             const response = await fetch(url, {
                 method: 'PUT',

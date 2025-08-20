@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { EnhancedEditModal } from './EnhancedEditModal';
+import { apiUrl } from '../../config/api';
 
 interface ContentListProps {
     sessionId: string;
@@ -35,8 +36,8 @@ function FileViewModal({ isOpen, onClose, title, path, type, category }: FileVie
                 // Get session from localStorage (set when logging in)
                 const sessionId = localStorage.getItem('adminSessionId');
                 const url = type === 'project'
-                    ? `http://localhost:3001/api/files/project/${path}`
-                    : `http://localhost:3001/api/files/origami/${category}/${path}`;
+                    ? apiUrl(`/files?path=project/${path}`)
+                    : apiUrl(`/files?path=origami/${category}/${path}`);
 
                 const response = await fetch(url, {
                     headers: { 'Authorization': `Bearer ${sessionId}` }
@@ -157,10 +158,10 @@ export function ContentList({ sessionId }: ContentListProps) {
 
             try {
                 const [projectsResponse, origamiResponse] = await Promise.all([
-                    fetch('http://localhost:3001/api/projects', {
+                    fetch(apiUrl('/content-list?type=projects'), {
                         headers: { 'Authorization': `Bearer ${sessionId}` }
                     }),
-                    fetch('http://localhost:3001/api/origami', {
+                    fetch(apiUrl('/content-list?type=origami'), {
                         headers: { 'Authorization': `Bearer ${sessionId}` }
                     })
                 ]);
@@ -190,10 +191,10 @@ export function ContentList({ sessionId }: ContentListProps) {
 
         try {
             const [projectsResponse, origamiResponse] = await Promise.all([
-                fetch('http://localhost:3001/api/projects', {
+                fetch(apiUrl('/content-list?type=projects'), {
                     headers: { 'Authorization': `Bearer ${sessionId}` }
                 }),
-                fetch('http://localhost:3001/api/origami', {
+                fetch(apiUrl('/content-list?type=origami'), {
                     headers: { 'Authorization': `Bearer ${sessionId}` }
                 })
             ]);
