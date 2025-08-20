@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import Sitemap from 'vite-plugin-sitemap'
-import { statSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'fs'
-import { resolve } from 'path'
+import { statSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { fileURLToPath, URL } from 'node:url'
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 const portfolioProjects = {
   'personal-website': { priority: 0.7, changefreq: 'weekly' },
@@ -68,7 +71,7 @@ const getLastModTime = (path: string) => {
   const stats = statSync(fullPath)
   if (stats.isDirectory()) {
     const files = readdirSync(fullPath)
-    const latest = files.reduce((latest, file) => {
+    const latest = files.reduce((latest: Date, file: string) => {
       const fileStats = statSync(resolve(fullPath, file))
       return fileStats.mtime > latest ? fileStats.mtime : latest
     }, new Date(0))
@@ -93,7 +96,7 @@ const routeLastMod = {
 
 saveCache(cache)
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     Sitemap({
@@ -109,7 +112,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: process.env.NODE_ENV === 'development',
+    sourcemap: mode === 'development',
     rollupOptions: {
       output: {
         manualChunks: undefined
@@ -121,4 +124,4 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react', 'react-dom'], // Ensure React is pre-bundled
   }
-})
+}))
