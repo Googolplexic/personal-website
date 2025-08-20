@@ -170,36 +170,52 @@ export default {
 }
 
 // Generate project structure
-export function generateProjectStructure(slug, title, description, technologies, githubUrl, liveUrl, summary) {
+export function generateProjectStructure(slug, title, description, technologies, githubUrl, liveUrl, summary, startDate, endDate, tags, keywords, SEOdescription) {
     const basePath = `src/assets/projects/${slug}`;
 
-    // Create description.md content
-    const descriptionMd = `# ${title}
+    // Use provided dates or default to current date
+    const projectStartDate = startDate || new Date().toISOString().split('T')[0];
+    const projectEndDate = endDate || new Date().toISOString().split('T')[0];
+
+    // Merge technologies with tags for a comprehensive list
+    const allTags = [...(technologies || []), ...(tags || [])];
+    const allKeywords = [...(technologies || []), ...(keywords || []), title.toLowerCase(), 'project'];
+
+    // Create description.md content with frontmatter (similar to be-square)
+    const descriptionMd = `---
+title: ${title}
+summary: ${summary}
+SEOdescription: ${SEOdescription || summary}
+keywords:
+${allKeywords.map(keyword => `- ${keyword}`).join('\n')}
+technologies:
+${(technologies || []).map(tech => `- ${tech}`).join('\n')}${githubUrl ? `
+githubUrl: ${githubUrl}` : ''}${liveUrl ? `
+liveUrl: ${liveUrl}` : ''}
+startDate: ${projectStartDate}
+endDate: ${projectEndDate}
+tags:
+${allTags.map(tag => `- ${tag.toLowerCase()}`).join('\n')}
+---
 
 ${description}
 `;
 
-    // Create index.ts content for projects
+    // Create index.ts content similar to be-square structure
     const indexTs = `import { ProjectProps } from '../../../types';
+import description from './description.md?raw';
+import matter from 'front-matter';
 
-const images = Object.values(import.meta.glob('./images/*.{png,jpg,jpeg,webp}', { 
-    eager: true, 
-    import: 'default' 
-})).sort((a, b) => (a as string).localeCompare(b as string)) as string[];
+const sortedImages = Object.values(import.meta.glob('./images/*.(png|jpg|jpeg)', { eager: true, import: 'default' }))
+    .sort((a, b) => (a as string).localeCompare(b as string)) as string[];
+
+const { attributes, body } = matter<ProjectProps>(description);
 
 export default {
-    title: '${title}',
-    summary: '${summary}',
-    description: '${description}',
-    technologies: [${technologies.map(tech => `'${tech}'`).join(', ')}],
-    githubUrl: '${githubUrl}',${liveUrl ? `
-    liveUrl: '${liveUrl}',` : ''}
-    startDate: '${new Date().toISOString().split('T')[0]}',
+    ...attributes as object,
+    description: body,
+    images: sortedImages,
     slug: '${slug}',
-    images,
-    keywords: ['project', '${title.toLowerCase()}', ...${JSON.stringify(technologies.map(t => t.toLowerCase()))}],
-    tags: ${JSON.stringify(technologies)},
-    type: 'project'
 } as ProjectProps;
 `;
 

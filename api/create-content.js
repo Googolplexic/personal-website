@@ -120,7 +120,20 @@ async function createOrigami(data) {
 }
 
 async function createProject(data) {
-    const { title, description, summary, technologies, githubUrl, liveUrl, images } = data;
+    const {
+        title,
+        description,
+        summary,
+        technologies,
+        githubUrl,
+        liveUrl,
+        images,
+        startDate,
+        endDate,
+        tags,
+        keywords,
+        SEOdescription
+    } = data;
 
     if (!title || !description || !summary) {
         throw new Error('Title, description, and summary are required for projects');
@@ -133,7 +146,7 @@ async function createProject(data) {
         .replace(/-+/g, '-')
         .trim();
 
-    // Generate project structure
+    // Generate project structure with all fields
     const structure = generateProjectStructure(
         slug,
         title,
@@ -141,7 +154,12 @@ async function createProject(data) {
         technologies || [],
         githubUrl,
         liveUrl,
-        summary
+        summary,
+        startDate,
+        endDate,
+        tags || [],
+        keywords || [],
+        SEOdescription || summary
     );
 
     // Create description.md

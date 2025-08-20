@@ -69,8 +69,8 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
                 });
 
                 if (response.ok) {
-                    const text = await response.text();
-                    setContent(text);
+                    const data = await response.json();
+                    setContent(data.content);
                 } else {
                     setError('Failed to load file content');
                 }

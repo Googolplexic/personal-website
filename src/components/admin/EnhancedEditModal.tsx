@@ -53,11 +53,15 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     const fileData = await response.json();
                     const fileList = fileData.files || [];
 
-                    // Filter markdown files
+                    // Filter markdown files and set appropriate default
                     const mdFiles = fileList.filter((file: { name: string; type: string }) => file.name && file.name.endsWith('.md'));
                     setMarkdownFiles(mdFiles);
                     if (mdFiles.length > 0) {
-                        setSelectedFile(mdFiles[0].name);
+                        // For origami, prefer info.md; for projects, prefer description.md
+                        const preferredFile = type === 'project' 
+                            ? mdFiles.find((f: { name: string; type: string }) => f.name === 'description.md') || mdFiles[0]
+                            : mdFiles.find((f: { name: string; type: string }) => f.name === 'info.md') || mdFiles[0];
+                        setSelectedFile(preferredFile.name);
                     }
 
                     // Filter image files
@@ -67,20 +71,41 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
                     // Create image objects with URLs
                     const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
-                        let url;
+                        // Create API URL for fetching image data, not for direct display
+                        let imageApiUrl;
                         if (type === 'project') {
                             // For projects, if file already includes "images/" prefix, don't add it again
                             const fileName = file.name.startsWith('images/') ? file.name.substring(7) : file.name;
-                            url = apiUrl(`/images?path=project/${path}&file=images/${fileName}`);
+                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=images/${fileName}`);
                         } else {
-                            url = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
+                            imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
                         }
                         return {
                             name: file.name,
-                            url: url
+                            apiUrl: imageApiUrl, // For fetching data
+                            url: null as string | null // Will be set later with base64 data
                         };
                     });
-                    setImages(imageObjects);
+                    
+                    // Load image data and convert to data URLs
+                    const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
+                        try {
+                            const response = await fetch(imageObj.apiUrl, {
+                                headers: { 'Authorization': `Bearer ${sessionId}` }
+                            });
+                            if (response.ok) {
+                                const data = await response.json();
+                                // Convert base64 to data URL
+                                imageObj.url = `data:image/jpeg;base64,${data.content}`;
+                            }
+                        } catch (error) {
+                            console.error('Failed to load image:', imageObj.name, error);
+                        }
+                        return imageObj;
+                    });
+                    
+                    const loadedImages = await Promise.all(loadImagePromises);
+                    setImages(loadedImages);
                 }
             } catch (error) {
                 console.error('Failed to fetch files:', error);
@@ -107,8 +132,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 });
 
                 if (response.ok) {
-                    const text = await response.text();
-                    setContent(text);
+                    const data = await response.json();
+                    setContent(data.content);
                 } else {
                     setError('Failed to load file content');
                 }
@@ -203,17 +228,39 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     );
 
                     const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
-                        let url;
+                        let imageApiUrl;
                         if (type === 'project') {
                             // For projects, if file already includes "images/" prefix, don't add it again
                             const fileName = file.name.startsWith('images/') ? file.name.substring(7) : file.name;
-                            url = `http://localhost:3001/api/images/project/${path}/images/${fileName}`;
+                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=images/${fileName}`);
                         } else {
-                            url = `http://localhost:3001/api/images/origami/${category}/${path}/${file.name}`;
+                            imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
                         }
-                        return { name: file.name, url: url };
+                        return { 
+                            name: file.name, 
+                            apiUrl: imageApiUrl,
+                            url: null as string | null
+                        };
                     });
-                    setImages(imageObjects);
+                    
+                    // Load image data and convert to data URLs
+                    const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
+                        try {
+                            const response = await fetch(imageObj.apiUrl, {
+                                headers: { 'Authorization': `Bearer ${sessionId}` }
+                            });
+                            if (response.ok) {
+                                const data = await response.json();
+                                imageObj.url = `data:image/jpeg;base64,${data.content}`;
+                            }
+                        } catch (error) {
+                            console.error('Failed to load image:', imageObj.name, error);
+                        }
+                        return imageObj;
+                    });
+                    
+                    const loadedImages = await Promise.all(loadImagePromises);
+                    setImages(loadedImages);
                 }
             } else {
                 const errorData = await response.json();
@@ -304,16 +351,38 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     );
 
                     const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
-                        let url;
+                        let imageApiUrl;
                         if (type === 'project') {
                             const fileName = file.name.startsWith('images/') ? file.name.substring(7) : file.name;
-                            url = `http://localhost:3001/api/images/project/${path}/images/${fileName}`;
+                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=images/${fileName}`);
                         } else {
-                            url = `http://localhost:3001/api/images/origami/${category}/${path}/${file.name}`;
+                            imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
                         }
-                        return { name: file.name, url: url };
+                        return { 
+                            name: file.name, 
+                            apiUrl: imageApiUrl,
+                            url: null as string | null
+                        };
                     });
-                    setImages(imageObjects);
+                    
+                    // Load image data and convert to data URLs
+                    const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
+                        try {
+                            const response = await fetch(imageObj.apiUrl, {
+                                headers: { 'Authorization': `Bearer ${sessionId}` }
+                            });
+                            if (response.ok) {
+                                const data = await response.json();
+                                imageObj.url = `data:image/jpeg;base64,${data.content}`;
+                            }
+                        } catch (error) {
+                            console.error('Failed to load image:', imageObj.name, error);
+                        }
+                        return imageObj;
+                    });
+                    
+                    const loadedImages = await Promise.all(loadImagePromises);
+                    setImages(loadedImages);
                 }
             } else {
                 console.error('Failed to rename image');
@@ -514,7 +583,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                         <div key={image.name} className="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
                                             <div className="bg-gray-100 dark:bg-gray-700 rounded mb-2 overflow-hidden">
                                                 <img
-                                                    src={`${image.url}?auth=${localStorage.getItem('adminSessionId')}`}
+                                                    src={image.url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5QzEwLjMzIDkgOSAxMC4zMyA5IDEyUzEwLjMzIDE1IDEyIDE1IDE1IDEzLjY3IDE1IDEyUzEzLjY3IDkgMTIgOVpNMTIgMTNDMTEuNDUgMTMgMTEgMTIuNTUgMTEgMTJTMTEuNDUgMTEgMTIgMTFTMTMgMTEuNDUgMTMgMTJTMTIuNTUgMTMgMTIgMTNaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo='}
                                                     alt={image.name}
                                                     className="w-full h-auto object-contain"
                                                     onError={(e) => {
