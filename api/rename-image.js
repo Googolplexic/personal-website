@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 
             // Get the existing file
             const fileData = await getFileFromGitHub(oldPath);
-            
+
             if (!fileData) {
                 return res.status(404).json({ error: 'Original file not found' });
             }
