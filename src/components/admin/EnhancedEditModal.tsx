@@ -99,14 +99,14 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                 // Determine MIME type from file extension
                                 const fileName = imageObj.name.toLowerCase();
                                 console.log('Processing image file:', fileName);
-                                
+
                                 let mimeType = 'image/jpeg'; // default
                                 if (fileName.endsWith('.png')) mimeType = 'image/png';
                                 else if (fileName.endsWith('.gif')) mimeType = 'image/gif';
                                 else if (fileName.endsWith('.webp')) mimeType = 'image/webp';
                                 else if (fileName.endsWith('.svg')) mimeType = 'image/svg+xml';
                                 else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) mimeType = 'image/jpeg';
-                                
+
                                 console.log('Detected MIME type:', mimeType, 'for file:', fileName);
 
                                 // Ensure base64 data is clean (no extra encoding)
@@ -216,38 +216,49 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         setUploading(true);
         try {
             const sessionId = localStorage.getItem('adminSessionId');
-            const formData = new FormData();
 
-            Array.from(files).forEach(file => {
-                formData.append('images', file);
-            });
+            // Upload each file individually using the images API
+            for (const file of Array.from(files)) {
+                // Convert file to base64
+                const base64Data = await new Promise<string>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const result = e.target?.result as string;
+                        resolve(result); // This includes "data:image/...;base64,..."
+                    };
+                    reader.readAsDataURL(file);
+                });
 
-            // Send the correct type for image upload to existing content
-            formData.append('type', type); // 'project' or 'origami'
-            formData.append('slug', path);
-            if (category) {
-                formData.append('category', category);
+                // Upload using the images API
+                const uploadUrl = type === 'project'
+                    ? apiUrl(`/images?path=project/${path}`)
+                    : apiUrl(`/images?path=origami/${category}/${path}`);
+
+                const response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        imageData: base64Data,
+                        fileName: file.name
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to upload ${file.name}`);
+                }
             }
 
-            const endpoint = type === 'project' ? '/create-content' : '/create-content';
+            // Refresh the image list by re-triggering the useEffect
+            const refreshUrl = type === 'project'
+                ? apiUrl(`/files?path=project/${path}`)
+                : apiUrl(`/files?path=origami/${category}/${path}`);
 
-            const response = await fetch(apiUrl(endpoint), {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${sessionId}`
-                },
-                body: formData
+            const refreshResponse = await fetch(refreshUrl, {
+                headers: { 'Authorization': `Bearer ${sessionId}` }
             });
-
-            if (response.ok) {
-                // Refresh the images list instead of full page reload
-                const url = type === 'project'
-                    ? `http://localhost:3001/api/files/project/${path}`
-                    : `http://localhost:3001/api/files/origami/${category}/${path}`;
-
-                const refreshResponse = await fetch(url, {
-                    headers: { 'Authorization': `Bearer ${sessionId}` }
-                });
 
                 if (refreshResponse.ok) {
                     const fileData = await refreshResponse.json();
@@ -300,10 +311,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     const loadedImages = await Promise.all(loadImagePromises);
                     setImages(loadedImages);
                 }
-            } else {
-                const errorData = await response.json();
-                setError(`Failed to upload images: ${errorData.error || 'Unknown error'}`);
-            }
+
         } catch (error) {
             setError('Failed to upload images');
             console.error('Failed to upload images:', error);
@@ -322,14 +330,10 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         try {
             const sessionId = localStorage.getItem('adminSessionId');
 
-            let url;
-            if (type === 'project') {
-                // For projects, if imageName already includes "images/" prefix, don't add it again
-                const fileName = imageName.startsWith('images/') ? imageName.substring(7) : imageName;
-                url = `http://localhost:3001/api/images/project/${path}/images/${fileName}`;
-            } else {
-                url = `http://localhost:3001/api/images/origami/${category}/${path}/${imageName}`;
-            }
+            // Use the same URL pattern as the images API
+            const url = type === 'project'
+                ? apiUrl(`/images?path=project/${path}&file=${imageName}`)
+                : apiUrl(`/images?path=origami/${category}/${path}&file=${imageName}`);
 
             const response = await fetch(url, {
                 method: 'DELETE',
@@ -351,90 +355,74 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
     };
 
     const handleImageRename = async (oldName: string, newName: string) => {
+        if (!newName.trim() || newName === oldName) {
+            return;
+        }
+
         try {
             const sessionId = localStorage.getItem('adminSessionId');
 
-            let oldUrl;
-            if (type === 'project') {
-                const oldFileName = oldName.startsWith('images/') ? oldName.substring(7) : oldName;
-                oldUrl = `http://localhost:3001/api/images/project/${path}/images/${oldFileName}`;
-            } else {
-                oldUrl = `http://localhost:3001/api/images/origami/${category}/${path}/${oldName}`;
+            // Step 1: Get the existing image data
+            const getUrl = type === 'project'
+                ? apiUrl(`/images?path=project/${path}&file=${oldName}`)
+                : apiUrl(`/images?path=origami/${category}/${path}&file=${oldName}`);
+
+            const getResponse = await fetch(getUrl, {
+                headers: { 'Authorization': `Bearer ${sessionId}` }
+            });
+
+            if (!getResponse.ok) {
+                setError('Failed to fetch image for renaming');
+                return;
             }
 
-            const response = await fetch(oldUrl.replace('/api/images/', '/api/rename-image/'), {
-                method: 'PUT',
+            const imageData = await getResponse.json();
+
+            // Step 2: Upload with new name
+            const uploadUrl = type === 'project'
+                ? apiUrl(`/images?path=project/${path}`)
+                : apiUrl(`/images?path=origami/${category}/${path}`);
+
+            const uploadResponse = await fetch(uploadUrl, {
+                method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${sessionId}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ newName })
+                body: JSON.stringify({
+                    imageData: imageData.content, // base64 data
+                    fileName: newName
+                })
             });
 
-            if (response.ok) {
-                // Refresh images after rename
-                const url = type === 'project'
-                    ? `http://localhost:3001/api/files/project/${path}`
-                    : `http://localhost:3001/api/files/origami/${category}/${path}`;
-
-                const response = await fetch(url, {
-                    headers: { 'Authorization': `Bearer ${sessionId}` }
-                });
-
-                if (response.ok) {
-                    const fileData = await response.json();
-                    const fileList = fileData.files || [];
-                    const imageFiles = fileList.filter((file: { name: string; type: string }) =>
-                        file.name && file.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
-                    );
-
-                    const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
-                        let imageApiUrl;
-                        if (type === 'project') {
-                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=${file.name}`);
-                        } else {
-                            imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
-                        }
-                        return {
-                            name: file.name,
-                            apiUrl: imageApiUrl,
-                            url: null as string | null
-                        };
-                    });
-
-                    // Load image data and convert to data URLs
-                    const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
-                        try {
-                            const response = await fetch(imageObj.apiUrl, {
-                                headers: { 'Authorization': `Bearer ${sessionId}` }
-                            });
-                            if (response.ok) {
-                                const data = await response.json();
-
-                                // Determine MIME type from file extension
-                                const fileName = imageObj.name.toLowerCase();
-                                let mimeType = 'image/jpeg'; // default
-                                if (fileName.endsWith('.png')) mimeType = 'image/png';
-                                else if (fileName.endsWith('.gif')) mimeType = 'image/gif';
-                                else if (fileName.endsWith('.webp')) mimeType = 'image/webp';
-                                else if (fileName.endsWith('.svg')) mimeType = 'image/svg+xml';
-                                else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) mimeType = 'image/jpeg';
-
-                                imageObj.url = `data:${mimeType};base64,${data.content}`;
-                            }
-                        } catch (error) {
-                            console.error('Failed to load image:', imageObj.name, error);
-                        }
-                        return imageObj;
-                    });
-
-                    const loadedImages = await Promise.all(loadImagePromises);
-                    setImages(loadedImages);
-                }
-            } else {
-                console.error('Failed to rename image');
+            if (!uploadResponse.ok) {
+                setError('Failed to upload renamed image');
+                return;
             }
+
+            // Step 3: Delete old image
+            const deleteResponse = await fetch(getUrl, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${sessionId}` }
+            });
+
+            if (!deleteResponse.ok) {
+                setError('Failed to delete old image after rename');
+                return;
+            }
+
+            // Step 4: Update the local state
+            setImages(prev => prev.map(img => 
+                img.name === oldName 
+                    ? { ...img, name: newName }
+                    : img
+            ));
+
+            setRenamingImage(null);
+            setNewImageName('');
+
         } catch (error) {
+            setError('Failed to rename image');
             console.error('Failed to rename image:', error);
         }
     };
