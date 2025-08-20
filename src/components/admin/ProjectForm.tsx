@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiUrl } from '../../config/api';
 
 interface ProjectFormProps {
     sessionId: string;
@@ -110,12 +111,19 @@ export function ProjectForm({ sessionId }: ProjectFormProps) {
                 });
             }
 
-            const response = await fetch('http://localhost:3001/api/projects', {
+            const response = await fetch(apiUrl('/create-content'), {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${sessionId}`,
                 },
-                body: submitData,
+                body: JSON.stringify({
+                    type: 'projects',
+                    title: formData.title,
+                    description: formData.description,
+                    technologies: formData.technologies,
+                    // Convert form data to expected format for serverless function
+                }),
             });
 
             if (response.ok) {

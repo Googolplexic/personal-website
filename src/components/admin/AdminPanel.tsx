@@ -9,7 +9,7 @@ export function AdminPanel() {
 
     const validateSession = useCallback(async (sessionId: string) => {
         try {
-            const response = await fetch(apiUrl('/api/validate-session'), {
+            const response = await fetch(apiUrl('/auth'), {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${sessionId}`
@@ -35,7 +35,7 @@ export function AdminPanel() {
 
     const checkServerAvailability = useCallback(async () => {
         try {
-            await fetch(apiUrl('/api/validate-session'), {
+            await fetch(apiUrl('/auth'), {
                 method: 'GET'
             });
 
@@ -63,7 +63,7 @@ export function AdminPanel() {
 
     const handleLogout = async () => {
         try {
-            await fetch(apiUrl('/api/logout'), {
+            await fetch(apiUrl('/auth'), {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${sessionId}`

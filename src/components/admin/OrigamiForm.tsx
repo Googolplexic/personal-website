@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiUrl } from '../../config/api';
 
 interface OrigamiFormProps {
     sessionId: string;
@@ -89,12 +90,18 @@ export function OrigamiForm({ sessionId }: OrigamiFormProps) {
                 });
             }
 
-            const response = await fetch('http://localhost:3001/api/origami', {
+            const response = await fetch(apiUrl('/create-content'), {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${sessionId}`,
                 },
-                body: submitData,
+                body: JSON.stringify({
+                    type: 'origami',
+                    title: formData.title,
+                    description: formData.description,
+                    // Convert form data to expected format for serverless function
+                }),
             });
 
             if (response.ok) {
