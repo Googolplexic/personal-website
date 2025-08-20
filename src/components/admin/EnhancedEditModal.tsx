@@ -379,6 +379,11 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             const imageData = await getResponse.json();
 
             // Step 2: Upload with new name
+            // For projects, ensure we keep the filename without images/ prefix for the API call
+            const cleanNewName = type === 'project' && newName.startsWith('images/') 
+                ? newName.substring(7) 
+                : newName;
+
             const uploadUrl = type === 'project'
                 ? apiUrl(`/images?path=project/${path}`)
                 : apiUrl(`/images?path=origami/${category}/${path}`);
@@ -390,8 +395,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    imageData: imageData.content, // base64 data
-                    fileName: newName
+                    imageData: `data:image/jpeg;base64,${imageData.content}`, // Ensure proper format
+                    fileName: cleanNewName
                 })
             });
 
@@ -412,12 +417,18 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             }
 
             // Step 4: Update the local state
+            // For projects, the new name should include images/ prefix for display
+            const displayNewName = type === 'project' && !cleanNewName.startsWith('images/')
+                ? `images/${cleanNewName}`
+                : cleanNewName;
+
             setImages(prev => prev.map(img => 
                 img.name === oldName 
-                    ? { ...img, name: newName }
+                    ? { ...img, name: displayNewName }
                     : img
             ));
 
+            // Reset rename state
             setRenamingImage(null);
             setNewImageName('');
 
@@ -633,12 +644,10 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                         value={newImageName}
                                                         onChange={(e) => setNewImageName(e.target.value)}
                                                         placeholder="Enter new filename"
-                                                        className="w-full text-xs border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded"
+                                                        className="w-full text-xs border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded mb-2"
                                                         onKeyDown={(e) => {
                                                             if (e.key === 'Enter') {
                                                                 handleImageRename(image.name, newImageName);
-                                                                setRenamingImage(null);
-                                                                setNewImageName('');
                                                             } else if (e.key === 'Escape') {
                                                                 setRenamingImage(null);
                                                                 setNewImageName('');
@@ -646,6 +655,23 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                         }}
                                                         autoFocus
                                                     />
+                                                    <div className="flex gap-1">
+                                                        <button
+                                                            onClick={() => handleImageRename(image.name, newImageName)}
+                                                            className="flex-1 text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded"
+                                                        >
+                                                            Save
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                setRenamingImage(null);
+                                                                setNewImageName('');
+                                                            }}
+                                                            className="flex-1 text-xs bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             ) : (
                                                 <p className="text-xs text-gray-600 dark:text-gray-400 truncate mb-2" title={image.name}>
@@ -656,7 +682,11 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                 <button
                                                     onClick={() => {
                                                         setRenamingImage(image.name);
-                                                        setNewImageName(image.name.startsWith('images/') ? image.name.substring(7) : image.name);
+                                                        // For projects, remove the images/ prefix for editing
+                                                        const editName = type === 'project' && image.name.startsWith('images/') 
+                                                            ? image.name.substring(7) 
+                                                            : image.name;
+                                                        setNewImageName(editName);
                                                     }}
                                                     className="flex-1 text-xs bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-300 px-2 py-1 rounded"
                                                 >

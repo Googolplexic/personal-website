@@ -70,7 +70,14 @@ export default async function handler(req, res) {
             const base64Data = imageData.includes(',') ? imageData.split(',')[1] : imageData;
             const imageBuffer = Buffer.from(base64Data, 'base64');
 
-            const fullPath = `${basePath}/${fileName}`;
+            // For projects, images go into images/ subdirectory
+            // For origami, images go directly in the folder
+            let fullPath;
+            if (requestPath.startsWith('project/')) {
+                fullPath = `${basePath}/images/${fileName}`;
+            } else {
+                fullPath = `${basePath}/${fileName}`;
+            }
 
             await uploadImageToGitHub(
                 fullPath,
