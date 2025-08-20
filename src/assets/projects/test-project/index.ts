@@ -8,9 +8,7 @@ const images = Object.values(import.meta.glob('./images/*.{png,jpg,jpeg,webp}', 
 export default {
     title: 'Test project',
     summary: 'This is a test',
-    description: '## YOOOOO
-
-This is a test',
+    description: '## YOOOOO This is a test',
     technologies: [],
     githubUrl: 'https://github.com',
     startDate: '2025-08-20',
