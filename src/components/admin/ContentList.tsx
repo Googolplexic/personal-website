@@ -21,132 +21,10 @@ interface ContentData {
     };
 }
 
-interface FileViewModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    title: string;
-    path: string;
-    type: 'project' | 'origami';
-    category?: string;
-}
-
-function FileViewModal({ isOpen, onClose, title, path, type, category }: FileViewModalProps) {
-    const [files, setFiles] = useState<string[]>([]);
-    const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const fetchFiles = async () => {
-            setLoading(true);
-            try {
-                // Get session from localStorage (set when logging in)
-                const sessionId = localStorage.getItem('adminSessionId');
-                const url = type === 'project'
-                    ? apiUrl(`/files?path=project/${path}`)
-                    : apiUrl(`/files?path=origami/${category}/${path}`);
-
-                const response = await fetch(url, {
-                    headers: { 'Authorization': `Bearer ${sessionId}` }
-                });
-                if (response.ok) {
-                    const fileData = await response.json();
-                    const fileList = fileData.files || [];
-                    setFiles(fileList);
-                }
-            } catch (error) {
-                console.error('Failed to fetch files:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchFiles();
-    }, [isOpen, path, type, category]);
-
-    if (!isOpen) return null;
-
-    const fullPath = type === 'project'
-        ? `/src/assets/projects/${path}/`
-        : `/src/assets/origami/${category}/${path}/`;
-
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        Files for {title}
-                    </h3>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    >
-                        ✕
-                    </button>
-                </div>
-
-                <div className="space-y-3">
-                    <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Location:</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 font-mono">{fullPath}</p>
-                    </div>
-
-                    <div className="space-y-2">
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Files:</p>
-                        <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded">
-                            {loading ? (
-                                <div className="text-gray-600 dark:text-gray-400 font-mono text-sm">Loading files...</div>
-                            ) : files.length > 0 ? (
-                                <pre className="text-gray-600 dark:text-gray-400 font-mono text-sm whitespace-pre text-left pl-4">
-                                    {`📁 ${path}/
-${files.map((file, index) => {
-                                        const isLast = index === files.length - 1;
-                                        const prefix = isLast ? '└── ' : '├── ';
-                                        let icon = '📄 ';
-
-                                        if (file.endsWith('/')) {
-                                            icon = '📁 ';
-                                        } else if (file.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
-                                            icon = '🖼️ ';
-                                        }
-
-                                        return `${prefix}${icon}${file}`;
-                                    }).join('\n')}`}
-                                </pre>
-                            ) : (
-                                <div className="text-gray-600 dark:text-gray-400 font-mono text-sm">No files found</div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded">
-                        <p className="text-sm text-blue-700 dark:text-blue-300">
-                            <strong>Note:</strong> To edit files, use your code editor and navigate to the path shown above.
-                            Changes will be reflected automatically when you save.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
 export function ContentList({ sessionId }: ContentListProps) {
     const [content, setContent] = useState<ContentData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [modalState, setModalState] = useState<{
-        isOpen: boolean;
-        title: string;
-        path: string;
-        type: 'project' | 'origami';
-        category?: string;
-    }>({
-        isOpen: false,
-        title: '',
-        path: '',
-        type: 'project'
-    });
 
     const [editModalState, setEditModalState] = useState<{
         isOpen: boolean;
@@ -241,25 +119,6 @@ export function ContentList({ sessionId }: ContentListProps) {
         }
     };
 
-    const openFileView = (title: string, path: string, type: 'project' | 'origami', category?: string) => {
-        setModalState({
-            isOpen: true,
-            title,
-            path,
-            type,
-            category
-        });
-    };
-
-    const closeFileView = () => {
-        setModalState({
-            isOpen: false,
-            title: '',
-            path: '',
-            type: 'project'
-        });
-    };
-
     const openEditModal = (title: string, path: string, type: 'project' | 'origami', category?: string) => {
         setEditModalState({
             isOpen: true,
@@ -277,14 +136,6 @@ export function ContentList({ sessionId }: ContentListProps) {
             path: '',
             type: 'project'
         });
-    }; const openInEditor = (path: string, type: 'project' | 'origami', category?: string) => {
-        const fullPath = type === 'project'
-            ? `src/assets/projects/${path}/`
-            : `src/assets/origami/${category}/${path}/`;
-
-        // For now, show an alert with the path. In a real implementation,
-        // you could integrate with VS Code or other editors
-        alert(`Open in your code editor:\n${fullPath}\n\nTip: Use Ctrl+Shift+E in VS Code to open the Explorer and navigate to this folder.`);
     };
 
     if (loading) {
@@ -317,15 +168,6 @@ export function ContentList({ sessionId }: ContentListProps) {
 
     return (
         <>
-            <FileViewModal
-                isOpen={modalState.isOpen}
-                onClose={closeFileView}
-                title={modalState.title}
-                path={modalState.path}
-                type={modalState.type}
-                category={modalState.category}
-            />
-
             <EnhancedEditModal
                 isOpen={editModalState.isOpen}
                 onClose={closeEditModal}
@@ -365,22 +207,10 @@ export function ContentList({ sessionId }: ContentListProps) {
                                     </p>
                                     <div className="mt-3 flex space-x-2">
                                         <button
-                                            onClick={() => openFileView(project.title, project.slug, 'project')}
-                                            className="text-xs bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition-colors"
-                                        >
-                                            View Files
-                                        </button>
-                                        <button
                                             onClick={() => openEditModal(project.title, project.slug, 'project')}
                                             className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
-                                        </button>
-                                        <button
-                                            onClick={() => openInEditor(project.slug, 'project')}
-                                            className="text-xs bg-yellow-100 dark:bg-yellow-900 hover:bg-yellow-200 dark:hover:bg-yellow-800 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded transition-colors"
-                                        >
-                                            Open in Editor
                                         </button>
                                     </div>
                                 </div>
@@ -418,22 +248,10 @@ export function ContentList({ sessionId }: ContentListProps) {
                                     </p>
                                     <div className="mt-3 flex space-x-2">
                                         <button
-                                            onClick={() => openFileView(String(design.title), String(design.slug), 'origami', 'my-designs')}
-                                            className="text-xs bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition-colors"
-                                        >
-                                            View Files
-                                        </button>
-                                        <button
                                             onClick={() => openEditModal(String(design.title), String(design.slug), 'origami', 'my-designs')}
                                             className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
-                                        </button>
-                                        <button
-                                            onClick={() => openInEditor(String(design.slug), 'origami', 'my-designs')}
-                                            className="text-xs bg-yellow-100 dark:bg-yellow-900 hover:bg-yellow-200 dark:hover:bg-yellow-800 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded transition-colors"
-                                        >
-                                            Open in Editor
                                         </button>
                                     </div>
                                 </div>
@@ -471,22 +289,10 @@ export function ContentList({ sessionId }: ContentListProps) {
                                     </p>
                                     <div className="mt-3 flex space-x-2">
                                         <button
-                                            onClick={() => openFileView(String(design.title), String(design.slug), 'origami', 'other-designs')}
-                                            className="text-xs bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition-colors"
-                                        >
-                                            View Files
-                                        </button>
-                                        <button
                                             onClick={() => openEditModal(String(design.title), String(design.slug), 'origami', 'other-designs')}
                                             className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
-                                        </button>
-                                        <button
-                                            onClick={() => openInEditor(String(design.slug), 'origami', 'other-designs')}
-                                            className="text-xs bg-yellow-100 dark:bg-yellow-900 hover:bg-yellow-200 dark:hover:bg-yellow-800 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded transition-colors"
-                                        >
-                                            Open in Editor
                                         </button>
                                     </div>
                                 </div>
