@@ -36,7 +36,7 @@ This is an Adobe Express add-on that utilizes OpenAI’s function calling capabi
 
 ### Key features
 
-- AI assistant Doug!
+- Meet AI assistant Doug!
   - Interprets natural language to process requests
 - Uses OpenAI’s GPT platform on a Node server to process requests using function calling capabilities
 - Voice to text input via OpenAI’s Whisper API

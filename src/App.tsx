@@ -4,6 +4,7 @@ import { Navbar } from './components/layout/Navbar'
 import { Portfolio } from './pages/Portfolio'
 import { Origami } from './pages/Origami'
 import { NotFound } from './pages/NotFound'
+import { AdminPage } from './pages/AdminPage'
 import { Analytics } from '@vercel/analytics/react';
 import { HelmetProvider } from 'react-helmet-async';
 import { SpeedInsights } from "@vercel/speed-insights/react"
@@ -18,6 +19,7 @@ function AppContent() {
                     <Route path="/" element={<RootRoute />} />
                     <Route path="/portfolio/*" element={<Portfolio />} />
                     <Route path="/origami" element={<Origami />} />
+                    <Route path="/admin" element={<AdminPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>
