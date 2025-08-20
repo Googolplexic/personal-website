@@ -6,11 +6,18 @@ interface ContentListProps {
     sessionId: string;
 }
 
+interface ContentItem {
+    slug: string;
+    title: string;
+    path: string;
+    category?: string;
+}
+
 interface ContentData {
-    projects: string[];
+    projects: ContentItem[];
     origami: {
-        myDesigns: string[];
-        otherDesigns: string[];
+        myDesigns: ContentItem[];
+        otherDesigns: ContentItem[];
     };
 }
 
@@ -179,9 +186,9 @@ export function ContentList({ sessionId }: ContentListProps) {
                     otherDesigns: origamiData.items?.filter((item: { category?: string }) => item.category === 'other-designs') || []
                 };
 
-                setContent({ 
-                    projects: projects.items || [], 
-                    origami 
+                setContent({
+                    projects: projects.items || [],
+                    origami
                 });
             } catch (error) {
                 setError('Failed to load content');
@@ -221,9 +228,9 @@ export function ContentList({ sessionId }: ContentListProps) {
                 otherDesigns: origamiData.items?.filter((item: { category?: string }) => item.category === 'other-designs') || []
             };
 
-            setContent({ 
-                projects: projects.items || [], 
-                origami 
+            setContent({
+                projects: projects.items || [],
+                origami
             });
         } catch (error) {
             setError('Failed to load content');
@@ -335,41 +342,41 @@ export function ContentList({ sessionId }: ContentListProps) {
                 {/* Projects */}
                 <div>
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                        Projects ({content.projects.length})
+                        Projects ({content.projects?.length || 0})
                     </h3>
-                    {content.projects.length > 0 ? (
+                    {content.projects && content.projects.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {content.projects.map((project) => (
                                 <div
-                                    key={project}
+                                    key={project.slug}
                                     className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
                                 >
                                     <div className="flex items-center justify-between">
                                         <h4 className="font-medium text-gray-900 dark:text-white">
-                                            {project}
+                                            {String(project.title)}
                                         </h4>
                                         <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
                                             project
                                         </span>
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                        /src/assets/projects/{project}/
+                                        /src/assets/projects/{String(project.slug)}/
                                     </p>
                                     <div className="mt-3 flex space-x-2">
                                         <button
-                                            onClick={() => openFileView(project, project, 'project')}
+                                            onClick={() => openFileView(project.title, project.slug, 'project')}
                                             className="text-xs bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition-colors"
                                         >
                                             View Files
                                         </button>
                                         <button
-                                            onClick={() => openEditModal(project, project, 'project')}
+                                            onClick={() => openEditModal(project.title, project.slug, 'project')}
                                             className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
                                         </button>
                                         <button
-                                            onClick={() => openInEditor(project, 'project')}
+                                            onClick={() => openInEditor(project.slug, 'project')}
                                             className="text-xs bg-yellow-100 dark:bg-yellow-900 hover:bg-yellow-200 dark:hover:bg-yellow-800 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Open in Editor
@@ -388,41 +395,41 @@ export function ContentList({ sessionId }: ContentListProps) {
                 {/* My Designs */}
                 <div>
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                        My Origami Designs ({content.origami.myDesigns.length})
+                        My Origami Designs ({content.origami?.myDesigns?.length || 0})
                     </h3>
-                    {content.origami.myDesigns.length > 0 ? (
+                    {content.origami?.myDesigns && content.origami.myDesigns.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {content.origami.myDesigns.map((design) => (
                                 <div
-                                    key={design}
+                                    key={design.slug}
                                     className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
                                 >
                                     <div className="flex items-center justify-between">
                                         <h4 className="font-medium text-gray-900 dark:text-white">
-                                            {design}
+                                            {String(design.title)}
                                         </h4>
                                         <span className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
                                             my design
                                         </span>
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                        /src/assets/origami/my-designs/{design}/
+                                        /src/assets/origami/my-designs/{String(design.slug)}/
                                     </p>
                                     <div className="mt-3 flex space-x-2">
                                         <button
-                                            onClick={() => openFileView(design, design, 'origami', 'my-designs')}
+                                            onClick={() => openFileView(String(design.title), String(design.slug), 'origami', 'my-designs')}
                                             className="text-xs bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition-colors"
                                         >
                                             View Files
                                         </button>
                                         <button
-                                            onClick={() => openEditModal(design, design, 'origami', 'my-designs')}
+                                            onClick={() => openEditModal(String(design.title), String(design.slug), 'origami', 'my-designs')}
                                             className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
                                         </button>
                                         <button
-                                            onClick={() => openInEditor(design, 'origami', 'my-designs')}
+                                            onClick={() => openInEditor(String(design.slug), 'origami', 'my-designs')}
                                             className="text-xs bg-yellow-100 dark:bg-yellow-900 hover:bg-yellow-200 dark:hover:bg-yellow-800 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Open in Editor
@@ -441,41 +448,41 @@ export function ContentList({ sessionId }: ContentListProps) {
                 {/* Other Designs */}
                 <div>
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                        Other Origami Designs ({content.origami.otherDesigns.length})
+                        Other Origami Designs ({content.origami?.otherDesigns?.length || 0})
                     </h3>
-                    {content.origami.otherDesigns.length > 0 ? (
+                    {content.origami?.otherDesigns && content.origami.otherDesigns.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {content.origami.otherDesigns.map((design) => (
                                 <div
-                                    key={design}
+                                    key={design.slug}
                                     className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
                                 >
                                     <div className="flex items-center justify-between">
                                         <h4 className="font-medium text-gray-900 dark:text-white">
-                                            {design}
+                                            {String(design.title)}
                                         </h4>
                                         <span className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded">
                                             other design
                                         </span>
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                        /src/assets/origami/other-designs/{design}/
+                                        /src/assets/origami/other-designs/{String(design.slug)}/
                                     </p>
                                     <div className="mt-3 flex space-x-2">
                                         <button
-                                            onClick={() => openFileView(design, design, 'origami', 'other-designs')}
+                                            onClick={() => openFileView(String(design.title), String(design.slug), 'origami', 'other-designs')}
                                             className="text-xs bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-2 py-1 rounded transition-colors"
                                         >
                                             View Files
                                         </button>
                                         <button
-                                            onClick={() => openEditModal(design, design, 'origami', 'other-designs')}
+                                            onClick={() => openEditModal(String(design.title), String(design.slug), 'origami', 'other-designs')}
                                             className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
                                         </button>
                                         <button
-                                            onClick={() => openInEditor(design, 'origami', 'other-designs')}
+                                            onClick={() => openInEditor(String(design.slug), 'origami', 'other-designs')}
                                             className="text-xs bg-yellow-100 dark:bg-yellow-900 hover:bg-yellow-200 dark:hover:bg-yellow-800 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Open in Editor

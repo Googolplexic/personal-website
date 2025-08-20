@@ -83,7 +83,7 @@ export function OrigamiForm({ sessionId }: OrigamiFormProps) {
                         reader.onload = () => resolve(reader.result as string);
                         reader.readAsDataURL(file);
                     });
-                    
+
                     imageData.push({
                         data: base64,
                         ext: file.name.split('.').pop(),
