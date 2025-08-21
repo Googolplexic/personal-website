@@ -7,20 +7,71 @@ import { fileURLToPath, URL } from 'node:url'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
-const portfolioProjects = {
-  'personal-website': { priority: 0.7, changefreq: 'weekly' },
-  'be-square': { priority: 0.7, changefreq: 'weekly' },
-  'sfu-scheduler': { priority: 0.7, changefreq: 'weekly' },
-  'machi-ne': { priority: 0.6, changefreq: 'weekly' },
-  'spirit-of-salmon': { priority: 0.3, changefreq: 'weekly' },
-  'origami-fractions': { priority: 0.7, changefreq: 'weekly' },
-  'box-pleating': { priority: 0.6, changefreq: 'weekly' },
-  'fold-preview': { priority: 0.6, changefreq: 'weekly' },
-  'pdf-merge': { priority: 0.3, changefreq: 'weekly' },
-  'youtube-speed': { priority: 0.3, changefreq: 'weekly' },
-  'lol-bot': { priority: 0.1, changefreq: 'never' },
-  'data-dave': { priority: 0.8, changefreq: 'weekly' },
+// Auto-detect projects from the filesystem
+const projectsDir = resolve(__dirname, 'src/assets/projects')
+
+const scanProjects = () => {
+  try {
+    const entries = readdirSync(projectsDir, { withFileTypes: true })
+    return entries
+      .filter(entry =>
+        entry.isDirectory() &&
+        entry.name !== 'template' && // Exclude template directory
+        existsSync(resolve(projectsDir, entry.name, 'index.ts')) // Must have index.ts
+      )
+      .map(entry => entry.name)
+      .sort()
+  } catch (error) {
+    console.warn('Error scanning projects:', error)
+    return []
+  }
 }
+
+// Get current projects
+const currentProjects = scanProjects()
+
+// Auto-generate portfolioProjects configuration
+const generateProjectConfig = (projectName: string) => {
+  // Default configuration
+  let priority = 0.6
+  let changefreq = 'monthly'
+
+  // Special cases for known projects
+  switch (projectName) {
+    case 'personal-website':
+    case 'data-dave':
+    case 'origami-fractions':
+      priority = 0.7
+      break
+    case 'lol-bot':
+      priority = 0.1
+      changefreq = 'never'
+      break
+    case 'spirit-of-salmon':
+    case 'pdf-merge':
+    case 'youtube-speed':
+      priority = 0.3
+      break
+    case 'sfu-scheduler':
+    case 'be-square':
+      priority = 0.7
+      break
+    case 'machi-ne':
+    case 'box-pleating':
+    case 'fold-preview':
+      priority = 0.6
+      break
+  }
+
+  return { priority, changefreq }
+}
+
+// Auto-generate portfolioProjects from current projects
+const portfolioProjects = Object.fromEntries(
+  currentProjects.map(project => [project, generateProjectConfig(project)])
+)
+
+console.log(`🚀 Auto-detected ${currentProjects.length} projects:`, currentProjects.join(', '))
 
 const names = [
   'origami',
@@ -100,16 +151,26 @@ const getUpdatedLastModTime = (path: string) => {
   return finalMtime
 }
 
+// Auto-generate route lastmod for all current projects
 const routeLastMod = {
   '/': getUpdatedLastModTime('pages/Home.tsx'),
   '/origami': getUpdatedLastModTime('pages/Origami.tsx'),
   '/portfolio': getUpdatedLastModTime('pages/Portfolio.tsx'),
   ...Object.fromEntries(
-    Object.keys(portfolioProjects).map(name => {
+    currentProjects.map(name => {
       const path = `assets/projects/${name}`
       return [`/portfolio/${name}`, getUpdatedLastModTime(path)]
     })
   )
+}
+
+// Update cache for any missing projects
+for (const project of currentProjects) {
+  const cacheKey = `assets/projects/${project}`
+  if (!cache[cacheKey]) {
+    cache[cacheKey] = getLastModTime(`assets/projects/${project}`)
+    console.log(`📝 Added cache entry for new project: ${project}`)
+  }
 }
 
 saveCache(cache)

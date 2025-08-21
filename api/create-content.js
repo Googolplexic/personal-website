@@ -16,11 +16,11 @@ export default async function handler(req, res) {
     // Validate authentication using cookies
     const cookies = parseCookies(req.headers.cookie);
     const token = cookies.adminToken;
-    
+
     if (!token) {
         return res.status(401).json({ error: 'Authentication required' });
     }
-    
+
     const decoded = verifyJWT(token);
     if (!decoded || !decoded.admin) {
         return res.status(401).json({ error: 'Invalid authentication' });
@@ -48,6 +48,11 @@ export default async function handler(req, res) {
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-')
                 .trim();
+
+            // Update the lastmod cache for the new content
+            if (type === 'project') {
+                await updateLastModCache(slug);
+            }
 
             return res.status(200).json({
                 success: true,
@@ -205,4 +210,39 @@ async function createProject(data) {
     // Note: Index files use import.meta.glob, so no manual updates needed
 }
 
+/**
+ * Updates the lastmod cache for a project
+ */
+async function updateLastModCache(projectSlug) {
+    try {
+        // Import the GitHub utilities
+        const { updateFileInGitHub, getFileFromGitHub } = await import('./github-utils.js');
+
+        // Get the current cache
+        let currentCache = {};
+        try {
+            const cacheContent = await getFileFromGitHub('lastmod-cache.json');
+            currentCache = JSON.parse(cacheContent);
+        } catch (error) {
+            console.log('Cache file not found, creating new one');
+        }
+
+        // Update the cache with current timestamp
+        const cacheKey = `assets/projects/${projectSlug}`;
+        currentCache[cacheKey] = new Date().toISOString();
+
+        // Save the updated cache
+        const newCacheContent = JSON.stringify(currentCache, null, 2);
+        await updateFileInGitHub(
+            'lastmod-cache.json',
+            newCacheContent,
+            `Update lastmod cache for new project: ${projectSlug}`
+        );
+
+        console.log(`Updated lastmod cache for project: ${projectSlug}`);
+    } catch (error) {
+        console.error('Error updating lastmod cache:', error);
+        // Don't throw error as cache update failure shouldn't break project creation
+    }
+}
 
