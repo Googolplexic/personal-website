@@ -260,57 +260,57 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 headers: { 'Authorization': `Bearer ${sessionId}` }
             });
 
-                if (refreshResponse.ok) {
-                    const fileData = await refreshResponse.json();
-                    const fileList = fileData.files || [];
-                    const imageFiles = fileList.filter((file: { name: string; type: string }) =>
-                        file.name && file.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
-                    );
+            if (refreshResponse.ok) {
+                const fileData = await refreshResponse.json();
+                const fileList = fileData.files || [];
+                const imageFiles = fileList.filter((file: { name: string; type: string }) =>
+                    file.name && file.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
+                );
 
-                    const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
-                        let imageApiUrl;
-                        if (type === 'project') {
-                            // For projects, file.name already includes "images/" prefix from the API
-                            imageApiUrl = apiUrl(`/images?path=project/${path}&file=${file.name}`);
-                        } else {
-                            imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
+                const imageObjects = imageFiles.map((file: { name: string; type: string }) => {
+                    let imageApiUrl;
+                    if (type === 'project') {
+                        // For projects, file.name already includes "images/" prefix from the API
+                        imageApiUrl = apiUrl(`/images?path=project/${path}&file=${file.name}`);
+                    } else {
+                        imageApiUrl = apiUrl(`/images?path=origami/${category}/${path}&file=${file.name}`);
+                    }
+                    return {
+                        name: file.name,
+                        apiUrl: imageApiUrl,
+                        url: null as string | null
+                    };
+                });
+
+                // Load image data and convert to data URLs
+                const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
+                    try {
+                        const response = await fetch(imageObj.apiUrl, {
+                            headers: { 'Authorization': `Bearer ${sessionId}` }
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+
+                            // Determine MIME type from file extension
+                            const fileName = imageObj.name.toLowerCase();
+                            let mimeType = 'image/jpeg'; // default
+                            if (fileName.endsWith('.png')) mimeType = 'image/png';
+                            else if (fileName.endsWith('.gif')) mimeType = 'image/gif';
+                            else if (fileName.endsWith('.webp')) mimeType = 'image/webp';
+                            else if (fileName.endsWith('.svg')) mimeType = 'image/svg+xml';
+                            else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) mimeType = 'image/jpeg';
+
+                            imageObj.url = `data:${mimeType};base64,${data.content}`;
                         }
-                        return {
-                            name: file.name,
-                            apiUrl: imageApiUrl,
-                            url: null as string | null
-                        };
-                    });
+                    } catch (error) {
+                        console.error('Failed to load image:', imageObj.name, error);
+                    }
+                    return imageObj;
+                });
 
-                    // Load image data and convert to data URLs
-                    const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
-                        try {
-                            const response = await fetch(imageObj.apiUrl, {
-                                headers: { 'Authorization': `Bearer ${sessionId}` }
-                            });
-                            if (response.ok) {
-                                const data = await response.json();
-
-                                // Determine MIME type from file extension
-                                const fileName = imageObj.name.toLowerCase();
-                                let mimeType = 'image/jpeg'; // default
-                                if (fileName.endsWith('.png')) mimeType = 'image/png';
-                                else if (fileName.endsWith('.gif')) mimeType = 'image/gif';
-                                else if (fileName.endsWith('.webp')) mimeType = 'image/webp';
-                                else if (fileName.endsWith('.svg')) mimeType = 'image/svg+xml';
-                                else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) mimeType = 'image/jpeg';
-
-                                imageObj.url = `data:${mimeType};base64,${data.content}`;
-                            }
-                        } catch (error) {
-                            console.error('Failed to load image:', imageObj.name, error);
-                        }
-                        return imageObj;
-                    });
-
-                    const loadedImages = await Promise.all(loadImagePromises);
-                    setImages(loadedImages);
-                }
+                const loadedImages = await Promise.all(loadImagePromises);
+                setImages(loadedImages);
+            }
 
         } catch (error) {
             setError('Failed to upload images');
@@ -380,8 +380,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
             // Step 2: Upload with new name
             // For projects, ensure we keep the filename without images/ prefix for the API call
-            const cleanNewName = type === 'project' && newName.startsWith('images/') 
-                ? newName.substring(7) 
+            const cleanNewName = type === 'project' && newName.startsWith('images/')
+                ? newName.substring(7)
                 : newName;
 
             const uploadUrl = type === 'project'
@@ -422,8 +422,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 ? `images/${cleanNewName}`
                 : cleanNewName;
 
-            setImages(prev => prev.map(img => 
-                img.name === oldName 
+            setImages(prev => prev.map(img =>
+                img.name === oldName
                     ? { ...img, name: displayNewName }
                     : img
             ));
@@ -683,8 +683,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                     onClick={() => {
                                                         setRenamingImage(image.name);
                                                         // For projects, remove the images/ prefix for editing
-                                                        const editName = type === 'project' && image.name.startsWith('images/') 
-                                                            ? image.name.substring(7) 
+                                                        const editName = type === 'project' && image.name.startsWith('images/')
+                                                            ? image.name.substring(7)
                                                             : image.name;
                                                         setNewImageName(editName);
                                                     }}
