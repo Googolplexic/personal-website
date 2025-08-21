@@ -194,13 +194,122 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode === 'development',
     rollupOptions: {
       output: {
-        manualChunks: undefined
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name?.split('.') || [];
+          const ext = info[info.length - 1];
+
+          // Group images by project
+          if (['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'].includes(ext)) {
+            const name = assetInfo.name || '';
+
+            // Extract project name from path if available
+            if (name.includes('projects/')) {
+              const projectMatch = name.match(/projects\/([^/]+)\//);
+              if (projectMatch) {
+                return `assets/images/projects/${projectMatch[1]}/[name]-[hash][extname]`;
+              }
+            }
+
+            // Other images (origami, etc.)
+            if (name.includes('origami/')) {
+              return `assets/images/origami/[name]-[hash][extname]`;
+            }
+
+            return `assets/images/[name]-[hash][extname]`;
+          }
+
+          // Group other assets by type
+          if (['css'].includes(ext)) {
+            return `assets/css/[name]-[hash][extname]`;
+          }
+
+          return `assets/[name]-[hash][extname]`;
+        },
+        chunkFileNames: (chunkInfo) => {
+          // Create separate chunks for different parts of the app
+          if (chunkInfo.name === 'vendor') {
+            return 'assets/js/vendor-[hash].js';
+          }
+          if (chunkInfo.name?.includes('project-')) {
+            return 'assets/js/projects/[name]-[hash].js';
+          }
+          if (chunkInfo.name?.includes('origami')) {
+            return 'assets/js/origami/[name]-[hash].js';
+          }
+          return 'assets/js/[name]-[hash].js';
+        },
+        manualChunks: (id) => {
+          // Vendor libraries
+          if (id.includes('node_modules')) {
+            // React and core dependencies
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'vendor-react';
+            }
+
+            // UI and styling libraries
+            if (id.includes('react-icons') || id.includes('react-helmet') || id.includes('@vercel')) {
+              return 'vendor-ui';
+            }
+
+            // Markdown and content processing
+            if (id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter')) {
+              return 'vendor-content';
+            }
+
+            // Other vendor code
+            return 'vendor-misc';
+          }
+
+          // Project-specific chunks
+          if (id.includes('src/assets/projects/')) {
+            const projectMatch = id.match(/projects\/([^/]+)\//);
+            if (projectMatch) {
+              return `project-${projectMatch[1]}`;
+            }
+          }
+
+          // Origami chunks
+          if (id.includes('src/assets/origami/')) {
+            return 'origami-assets';
+          }
+
+          // Component chunks
+          if (id.includes('src/components/admin/')) {
+            return 'admin-components';
+          }
+
+          if (id.includes('src/components/portfolio/')) {
+            return 'portfolio-components';
+          }
+
+          if (id.includes('src/components/origami/')) {
+            return 'origami-components';
+          }
+
+          if (id.includes('src/components/search/')) {
+            return 'search-components';
+          }
+
+          // Page chunks
+          if (id.includes('src/pages/')) {
+            const pageMatch = id.match(/pages\/([^/]+)\.tsx?$/);
+            if (pageMatch) {
+              return `page-${pageMatch[1].toLowerCase()}`;
+            }
+          }
+
+          // Utils and config
+          if (id.includes('src/utils/') || id.includes('src/config/')) {
+            return 'utils';
+          }
+        }
       }
     },
-    assetsInlineLimit: 4096, // Inline small images as base64
+    assetsInlineLimit: 2048, // Reduce inline limit to prevent large base64 images
+    chunkSizeWarningLimit: 500, // Warn for chunks larger than 500kb
   },
   assetsInclude: ['**/*.md'],
   optimizeDeps: {
-    include: ['react', 'react-dom'], // Ensure React is pre-bundled
+    include: ['react', 'react-dom', 'react-router-dom'], // Ensure React is pre-bundled
   }
 }))

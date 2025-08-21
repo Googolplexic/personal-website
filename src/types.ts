@@ -3,6 +3,9 @@ export type ThemeContextType = {
     toggleDarkMode: () => void;
 };
 
+// Import lazy image types
+import type { LazyImageCollection } from './utils/lazyImages';
+
 // Base interface for common properties
 export interface BaseItem {
     title: string;
@@ -13,7 +16,7 @@ export interface BaseItem {
     SEOdescription?: string;  // SEO description
     keywords?: string[];   // SEO keywords as array
     tags?: string[];
-    images?: string[];
+    images?: string[] | LazyImageCollection;
 }
 
 // Project-specific properties
@@ -24,6 +27,7 @@ export interface ProjectProps extends BaseItem {
     githubUrl: string;
     liveUrl?: string;
     type: 'project';
+    images?: string[] | LazyImageCollection;
 }
 
 // Origami-specific properties
