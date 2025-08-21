@@ -18,4 +18,4 @@ const otherDesigns: OrigamiProps[] = Object.entries(modules)
         return dateB.getTime() - dateA.getTime();
     });
 
-export default otherDesigns;
+export default otherDesigns; 
