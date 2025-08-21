@@ -42,13 +42,13 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
         const fetchFiles = async () => {
             try {
-                const sessionId = localStorage.getItem('adminSessionId');
+
                 const url = type === 'project'
                     ? apiUrl(`/files?path=project/${path}`)
                     : apiUrl(`/files?path=origami/${category}/${path}`);
 
                 const response = await fetch(url, {
-                    headers: { 'Authorization': `Bearer ${sessionId}` }
+                    credentials: 'include'
                 });
                 if (response.ok) {
                     const fileData = await response.json();
@@ -91,7 +91,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
                         try {
                             const response = await fetch(imageObj.apiUrl, {
-                                headers: { 'Authorization': `Bearer ${sessionId}` }
+                                credentials: 'include'
                             });
                             if (response.ok) {
                                 const data = await response.json();
@@ -142,13 +142,13 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             setLoading(true);
             setError('');
             try {
-                const sessionId = localStorage.getItem('adminSessionId');
+
                 const url = type === 'project'
                     ? apiUrl(`/content?path=project/${path}&file=${selectedFile}`)
                     : apiUrl(`/content?path=origami/${category}/${path}&file=${selectedFile}`);
 
                 const response = await fetch(url, {
-                    headers: { 'Authorization': `Bearer ${sessionId}` }
+                    credentials: 'include'
                 });
 
                 if (response.ok) {
@@ -173,7 +173,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         setSaving(true);
         setError('');
         try {
-            const sessionId = localStorage.getItem('adminSessionId');
+
             const url = type === 'project'
                 ? apiUrl(`/content?path=project/${path}&file=${selectedFile}`)
                 : apiUrl(`/content?path=origami/${category}/${path}&file=${selectedFile}`);
@@ -181,7 +181,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${sessionId}`,
+                    'credentials': 'include',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -215,7 +215,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
         setUploading(true);
         try {
-            const sessionId = localStorage.getItem('adminSessionId');
+
 
             // Upload each file individually using the images API
             for (const file of Array.from(files)) {
@@ -237,7 +237,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 const response = await fetch(uploadUrl, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${sessionId}`,
+                        'credentials': 'include',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
@@ -257,7 +257,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 : apiUrl(`/files?path=origami/${category}/${path}`);
 
             const refreshResponse = await fetch(refreshUrl, {
-                headers: { 'Authorization': `Bearer ${sessionId}` }
+                credentials: 'include'
             });
 
             if (refreshResponse.ok) {
@@ -286,7 +286,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 const loadImagePromises = imageObjects.map(async (imageObj: { name: string; apiUrl: string; url: string | null }) => {
                     try {
                         const response = await fetch(imageObj.apiUrl, {
-                            headers: { 'Authorization': `Bearer ${sessionId}` }
+                            credentials: 'include'
                         });
                         if (response.ok) {
                             const data = await response.json();
@@ -328,7 +328,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         }
 
         try {
-            const sessionId = localStorage.getItem('adminSessionId');
+
 
             // Use the same URL pattern as the images API
             const url = type === 'project'
@@ -338,7 +338,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             const response = await fetch(url, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${sessionId}`
+                    'credentials': 'include'
                 }
             });
 
@@ -360,7 +360,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         }
 
         try {
-            const sessionId = localStorage.getItem('adminSessionId');
+
 
             // Step 1: Get the existing image data
             const getUrl = type === 'project'
@@ -368,7 +368,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 : apiUrl(`/images?path=origami/${category}/${path}&file=${oldName}`);
 
             const getResponse = await fetch(getUrl, {
-                headers: { 'Authorization': `Bearer ${sessionId}` }
+                credentials: 'include'
             });
 
             if (!getResponse.ok) {
@@ -391,7 +391,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             const uploadResponse = await fetch(uploadUrl, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${sessionId}`,
+                    'credentials': 'include',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -408,7 +408,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             // Step 3: Delete old image
             const deleteResponse = await fetch(getUrl, {
                 method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${sessionId}` }
+                credentials: 'include'
             });
 
             if (!deleteResponse.ok) {
@@ -742,3 +742,4 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         </>
     );
 }
+

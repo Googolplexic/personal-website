@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { apiUrl } from '../../config/api';
 
-interface ProjectFormProps {
-    sessionId: string;
-}
-
 interface ProjectFormData {
     title: string;
     summary: string;
@@ -35,7 +31,7 @@ const initialFormData: ProjectFormData = {
     slug: '',
 };
 
-export function ProjectForm({ sessionId }: ProjectFormProps) {
+export function ProjectForm() {
     const [formData, setFormData] = useState<ProjectFormData>(initialFormData);
     const [images, setImages] = useState<FileList | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -112,8 +108,8 @@ export function ProjectForm({ sessionId }: ProjectFormProps) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionId}`,
                 },
+                credentials: 'include', // Use cookies instead of Authorization header
                 body: JSON.stringify({
                     type: 'project',
                     title: formData.title,

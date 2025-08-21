@@ -24,13 +24,12 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
 
         const fetchFiles = async () => {
             try {
-                const sessionId = localStorage.getItem('adminSessionId');
                 const url = type === 'project'
                     ? apiUrl(`/files?path=project/${path}`)
                     : apiUrl(`/files?path=origami/${category}/${path}`);
 
                 const response = await fetch(url, {
-                    headers: { 'Authorization': `Bearer ${sessionId}` }
+                    credentials: 'include'
                 });
                 if (response.ok) {
                     const fileData = await response.json();
@@ -59,13 +58,12 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
             setLoading(true);
             setError('');
             try {
-                const sessionId = localStorage.getItem('adminSessionId');
                 const url = type === 'project'
                     ? apiUrl(`/content?path=project/${path}&file=${selectedFile}`)
                     : apiUrl(`/content?path=origami/${category}/${path}&file=${selectedFile}`);
 
                 const response = await fetch(url, {
-                    headers: { 'Authorization': `Bearer ${sessionId}` }
+                    credentials: 'include'
                 });
 
                 if (response.ok) {
@@ -89,7 +87,6 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
         setSaving(true);
         setError('');
         try {
-            const sessionId = localStorage.getItem('adminSessionId');
             const url = type === 'project'
                 ? apiUrl(`/content?path=project/${path}&file=${selectedFile}`)
                 : apiUrl(`/content?path=origami/${category}/${path}&file=${selectedFile}`);
@@ -97,9 +94,9 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${sessionId}`,
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     content: content,
                     sha: null // For now, since we don't track SHA in this component

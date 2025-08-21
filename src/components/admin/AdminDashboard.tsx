@@ -4,13 +4,12 @@ import { OrigamiForm } from './OrigamiForm';
 import { ContentList } from './ContentList';
 
 interface AdminDashboardProps {
-    sessionId: string;
     onLogout: () => void;
 }
 
 type ActiveTab = 'overview' | 'new-project' | 'new-origami' | 'manage';
 
-export function AdminDashboard({ sessionId, onLogout }: AdminDashboardProps) {
+export function AdminDashboard({ onLogout }: AdminDashboardProps) {
     const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
 
     const tabs = [
@@ -107,7 +106,7 @@ export function AdminDashboard({ sessionId, onLogout }: AdminDashboardProps) {
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
                                 Create New Project
                             </h2>
-                            <ProjectForm sessionId={sessionId} />
+                            <ProjectForm />
                         </div>
                     )}
 
@@ -116,7 +115,7 @@ export function AdminDashboard({ sessionId, onLogout }: AdminDashboardProps) {
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
                                 Add New Origami
                             </h2>
-                            <OrigamiForm sessionId={sessionId} />
+                            <OrigamiForm />
                         </div>
                     )}
 
@@ -125,7 +124,7 @@ export function AdminDashboard({ sessionId, onLogout }: AdminDashboardProps) {
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
                                 Manage Existing Content
                             </h2>
-                            <ContentList sessionId={sessionId} />
+                            <ContentList />
                         </div>
                     )}
                 </div>

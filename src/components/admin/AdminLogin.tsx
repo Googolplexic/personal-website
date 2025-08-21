@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { apiUrl } from '../../config/api';
 
 interface AdminLoginProps {
-    onLogin: (sessionId: string) => void;
+    onLogin: () => void;
 }
 
 export function AdminLogin({ onLogin }: AdminLoginProps) {
@@ -22,12 +22,13 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ password }),
+                credentials: 'include', // Important for cookies
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                onLogin(data.sessionId);
+                onLogin(); // No need to pass sessionId anymore
             } else {
                 setError(data.error || 'Login failed');
             }

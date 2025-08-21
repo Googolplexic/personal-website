@@ -2,10 +2,6 @@ import { useState, useEffect } from 'react';
 import { EnhancedEditModal } from './EnhancedEditModal';
 import { apiUrl } from '../../config/api';
 
-interface ContentListProps {
-    sessionId: string;
-}
-
 interface ContentItem {
     slug: string;
     title: string;
@@ -21,7 +17,7 @@ interface ContentData {
     };
 }
 
-export function ContentList({ sessionId }: ContentListProps) {
+export function ContentList() {
     const [content, setContent] = useState<ContentData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -45,10 +41,10 @@ export function ContentList({ sessionId }: ContentListProps) {
             try {
                 const [projectsResponse, origamiResponse] = await Promise.all([
                     fetch(apiUrl('/content-list?type=projects'), {
-                        headers: { 'Authorization': `Bearer ${sessionId}` }
+                        credentials: 'include'
                     }),
                     fetch(apiUrl('/content-list?type=origami'), {
-                        headers: { 'Authorization': `Bearer ${sessionId}` }
+                        credentials: 'include'
                     })
                 ]);
 
@@ -78,7 +74,7 @@ export function ContentList({ sessionId }: ContentListProps) {
         };
 
         fetchContent();
-    }, [sessionId]);
+    }, []);
 
     const refetchContent = async () => {
         setLoading(true);
@@ -87,10 +83,10 @@ export function ContentList({ sessionId }: ContentListProps) {
         try {
             const [projectsResponse, origamiResponse] = await Promise.all([
                 fetch(apiUrl('/content-list?type=projects'), {
-                    headers: { 'Authorization': `Bearer ${sessionId}` }
+                    credentials: 'include'
                 }),
                 fetch(apiUrl('/content-list?type=origami'), {
-                    headers: { 'Authorization': `Bearer ${sessionId}` }
+                    credentials: 'include'
                 })
             ]);
 

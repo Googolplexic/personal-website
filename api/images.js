@@ -1,20 +1,29 @@
 // Vercel serverless function to manage images via GitHub API
-import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, validateSessionToken } from './github-utils.js';
+import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub } from './github-utils.js';
+import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
-    // Simple auth check
-    const authHeader = req.headers.authorization;
-    if (!validateSessionToken(authHeader)) {
-        return res.status(401).json({ error: 'Unauthorized' });
+    // Validate authentication using cookies
+    const cookies = parseCookies(req.headers.cookie);
+    const token = cookies.adminToken;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const decoded = verifyJWT(token);
+    if (!decoded || !decoded.admin) {
+        return res.status(401).json({ error: 'Invalid authentication' });
     }
 
     try {

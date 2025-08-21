@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { apiUrl } from '../../config/api';
 
-interface OrigamiFormProps {
-    sessionId: string;
-}
-
 interface OrigamiFormData {
     title: string;
     description: string;
@@ -23,7 +19,7 @@ const initialFormData: OrigamiFormData = {
     slug: '',
 };
 
-export function OrigamiForm({ sessionId }: OrigamiFormProps) {
+export function OrigamiForm() {
     const [formData, setFormData] = useState<OrigamiFormData>(initialFormData);
     const [images, setImages] = useState<FileList | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -96,8 +92,8 @@ export function OrigamiForm({ sessionId }: OrigamiFormProps) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionId}`,
                 },
+                credentials: 'include', // Use cookies instead of Authorization header
                 body: JSON.stringify({
                     type: 'origami',
                     title: formData.title,

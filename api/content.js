@@ -1,20 +1,29 @@
 // Vercel serverless function to read/update content files via GitHub API
-import { getFileFromGitHub, updateFileInGitHub, validateSessionToken } from './github-utils.js';
+import { getFileFromGitHub, updateFileInGitHub } from './github-utils.js';
+import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
-    // Simple auth check
-    const authHeader = req.headers.authorization;
-    if (!validateSessionToken(authHeader)) {
-        return res.status(401).json({ error: 'Unauthorized' });
+    // Validate authentication using cookies
+    const cookies = parseCookies(req.headers.cookie);
+    const token = cookies.adminToken;
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    const decoded = verifyJWT(token);
+    if (!decoded || !decoded.admin) {
+        return res.status(401).json({ error: 'Invalid authentication' });
     }
 
     try {
