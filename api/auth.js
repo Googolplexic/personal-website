@@ -11,7 +11,14 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
         const { password } = req.body;
-        const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+        const adminPassword = process.env.ADMIN_PASSWORD;
+
+        if (!adminPassword) {
+            return res.status(500).json({
+                success: false,
+                error: 'Server configuration error',
+            });
+        }
 
         if (password === adminPassword) {
             // Generate a simple session token

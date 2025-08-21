@@ -84,10 +84,6 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
                         </button>
                     </div>
                 </form>
-
-                <div className="text-xs text-center text-gray-500 dark:text-gray-400">
-                    Default password: admin123 (change with ADMIN_PASSWORD env var)
-                </div>
             </div>
         </div>
     );
