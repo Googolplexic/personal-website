@@ -33,4 +33,6 @@ server/.env.production
 *.sln
 *.sw?
 .vercel
+
+# howard
 howard.js
