@@ -25,8 +25,8 @@ technologies:
 githubUrl: https://github.com/Googolplexic/grid-detection
 startDate: 2025-07
 tags:
-- machine-learning
-- computer-vision
+- ai
+- personal-project 
 - origami
 ---
 
