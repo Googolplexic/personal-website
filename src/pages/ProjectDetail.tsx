@@ -8,6 +8,7 @@ import { NotFound } from './NotFound';
 import { HighlightedText } from '../components/ui/HighlightedText';
 import { Heading, Text } from '../components/ui/base';
 import React from 'react';
+import { grid, spacing } from '../utils/styles';
 
 export function ProjectDetail() {
     const { projectSlug } = useParams();
@@ -68,20 +69,20 @@ export function ProjectDetail() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12 gap-0">
+        <div className={grid('2', '12')}>
             <div>
                 <Heading level={1}>
                     <HighlightedText text={project.title} searchTerm={searchTerm} />
                 </Heading>
-                <Text color="secondary" className="mb-2">
+                <Text color="secondary" className={spacing({ mb: '2' })}>
                     {project.startDate === project.endDate ? project.startDate : `${project.startDate} - ${project.endDate || 'Present'}`}
                 </Text>
-                <ProjectLinks project={project} className='mb-6' />
+                <ProjectLinks project={project} className={spacing({ mb: '6' })} />
                 <ProjectImageCarousel images={project.images || []} title={project.title} />
                 <Heading level={2}>Technologies Used</Heading>
                 <ProjectTechnologies technologies={project.technologies} searchTerm={searchTerm} />
             </div>
-            <div className="prose dark:prose-invert max-w-none text-left mt-12 lg:mt-0">
+            <div className={`prose dark:prose-invert max-w-none text-left ${spacing({ mt: '12' })} lg:mt-0`}>
                 <Markdown components={components}>{project.description}</Markdown>
             </div>
         </div>

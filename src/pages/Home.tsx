@@ -4,7 +4,8 @@ import { Skills } from '../components/sections/Skills';
 import { SEO } from '../components/layout/SEO';
 import { ResumeSection } from '../components/sections/ResumeSection';
 import { ProjectGrid } from '../components/portfolio/ProjectGrid';
-import { Heading, Text, Link } from '../components/ui/base';
+import { Heading, Text, Link, Stack } from '../components/ui/base';
+import { container, grid, spacing, themeClasses } from '../utils/styles';
 
 export function Home() {
     const featuredSlugs = ['hermes', 'personal-website', 'be-square', 'origami-fractions'];
@@ -17,32 +18,32 @@ export function Home() {
                 keywords="Coleman Lai, software developer, computing science, origami artist, SFU, Vancouver, full-stack developer, origami, paper art, portfolio"
             />
 
-            <div className="max-w-5xl mx-auto px-4">
-                <header className="mb-12 text-center">
-                    <Heading level={1} className="mb-4">Coleman Lai</Heading>
-                    <Text size="xl" color="secondary" className="mb-4">
+            <div className={container('md')}>
+                <header className={`${spacing({ mb: '12' })} text-center`}>
+                    <Heading level={1} className={spacing({ mb: '4' })}>Coleman Lai</Heading>
+                    <Text size="xl" color="secondary" className={spacing({ mb: '4' })}>
                         Developing computing science major and expert origami artist
                     </Text>
                     <Text>
                         This site is a work-in-progress. More to come
-                        <Link to="/admin" className="!no-underline !text-gray-900 dark:!text-gray-100 cursor-default hover:!no-underline hover:!text-gray-900 dark:hover:!text-gray-100">
+                        <Link to="/admin" className={`!no-underline ${themeClasses('!text-gray-900', '!text-gray-100')} cursor-default ${themeClasses('hover:!text-gray-900', 'hover:!text-gray-100')}`}>
                             !
                         </Link>
                     </Text>
                 </header>
 
-                <main className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <div className="space-y-12">
+                <main className={grid('2', '12')}>
+                    <Stack spacing="12">
                         <About />
                         <Skills />
-                    </div>
-                    <div className="space-y-12">
+                    </Stack>
+                    <Stack spacing="12">
                         <Contact />
                         <ResumeSection />
-                    </div>
+                    </Stack>
                 </main>
 
-                <section className="mt-16 mb-12">
+                <section className={`${spacing({ mt: '16', mb: '12' })}`}>
                     <ProjectGrid
                         featuredSlugs={featuredSlugs}
                         title="Featured Projects"

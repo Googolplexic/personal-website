@@ -1,5 +1,6 @@
 import { SEO } from '../components/layout/SEO';
 import { Heading, Text, Link } from '../components/ui/base';
+import { spacing, themeClasses } from '../utils/styles';
 
 export function NotFound() {
     return (
@@ -16,10 +17,10 @@ export function NotFound() {
 
             <div className="text-center">
                 <Heading level={1}>404 - Page Not Found</Heading>
-                <Text className="mb-8">The page you're looking for doesn't exist.</Text>
+                <Text className={spacing({ mb: '8' })}>The page you're looking for doesn't exist.</Text>
                 <Link
                     to="/"
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                    className={themeClasses('text-blue-600', 'text-blue-400')}
                 >
                     Return to Home
                 </Link>

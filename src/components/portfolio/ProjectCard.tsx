@@ -5,9 +5,10 @@ import { ProjectLinks } from './ProjectLinks';
 import { ProjectTechnologies } from './ProjectTechnologies';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
-import { Card, Heading, Text } from '../ui/base';
+import { Card, Heading, Text, Flex } from '../ui/base';
 import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage } from '../../utils/lazyImages';
+import { spacing } from '../../utils/styles';
 
 interface ProjectWithBasePath extends ProjectProps {
     basePath?: string;
@@ -55,25 +56,25 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
             onClick={handleClick}
             variant="interactive"
             padding="lg"
-            className="mb-4 h-full flex flex-col"
+            className={`${spacing({ mb: '4' })} h-full flex flex-col`}
         >
             {showCategory && categoryLabel && categoryColor && (
-                <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-3" />
+                <CategoryLabel label={categoryLabel} color={categoryColor} className={spacing({ mb: '3' })} />
             )}
             <div className="flex-1 flex flex-col justify-center">
                 {firstImage && (
-                    <div className="flex gap-2 mb-4 mx-auto justify-center">
+                    <Flex gap="2" justify="center" className={`${spacing({ mb: '4' })} mx-auto`}>
                         <img
                             src={firstImage}
                             alt={`${props.title}`}
                             className="max-h-[12rem] w-auto h-auto object-contain rounded-lg"
                         />
-                    </div>
+                    </Flex>
                 )}
-                <Heading level={2} className="mb-2">
+                <Heading level={2} className={spacing({ mb: '2' })}>
                     <HighlightedText text={props.title} searchTerm={searchTerm} />
                 </Heading>
-                <Text size="sm" color="secondary" className="mb-2">
+                <Text size="sm" color="secondary" className={spacing({ mb: '2' })}>
                     {props.startDate === props.endDate ? props.startDate : `${props.startDate} - ${props.endDate || 'Present'}`}
                 </Text>
                 <Text>

@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { ItemProps } from '../../types';
 import { Button } from '../ui/base';
+import { spacing, formInput, formSelect } from '../../utils/styles';
 
 export type SortOption = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'tech-count';
 
@@ -67,7 +68,7 @@ export function UniversalSearch({
     };
 
     return (
-        <div className="mb-6">
+        <div className={spacing({ mb: '6' })}>
             {/* Search and filter controls */}
             <div className="flex flex-col gap-4">
                 {/* Top row: Search input (full width) */}
@@ -76,7 +77,7 @@ export function UniversalSearch({
                     placeholder={getPlaceholderText()}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    className={formInput()}
                 />
 
                 {/* Bottom row: Filters and controls */}
@@ -86,7 +87,7 @@ export function UniversalSearch({
                             aria-label="Filter by technology"
                             value={selectedTech}
                             onChange={(e) => setSelectedTech(e.target.value)}
-                            className="px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white flex-1 min-w-0"
+                            className={formSelect()}
                         >
                             <option value="">All Technologies</option>
                             {allTechnologies.map(tech => (
@@ -100,7 +101,7 @@ export function UniversalSearch({
                             aria-label="Filter by tag"
                             value={selectedTag}
                             onChange={(e) => setSelectedTag(e.target.value)}
-                            className="px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white flex-1 min-w-0"
+                            className={formSelect()}
                         >
                             <option value="">All Tags</option>
                             {allTags.map(tag => (
@@ -113,7 +114,7 @@ export function UniversalSearch({
                         aria-label="Sort items"
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value as SortOption)}
-                        className="px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white flex-1 min-w-0"
+                        className={formSelect()}
                     >
                         {getSortOptions().map(option => (
                             <option key={option.value} value={option.value}>
@@ -123,7 +124,8 @@ export function UniversalSearch({
                     </select>
 
                     <Button
-                        className='px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white border-gray-200 bg-white text-gray-900 dark:hover:bg-gray-900 hover:bg-gray-100 whitespace-nowrap'
+                        variant="secondary"
+                        className={`${spacing({ px: '4', py: '2' })} whitespace-nowrap`}
                         onClick={() => {
                             setSearchTerm('');
                             setSelectedTech('');

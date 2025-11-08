@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, Flex } from './base';
-import { cn } from '../../utils/styles';
+import { cn, overlay, themeClasses } from '../../utils/styles';
 
 interface CarouselProps {
     modelImages: string[];
@@ -38,8 +38,8 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
     return (
         <div className="w-full group">
             <div className={cn(
-                'grid gap-4',
-                creasePattern ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl mx-auto'
+                'gap-4',
+                creasePattern ? 'grid grid-cols-1 md:grid-cols-2' : 'grid grid-cols-1 max-w-2xl mx-auto'
             )}>
                 <div className="relative group">
                     <div className={cn(
@@ -61,7 +61,7 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                             <Button
                                 variant="icon"
                                 onClick={() => changeImage(currentImageIndex === 0 ? modelImages.length - 1 : currentImageIndex - 1)}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800 text-white rounded-r opacity-0 group-hover:opacity-100 transition-all"
+                                className={`absolute left-0 top-1/2 -translate-y-1/2 ${overlay('medium')} text-white rounded-r opacity-0 group-hover:opacity-100 transition-all`}
                                 aria-label="Previous image"
                             >
                                 ←
@@ -69,7 +69,7 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                             <Button
                                 variant="icon"
                                 onClick={() => changeImage(currentImageIndex === modelImages.length - 1 ? 0 : currentImageIndex + 1)}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800 text-white rounded-l opacity-0 group-hover:opacity-100 transition-all"
+                                className={`absolute right-0 top-1/2 -translate-y-1/2 ${overlay('medium')} text-white rounded-l opacity-0 group-hover:opacity-100 transition-all`}
                                 aria-label="Next image"
                             >
                                 →
@@ -82,8 +82,8 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                                         className={cn(
                                             'w-12 h-1 mx-1 rounded-full transition-colors border-none focus:outline-none p-0',
                                             index === currentImageIndex
-                                                ? 'bg-gray-600 dark:bg-gray-300'
-                                                : 'bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500'
+                                                ? themeClasses('bg-gray-600', 'bg-gray-300')
+                                                : themeClasses('bg-gray-300 hover:bg-gray-400', 'bg-gray-600 hover:bg-gray-500')
                                         )}
                                         aria-label={`View image ${index + 1}`}
                                     />

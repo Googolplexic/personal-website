@@ -1,8 +1,9 @@
 import { Heading, Text, Link, Stack } from '../ui/base';
+import { spacing } from '../../utils/styles';
 
 export function About() {
     return (
-        <section id="about" className="mb-12">
+        <section id="about" className={spacing({ mb: '12' })}>
             <Heading level={2}>About Me</Heading>
             <Stack spacing="4">
                 <Text>

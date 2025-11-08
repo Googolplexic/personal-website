@@ -287,9 +287,10 @@ export const patterns = {
         nav: 'text-gray-800 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors',
     },
     button: {
-        base: 'transition-colors no-underline rounded-lg',
-        primary: 'bg-gray-600 hover:bg-gray-700 text-white px-6 py-3',
-        icon: 'p-2 border-none focus:outline-none',
+        base: 'transition-colors no-underline',
+        primary: 'bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white px-6 py-3 rounded-lg',
+        secondary: 'border bg-white text-gray-900 hover:bg-gray-100 active:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-900 dark:active:bg-gray-950 border-gray-200 dark:border-gray-700 rounded-lg',
+        icon: 'p-2 border-none focus:outline-none rounded-lg hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700',
     },
 } as const;
 

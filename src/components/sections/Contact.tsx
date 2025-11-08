@@ -1,6 +1,7 @@
 import { FiMail } from 'react-icons/fi';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { Heading, Card, Flex, Text, Stack } from '../ui/base';
+import { spacing, themeClasses } from '../../utils/styles';
 
 export function Contact() {
     const contacts = [
@@ -31,7 +32,7 @@ export function Contact() {
     ];
 
     return (
-        <section id="contact" className="mb-12">
+        <section id="contact" className={spacing({ mb: '12' })}>
             <Heading level={2}>Contact</Heading>
             <Stack spacing="4">
                 {contacts.map((contact) => (
@@ -44,7 +45,7 @@ export function Contact() {
                     >
                         <Card variant="interactive" padding="md" className="h-full">
                             <Flex align="center" gap="4">
-                                <Text color="secondary" className="text-gray-600 dark:text-gray-200">
+                                <Text color="secondary" className={themeClasses('text-gray-600', 'text-gray-200')}>
                                     {contact.icon}
                                 </Text>
                                 <Flex direction="col" className="text-left">

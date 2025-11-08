@@ -7,6 +7,7 @@ const buttonVariants = createVariants({
     variants: {
         variant: {
             primary: patterns.button.primary,
+            secondary: patterns.button.secondary,
             icon: patterns.button.icon,
         },
     },
@@ -17,7 +18,7 @@ const buttonVariants = createVariants({
 
 export interface ButtonProps {
     children: ReactNode;
-    variant?: 'primary' | 'icon';
+    variant?: 'primary' | 'secondary' | 'icon';
     className?: string;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     type?: 'button' | 'submit' | 'reset';

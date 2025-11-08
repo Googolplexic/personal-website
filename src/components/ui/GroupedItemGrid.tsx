@@ -4,6 +4,7 @@ import { GroupedSearch, SortOption, CategoryFilter } from "../search/GroupedSear
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
 import { Heading, Text } from "./base";
+import { spacing, grid } from "../../utils/styles";
 
 interface GroupedItemGridProps {
     items?: ItemProps[];
@@ -160,7 +161,7 @@ export function GroupedItemGrid({
     };
 
     return (
-        <section className={`mb-12 ${className}`}>
+        <section className={`${spacing({ mb: '12' })} ${className}`}>
             {title && <Heading level={2}>{title}</Heading>}
 
             {!hideControls && (
@@ -185,9 +186,7 @@ export function GroupedItemGrid({
                 />
             )}
 
-            <div className={
-                "grid grid-cols-1 lg:grid-cols-2 gap-6"
-            }>
+            <div className={grid('2', '6')}>
                 {sortedAndFilteredItems.map((item) => {
                     const category = getItemCategory(item);
                     const categoryLabel = getCategoryLabel(category);
@@ -226,7 +225,7 @@ export function GroupedItemGrid({
             </div>
 
             {sortedAndFilteredItems.length === 0 && (
-                <Text color="secondary" className="text-center mt-8">
+                <Text color="secondary" className={`text-center ${spacing({ mt: '8' })}`}>
                     No items found matching your criteria.
                 </Text>
             )}

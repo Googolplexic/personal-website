@@ -4,6 +4,7 @@ import { UniversalSearch, SortOption } from "../search/UniversalSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
 import { Heading, Text } from "./base";
+import { spacing, grid, themeClasses } from "../../utils/styles";
 
 interface ItemGridProps {
     items?: ItemProps[];
@@ -106,8 +107,8 @@ export function ItemGrid({
     }, [items, featuredSlugs, searchTerm, selectedTech, selectedTag, sortBy]);
 
     return (
-        <section className={`mb-12 ${className}`}>
-            {title && <Heading level={2} className="mb-6">{title}</Heading>}
+        <section className={`${spacing({ mb: '12' })} ${className}`}>
+            {title && <Heading level={2} className={spacing({ mb: '6' })}>{title}</Heading>}
 
             {!hideControls && (
                 <UniversalSearch
@@ -126,9 +127,7 @@ export function ItemGrid({
                 />
             )}
 
-            <div className={
-                "grid grid-cols-1 lg:grid-cols-2 gap-8"
-            }>
+            <div className={grid('2', '8')}>
                 {sortedAndFilteredItems.map((item) => {
                     if (item.type === 'project') {
                         return (
@@ -157,7 +156,7 @@ export function ItemGrid({
             </div>
 
             {sortedAndFilteredItems.length === 0 && (
-                <Text className="text-center text-gray-600 dark:text-gray-400 mt-8">
+                <Text className={`text-center ${themeClasses('text-gray-600', 'text-gray-400')} ${spacing({ mt: '8' })}`}>
                     No items found matching your criteria.
                 </Text>
             )}

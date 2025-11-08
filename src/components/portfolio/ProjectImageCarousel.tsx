@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useImagePreloader } from '../../utils/useImagePreloader';
 import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage, getResolvedImages } from '../../utils/lazyImages';
-import { Button } from '../ui/base';
+import { Button, Flex } from '../ui/base';
 import { Heading } from '../ui/base/Heading';
+import { spacing, overlay, themeClasses, cn } from '../../utils/styles';
 
 interface ProjectImageCarouselProps {
     images: string[] | LazyImageCollection;
@@ -68,15 +69,15 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
 
     if (resolvedImages.length === 0) {
         return <div>
-            <Heading level={2} className='text-gray-600 dark:text-gray-500'>No images :(</Heading>
+            <Heading level={2} className={themeClasses('text-gray-600', 'text-gray-500')}>No images :(</Heading>
         </div>;
     }
 
     const currentImage = resolvedImages[currentImageIndex];
 
     return (
-        <div className="relative mb-8 group z-0">
-            <div className="max-w-[80%] h-48 mx-auto mb-4 rounded-lg flex align-middle">
+        <div className={`relative ${spacing({ mb: '8' })} group z-0`}>
+            <Flex justify="center" align="center" className={`max-w-[80%] h-48 mx-auto ${spacing({ mb: '4' })} rounded-lg`}>
                 {currentImage && (
                     <img
                         src={currentImage}
@@ -89,13 +90,13 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                         height="192"
                     />
                 )}
-            </div>
+            </Flex>
             {resolvedImages.length > 1 && (
                 <>
                     <Button
                         variant="icon"
                         onClick={() => changeImage(currentImageIndex === 0 ? resolvedImages.length - 1 : currentImageIndex - 1)}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800 text-white rounded-r opacity-0 group-hover:opacity-100 transition-all"
+                        className={`absolute left-0 top-1/2 -translate-y-1/2 ${overlay('medium')} text-white rounded-r opacity-0 group-hover:opacity-100 transition-all`}
                         aria-label="Previous image"
                     >
                         ←
@@ -103,7 +104,7 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                     <Button
                         variant="icon"
                         onClick={() => changeImage(currentImageIndex === resolvedImages.length - 1 ? 0 : currentImageIndex + 1)}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800 text-white rounded-l opacity-0 group-hover:opacity-100 transition-all"
+                        className={`absolute right-0 top-1/2 -translate-y-1/2 ${overlay('medium')} text-white rounded-l opacity-0 group-hover:opacity-100 transition-all`}
                         aria-label="Next image"
                     >
                         →
@@ -115,10 +116,12 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                                 title={`View image ${index + 1}`}
                                 aria-label={`View image ${index + 1}`}
                                 onClick={() => changeImage(index)}
-                                className={`w-12 h-1 mx-1 rounded-full transition-colors border-none focus:outline-none p-0 ${index === currentImageIndex
-                                    ? 'bg-gray-600 dark:bg-gray-300'
-                                    : 'bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500'
-                                    }`}
+                                className={cn(
+                                    'w-12 h-1 mx-1 rounded-full transition-colors border-none focus:outline-none p-0',
+                                    index === currentImageIndex
+                                        ? themeClasses('bg-gray-600', 'bg-gray-300')
+                                        : themeClasses('bg-gray-300 hover:bg-gray-400', 'bg-gray-600 hover:bg-gray-500')
+                                )}
                             />
                         ))}
                     </div>

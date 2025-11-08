@@ -152,3 +152,96 @@ export function spacing(values: {
 
     return classes.join(' ');
 }
+
+/**
+ * Overlay Utility
+ * Creates semi-transparent overlays for modals, carousels, etc.
+ * 
+ * @example
+ * overlay('medium')
+ * // => 'bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800'
+ */
+export function overlay(opacity: 'light' | 'medium' | 'heavy' = 'medium'): string {
+    const overlays = {
+        light: 'bg-black/30 hover:bg-black/40 dark:hover:bg-gray-700',
+        medium: 'bg-black/50 hover:bg-black/70 dark:hover:bg-gray-800',
+        heavy: 'bg-black/70 hover:bg-black/80 dark:hover:bg-gray-900',
+    };
+    return overlays[opacity];
+}
+
+/**
+ * Container Utility
+ * Creates centered containers with max-width
+ * 
+ * @example
+ * container('md')
+ * // => 'max-w-5xl mx-auto px-4'
+ */
+export function container(size: 'sm' | 'md' | 'lg' | 'xl' | 'full' = 'md'): string {
+    const containers = {
+        sm: 'max-w-3xl mx-auto px-4',
+        md: 'max-w-5xl mx-auto px-4',
+        lg: 'max-w-6xl mx-auto px-4',
+        xl: 'max-w-7xl mx-auto px-4',
+        full: 'w-full px-4',
+    };
+    return containers[size];
+}
+
+/**
+ * Grid Utility
+ * Creates responsive grid layouts
+ * 
+ * @example
+ * grid('2', '8')
+ * // => 'grid grid-cols-1 lg:grid-cols-2 gap-8'
+ */
+export function grid(cols: '1' | '2' | '3' = '2', gap: string = '8'): string {
+    if (cols === '1') return `grid grid-cols-1 gap-${gap}`;
+    if (cols === '3') return `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-${gap}`;
+    return `grid grid-cols-1 lg:grid-cols-2 gap-${gap}`;
+}
+
+/**
+ * Fixed Position Utility
+ * Creates fixed positioning for elements like theme toggles
+ * 
+ * @example
+ * fixedPosition('bottom-right')
+ * // => 'fixed bottom-12 right-12'
+ */
+export function fixedPosition(position: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left' = 'bottom-right'): string {
+    const positions = {
+        'bottom-right': 'fixed bottom-12 right-12',
+        'bottom-left': 'fixed bottom-12 left-12',
+        'top-right': 'fixed top-12 right-12',
+        'top-left': 'fixed top-12 left-12',
+    };
+    return positions[position];
+}
+
+/**
+ * Form Input Utility
+ * Creates consistent form input styling
+ * 
+ * @example
+ * formInput()
+ * // => 'w-full px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white'
+ */
+export function formInput(fullWidth: boolean = true): string {
+    const base = 'px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white';
+    return fullWidth ? `w-full ${base}` : base;
+}
+
+/**
+ * Form Select Utility
+ * Creates consistent form select styling (same as input for consistency)
+ * 
+ * @example
+ * formSelect()
+ * // => 'px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white flex-1 min-w-0'
+ */
+export function formSelect(): string {
+    return 'px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white flex-1 min-w-0';
+}

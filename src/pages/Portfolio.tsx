@@ -4,12 +4,13 @@ import { ProjectDetail } from "./ProjectDetail";
 import { SEO } from "../components/layout/SEO";
 import { ProjectGrid } from "../components/portfolio/ProjectGrid";
 import { Heading, Text, Link } from "../components/ui/base";
+import { spacing } from "../utils/styles";
 
 function PortfolioGrid() {
     return (
         <div className="text-center">
             <Heading level={1}>Portfolio</Heading>
-            <Text className="mb-8">
+            <Text className={spacing({ mb: '8' })}>
                 These project pages are all dynamically generated! See my{' '}
                 <Link href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">
                     personal website
