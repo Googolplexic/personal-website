@@ -51,5 +51,5 @@ This is an Adobe Express add-on that utilizes OpenAI’s function calling capabi
 
 - Adobe doesn’t allow external modules on the client side, preventing an easy way to make OpenAI API calls
 - Functions had to be called through the Node server, which required a different approach as the function calling capabilities could not call these functions directly
-- Hackathons being hackathons
+- Hackathons being hackathons :)
 - Learning new technologies
