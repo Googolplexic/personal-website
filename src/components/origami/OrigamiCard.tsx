@@ -1,6 +1,7 @@
 import { Carousel } from '../ui/Carousel';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
+import { Card, Heading, Text } from '../ui/base';
 
 interface OrigamiCardProps {
     title: string;
@@ -17,29 +18,29 @@ interface OrigamiCardProps {
 
 export function OrigamiCard({ title, description, modelImages, creasePattern, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false }: OrigamiCardProps) {
     return (
-        <div className="border-2 rounded-lg p-6 mb-8 dark:border-gray-700 border-gray-400 transition-all h-full flex flex-col">
+        <Card padding="md" className="mb-8 h-full flex flex-col">
             {showCategory && categoryLabel && categoryColor && (
                 <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-4" />
             )}
             <div className="flex-1 flex flex-col justify-center">
                 <div className="mb-6">
-                    <h3 className="text-2xl font-bold">
+                    <Heading level={3} className="mb-2">
                         <HighlightedText text={title} searchTerm={searchTerm} />
-                    </h3>
+                    </Heading>
                     {designer && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        <Text size="sm" color="secondary" className="mb-2">
                             Designed by <HighlightedText text={designer} searchTerm={searchTerm} />
-                        </p>
+                        </Text>
                     )}
                     {date && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        <Text size="sm" color="secondary" className="mb-2">
                             {date}
-                        </p>
+                        </Text>
                     )}
                     {description && (
-                        <p>
+                        <Text>
                             <HighlightedText text={description} searchTerm={searchTerm} />
-                        </p>
+                        </Text>
                     )}
                 </div>
                 <Carousel
@@ -47,6 +48,6 @@ export function OrigamiCard({ title, description, modelImages, creasePattern, da
                     creasePattern={creasePattern}
                 />
             </div>
-        </div>
+        </Card>
     );
 }

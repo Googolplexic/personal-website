@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { ItemProps } from '../../types';
+import { Button } from '../ui/base';
 
 export type SortOption = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'tech-count';
 export type CategoryFilter = 'all' | 'my-designs' | 'other-designs' | 'software';
@@ -93,7 +94,7 @@ export function GroupedSearch({
             {setShowGrouping && (
                 <div className="mb-4 flex justify-center">
                     <div className="flex border rounded-lg dark:border-gray-600">
-                        <button
+                        <Button
                             onClick={() => setShowGrouping(true)}
                             className={`px-4 py-2 text-sm font-medium transition-colors ${showGrouping
                                 ? 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white'
@@ -101,8 +102,8 @@ export function GroupedSearch({
                                 } rounded-l-lg`}
                         >
                             Grouped View
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => setShowGrouping(false)}
                             className={`px-4 py-2 text-sm font-medium transition-colors ${!showGrouping
                                 ? 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white'
@@ -110,7 +111,7 @@ export function GroupedSearch({
                                 } rounded-r-lg`}
                         >
                             List View
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}
@@ -120,7 +121,7 @@ export function GroupedSearch({
                 <div className="mb-4">
                     <div className="flex flex-wrap gap-2 justify-center">
                         {categoryButtons.map(button => (
-                            <button
+                            <Button
                                 key={button.value}
                                 onClick={() => setCategoryFilter(button.value)}
                                 className={`px-4 py-2 rounded-lg transition-colors ${categoryFilter === button.value
@@ -132,7 +133,7 @@ export function GroupedSearch({
                                 {button.count !== undefined && (
                                     <span className="ml-2 text-sm opacity-75">({button.count})</span>
                                 )}
-                            </button>
+                            </Button>
                         ))}
                     </div>
                 </div>
@@ -192,7 +193,7 @@ export function GroupedSearch({
                         ))}
                     </select>
 
-                    <button
+                    <Button
                         className='px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white border-gray-200 bg-white text-gray-900 dark:hover:bg-gray-900 hover:bg-gray-100 whitespace-nowrap'
                         onClick={() => {
                             setSearchTerm('');
@@ -203,7 +204,7 @@ export function GroupedSearch({
                         }
                         }>
                         Reset
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -1,14 +1,17 @@
 import { useTheme } from '../../useTheme';
+import { Button } from '../ui/base';
 
 export function ThemeToggle() {
     const { darkMode, toggleDarkMode } = useTheme();
 
     return (
-        <button
+        <Button
             onClick={toggleDarkMode}
-            className="fixed bottom-12 right-12 p-2 text-xl rounded-lg dark:bg-gray-300 bg-gray-800"
+            variant="icon"
+            className="fixed bottom-12 right-12 text-xl rounded-lg dark:bg-gray-300 bg-gray-800"
+            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
         >
             {darkMode ? '🌞' : '🌙'}
-        </button>
+        </Button>
     );
 }

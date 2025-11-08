@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiUrl } from '../../config/api';
 import { marked } from 'marked';
+import { Heading } from '../ui/base';
 
 interface EnhancedEditModalProps {
     isOpen: boolean;
@@ -446,9 +447,9 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-6xl h-[90vh] flex flex-col">
                     <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            <Heading level={3}>
                                 Edit {title}
-                            </h3>
+                            </Heading>
                             {activeTab === 'edit' && (
                                 <div className="flex items-center gap-4 mt-2">
                                     <label className="text-sm text-gray-600 dark:text-gray-400">File:</label>
@@ -510,9 +511,9 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                     <div className="grid grid-cols-2 gap-6 h-full">
                                         {/* Editor */}
                                         <div className="flex flex-col h-full">
-                                            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <Heading level={4} className="text-sm mb-2">
                                                 Markdown Editor
-                                            </h4>
+                                            </Heading>
                                             <textarea
                                                 value={content}
                                                 onChange={(e) => setContent(e.target.value)}
@@ -523,9 +524,9 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
                                         {/* Preview */}
                                         <div className="flex flex-col h-full">
-                                            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <Heading level={4} className="text-sm mb-2">
                                                 Preview (without frontmatter)
-                                            </h4>
+                                            </Heading>
                                             <div className="flex-1 p-4 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-900 overflow-y-auto">
                                                 <div className="prose dark:prose-invert max-w-none text-sm markdown-preview text-left">
                                                     {content ? (
@@ -603,9 +604,9 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                 {/* Image Management */}
                                 <div className="mb-6">
                                     <div className="flex items-center gap-4 mb-4">
-                                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <Heading level={4} className="text-sm">
                                             Upload New Images
-                                        </h4>
+                                        </Heading>
                                         <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">
                                             {uploading ? 'Uploading...' : 'Choose Files'}
                                             <input

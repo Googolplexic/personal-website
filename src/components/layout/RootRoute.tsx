@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Home } from '../../pages/Home';
+import { Heading } from '../ui/base/Heading';
 
 const RICK_ROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
@@ -30,7 +31,7 @@ export function RootRoute() {
     if (redirectUrl) {
         return (
             <div className="text-center">
-                <h1 className="text-4xl font-bold mb-4">Loading...</h1>
+                <Heading level={1} className="mb-4">Loading...</Heading>
                 <div className="mt-4 animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent mx-auto"></div>
             </div>
         );

@@ -3,6 +3,7 @@ import { GroupedItemGrid } from '../components/ui/GroupedItemGrid';
 import { myDesigns, otherDesigns } from '../assets/origami';
 import projects from '../assets/projects';
 import { ItemProps } from '../types';
+import { Heading, Text, Link } from '../components/ui/base';
 
 export function Origami() {
     const origamiProjects = ['fold-preview', 'box-pleating', 'origami-fractions'];
@@ -24,22 +25,25 @@ export function Origami() {
                 pathname="/origami"
             />
             <div className="max-w-6xl mx-auto px-4">
-                <h1>Origami</h1>
-                <p>
+                <Heading level={1}>Origami</Heading>
+                <Text>
                     More images are coming soon! In the meantime, please visit{' '}
-                    <a
+                    <Link
                         href="https://www.instagram.com/12googolplex"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-semibold underline hover:text-blue-600 dark:hover:text-blue-300"
                     >
                         @12googolplex
-                    </a>
-                </p>
-                <p className='mb-8'>
+                    </Link>
+                </Text>
+                <Text className='mb-8'>
                     These image albums are all dynamically generated! See my{' '}
-                    <a href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">personal website</a> page for more detail.
-                </p>
+                    <Link href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">
+                        personal website
+                    </Link>
+                    {' '}page for more detail.
+                </Text>
 
                 {/* Unified search with grouping across all origami content */}
                 <div className="max-w-5xl mx-auto">

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ProjectForm } from './ProjectForm';
 import { OrigamiForm } from './OrigamiForm';
 import { ContentList } from './ContentList';
+import { Heading, Text, Button } from '../ui/base';
 
 interface AdminDashboardProps {
     onLogout: () => void;
@@ -26,19 +27,19 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center py-6">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                            <Heading level={1}>
                                 Content Admin
-                            </h1>
-                            <p className="text-gray-600 dark:text-gray-400">
+                            </Heading>
+                            <Text className="text-gray-600 dark:text-gray-400">
                                 Manage your personal website content
-                            </p>
+                            </Text>
                         </div>
-                        <button
+                        <Button
                             onClick={onLogout}
                             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                         >
                             Logout
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </header>
@@ -48,17 +49,17 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex space-x-8">
                         {tabs.map((tab) => (
-                            <button
+                            <Button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
-                                        ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
+                                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
                                     }`}
                             >
                                 <span className="mr-2">{tab.icon}</span>
                                 {tab.label}
-                            </button>
+                            </Button>
                         ))}
                     </div>
                 </div>
@@ -69,12 +70,12 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 <div className="px-4 py-6 sm:px-0">
                     {activeTab === 'overview' && (
                         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                            <Heading level={2} className="mb-4">
                                 Welcome to Admin Panel
-                            </h2>
+                            </Heading>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                                    <h3 className="font-medium text-blue-900 dark:text-blue-100">Quick Actions</h3>
+                                    <Heading level={3} className="font-medium text-blue-900 dark:text-blue-100">Quick Actions</Heading>
                                     <ul className="mt-2 space-y-1 text-sm text-blue-700 dark:text-blue-300">
                                         <li>• Create new project</li>
                                         <li>• Add origami design</li>
@@ -82,7 +83,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
                                     </ul>
                                 </div>
                                 <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                                    <h3 className="font-medium text-green-900 dark:text-green-100">Features</h3>
+                                    <Heading level={3} className="font-medium text-green-900 dark:text-green-100">Features</Heading>
                                     <ul className="mt-2 space-y-1 text-sm text-green-700 dark:text-green-300">
                                         <li>• Auto-generated metadata</li>
                                         <li>• Image optimization</li>
@@ -90,7 +91,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
                                     </ul>
                                 </div>
                                 <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                                    <h3 className="font-medium text-purple-900 dark:text-purple-100">Tips</h3>
+                                    <Heading level={3} className="font-medium text-purple-900 dark:text-purple-100">Tips</Heading>
                                     <ul className="mt-2 space-y-1 text-sm text-purple-700 dark:text-purple-300">
                                         <li>• Use descriptive slugs</li>
                                         <li>• Add alt text to images</li>
@@ -103,27 +104,27 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
                     {activeTab === 'new-project' && (
                         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                            <Heading level={2} className="mb-6">
                                 Create New Project
-                            </h2>
+                            </Heading>
                             <ProjectForm />
                         </div>
                     )}
 
                     {activeTab === 'new-origami' && (
                         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                            <Heading level={2} className="mb-6">
                                 Add New Origami
-                            </h2>
+                            </Heading>
                             <OrigamiForm />
                         </div>
                     )}
 
                     {activeTab === 'manage' && (
                         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                            <Heading level={2} className="mb-6">
                                 Manage Existing Content
-                            </h2>
+                            </Heading>
                             <ContentList />
                         </div>
                     )}

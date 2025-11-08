@@ -1,9 +1,10 @@
 import { FiDownload } from 'react-icons/fi';
+import { Heading } from '../ui/base';
 
 export function ResumeSection() {
     return (
         <section id="resume" className="mb-12">
-            <h2 className="text-2xl font-semibold mb-6 dark:text-white">Resume</h2>
+            <Heading level={2}>Resume</Heading>
             <a
                 href="/resume.pdf"
                 target="_blank"

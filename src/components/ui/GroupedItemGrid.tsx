@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react';
 import { GroupedSearch, SortOption, CategoryFilter } from "../search/GroupedSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
+import { Heading, Text } from "./base";
 
 interface GroupedItemGridProps {
     items?: ItemProps[];
@@ -160,7 +161,7 @@ export function GroupedItemGrid({
 
     return (
         <section className={`mb-12 ${className}`}>
-            {title && <h2 className="text-2xl font-semibold mb-6 dark:text-white">{title}</h2>}
+            {title && <Heading level={2}>{title}</Heading>}
 
             {!hideControls && (
                 <GroupedSearch
@@ -225,9 +226,9 @@ export function GroupedItemGrid({
             </div>
 
             {sortedAndFilteredItems.length === 0 && (
-                <p className="text-center text-gray-600 dark:text-gray-400 mt-8">
+                <Text color="secondary" className="text-center mt-8">
                     No items found matching your criteria.
-                </p>
+                </Text>
             )}
         </section>
     );

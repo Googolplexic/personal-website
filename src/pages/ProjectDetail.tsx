@@ -6,6 +6,7 @@ import { ProjectLinks } from '../components/portfolio/ProjectLinks';
 import { ProjectTechnologies } from '../components/portfolio/ProjectTechnologies';
 import { NotFound } from './NotFound';
 import { HighlightedText } from '../components/ui/HighlightedText';
+import { Heading, Text } from '../components/ui/base';
 import React from 'react';
 
 export function ProjectDetail() {
@@ -69,13 +70,15 @@ export function ProjectDetail() {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12 gap-0">
             <div>
-                <h1><HighlightedText text={project.title} searchTerm={searchTerm} /></h1>
-                <p className="text-gray-600 dark:text-gray-400 mb-2">
+                <Heading level={1}>
+                    <HighlightedText text={project.title} searchTerm={searchTerm} />
+                </Heading>
+                <Text color="secondary" className="mb-2">
                     {project.startDate === project.endDate ? project.startDate : `${project.startDate} - ${project.endDate || 'Present'}`}
-                </p>
+                </Text>
                 <ProjectLinks project={project} className='mb-6' />
                 <ProjectImageCarousel images={project.images || []} title={project.title} />
-                <h2>Technologies Used</h2>
+                <Heading level={2}>Technologies Used</Heading>
                 <ProjectTechnologies technologies={project.technologies} searchTerm={searchTerm} />
             </div>
             <div className="prose dark:prose-invert max-w-none text-left mt-12 lg:mt-0">

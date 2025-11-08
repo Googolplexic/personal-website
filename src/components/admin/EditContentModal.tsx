@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiUrl } from '../../config/api';
+import { Heading } from '../ui/base/Heading';
 
 interface EditContentModalProps {
     isOpen: boolean;
@@ -124,9 +125,9 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
             <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-4xl h-[80vh] flex flex-col">
                 <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-600">
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <Heading level={3}>
                             Edit {title}
-                        </h3>
+                        </Heading>
                         <div className="flex items-center gap-4 mt-2">
                             <label className="text-sm text-gray-600 dark:text-gray-400">File:</label>
                             <select

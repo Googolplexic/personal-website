@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { apiUrl } from '../../config/api';
+import { Heading, Button } from '../ui/base';
 
 interface ProjectFormData {
     title: string;
@@ -155,7 +156,7 @@ export function ProjectForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Basic Info */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">Basic Information</h3>
+                    <Heading level={3}>Basic Information</Heading>
 
                     <div>
                         <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -248,7 +249,7 @@ export function ProjectForm() {
 
                 {/* Additional Info */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">Additional Information</h3>
+                    <Heading level={3}>Additional Information</Heading>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -361,13 +362,13 @@ export function ProjectForm() {
             </div>
 
             <div className="flex justify-end">
-                <button
+                <Button
                     type="submit"
                     disabled={isSubmitting}
                     className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? 'Creating...' : 'Create Project'}
-                </button>
+                </Button>
             </div>
         </form>
     );

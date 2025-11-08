@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { ItemProps } from '../../types';
+import { Button } from '../ui/base';
 
 export type SortOption = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'tech-count';
 
@@ -121,7 +122,7 @@ export function UniversalSearch({
                         ))}
                     </select>
 
-                    <button
+                    <Button
                         className='px-4 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 dark:text-white border-gray-200 bg-white text-gray-900 dark:hover:bg-gray-900 hover:bg-gray-100 whitespace-nowrap'
                         onClick={() => {
                             setSearchTerm('');
@@ -131,7 +132,7 @@ export function UniversalSearch({
                         }
                         }>
                         Reset
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

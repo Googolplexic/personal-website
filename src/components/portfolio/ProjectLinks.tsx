@@ -1,3 +1,5 @@
+import { Link, Flex } from '../ui/base';
+
 interface ProjectLinksProps {
     project: {
         githubUrl: string;
@@ -12,30 +14,32 @@ export function ProjectLinks({ project, className }: ProjectLinksProps) {
     };
 
     return (
-        <div
-            className={`flex gap-8 justify-center ${className}`}
+        <Flex
+            gap="8"
+            justify="center"
+            className={className}
             {...(className && { onClick: handleLinkClick })}
         >
             {project.githubUrl && (
-                <a
+                <Link
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-700 dark:text-blue-300 font-bold"
+                    variant="primary"
                 >
                     GitHub
-                </a>
+                </Link>
             )}
             {project.liveUrl && (
-                <a
+                <Link
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-700 dark:text-blue-300 font-bold"
+                    variant="primary"
                 >
                     View Site
-                </a>
+                </Link>
             )}
-        </div>
+        </Flex>
     );
 }

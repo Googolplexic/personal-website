@@ -5,6 +5,7 @@ import { ProjectLinks } from './ProjectLinks';
 import { ProjectTechnologies } from './ProjectTechnologies';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
+import { Card, Heading, Text } from '../ui/base';
 import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage } from '../../utils/lazyImages';
 
@@ -50,9 +51,11 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
     };
 
     return (
-        <div
+        <Card
             onClick={handleClick}
-            className="cursor-pointer border-2 rounded-lg lg:p-12 p-6 mb-4 dark:border-gray-700 border-gray-400 hover:[box-shadow:0_0_15px_2px_rgba(0,0,0,0.2)] dark:hover:[box-shadow:0_0_15px_2px_rgba(255,255,255,0.2)] transition-all hover:scale-[1.02] h-full flex flex-col"
+            variant="interactive"
+            padding="lg"
+            className="mb-4 h-full flex flex-col"
         >
             {showCategory && categoryLabel && categoryColor && (
                 <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-3" />
@@ -67,18 +70,18 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
                         />
                     </div>
                 )}
-                <h2 className="text-2xl font-bold mb-2">
+                <Heading level={2} className="mb-2">
                     <HighlightedText text={props.title} searchTerm={searchTerm} />
-                </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                </Heading>
+                <Text size="sm" color="secondary" className="mb-2">
                     {props.startDate === props.endDate ? props.startDate : `${props.startDate} - ${props.endDate || 'Present'}`}
-                </p>
-                <p>
+                </Text>
+                <Text>
                     <HighlightedText text={props.summary} searchTerm={searchTerm} />
-                </p>
+                </Text>
                 <ProjectTechnologies technologies={props.technologies} searchTerm={searchTerm} />
                 <ProjectLinks project={props} />
             </div>
-        </div>
+        </Card>
     );
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { EnhancedEditModal } from './EnhancedEditModal';
 import { apiUrl } from '../../config/api';
+import { Heading, Text, Button } from '../ui/base';
 
 interface ContentItem {
     slug: string;
@@ -137,7 +138,7 @@ export function ContentList() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-8">
-                <div className="text-gray-600 dark:text-gray-400">Loading content...</div>
+                <Text className="text-gray-600 dark:text-gray-400">Loading content...</Text>
             </div>
         );
     }
@@ -145,20 +146,20 @@ export function ContentList() {
     if (error) {
         return (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
-                <div className="text-red-700 dark:text-red-300">{error}</div>
-                <button
+                <Text className="text-red-700 dark:text-red-300">{error}</Text>
+                <Button
                     onClick={refetchContent}
                     className="mt-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 underline"
                 >
                     Try again
-                </button>
+                </Button>
             </div>
         );
     }
 
     if (!content) {
         return (
-            <div className="text-gray-600 dark:text-gray-400">No content found</div>
+            <Text className="text-gray-600 dark:text-gray-400">No content found</Text>
         );
     }
 
@@ -180,9 +181,9 @@ export function ContentList() {
             <div className="space-y-8">
                 {/* Projects */}
                 <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <Heading level={3} className="mb-4">
                         Projects ({content.projects?.length || 0})
-                    </h3>
+                    </Heading>
                     {content.projects && content.projects.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {content.projects.map((project) => (
@@ -191,39 +192,39 @@ export function ContentList() {
                                     className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <h4 className="font-medium text-gray-900 dark:text-white">
+                                        <Heading level={4}>
                                             {String(project.title)}
-                                        </h4>
+                                        </Heading>
                                         <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
                                             project
                                         </span>
                                     </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                                         /src/assets/projects/{String(project.slug)}/
-                                    </p>
+                                    </Text>
                                     <div className="mt-3 flex space-x-2">
-                                        <button
+                                        <Button
                                             onClick={() => openEditModal(project.title, project.slug, 'project')}
                                             className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="text-gray-600 dark:text-gray-400 text-center py-8">
+                        <Text className="text-gray-600 dark:text-gray-400 text-center py-8">
                             No projects found
-                        </div>
+                        </Text>
                     )}
                 </div>
 
                 {/* My Designs */}
                 <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <Heading level={3} className="mb-4">
                         My Origami Designs ({content.origami?.myDesigns?.length || 0})
-                    </h3>
+                    </Heading>
                     {content.origami?.myDesigns && content.origami.myDesigns.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {content.origami.myDesigns.map((design) => (
@@ -232,39 +233,39 @@ export function ContentList() {
                                     className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <h4 className="font-medium text-gray-900 dark:text-white">
+                                        <Heading level={4}>
                                             {String(design.title)}
-                                        </h4>
+                                        </Heading>
                                         <span className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
                                             my design
                                         </span>
                                     </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                                         /src/assets/origami/my-designs/{String(design.slug)}/
-                                    </p>
+                                    </Text>
                                     <div className="mt-3 flex space-x-2">
-                                        <button
+                                        <Button
                                             onClick={() => openEditModal(String(design.title), String(design.slug), 'origami', 'my-designs')}
                                             className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="text-gray-600 dark:text-gray-400 text-center py-8">
+                        <Text className="text-gray-600 dark:text-gray-400 text-center py-8">
                             No designs found
-                        </div>
+                        </Text>
                     )}
                 </div>
 
                 {/* Other Designs */}
                 <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <Heading level={3} className="mb-4">
                         Other Origami Designs ({content.origami?.otherDesigns?.length || 0})
-                    </h3>
+                    </Heading>
                     {content.origami?.otherDesigns && content.origami.otherDesigns.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {content.origami.otherDesigns.map((design) => (
@@ -273,39 +274,39 @@ export function ContentList() {
                                     className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <h4 className="font-medium text-gray-900 dark:text-white">
+                                        <Heading level={4}>
                                             {String(design.title)}
-                                        </h4>
+                                        </Heading>
                                         <span className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded">
                                             other design
                                         </span>
                                     </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                                         /src/assets/origami/other-designs/{String(design.slug)}/
-                                    </p>
+                                    </Text>
                                     <div className="mt-3 flex space-x-2">
-                                        <button
+                                        <Button
                                             onClick={() => openEditModal(String(design.title), String(design.slug), 'origami', 'other-designs')}
                                             className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="text-gray-600 dark:text-gray-400 text-center py-8">
+                        <Text className="text-gray-600 dark:text-gray-400 text-center py-8">
                             No other designs found
-                        </div>
+                        </Text>
                     )}
                 </div>
 
                 {/* Summary */}
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    <Heading level={3} className="mb-4">
                         Content Summary
-                    </h3>
+                    </Heading>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                         <div className="bg-blue-100 dark:bg-blue-900/20 p-4 rounded-lg">
                             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">

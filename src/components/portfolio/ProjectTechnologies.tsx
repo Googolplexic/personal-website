@@ -1,4 +1,5 @@
 import { HighlightedText } from '../ui/HighlightedText';
+import { Pill, Flex } from '../ui/base';
 
 interface ProjectTechnologiesProps {
     technologies: string[];
@@ -8,13 +9,13 @@ interface ProjectTechnologiesProps {
 export function ProjectTechnologies({ technologies, searchTerm = '' }: ProjectTechnologiesProps) {
     return (
         <div className="my-4">
-            <div className="flex flex-wrap gap-2 justify-center text-[0.7rem] sm:text-xs md:text-sm">
+            <Flex wrap justify="center" gap="2" className="text-[0.7rem] sm:text-xs md:text-sm">
                 {technologies.map((tech, index) => (
-                    <span key={index} className="bg-gray-200 dark:bg-gray-700 sm:px-2 px-1 sm:py-1 py-0 rounded">
+                    <Pill key={index} className="sm:px-2 px-1 sm:py-1 py-0">
                         <HighlightedText text={tech} searchTerm={searchTerm} />
-                    </span>
+                    </Pill>
                 ))}
-            </div>
+            </Flex>
         </div>
     );
 }

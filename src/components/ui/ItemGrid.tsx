@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react';
 import { UniversalSearch, SortOption } from "../search/UniversalSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
+import { Heading, Text } from "./base";
 
 interface ItemGridProps {
     items?: ItemProps[];
@@ -106,7 +107,7 @@ export function ItemGrid({
 
     return (
         <section className={`mb-12 ${className}`}>
-            {title && <h2 className="text-2xl font-semibold mb-6 dark:text-white">{title}</h2>}
+            {title && <Heading level={2} className="mb-6">{title}</Heading>}
 
             {!hideControls && (
                 <UniversalSearch
@@ -156,9 +157,9 @@ export function ItemGrid({
             </div>
 
             {sortedAndFilteredItems.length === 0 && (
-                <p className="text-center text-gray-600 dark:text-gray-400 mt-8">
+                <Text className="text-center text-gray-600 dark:text-gray-400 mt-8">
                     No items found matching your criteria.
-                </p>
+                </Text>
             )}
         </section>
     );

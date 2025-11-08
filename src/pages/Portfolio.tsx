@@ -3,13 +3,19 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { ProjectDetail } from "./ProjectDetail";
 import { SEO } from "../components/layout/SEO";
 import { ProjectGrid } from "../components/portfolio/ProjectGrid";
-
+import { Heading, Text, Link } from "../components/ui/base";
 
 function PortfolioGrid() {
     return (
         <div className="text-center">
-            <h1>Portfolio</h1>
-            <p className="mb-8">These project pages are all dynamically generated! See my <a href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">personal website</a> page for more detail.</p>
+            <Heading level={1}>Portfolio</Heading>
+            <Text className="mb-8">
+                These project pages are all dynamically generated! See my{' '}
+                <Link href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">
+                    personal website
+                </Link>
+                {' '}page for more detail.
+            </Text>
             <ProjectGrid />
         </div>
     );
@@ -20,7 +26,6 @@ export function Portfolio() {
     const projectSlug = location.pathname.split('/portfolio/')[1];
 
     const currentProject = projectSlug ? projects.find(p => p.slug === projectSlug) : null;
-    console.log(projectSlug, currentProject);
 
     return (
         <>

@@ -1,5 +1,6 @@
 import { FiMail } from 'react-icons/fi';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
+import { Heading, Card, Flex, Text, Stack } from '../ui/base';
 
 export function Contact() {
     const contacts = [
@@ -31,30 +32,34 @@ export function Contact() {
 
     return (
         <section id="contact" className="mb-12">
-            <h2 className="text-2xl font-semibold mb-6 dark:text-white">Contact</h2>
-            <div className="flex flex-col gap-4">
+            <Heading level={2}>Contact</Heading>
+            <Stack spacing="4">
                 {contacts.map((contact) => (
                     <a
                         key={contact.name}
                         href={contact.href}
                         target="_blank"
                         rel="noopener"
-                        className="border-2 rounded-lg px-4 py-2 dark:border-gray-700 border-gray-400 hover:[box-shadow:0_0_15px_2px_rgba(0,0,0,0.2)] dark:hover:[box-shadow:0_0_15px_2px_rgba(255,255,255,0.2)] transition-all hover:scale-[1.02] flex items-center gap-4"
+                        className="no-underline"
                     >
-                        <div className="text-gray-600 dark:text-gray-200">
-                            {contact.icon}
-                        </div>
-                        <div className="flex flex-col text-left">
-                            <span className="font-bold text-gray-900 dark:text-white">
-                                {contact.name}
-                            </span>
-                            <span className="text-gray-600 dark:text-gray-400">
-                                {contact.value}
-                            </span>
-                        </div>
+                        <Card variant="interactive" padding="md" className="h-full">
+                            <Flex align="center" gap="4">
+                                <Text color="secondary" className="text-gray-600 dark:text-gray-200">
+                                    {contact.icon}
+                                </Text>
+                                <Flex direction="col" className="text-left">
+                                    <Text weight="bold">
+                                        {contact.name}
+                                    </Text>
+                                    <Text color="secondary">
+                                        {contact.value}
+                                    </Text>
+                                </Flex>
+                            </Flex>
+                        </Card>
                     </a>
                 ))}
-            </div>
+            </Stack>
         </section>
     );
 }
