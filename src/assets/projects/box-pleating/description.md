@@ -31,7 +31,7 @@ tags:
 
 ## A Python package for creating and validating box-pleated origami patterns
 
-`box-pleating` is a Python package that provides tools for working with box-pleating origami patterns. It includes features for pattern creation, validation, and FOLD format conversion. It was meant to be a basis for an AI origami crease pattern generation project, but we'll see where it goes from here.
+`box-pleating` is a Python package that provides tools for working with box-pleating origami patterns. It includes features for pattern creation, validation, and FOLD format conversion. It was meant to be a basis for an AI origami crease pattern generation project, but we'll see where it goes from here. :)
 
 ### Key Features
 
