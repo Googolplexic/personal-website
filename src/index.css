@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Register --spot-size so it can be animated */
+@property --spot-size {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 320px;
+}
+
 /* ============================================================
    DARK-ONLY GALLERY THEME
    Inspired by real museum spotlights and theatre lighting.
@@ -17,8 +24,8 @@
 
     /* --- Text --- */
     --color-text-primary: #e8e4de;
-    --color-text-secondary: #8a8580;
-    --color-text-tertiary: #6e6862;
+    --color-text-secondary: #c5c0bb;
+    --color-text-tertiary: #a9a29b;
 
     /* --- Borders --- */
     --color-border: rgba(255, 255, 255, 0.10);
@@ -120,18 +127,26 @@
     z-index: 0;
     --spot-x: 50%;
     --spot-y: 50%;
+    --spot-size: 320px;
     background: radial-gradient(
       circle at var(--spot-x) var(--spot-y),
       rgba(255, 248, 230, 0.09) 0%,
-      rgba(255, 248, 230, 0.09) 160px,
-      rgba(255, 248, 230, 0.07) 200px,
-      rgba(255, 248, 230, 0.02) 260px,
-      transparent 320px
+      rgba(255, 248, 230, 0.09) calc(var(--spot-size) * 0.5),
+      rgba(255, 248, 230, 0.07) calc(var(--spot-size) * 0.625),
+      rgba(255, 248, 230, 0.02) calc(var(--spot-size) * 0.8125),
+      transparent var(--spot-size)
     );
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.6s ease, --spot-size 0.6s ease;
   }
-  #global-spotlight.visible { opacity: 1; }
+  #global-spotlight.visible {
+    opacity: 1;
+    --spot-size: 320px;
+  }
+  #global-spotlight.expanding {
+    opacity: 0;
+    --spot-size: 2000px;
+  }
 
   .spotlight-group {
     position: relative;
@@ -148,8 +163,8 @@
 
   /* Dim non-hovered items */
   .spotlight-group:hover .spotlight-item:not(:hover) {
-    opacity: 0.25;
-    filter: brightness(0.5) saturate(0.4);
+    opacity: 0.35;
+    filter: brightness(0.55) saturate(0.5);
   }
 
   /* Illuminate the hovered item */
@@ -163,6 +178,18 @@
     .spotlight-group:hover .spotlight-item:not(:hover) {
       opacity: 1; filter: none;
     }
+  }
+
+  /* --- PAGE ENTER ANIMATION --- */
+  @keyframes page-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .page-enter {
+    animation: page-fade-in 0.35s cubic-bezier(.4,0,.2,1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .page-enter { animation: none; }
   }
 
   /* --- SCROLL REVEAL --- */

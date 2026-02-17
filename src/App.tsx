@@ -10,8 +10,13 @@ import { HelmetProvider } from 'react-helmet-async';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { RootRoute } from './components/layout/RootRoute'
 import { Footer } from './components/layout/Footer'
+import { PageTransition } from './components/layout/PageTransition'
+import { BackToTop } from './components/ui/BackToTop'
+import { useSmoothScroll } from './utils/useSmoothScroll'
 
 function AppContent() {
+    useSmoothScroll();
+
     return (
         <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-500 md:text-base text-sm"
             style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
@@ -19,15 +24,18 @@ function AppContent() {
             <div id="global-spotlight" />
             <Navbar />
             <main>
-                <Routes>
-                    <Route path="/" element={<RootRoute />} />
-                    <Route path="/portfolio/*" element={<Portfolio />} />
-                    <Route path="/origami" element={<Origami />} />
-                    <Route path="/admin" element={<AdminPage />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
+                <PageTransition>
+                    <Routes>
+                        <Route path="/" element={<RootRoute />} />
+                        <Route path="/portfolio/*" element={<Portfolio />} />
+                        <Route path="/origami" element={<Origami />} />
+                        <Route path="/admin" element={<AdminPage />} />
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </PageTransition>
             </main>
             <Footer />
+            <BackToTop />
             <Analytics />
             <SpeedInsights />
         </div>

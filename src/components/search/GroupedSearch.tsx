@@ -86,7 +86,7 @@ export function GroupedSearch({
         'px-3 py-1 text-xs font-body tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer bg-transparent',
         active
             ? 'opacity-100 border-b border-b-[var(--color-accent)] border-t-0 border-x-0'
-            : 'opacity-40 hover:opacity-70 border-b border-b-transparent border-t-0 border-x-0'
+            : 'opacity-60 hover:opacity-85 border-b border-b-transparent border-t-0 border-x-0'
     );
 
     const categoryButtons = [

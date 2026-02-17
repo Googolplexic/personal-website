@@ -44,12 +44,25 @@ export function useSpotlight() {
     const onMouseEnter = useCallback(() => {
         if (!isHoverDevice()) return;
         const overlay = document.getElementById('global-spotlight');
-        if (overlay) overlay.classList.add('visible');
+        if (overlay) {
+            overlay.classList.remove('expanding');
+            overlay.classList.add('visible');
+        }
     }, []);
 
     const onMouseLeave = useCallback(() => {
         const overlay = document.getElementById('global-spotlight');
-        if (overlay) overlay.classList.remove('visible');
+        if (overlay) {
+            // Expand spotlight outward while fading
+            overlay.classList.remove('visible');
+            overlay.classList.add('expanding');
+            // Clean up expanding class after transition
+            const cleanup = () => {
+                overlay.classList.remove('expanding');
+                overlay.removeEventListener('transitionend', cleanup);
+            };
+            overlay.addEventListener('transitionend', cleanup);
+        }
     }, []);
 
     return { ref, onMouseMove, onMouseEnter, onMouseLeave };

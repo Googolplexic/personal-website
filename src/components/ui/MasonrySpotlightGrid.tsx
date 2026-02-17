@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useSpotlight } from '../../utils/useSpotlight';
 import { useScrollProximity } from '../../utils/useScrollProximity';
+import { useStaggeredEntrance } from '../../utils/useStaggeredEntrance';
 
 interface MasonrySpotlightGridProps {
     children: ReactNode;
@@ -16,6 +17,7 @@ interface MasonrySpotlightGridProps {
 export function MasonrySpotlightGrid({ children, className = '' }: MasonrySpotlightGridProps) {
     const { ref, onMouseMove, onMouseEnter, onMouseLeave } = useSpotlight();
     useScrollProximity(ref);
+    useStaggeredEntrance(ref);
 
     return (
         <div
