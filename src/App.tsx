@@ -9,10 +9,11 @@ import { Analytics } from '@vercel/analytics/react';
 import { HelmetProvider } from 'react-helmet-async';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { RootRoute } from './components/layout/RootRoute'
+import { Footer } from './components/layout/Footer'
 
 function AppContent() {
     return (
-        <div className="min-h-screen w-full transition-colors duration-500 md:text-base text-sm"
+        <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-500 md:text-base text-sm"
             style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
             {/* Global spotlight overlay — at root level so no ancestor transform can clip it */}
             <div id="global-spotlight" />
@@ -26,6 +27,7 @@ function AppContent() {
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
+            <Footer />
             <Analytics />
             <SpeedInsights />
         </div>

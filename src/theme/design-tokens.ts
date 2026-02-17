@@ -60,7 +60,7 @@ export const spacing = {
 export const typography = {
     family: {
         heading: "font-heading",  // 'EB Garamond', Georgia, serif
-        body: "font-body",        // 'Inter', system-ui, sans-serif
+        body: "font-body",        // 'PT Sans', system-ui, sans-serif
     },
     size: {
         xs: 'text-xs',

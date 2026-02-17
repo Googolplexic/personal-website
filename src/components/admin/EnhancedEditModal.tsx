@@ -559,7 +559,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                         color: var(--color-text-primary); 
                                                         padding: 0.125rem 0.25rem; 
                                                         border-radius: 0.25rem; 
-                                                        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; 
+                                                        font-family: 'Monaco', 'Menlo', 'PT Sans Mono', monospace; 
                                                         font-size: 0.875em;
                                                     }
                                                     .markdown-preview pre { 

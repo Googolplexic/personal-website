@@ -119,7 +119,7 @@ export function GroupedSearch({
             )}
 
             {/* Category filter buttons */}
-            {showGrouping && (
+            {setShowGrouping && (
                 <div className="mb-4">
                     <div className="flex flex-wrap gap-2 justify-center">
                         {categoryButtons.map(button => (

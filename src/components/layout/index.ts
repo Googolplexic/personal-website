@@ -1,3 +1,4 @@
+export { Footer } from './Footer';
 export { Navbar } from './Navbar';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';

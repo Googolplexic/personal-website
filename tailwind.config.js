@@ -12,7 +12,7 @@ export default {
     extend: {
       fontFamily: {
         heading: ['EB Garamond', 'Garamond', 'Georgia', 'serif'],
-        body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        body: ['PT Sans', 'system-ui', '-apple-system', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 1s ease-out forwards',

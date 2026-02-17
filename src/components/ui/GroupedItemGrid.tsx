@@ -38,6 +38,16 @@ export function GroupedItemGrid({
     const [sortBy, setSortBy] = useState<SortOption>('date-desc');
     const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
     const [showGrouping, setShowGrouping] = useState(initialShowGrouping);
+    const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+
+    const toggleGroup = (key: string) => {
+        setCollapsedGroups(prev => {
+            const next = new Set(prev);
+            if (next.has(key)) next.delete(key);
+            else next.add(key);
+            return next;
+        });
+    };
 
     const { allTechnologies, allTags } = useMemo(() => {
         const techSet = new Set<string>();
@@ -69,7 +79,7 @@ export function GroupedItemGrid({
         }
     };
 
-    const getCategoryColor = (category: string): string => {
+    const getCategoryClass = (category: string): string => {
         switch (category) {
             case 'my-designs': return 'gallery-cat-green';
             case 'other-designs': return 'gallery-cat-blue';
@@ -159,6 +169,61 @@ export function GroupedItemGrid({
         software: software.length
     };
 
+    const renderCard = (item: ItemProps, showCategoryBadge: boolean) => {
+        const category = getItemCategory(item);
+        const categoryLabel = getCategoryLabel(category);
+        const categoryCls = getCategoryClass(category);
+
+        if (item.type === 'project') {
+            return (
+                <ProjectCard
+                    key={item.slug}
+                    {...(item as ProjectProps)}
+                    searchTerm={searchTerm}
+                    categoryLabel={categoryLabel}
+                    categoryColor={categoryCls}
+                    showCategory={showCategoryBadge}
+                />
+            );
+        } else {
+            const origami = item as OrigamiProps;
+            return (
+                <OrigamiCard
+                    key={item.slug}
+                    title={origami.title}
+                    description={origami.description}
+                    modelImages={origami.modelImages}
+                    creasePattern={origami.creasePattern}
+                    date={origami.date}
+                    designer={origami.designer}
+                    searchTerm={searchTerm}
+                    categoryLabel={categoryLabel}
+                    categoryColor={categoryCls}
+                    showCategory={showCategoryBadge}
+                />
+            );
+        }
+    };
+
+    // Group items by category for grouped view
+    const groupedItems = useMemo(() => {
+        const groups: { key: string; label: string; items: ItemProps[] }[] = [];
+        const categoryOrder = ['my-designs', 'other-designs', 'software'];
+
+        for (const cat of categoryOrder) {
+            const catItems = sortedAndFilteredItems.filter(item => getItemCategory(item) === cat);
+            if (catItems.length > 0) {
+                groups.push({
+                    key: cat,
+                    label: getCategoryLabel(cat),
+                    items: catItems,
+                });
+            }
+        }
+
+        return groups;
+    }, [sortedAndFilteredItems]);
+
     return (
         <section className={`mb-12 ${className}`}>
             {title && <h2 className="gallery-heading text-2xl md:text-3xl mb-4" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>}
@@ -185,48 +250,68 @@ export function GroupedItemGrid({
                 />
             )}
 
-            <MasonrySpotlightGrid>
-                {sortedAndFilteredItems.map((item) => {
-                    const category = getItemCategory(item);
-                    const categoryLabel = getCategoryLabel(category);
-                    const categoryColor = getCategoryColor(category);
+            {showGrouping ? (
+                /* Grouped view: separate sections per category */
+                groupedItems.length > 0 ? (
+                    <div className="space-y-10">
+                        {groupedItems.map(group => {
+                            const isCollapsed = collapsedGroups.has(group.key);
+                            return (
+                                <div key={group.key}>
+                                    <button
+                                        onClick={() => toggleGroup(group.key)}
+                                        className="flex items-center gap-3 mb-5 w-full text-left cursor-pointer bg-transparent border-none p-0 group"
+                                    >
+                                        <h3
+                                            className="text-sm font-body tracking-[0.15em] uppercase transition-colors"
+                                            style={{ color: 'var(--color-text-secondary)' }}
+                                        >
+                                            {group.label}s
+                                            <span className="ml-2 opacity-50">({group.items.length})</span>
+                                        </h3>
+                                        <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border)' }} />
+                                        <svg
+                                            width="14" height="14" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                                            className={`transition-transform duration-300 ${isCollapsed ? '-rotate-90' : ''}`}
+                                            style={{ color: 'var(--color-text-tertiary)' }}
+                                        >
+                                            <path d="M6 9l6 6 6-6" />
+                                        </svg>
+                                    </button>
+                                    <div
+                                        className={`grid transition-[grid-template-rows] duration-500 ease-in-out ${
+                                            isCollapsed ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'
+                                        }`}
+                                    >
+                                        <div className="overflow-hidden">
+                                            <MasonrySpotlightGrid>
+                                                {group.items.map(item => renderCard(item, false))}
+                                            </MasonrySpotlightGrid>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <p className="text-center mt-8 font-body" style={{ color: 'var(--color-text-secondary)' }}>
+                        No items found matching your criteria.
+                    </p>
+                )
+            ) : (
+                /* List view: flat masonry with category badges */
+                <>
+                    <MasonrySpotlightGrid>
+                        {sortedAndFilteredItems.map(item => renderCard(item, true))}
+                    </MasonrySpotlightGrid>
 
-                    if (item.type === 'project') {
-                        return (
-                            <ProjectCard
-                                key={item.slug}
-                                {...(item as ProjectProps)}
-                                searchTerm={searchTerm}
-                                categoryLabel={categoryLabel}
-                                categoryColor={categoryColor}
-                                showCategory={showGrouping}
-                            />
-                        );
-                    } else {
-                        const origami = item as OrigamiProps;
-                        return (
-                            <OrigamiCard
-                                key={item.slug}
-                                title={origami.title}
-                                description={origami.description}
-                                modelImages={origami.modelImages}
-                                creasePattern={origami.creasePattern}
-                                date={origami.date}
-                                designer={origami.designer}
-                                searchTerm={searchTerm}
-                                categoryLabel={categoryLabel}
-                                categoryColor={categoryColor}
-                                showCategory={showGrouping}
-                            />
-                        );
-                    }
-                })}
-            </MasonrySpotlightGrid>
-
-            {sortedAndFilteredItems.length === 0 && (
-                <p className="text-center mt-8 font-body" style={{ color: 'var(--color-text-secondary)' }}>
-                    No items found matching your criteria.
-                </p>
+                    {sortedAndFilteredItems.length === 0 && (
+                        <p className="text-center mt-8 font-body" style={{ color: 'var(--color-text-secondary)' }}>
+                            No items found matching your criteria.
+                        </p>
+                    )}
+                </>
             )}
         </section>
     );

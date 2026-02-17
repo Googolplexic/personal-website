@@ -17,7 +17,7 @@ export function ProjectDetail() {
         return <NotFound />;
     }
 
-    const exhibitNumber = String(projects.indexOf(project) + 1).padStart(2, '0');
+    const exhibitNumber = String(projects.length - projects.indexOf(project)).padStart(2, '0');
     const currentIndex = projects.indexOf(project);
     const nextProject = projects[(currentIndex + 1) % projects.length];
 
@@ -184,13 +184,6 @@ export function ProjectDetail() {
                     </div>
                 )}
             </div>
-
-            <footer className="py-12 text-center">
-                <p className="text-xs tracking-[0.2em] uppercase font-body"
-                   style={{ color: 'var(--color-text-tertiary)' }}>
-                    © {new Date().getFullYear()} Coleman Lai
-                </p>
-            </footer>
         </div>
     );
 }
