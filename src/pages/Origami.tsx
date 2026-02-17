@@ -49,7 +49,6 @@ export function Origami() {
 
                 <GroupedItemGrid
                     items={allItems}
-                    title="Browse All Origami & Software"
                     itemType="mixed"
                     showGrouping={true}
                     allowGroupingToggle={true}
