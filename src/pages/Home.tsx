@@ -5,7 +5,7 @@ import { ResumeSection } from '../components/sections/ResumeSection';
 import { ProjectGrid } from '../components/portfolio/ProjectGrid';
 import { Link } from '../components/ui/base';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 function ScrollSection({ children, className = '' }: { children: React.ReactNode; className?: string }) {
     const { ref, className: revealClass } = useScrollRevealClass({ threshold: 0.08 });
@@ -19,45 +19,79 @@ function ScrollSection({ children, className = '' }: { children: React.ReactNode
 export function Home() {
     const featuredSlugs = ['hermes', 'personal-website', 'be-square', 'origami-fractions'];
     const nameRef = useRef<HTMLHeadingElement>(null);
+    const heroRef = useRef<HTMLElement>(null);
+
+    // Reset hero text illumination and hide hero spotlight when hero scrolls out of view
+    useEffect(() => {
+        const el = heroRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting) {
+                    const name = nameRef.current;
+                    if (name) {
+                        name.style.backgroundImage = 'none';
+                        name.style.color = '#e8e4de';
+                        name.style.webkitTextFillColor = 'unset';
+                        name.style.filter = 'none';
+                    }
+                    const spotlight = el.querySelector('.hero-spotlight');
+                    if (spotlight) spotlight.classList.remove('visible');
+                }
+            },
+            { threshold: 0 }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
 
     const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
         const section = e.currentTarget;
         const spotlight = section.querySelector('.hero-spotlight') as HTMLElement;
         if (!spotlight) return;
+        // Show the spotlight on first mouse movement
+        if (!spotlight.classList.contains('visible')) spotlight.classList.add('visible');
         const rect = section.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;
         const y = ((e.clientY - rect.top) / rect.height) * 100;
         spotlight.style.setProperty('--hero-x', `${x}%`);
         spotlight.style.setProperty('--hero-y', `${y}%`);
 
-        // Text illumination — bright gradient spot follows mouse across name
+        // Text illumination — direction-sensitive glow with eased falloff
         const name = nameRef.current;
         if (name) {
             const nameRect = name.getBoundingClientRect();
             // Horizontal position relative to name for the gradient sweep
             const relX = ((e.clientX - nameRect.left) / nameRect.width) * 100;
-            // Vertical proximity for intensity
+            // Distance from name center (both axes)
+            const cx = nameRect.left + nameRect.width / 2;
             const cy = nameRect.top + nameRect.height / 2;
-            const vertDist = Math.abs(e.clientY - cy);
-            const maxVert = 250;
-            const intensity = Math.max(0, 1 - vertDist / maxVert);
+            const dx = (e.clientX - cx) / (nameRect.width * 1.5);
+            const dy = (e.clientY - cy) / 300;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            // Cubic ease-out for smooth falloff
+            const raw = Math.max(0, 1 - dist);
+            const intensity = raw * raw * (3 - 2 * raw); // smoothstep
 
-            if (intensity > 0) {
-                // Gradient text illumination — bright warm spot sweeps across letters
-                const bright = `rgba(255, 255, 248, ${Math.min(1, 0.6 + intensity * 0.4)})`;
+            // Gradient spread narrows as mouse gets closer (tighter beam when near)
+            const spread = 15 + 20 * (1 - intensity);
+
+            if (intensity > 0.01) {
+                const bright = `rgba(255, 255, 255, ${Math.min(1, 0.7 + intensity * 0.3)})`;
                 const base = '#e8e4de';
-                name.style.backgroundImage = `linear-gradient(90deg, ${base} ${relX - 20}%, ${bright} ${relX}%, ${base} ${relX + 20}%)`;
+                name.style.backgroundImage = `linear-gradient(90deg, ${base} ${relX - spread}%, ${bright} ${relX}%, ${base} ${relX + spread}%)`;
                 name.style.webkitBackgroundClip = 'text';
                 name.style.backgroundClip = 'text';
                 name.style.color = 'transparent';
                 name.style.webkitTextFillColor = 'transparent';
-                // Warm glow behind
-                name.style.filter = `drop-shadow(0 0 ${20 * intensity}px rgba(255, 248, 230, ${0.5 * intensity}))`;
+                name.style.filter = `drop-shadow(0 0 ${40 * intensity}px rgba(255, 248, 230, ${0.85 * intensity})) drop-shadow(0 0 ${14 * intensity}px rgba(255, 255, 248, ${0.5 * intensity}))`;
+                name.style.transition = 'filter 0.3s ease-out';
             } else {
                 name.style.backgroundImage = 'none';
                 name.style.color = '#e8e4de';
                 name.style.webkitTextFillColor = 'unset';
                 name.style.filter = 'none';
+                name.style.transition = 'filter 0.5s ease-out';
             }
         }
     }, []);
@@ -72,8 +106,20 @@ export function Home() {
 
             {/* ===== HERO ===== */}
             <section
+                ref={heroRef}
                 className="min-h-screen flex flex-col items-center justify-center relative px-6"
                 onMouseMove={handleHeroMouseMove}
+                onMouseLeave={() => {
+                    const spotlight = heroRef.current?.querySelector('.hero-spotlight');
+                    if (spotlight) spotlight.classList.remove('visible');
+                    const name = nameRef.current;
+                    if (name) {
+                        name.style.backgroundImage = 'none';
+                        name.style.color = '#e8e4de';
+                        name.style.webkitTextFillColor = 'unset';
+                        name.style.filter = 'none';
+                    }
+                }}
             >
                 {/* Spotlight cone from above */}
                 <div className="hero-spotlight" />
@@ -115,7 +161,7 @@ export function Home() {
 
             {/* ===== ABOUT ===== */}
             <ScrollSection className="py-24 md:py-36">
-                <div id="about" className="max-w-2xl mx-auto px-6 text-center">
+                <div id="about" className="max-w-2xl mx-auto px-6 text-center scroll-mt-32">
                     <About />
                 </div>
             </ScrollSection>

@@ -146,22 +146,6 @@
     z-index: 1;
   }
 
-  /* Per-item glow when hovered — subtle surface warmth */
-  .spotlight-item::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    background: radial-gradient(
-      ellipse at 50% 30%,
-      rgba(255, 248, 230, 0.035) 0%,
-      transparent 70%
-    );
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-    z-index: 0;
-  }
-
   /* Dim non-hovered items */
   .spotlight-group:hover .spotlight-item:not(:hover) {
     opacity: 0.25;
@@ -173,15 +157,12 @@
     opacity: 1;
     filter: brightness(1.05);
   }
-  .spotlight-group:hover .spotlight-item:hover::after { opacity: 1; }
 
   /* Touch devices: disable spotlight dimming */
   @media (hover: none) {
     .spotlight-group:hover .spotlight-item:not(:hover) {
       opacity: 1; filter: none;
     }
-    .spotlight-group:hover .spotlight-item:hover::before,
-    .spotlight-group:hover .spotlight-item:hover::after { opacity: 0; }
   }
 
   /* --- SCROLL REVEAL --- */
@@ -283,6 +264,11 @@
     pointer-events: none;
     --hero-x: 50%;
     --hero-y: 50%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .hero-spotlight.visible {
+    opacity: 1;
   }
   .hero-spotlight::before {
     content: '';
