@@ -72,8 +72,8 @@ export function GroupedItemGrid({
 
     const getCategoryLabel = (category: string): string => {
         switch (category) {
-            case 'my-designs': return 'My Design';
-            case 'other-designs': return 'Other Design';
+            case 'my-designs': return 'My Designs';
+            case 'other-designs': return 'Other Designs';
             case 'software': return 'Software';
             default: return '';
         }
@@ -266,7 +266,7 @@ export function GroupedItemGrid({
                                             className="text-sm font-body tracking-[0.15em] uppercase transition-colors"
                                             style={{ color: 'var(--color-text-secondary)' }}
                                         >
-                                            {group.label}s
+                                            {group.label}
                                             <span className="ml-2 opacity-50">({group.items.length})</span>
                                         </h3>
                                         <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border)' }} />
