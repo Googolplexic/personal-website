@@ -134,7 +134,7 @@ export function Home() {
 
                     <p className="text-lg sm:text-xl md:text-2xl font-heading italic tracking-wide mb-6 animate-fade-in opacity-0"
                        style={{ color: 'var(--color-text-secondary)', animationDelay: '0.35s' }}>
-                        Showcasing a gallery of code and paper.
+                        A gallery of code and paper.
                     </p>
 
                     <div className="gallery-divider mb-6 animate-fade-in opacity-0" style={{ animationDelay: '0.5s' }} />
@@ -142,7 +142,7 @@ export function Home() {
                     <p className="text-xs tracking-[0.2em] uppercase font-body animate-fade-in opacity-0"
                        style={{ color: 'var(--color-text-tertiary)', animationDelay: '0.6s' }}>
                         Computing Science &nbsp;·&nbsp; Origami Artist
-                        <Link to="/admin" className="!no-underline cursor-default" style={{ color: 'inherit', opacity: 1 }}>.</Link>
+                        <Link to="/admin" className="!no-underline cursor-default" style={{ color: 'inherit', opacity: 1 }}>{'\u200B'}</Link>
                     </p>
                 </div>
 
@@ -186,7 +186,7 @@ export function Home() {
             <ScrollSection className="py-20 md:py-32">
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="text-center mb-14">
-                        <p className="gallery-overline mb-4">The Collection</p>
+                        <p className="gallery-overline mb-4">The Gallery</p>
                         <h2 className="gallery-heading text-3xl md:text-4xl mb-2"
                             style={{ color: 'var(--color-text-primary)' }}>
                             Featured Projects

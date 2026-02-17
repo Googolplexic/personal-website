@@ -24,7 +24,7 @@ export function Origami() {
             />
             <div className="max-w-6xl mx-auto px-6 pt-32 pb-20">
                 <div className="text-center mb-14">
-                    <p className="gallery-overline mb-4">The Collection</p>
+                    <p className="gallery-overline mb-4">The Gallery</p>
                     <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4"
                         style={{ color: 'var(--color-text-primary)' }}>
                         Origami
