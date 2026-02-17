@@ -46,6 +46,7 @@ export function Home() {
     }, []);
 
     const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
+        if (!window.matchMedia('(hover: hover)').matches) return;
         const section = e.currentTarget;
         const spotlight = section.querySelector('.hero-spotlight') as HTMLElement;
         if (!spotlight) return;

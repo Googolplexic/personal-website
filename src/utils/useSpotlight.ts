@@ -31,7 +31,10 @@ export function useSpotlight() {
         };
     }, []);
 
+    const isHoverDevice = () => window.matchMedia('(hover: hover)').matches;
+
     const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isHoverDevice()) return;
         const overlay = document.getElementById('global-spotlight');
         if (!overlay) return;
         overlay.style.setProperty('--spot-x', `${e.clientX}px`);
@@ -39,6 +42,7 @@ export function useSpotlight() {
     }, []);
 
     const onMouseEnter = useCallback(() => {
+        if (!isHoverDevice()) return;
         const overlay = document.getElementById('global-spotlight');
         if (overlay) overlay.classList.add('visible');
     }, []);

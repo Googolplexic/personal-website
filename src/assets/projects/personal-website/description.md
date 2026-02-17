@@ -6,7 +6,7 @@ keywords:
 - personal portfolio
 - software developer portfolio
 - React TypeScript website
-- dark mode portfolio
+- dark gallery theme
 - origami artist
 - Coleman Lai
 - web development
@@ -30,8 +30,7 @@ tags:
 
 This website serves as my personal portfolio and was built using TypeScript and React. The site is hosted on Vercel (and my domain *colemanlai.com*). Some key features I was focussing on:
 
-- Dark mode support using Tailwind CSS
-  - Easy access button to switch between modes
+- Dark gallery theme using Tailwind CSS
 - Responsive design that works well on both mobile and desktop
 - Project portfolio showcase
   - Project listing with filtering and search capabilities
@@ -57,7 +56,7 @@ This website serves as my personal portfolio and was built using TypeScript and 
 - **Dynamically generated origami gallery**
   - Automatic album generation from image collections
     - Just plug in images + metadata and it will be added to the gallery automatically
-  - Separate sections for original designs and folded models
+  - Grouped and list views for browsing by category
   - Allow for crease patterns to be displayed separately
     - This is done automatically by checking for a `pattern` ending in the image filename
   - Integration with portfolio for origami-related software projects
@@ -68,7 +67,7 @@ The project uses several modern web technologies and practices:
 
 - **TypeScript** for type-safe development
 - **React** with functional components and hooks
-- **Tailwind CSS** for styling and dark mode implementation
+- **Tailwind CSS** for styling and theming
 - **React Router** for client-side navigation
 - **React Markdown** for rendering project descriptions without the hassle of HTML
 - **React Helmet** for managing SEO metadata
@@ -81,4 +80,4 @@ The project uses several modern web technologies and practices:
 
 - Building the origami gallery
   - Maybe a FOLD visualization for crease patterns instead of just displaying the image
-- Currently this looks a bit simple. In the future, I want to make this look unique and themed. However, this is a low priority for now as the main focus is on functionality and content.
+

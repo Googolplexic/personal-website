@@ -18,11 +18,12 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
 
         const update = () => {
             const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
-            const viewportCenter = window.innerHeight / 2;
+            // Offset center slightly downward to account for navbar
+            const viewportCenter = window.innerHeight * 0.53;
             // Cards within this range of the center are fully bright
-            const fullBrightRange = window.innerHeight * 0.15;
+            const fullBrightRange = window.innerHeight * 0.22;
             // Cards beyond this range are at minimum brightness
-            const fadeRange = window.innerHeight * 0.55;
+            const fadeRange = window.innerHeight * 0.65;
 
             items.forEach(item => {
                 const rect = item.getBoundingClientRect();
@@ -40,9 +41,9 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
                     t = raw * raw * (3 - 2 * raw);
                 }
 
-                // Map t to opacity range [0.45, 1] and brightness [0.6, 1.0]
-                const opacity = 0.45 + t * 0.55;
-                const brightness = 0.6 + t * 0.4;
+                // Map t to opacity range [0.3, 1] and brightness [0.35, 1.0]
+                const opacity = 0.2 + t * 0.8;
+                const brightness = 0.35 + t * 0.65;
 
                 item.style.opacity = String(opacity);
                 item.style.filter = `brightness(${brightness})`;
