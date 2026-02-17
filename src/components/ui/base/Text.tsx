@@ -1,45 +1,38 @@
 import { ReactNode } from 'react';
-import { cn, createVariants } from '../../../utils/styles';
-import { typography } from '../../../theme/design-tokens';
+import { cn } from '../../../utils/styles';
 
-const textVariants = createVariants({
-    base: '',
-    variants: {
-        size: {
-            xs: typography.size.xs,
-            sm: typography.size.sm,
-            base: typography.size.base,
-            lg: typography.size.lg,
-            xl: typography.size.xl,
-            '2xl': typography.size['2xl'],
-            '3xl': typography.size['3xl'],
-            '4xl': typography.size['4xl'],
-        },
-        weight: {
-            normal: typography.weight.normal,
-            medium: typography.weight.medium,
-            semibold: typography.weight.semibold,
-            bold: typography.weight.bold,
-        },
-        color: {
-            primary: 'text-gray-900 dark:text-white',
-            secondary: 'text-gray-600 dark:text-gray-400',
-            tertiary: 'text-gray-800 dark:text-gray-300',
-            inverse: 'text-white dark:text-gray-900',
-        },
-    },
-    defaultVariants: {
-        size: 'base',
-        weight: 'normal',
-        color: 'primary',
-    },
-});
+const sizeMap: Record<string, string> = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    base: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl',
+    '3xl': 'text-3xl',
+    '4xl': 'text-4xl',
+    '5xl': 'text-5xl',
+};
+
+const weightMap: Record<string, string> = {
+    light: 'font-light',
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold',
+};
+
+const colorVarMap: Record<string, string> = {
+    primary: 'var(--color-text-primary)',
+    secondary: 'var(--color-text-secondary)',
+    tertiary: 'var(--color-text-tertiary)',
+    inverse: 'var(--color-bg-primary)',
+};
 
 export interface TextProps {
     children: ReactNode;
     as?: 'p' | 'span' | 'div' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-    size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
-    weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+    size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
+    weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
     color?: 'primary' | 'secondary' | 'tertiary' | 'inverse';
     className?: string;
 }
@@ -51,18 +44,20 @@ export interface TextProps {
 export function Text({
     children,
     as: Component = 'p',
-    size,
-    weight,
-    color,
+    size = 'base',
+    weight = 'normal',
+    color = 'primary',
     className,
     ...props
 }: TextProps) {
     return (
         <Component
             className={cn(
-                textVariants({ size, weight, color }),
+                sizeMap[size],
+                weightMap[weight],
                 className
             )}
+            style={{ color: colorVarMap[color] }}
             {...props}
         >
             {children}

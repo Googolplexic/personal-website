@@ -1,25 +1,16 @@
 import { ReactNode } from 'react';
-import { cn, createVariants } from '../../../utils/styles';
-import { patterns } from '../../../theme/design-tokens';
+import { cn } from '../../../utils/styles';
 
-const cardVariants = createVariants({
-    base: patterns.card.base,
-    variants: {
-        variant: {
-            default: '',
-            interactive: patterns.card.interactive,
-        },
-        padding: {
-            sm: patterns.card.padding.sm,
-            md: patterns.card.padding.md,
-            lg: patterns.card.padding.lg,
-        },
-    },
-    defaultVariants: {
-        variant: 'default',
-        padding: 'md',
-    },
-});
+const variantStyles: Record<string, string> = {
+    default: '',
+    interactive: 'spotlight-item cursor-pointer',
+};
+
+const paddingStyles: Record<string, string> = {
+    sm: 'p-4',
+    md: 'p-6',
+    lg: 'lg:p-10 p-6',
+};
 
 export interface CardProps {
     children: ReactNode;
@@ -30,13 +21,12 @@ export interface CardProps {
 }
 
 /**
- * Card - Container component with border and optional interactivity
- * Used for content sections that need visual separation
+ * Card - Container component with shadow-based elevation
  */
 export function Card({
     children,
-    variant,
-    padding,
+    variant = 'default',
+    padding = 'md',
     className,
     onClick,
     ...props
@@ -44,7 +34,8 @@ export function Card({
     return (
         <div
             className={cn(
-                cardVariants({ variant, padding }),
+                variantStyles[variant],
+                paddingStyles[padding],
                 className
             )}
             onClick={onClick}

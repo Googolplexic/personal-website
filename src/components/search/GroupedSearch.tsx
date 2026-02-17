@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { ItemProps } from '../../types';
 import { Button } from '../ui/base';
-import { spacing, formInput, formSelect, themeClasses, cn } from '../../utils/styles';
+import { formInput, formSelect, cn } from '../../utils/styles';
 
 export type SortOption = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'tech-count';
 export type CategoryFilter = 'all' | 'my-designs' | 'other-designs' | 'software';
@@ -82,6 +82,13 @@ export function GroupedSearch({
         return baseOptions;
     };
 
+    const toggleBtnClass = (active: boolean) => cn(
+        'px-3 py-1 text-xs font-body tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer bg-transparent',
+        active
+            ? 'opacity-100 border-b border-b-[var(--color-accent)] border-t-0 border-x-0'
+            : 'opacity-40 hover:opacity-70 border-b border-b-transparent border-t-0 border-x-0'
+    );
+
     const categoryButtons = [
         { value: 'all' as CategoryFilter, label: 'All', count: itemCounts ? itemCounts.myDesigns + itemCounts.otherDesigns + itemCounts.software : undefined },
         { value: 'my-designs' as CategoryFilter, label: 'My Designs', count: itemCounts?.myDesigns },
@@ -90,58 +97,43 @@ export function GroupedSearch({
     ];
 
     return (
-        <div className={spacing({ mb: '6' })}>
+        <div className="mb-6">
             {/* View toggle */}
             {setShowGrouping && (
-                <div className={`${spacing({ mb: '4' })} flex justify-center gap-2`}>
-                    <Button
+                <div className="mb-4 flex justify-center gap-2">
+                    <button
                         onClick={() => setShowGrouping(true)}
-                        className={cn(
-                            spacing({ px: '4', py: '2' }),
-                            'rounded-lg transition-colors',
-                            showGrouping
-                                ? themeClasses('bg-gray-800 text-white hover:bg-gray-900 active:bg-black', 'bg-gray-500 text-white hover:bg-gray-600 active:bg-gray-700')
-                                : themeClasses('bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400', 'bg-gray-700 text-gray-300 hover:bg-gray-600 active:bg-gray-500')
-                        )}
+                        className={toggleBtnClass(showGrouping)}
+                        style={{ color: showGrouping ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
                     >
                         Grouped View
-                    </Button>
-                    <Button
+                    </button>
+                    <button
                         onClick={() => setShowGrouping(false)}
-                        className={cn(
-                            spacing({ px: '4', py: '2' }),
-                            'rounded-lg transition-colors',
-                            !showGrouping
-                                ? themeClasses('bg-gray-800 text-white hover:bg-gray-900 active:bg-black', 'bg-gray-500 text-white hover:bg-gray-600 active:bg-gray-700')
-                                : themeClasses('bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400', 'bg-gray-700 text-gray-300 hover:bg-gray-600 active:bg-gray-500')
-                        )}
+                        className={toggleBtnClass(!showGrouping)}
+                        style={{ color: !showGrouping ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
                     >
                         List View
-                    </Button>
+                    </button>
                 </div>
             )}
 
             {/* Category filter buttons */}
             {showGrouping && (
-                <div className={spacing({ mb: '4' })}>
+                <div className="mb-4">
                     <div className="flex flex-wrap gap-2 justify-center">
                         {categoryButtons.map(button => (
-                            <Button
+                            <button
                                 key={button.value}
                                 onClick={() => setCategoryFilter(button.value)}
-                                className={cn(
-                                    spacing({ px: '4', py: '2' }),
-                                    'rounded-lg transition-colors',
-                                    categoryFilter === button.value
-                                        ? themeClasses('bg-gray-800 text-white hover:bg-gray-900 active:bg-black', 'bg-gray-500 text-white hover:bg-gray-600 active:bg-gray-700')
-                                        : themeClasses('bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400', 'bg-gray-700 text-gray-300 hover:bg-gray-600 active:bg-gray-500')
-                                )}
+                                className={toggleBtnClass(categoryFilter === button.value)}
+                                style={{ color: categoryFilter === button.value ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
                             >
                                 {button.label}
                                 {button.count !== undefined && (
-                                    <span className={`${spacing({ ml: '2' })} text-sm opacity-75`}>({button.count})</span>
+                                    <span className="ml-1.5 text-xs opacity-50">({button.count})</span>
                                 )}
-                            </Button>
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -149,7 +141,6 @@ export function GroupedSearch({
 
             {/* Search and filter controls */}
             <div className="flex flex-col gap-4">
-                {/* Top row: Search input (full width) */}
                 <input
                     type="text"
                     placeholder={getPlaceholderText()}
@@ -158,7 +149,6 @@ export function GroupedSearch({
                     className={formInput()}
                 />
 
-                {/* Bottom row: Filters and controls */}
                 <div className="flex flex-col sm:flex-row gap-3">
                     {showTechFilter && (
                         <select
@@ -203,7 +193,7 @@ export function GroupedSearch({
 
                     <Button
                         variant="secondary"
-                        className={`${spacing({ px: '4', py: '2' })} whitespace-nowrap`}
+                        className="px-4 py-2 whitespace-nowrap"
                         onClick={() => {
                             setSearchTerm('');
                             setSelectedTech('');

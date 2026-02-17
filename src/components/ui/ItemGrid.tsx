@@ -3,8 +3,7 @@ import { useState, useMemo } from 'react';
 import { UniversalSearch, SortOption } from "../search/UniversalSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
-import { Heading, Text } from "./base";
-import { spacing, grid, themeClasses } from "../../utils/styles";
+import { MasonrySpotlightGrid } from "./MasonrySpotlightGrid";
 
 interface ItemGridProps {
     items?: ItemProps[];
@@ -107,8 +106,8 @@ export function ItemGrid({
     }, [items, featuredSlugs, searchTerm, selectedTech, selectedTag, sortBy]);
 
     return (
-        <section className={`${spacing({ mb: '12' })} ${className}`}>
-            {title && <Heading level={2} className={spacing({ mb: '6' })}>{title}</Heading>}
+        <section className={`mb-12 ${className}`}>
+            {title && <h2 className="gallery-heading text-2xl md:text-3xl mb-6" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>}
 
             {!hideControls && (
                 <UniversalSearch
@@ -127,7 +126,7 @@ export function ItemGrid({
                 />
             )}
 
-            <div className={grid('2', '8')}>
+            <MasonrySpotlightGrid>
                 {sortedAndFilteredItems.map((item) => {
                     if (item.type === 'project') {
                         return (
@@ -153,12 +152,12 @@ export function ItemGrid({
                         );
                     }
                 })}
-            </div>
+            </MasonrySpotlightGrid>
 
             {sortedAndFilteredItems.length === 0 && (
-                <Text className={`text-center ${themeClasses('text-gray-600', 'text-gray-400')} ${spacing({ mt: '8' })}`}>
+                <p className="text-center mt-8 font-body" style={{ color: 'var(--color-text-secondary)' }}>
                     No items found matching your criteria.
-                </Text>
+                </p>
             )}
         </section>
     );

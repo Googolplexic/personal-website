@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Flex } from './base';
-import { cn, overlay, themeClasses } from '../../utils/styles';
+import { cn } from '../../utils/styles';
 
 interface CarouselProps {
     modelImages: string[];
@@ -36,69 +35,91 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
     };
 
     return (
-        <div className="w-full group">
+        <div className="w-full">
             <div className={cn(
                 'gap-4',
                 creasePattern ? 'grid grid-cols-1 md:grid-cols-2' : 'grid grid-cols-1 max-w-2xl mx-auto'
             )}>
                 <div className="relative group">
                     <div className={cn(
-                        'h-72 mx-auto rounded-lg flex items-center justify-center bg-transparent',
+                        'h-72 mx-auto overflow-hidden flex items-center justify-center bg-transparent',
                         modelImages.length > 1 ? 'max-w-[90%]' : 'max-w-full'
                     )}>
-                        <img
-                            src={modelImages[currentImageIndex]}
-                            alt={`Model View ${currentImageIndex + 1}`}
-                            className="max-h-72 w-auto object-contain rounded-lg cursor-pointer"
-                            onClick={() => window.open(modelImages[currentImageIndex], '_blank')}
-                            loading="lazy"
-                            width="640"
-                            height="288"
-                        />
+                        <div
+                            className="flex h-full transition-transform duration-500 ease-in-out"
+                            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                        >
+                            {modelImages.map((img, i) => (
+                                <div key={i} className="w-full flex-shrink-0 flex items-center justify-center">
+                                    <img
+                                        src={img}
+                                        alt={`Model View ${i + 1}`}
+                                        className="max-h-72 w-auto object-contain cursor-pointer"
+                                        onClick={() => window.open(img, '_blank')}
+                                        loading="lazy"
+                                        width="640"
+                                        height="288"
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     {modelImages.length > 1 && (
                         <>
-                            <Button
-                                variant="icon"
+                            <button
                                 onClick={() => changeImage(currentImageIndex === 0 ? modelImages.length - 1 : currentImageIndex - 1)}
-                                className={`absolute left-0 top-1/2 -translate-y-1/2 ${overlay('medium')} text-white rounded-r opacity-0 group-hover:opacity-100 transition-all`}
+                                className="absolute left-1 top-1/2 -translate-y-1/2 w-8 h-8 p-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer rounded-full"
+                                style={{
+                                    color: 'var(--color-text-primary)',
+                                    background: 'rgba(10, 10, 10, 0.7)',
+                                    backdropFilter: 'blur(12px) saturate(1.2)',
+                                    WebkitBackdropFilter: 'blur(12px) saturate(1.2)',
+                                    border: '1px solid rgba(255, 255, 255, 0.15)'
+                                }}
                                 aria-label="Previous image"
                             >
-                                ←
-                            </Button>
-                            <Button
-                                variant="icon"
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
+                            </button>
+                            <button
                                 onClick={() => changeImage(currentImageIndex === modelImages.length - 1 ? 0 : currentImageIndex + 1)}
-                                className={`absolute right-0 top-1/2 -translate-y-1/2 ${overlay('medium')} text-white rounded-l opacity-0 group-hover:opacity-100 transition-all`}
+                                className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 p-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer rounded-full"
+                                style={{
+                                    color: 'var(--color-text-primary)',
+                                    background: 'rgba(10, 10, 10, 0.7)',
+                                    backdropFilter: 'blur(12px) saturate(1.2)',
+                                    WebkitBackdropFilter: 'blur(12px) saturate(1.2)',
+                                    border: '1px solid rgba(255, 255, 255, 0.15)'
+                                }}
                                 aria-label="Next image"
                             >
-                                →
-                            </Button>
-                            <Flex justify="center" gap="1" className="mt-2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
+                            </button>
+                            <div className="flex justify-center gap-1 mt-3">
                                 {modelImages.map((_, index) => (
                                     <button
                                         key={index}
                                         onClick={() => changeImage(index)}
                                         className={cn(
-                                            'w-12 h-1 mx-1 rounded-full transition-colors border-none focus:outline-none p-0',
+                                            'w-8 h-0.5 transition-all duration-300 border-none focus:outline-none p-0 cursor-pointer',
                                             index === currentImageIndex
-                                                ? themeClasses('bg-gray-600', 'bg-gray-300')
-                                                : themeClasses('bg-gray-300 hover:bg-gray-400', 'bg-gray-600 hover:bg-gray-500')
+                                                ? 'opacity-100'
+                                                : 'opacity-30 hover:opacity-60'
                                         )}
+                                        style={{ backgroundColor: 'var(--color-text-secondary)' }}
                                         aria-label={`View image ${index + 1}`}
                                     />
                                 ))}
-                            </Flex>
+                            </div>
                         </>
                     )}
                 </div>
 
                 {creasePattern && (
-                    <div className="max-w-[100%] h-72 mx-auto rounded-lg flex items-center justify-center bg-transparent">
+                    <div className="max-w-[100%] h-72 mx-auto flex items-center justify-center bg-transparent">
                         <img
                             src={creasePattern}
                             alt="Crease Pattern"
-                            className="max-h-72 w-auto object-contain rounded-lg cursor-pointer"
+                            className="max-h-72 w-auto object-contain cursor-pointer"
                             onClick={() => window.open(creasePattern, '_blank')}
                             loading="lazy"
                             width="640"

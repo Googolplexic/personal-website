@@ -12,9 +12,12 @@ import { RootRoute } from './components/layout/RootRoute'
 
 function AppContent() {
     return (
-        <div className="min-h-screen w-screen transition-all duration-200 md:text-base text-sm">
+        <div className="min-h-screen w-full transition-colors duration-500 md:text-base text-sm"
+            style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
+            {/* Global spotlight overlay — at root level so no ancestor transform can clip it */}
+            <div id="global-spotlight" />
             <Navbar />
-            <div className="max-w-3xl lg:max-w-7xl mx-auto md:px-16 px-4 py-36">
+            <main>
                 <Routes>
                     <Route path="/" element={<RootRoute />} />
                     <Route path="/portfolio/*" element={<Portfolio />} />
@@ -22,7 +25,7 @@ function AppContent() {
                     <Route path="/admin" element={<AdminPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
-            </div>
+            </main>
             <Analytics />
             <SpeedInsights />
         </div>

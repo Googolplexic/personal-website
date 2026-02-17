@@ -1,170 +1,167 @@
 /**
- * Design Tokens
- * Central source of truth for all design values used throughout the application.
- * All components should reference these tokens rather than hardcoding values.
+ * Design Tokens — Art Gallery / Spotlight Theme
+ * Central source of truth for all design values.
+ * Uses CSS custom properties for dynamic theme switching.
  */
 
-/**
- * Color Palette
- * Organized by semantic meaning with light/dark variants
- */
+/* ================================================================
+   COLORS
+   ================================================================ */
 export const colors = {
-    // Background colors
     background: {
         primary: {
-            light: 'bg-gray-300',
-            dark: 'bg-gray-950',
+            light: 'bg-gallery-bg',
+            dark: 'bg-gallery-bg-dark',
         },
         secondary: {
-            light: 'bg-gray-200',
-            dark: 'bg-gray-800',
+            light: 'bg-gallery-secondary',
+            dark: 'bg-gallery-secondary-dark',
         },
-        tertiary: {
-            light: 'bg-gray-100',
-            dark: 'bg-gray-900',
+        surface: {
+            light: 'bg-gallery-surface',
+            dark: 'bg-gallery-surface-dark',
         },
     },
-
-    // Text colors
     text: {
         primary: {
-            light: 'text-gray-900',
-            dark: 'text-white',
+            light: 'text-gallery-text',
+            dark: 'text-gallery-text-dark',
         },
         secondary: {
-            light: 'text-gray-600',
-            dark: 'text-gray-400',
+            light: 'text-gallery-muted',
+            dark: 'text-gallery-muted-dark',
         },
         tertiary: {
-            light: 'text-gray-800',
-            dark: 'text-gray-300',
+            light: 'text-gallery-dim',
+            dark: 'text-gallery-dim-dark',
         },
         inverse: {
             light: 'text-white',
-            dark: 'text-gray-900',
+            dark: 'text-gallery-text',
         },
     },
-
-    // Border colors
     border: {
         default: {
-            light: 'border-gray-400',
-            dark: 'border-gray-700',
-        },
-        focus: {
-            light: 'border-gray-600',
-            dark: 'border-gray-500',
-        },
-    },
-
-    // Interactive colors
-    interactive: {
-        primary: {
-            light: 'text-blue-700',
-            dark: 'text-blue-300',
+            light: 'border-black/8',
+            dark: 'border-white/6',
         },
         hover: {
-            light: 'hover:text-gray-900',
-            dark: 'hover:text-white',
+            light: 'border-black/15',
+            dark: 'border-white/12',
         },
     },
-
-    // Accent colors
+    interactive: {
+        primary: {
+            light: 'text-gallery-text',
+            dark: 'text-gallery-text-dark',
+        },
+        hover: {
+            light: 'hover:text-gallery-accent',
+            dark: 'hover:text-gallery-accent-dark',
+        },
+    },
     accent: {
         highlight: {
-            light: 'bg-purple-300',
-            dark: 'bg-purple-800',
+            light: 'bg-amber-100',
+            dark: 'bg-amber-900/50',
         },
     },
-
-    // UI element colors
     button: {
         primary: {
-            light: 'bg-gray-600 hover:bg-gray-700',
-            dark: 'bg-gray-600 hover:bg-gray-700',
+            light: 'bg-gallery-text hover:bg-gallery-accent',
+            dark: 'bg-gallery-text-dark hover:bg-white',
         },
         secondary: {
-            light: 'bg-black/50 hover:bg-black/70',
-            dark: 'bg-black/50 hover:bg-gray-800',
+            light: 'bg-transparent hover:bg-black/5',
+            dark: 'bg-transparent hover:bg-white/5',
         },
     },
-
     pill: {
         background: {
-            light: 'bg-gray-200',
-            dark: 'bg-gray-700',
+            light: 'bg-black/5',
+            dark: 'bg-white/8',
         },
         text: {
-            light: 'text-gray-800',
-            dark: 'text-gray-200',
+            light: 'text-gallery-text',
+            dark: 'text-gallery-text-dark',
         },
     },
-
     indicator: {
         active: {
-            light: 'bg-gray-600',
-            dark: 'bg-gray-300',
+            light: 'bg-gallery-text',
+            dark: 'bg-gallery-text-dark',
         },
         inactive: {
-            light: 'bg-gray-300 hover:bg-gray-400',
-            dark: 'bg-gray-600 hover:bg-gray-500',
+            light: 'bg-black/15 hover:bg-black/25',
+            dark: 'bg-white/15 hover:bg-white/25',
         },
     },
 } as const;
 
-/**
- * Spacing Scale
- * Consistent spacing values for padding, margin, gaps
- */
+/* ================================================================
+   SPACING
+   ================================================================ */
 export const spacing = {
     none: '0',
-    xs: '0.25rem',    // 1 - 4px
-    sm: '0.5rem',     // 2 - 8px
-    md: '0.75rem',    // 3 - 12px
-    lg: '1rem',       // 4 - 16px
-    xl: '1.5rem',     // 6 - 24px
-    '2xl': '2rem',    // 8 - 32px
-    '3xl': '3rem',    // 12 - 48px
-    '4xl': '4rem',    // 16 - 64px
-    '5xl': '6rem',    // 24 - 96px
-    '6xl': '9rem',    // 36 - 144px
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '0.75rem',
+    lg: '1rem',
+    xl: '1.5rem',
+    '2xl': '2rem',
+    '3xl': '3rem',
+    '4xl': '4rem',
+    '5xl': '6rem',
+    '6xl': '9rem',
 } as const;
 
-/**
- * Typography Scale
- * Font sizes, weights, and line heights
- */
+/* ================================================================
+   TYPOGRAPHY
+   ================================================================ */
 export const typography = {
+    family: {
+        heading: "font-heading",  // 'Playfair Display', Georgia, serif
+        body: "font-body",        // 'Inter', system-ui, sans-serif
+    },
     size: {
-        xs: 'text-xs',        // 0.75rem - 12px
-        sm: 'text-sm',        // 0.875rem - 14px
-        base: 'text-base',    // 1rem - 16px
-        lg: 'text-lg',        // 1.125rem - 18px
-        xl: 'text-xl',        // 1.25rem - 20px
-        '2xl': 'text-2xl',    // 1.5rem - 24px
-        '3xl': 'text-3xl',    // 1.875rem - 30px
-        '4xl': 'text-4xl',    // 2.25rem - 36px
+        xs: 'text-xs',
+        sm: 'text-sm',
+        base: 'text-base',
+        lg: 'text-lg',
+        xl: 'text-xl',
+        '2xl': 'text-2xl',
+        '3xl': 'text-3xl',
+        '4xl': 'text-4xl',
+        '5xl': 'text-5xl',
     },
     weight: {
+        light: 'font-light',
         normal: 'font-normal',
         medium: 'font-medium',
         semibold: 'font-semibold',
         bold: 'font-bold',
     },
+    tracking: {
+        tighter: 'tracking-tighter',
+        tight: 'tracking-tight',
+        normal: 'tracking-normal',
+        wide: 'tracking-wide',
+        wider: 'tracking-wider',
+        widest: 'tracking-widest',
+    },
     responsive: {
         base: 'md:text-base text-sm',
         heading: {
-            h1: 'text-4xl',
-            h2: 'text-2xl',
-            h3: 'text-xl',
+            h1: 'text-4xl md:text-5xl lg:text-6xl',
+            h2: 'text-2xl md:text-3xl',
+            h3: 'text-xl md:text-2xl',
         },
     },
 } as const;
 
-/**
- * Border Radius
- * Consistent rounding values
- */
+/* ================================================================
+   BORDER RADIUS
+   ================================================================ */
 export const radius = {
     none: 'rounded-none',
     sm: 'rounded-sm',
@@ -172,13 +169,14 @@ export const radius = {
     md: 'rounded-md',
     lg: 'rounded-lg',
     xl: 'rounded-xl',
+    '2xl': 'rounded-2xl',
+    '3xl': 'rounded-3xl',
     full: 'rounded-full',
 } as const;
 
-/**
- * Shadows
- * Box shadow definitions
- */
+/* ================================================================
+   SHADOWS — gallery spotlight-inspired
+   ================================================================ */
 export const shadows = {
     none: 'shadow-none',
     sm: 'shadow-sm',
@@ -186,33 +184,39 @@ export const shadows = {
     md: 'shadow-md',
     lg: 'shadow-lg',
     xl: 'shadow-xl',
-    // Custom hover shadows for cards
-    cardHover: {
-        light: '[box-shadow:0_0_15px_2px_rgba(0,0,0,0.2)]',
-        dark: '[box-shadow:0_0_15px_2px_rgba(255,255,255,0.2)]',
+    spotlight: {
+        light: '',
+        dark: '',
+    },
+    spotlightStrong: {
+        light: '',
+        dark: '',
     },
 } as const;
 
-/**
- * Transitions
- * Animation and transition definitions
- */
+/* ================================================================
+   TRANSITIONS — slower, more cinematic
+   ================================================================ */
 export const transitions = {
     default: 'transition-all',
     colors: 'transition-colors',
     transform: 'transition-transform',
     opacity: 'transition-opacity',
     duration: {
-        fast: 'duration-150',
-        normal: 'duration-200',
-        slow: 'duration-300',
+        fast: 'duration-200',
+        normal: 'duration-300',
+        slow: 'duration-500',
+        cinematic: 'duration-700',
+    },
+    ease: {
+        default: 'ease-out',
+        smooth: 'ease-in-out',
     },
 } as const;
 
-/**
- * Z-Index Layers
- * Stacking order for positioned elements
- */
+/* ================================================================
+   Z-INDEX
+   ================================================================ */
 export const zIndex = {
     base: 'z-0',
     dropdown: 'z-10',
@@ -224,10 +228,9 @@ export const zIndex = {
     tooltip: 'z-70',
 } as const;
 
-/**
- * Layout
- * Common layout patterns and constraints
- */
+/* ================================================================
+   LAYOUT
+   ================================================================ */
 export const layout = {
     container: {
         maxWidth: {
@@ -236,22 +239,21 @@ export const layout = {
             lg: 'max-w-7xl',
         },
         padding: {
-            mobile: 'px-4',
-            tablet: 'sm:px-12',
+            mobile: 'px-5',
+            tablet: 'sm:px-8',
             desktop: 'md:px-16',
         },
     },
     section: {
         padding: {
-            vertical: 'py-36',
+            vertical: 'py-24',
         },
     },
 } as const;
 
-/**
- * Breakpoints (for reference)
- * These match Tailwind's default breakpoints
- */
+/* ================================================================
+   BREAKPOINTS (reference)
+   ================================================================ */
 export const breakpoints = {
     sm: '640px',
     md: '768px',
@@ -260,47 +262,50 @@ export const breakpoints = {
     '2xl': '1536px',
 } as const;
 
-/**
- * Common Component Patterns
- * Reusable class combinations for common patterns
- */
+/* ================================================================
+   PATTERNS — reusable component class combos
+   ================================================================ */
 export const patterns = {
     card: {
-        base: 'border-2 rounded-lg dark:border-gray-700 border-gray-400',
-        interactive: 'cursor-pointer hover:[box-shadow:0_0_15px_2px_rgba(0,0,0,0.2)] dark:hover:[box-shadow:0_0_15px_2px_rgba(255,255,255,0.2)] transition-all hover:scale-[1.02]',
+        base: '',
+        interactive: 'spotlight-item cursor-pointer',
         padding: {
             sm: 'p-4',
             md: 'p-6',
-            lg: 'lg:p-12 p-6',
+            lg: 'lg:p-10 p-6',
         },
     },
     heading: {
-        section: 'text-2xl font-semibold mb-6 dark:text-white',
-        page: 'text-4xl font-bold mb-4 dark:text-white',
+        section: 'gallery-heading text-2xl md:text-3xl mb-6',
+        page: 'gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4',
     },
     pill: {
-        base: 'px-3 py-1 rounded-full text-sm',
-        colors: 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
+        base: 'text-xs font-body tracking-wide',
+        colors: 'text-[var(--color-text-tertiary)]',
     },
     link: {
-        primary: 'text-blue-700 dark:text-blue-300 font-bold',
-        nav: 'text-gray-800 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors',
+        primary: 'font-medium underline-offset-4 hover:underline transition-colors',
+        nav: 'nav-link-gallery',
     },
     button: {
-        base: 'transition-colors no-underline',
-        primary: 'bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white px-6 py-3 rounded-lg',
-        secondary: 'border bg-white text-gray-900 hover:bg-gray-100 active:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-900 dark:active:bg-gray-950 border-gray-200 dark:border-gray-700 rounded-lg',
-        icon: 'p-2 border-none focus:outline-none rounded-lg hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700',
+        base: 'transition-all duration-300 no-underline font-body',
+        primary: 'bg-[var(--color-text-primary)] text-[var(--color-bg-primary)] hover:opacity-90 active:opacity-80 px-5 py-2.5 text-xs tracking-[0.15em] uppercase',
+        secondary: 'border border-[var(--color-text-tertiary)] bg-transparent text-[var(--color-text-primary)] hover:border-[var(--color-text-secondary)] px-5 py-2.5 text-xs tracking-[0.15em] uppercase',
+        icon: 'p-2 border-none focus:outline-none hover:opacity-70 active:opacity-60',
+    },
+    spotlight: {
+        group: 'spotlight-group',
+        item: 'spotlight-item',
     },
 } as const;
 
-/**
- * Utility: Get theme-aware class
- * Helper to get light/dark class combinations
- */
+/* ================================================================
+   UTILITY: theme-aware class builder
+   ================================================================ */
 export function getThemeClasses(
     lightClass: string,
     darkClass: string
 ): string {
     return `${lightClass} dark:${darkClass}`;
 }
+

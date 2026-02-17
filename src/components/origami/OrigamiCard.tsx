@@ -1,8 +1,6 @@
 import { Carousel } from '../ui/Carousel';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
-import { Card, Heading, Text } from '../ui/base';
-import { spacing } from '../../utils/styles';
 
 interface OrigamiCardProps {
     title: string;
@@ -19,36 +17,44 @@ interface OrigamiCardProps {
 
 export function OrigamiCard({ title, description, modelImages, creasePattern, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false }: OrigamiCardProps) {
     return (
-        <Card padding="md" className={`${spacing({ mb: '8' })} h-full flex flex-col`}>
-            {showCategory && categoryLabel && categoryColor && (
-                <CategoryLabel label={categoryLabel} color={categoryColor} className={spacing({ mb: '4' })} />
-            )}
-            <div className="flex-1 flex flex-col justify-center">
-                <div className={spacing({ mb: '6' })}>
-                    <Heading level={3} className={spacing({ mb: '2' })}>
-                        <HighlightedText text={title} searchTerm={searchTerm} />
-                    </Heading>
-                    {designer && (
-                        <Text size="sm" color="secondary" className={spacing({ mb: '2' })}>
-                            Designed by <HighlightedText text={designer} searchTerm={searchTerm} />
-                        </Text>
-                    )}
-                    {date && (
-                        <Text size="sm" color="secondary" className={spacing({ mb: '2' })}>
-                            {date}
-                        </Text>
-                    )}
-                    {description && (
-                        <Text>
-                            <HighlightedText text={description} searchTerm={searchTerm} />
-                        </Text>
-                    )}
-                </div>
+        <div className="spotlight-item flex flex-col break-inside-avoid">
+            {/* Image first — like project cards */}
+            <div className="mb-3">
                 <Carousel
                     modelImages={modelImages}
                     creasePattern={creasePattern}
                 />
             </div>
-        </Card>
+
+            {/* Content below image */}
+            <div className="pt-2 pb-4 flex-1 flex flex-col">
+                {showCategory && categoryLabel && categoryColor && (
+                    <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-2" />
+                )}
+
+                <h3 className="gallery-heading text-lg md:text-xl mb-1"
+                    style={{ color: 'var(--color-text-primary)' }}>
+                    <HighlightedText text={title} searchTerm={searchTerm} />
+                </h3>
+                {designer && (
+                    <p className="text-xs tracking-wide mb-1 font-body"
+                       style={{ color: 'var(--color-text-secondary)' }}>
+                        <HighlightedText text={designer} searchTerm={searchTerm} />
+                    </p>
+                )}
+                {date && (
+                    <p className="text-xs tracking-[0.2em] uppercase mb-2 font-body"
+                       style={{ color: 'var(--color-text-secondary)' }}>
+                        {date}
+                    </p>
+                )}
+                {description && (
+                    <p className="text-sm leading-relaxed font-body"
+                       style={{ color: 'var(--color-text-secondary)' }}>
+                        <HighlightedText text={description} searchTerm={searchTerm} />
+                    </p>
+                )}
+            </div>
+        </div>
     );
 }

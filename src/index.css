@@ -2,54 +2,469 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   DARK-ONLY GALLERY THEME
+   Inspired by real museum spotlights and theatre lighting.
+   No light mode. Pure darkness with warm illumination.
+   ============================================================ */
 @layer base {
   :root {
-    @apply bg-gray-100 text-gray-900;
-    font-family: Candara, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
+    /* --- Backgrounds --- */
+    --color-bg-primary: #0a0a0a;
+    --color-bg-secondary: #0f0f0f;
+    --color-bg-surface: #141414;
+    --color-bg-elevated: #1a1a1a;
+
+    /* --- Text --- */
+    --color-text-primary: #e8e4de;
+    --color-text-secondary: #8a8580;
+    --color-text-tertiary: #6e6862;
+
+    /* --- Borders --- */
+    --color-border: rgba(255, 255, 255, 0.10);
+    --color-border-hover: rgba(255, 255, 255, 0.18);
+
+    /* --- Accent (warm gold — restrained) --- */
+    --color-accent: #c9a84c;
+    --color-accent-soft: rgba(201, 168, 76, 0.06);
+    --color-accent-text: #c9a84c;
+
+    /* --- Spotlight — warm cone of light --- */
+    --spotlight-warm: rgba(255, 248, 230, 0.05);
+    --spotlight-warm-strong: rgba(255, 248, 230, 0.10);
+
+    /* --- Nav --- */
+    --nav-bg: rgba(10, 10, 10, 0.92);
+    --nav-border: rgba(255, 255, 255, 0.08);
+
+    /* --- Frosted glass --- */
+    --frosted-bg: rgba(10, 10, 10, 0.85);
+
+    /* --- Misc --- */
+    --divider: rgba(255, 255, 255, 0.10);
+
+    background-color: #0a0a0a;
+    color: #e8e4de;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.65;
     font-weight: 400;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
-  :root.dark {
-    @apply bg-gray-900 text-gray-100;
+
+  /* --- Typography defaults --- */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'EB Garamond', 'Garamond', Georgia, serif;
+    color: var(--color-text-primary);
+    font-weight: 400;
   }
 
-  h1 {
-    @apply md:text-4xl text-3xl font-bold mb-4;
-  }
+  h1 { @apply text-4xl md:text-5xl mb-4 tracking-tight; }
+  h2 { @apply text-2xl md:text-3xl mb-4 tracking-tight; }
+  h3 { @apply text-xl md:text-2xl mb-3; }
 
-  h2 {
-    @apply md:text-2xl text-xl font-bold mb-4;
-  }
   a {
-    @apply text-blue-600 dark:text-blue-400 hover:underline;
+    color: var(--color-accent-text);
+    text-decoration: none;
+    transition: color 0.3s ease, opacity 0.3s ease;
   }
+  a:hover { opacity: 0.75; }
 
   body {
     margin: 0;
-    display: flex;
-    place-items: center;
     min-width: 320px;
     min-height: 100vh;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
   }
 
   button {
-    border-radius: 8px;
-    border: 1px solid transparent;
+    border: none;
     padding: 0.6em 1.2em;
     font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
+    font-weight: 400;
+    font-family: 'Inter', system-ui, sans-serif;
     cursor: pointer;
-    transition: background-color 0.25s;
+    transition: all 0.35s ease;
+    background: transparent;
+    color: var(--color-text-primary);
+  }
+  button:focus, button:focus-visible { outline: none; }
+
+  html { scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ============================================================
+   SPOTLIGHT SYSTEM — moving circular bird's-eye spotlight
+   A warm disc of light that follows the mouse across the grid,
+   like a stage follow-spot seen from directly above.
+   ============================================================ */
+@layer components {
+
+  /* Global spotlight overlay — fixed to viewport, immune to transforms */
+  #global-spotlight {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    --spot-x: 50%;
+    --spot-y: 50%;
+    background: radial-gradient(
+      circle at var(--spot-x) var(--spot-y),
+      rgba(255, 248, 230, 0.09) 0%,
+      rgba(255, 248, 230, 0.09) 160px,
+      rgba(255, 248, 230, 0.07) 200px,
+      rgba(255, 248, 230, 0.02) 260px,
+      transparent 320px
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  #global-spotlight.visible { opacity: 1; }
+
+  .spotlight-group {
+    position: relative;
+    overflow: visible;
   }
 
-  button:focus,
-  button:focus-visible {
-    outline: none;
+  .spotlight-item {
+    position: relative;
+    transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+                filter 0.6s cubic-bezier(.4,0,.2,1);
+    will-change: opacity, filter;
+    z-index: 1;
   }
+
+  /* Per-item glow when hovered — subtle surface warmth */
+  .spotlight-item::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    background: radial-gradient(
+      ellipse at 50% 30%,
+      rgba(255, 248, 230, 0.035) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Dim non-hovered items */
+  .spotlight-group:hover .spotlight-item:not(:hover) {
+    opacity: 0.25;
+    filter: brightness(0.5) saturate(0.4);
+  }
+
+  /* Illuminate the hovered item */
+  .spotlight-group:hover .spotlight-item:hover {
+    opacity: 1;
+    filter: brightness(1.05);
+  }
+  .spotlight-group:hover .spotlight-item:hover::after { opacity: 1; }
+
+  /* Touch devices: disable spotlight dimming */
+  @media (hover: none) {
+    .spotlight-group:hover .spotlight-item:not(:hover) {
+      opacity: 1; filter: none;
+    }
+    .spotlight-group:hover .spotlight-item:hover::before,
+    .spotlight-group:hover .spotlight-item:hover::after { opacity: 0; }
+  }
+
+  /* --- SCROLL REVEAL --- */
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s cubic-bezier(.4,0,.2,1), transform 0.9s cubic-bezier(.4,0,.2,1);
+  }
+  .scroll-reveal.revealed { opacity: 1; transform: translateY(0); }
+  .scroll-reveal-delay-1 { transition-delay: 0.1s; }
+  .scroll-reveal-delay-2 { transition-delay: 0.2s; }
+  .scroll-reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* --- FROSTED GLASS (carousel arrows, etc.) --- */
+  .frosted-glass {
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+  }
+
+  /* --- IMAGE SKELETON --- */
+  .img-skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-bg-secondary) 25%,
+      var(--color-bg-surface) 50%,
+      var(--color-bg-secondary) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite ease-in-out;
+  }
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* --- IMAGE FADE IN --- */
+  .img-fade-in { opacity: 0; transition: opacity 0.6s ease; }
+  .img-fade-in.loaded { opacity: 1; }
+
+  /* --- GALLERY HEADING — Garamond, light weight --- */
+  .gallery-heading {
+    font-family: 'EB Garamond', 'Garamond', Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  /* --- OVERLINE — tiny uppercase label (bumped for readability) --- */
+  .gallery-overline {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  /* --- NAV LINKS --- */
+  .nav-link-gallery {
+    position: relative;
+    text-decoration: none;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    font-weight: 400;
+    font-family: 'Inter', system-ui, sans-serif;
+    transition: color 0.3s ease;
+    color: var(--color-text-tertiary);
+  }
+
+  .nav-link-gallery::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    width: 0;
+    height: 1px;
+    background: var(--color-accent);
+    transition: width 0.3s ease, left 0.3s ease;
+  }
+
+  .nav-link-gallery:hover,
+  .nav-link-gallery.active {
+    color: var(--color-text-primary);
+  }
+
+  .nav-link-gallery:hover::after,
+  .nav-link-gallery.active::after {
+    width: 100%;
+    left: 0;
+  }
+
+  /* --- HERO SPOTLIGHT — interactive mouse-following disc --- */
+  .hero-spotlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    --hero-x: 50%;
+    --hero-y: 50%;
+  }
+  .hero-spotlight::before {
+    content: '';
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 248, 230, 0.10) 0%,
+      rgba(255, 248, 230, 0.05) 30%,
+      rgba(255, 248, 230, 0.02) 55%,
+      transparent 70%
+    );
+    top: var(--hero-y);
+    left: var(--hero-x);
+    transform: translate(-50%, -50%);
+  }
+  .hero-spotlight::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(201, 168, 76, 0.04) 0%,
+      rgba(201, 168, 76, 0.015) 40%,
+      transparent 70%
+    );
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: hero-drift 20s ease-in-out infinite alternate;
+  }
+  @keyframes hero-drift {
+    0%   { transform: translate(-60%, -55%); }
+    25%  { transform: translate(-40%, -48%); }
+    50%  { transform: translate(-55%, -42%); }
+    75%  { transform: translate(-45%, -55%); }
+    100% { transform: translate(-50%, -50%); }
+  }
+
+  /* --- SCROLL INDICATOR --- */
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0) translateX(-50%); }
+    50% { transform: translateY(8px) translateX(-50%); }
+  }
+  .scroll-indicator {
+    animation: bounce-subtle 3s ease-in-out infinite;
+  }
+
+  /* --- DECORATIVE DIVIDER --- */
+  .gallery-divider {
+    width: 32px;
+    height: 1px;
+    background: var(--divider);
+    margin: 0 auto;
+  }
+
+  /* --- FORM INPUTS — gallery-integrated, minimal --- */
+  .gallery-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+    padding: 0.5rem 0;
+    color: var(--color-text-primary);
+    transition: border-color 0.3s ease;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+  .gallery-input::placeholder {
+    color: var(--color-text-tertiary);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .gallery-input:focus {
+    outline: none;
+    border-bottom-color: var(--color-text-secondary);
+  }
+
+  .gallery-select {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+    padding: 0.5rem 0;
+    color: var(--color-text-secondary);
+    transition: border-color 0.3s ease;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+  .gallery-select:focus {
+    outline: none;
+    border-bottom-color: var(--color-text-secondary);
+  }
+
+  /* --- EXHIBIT LABEL --- */
+  .exhibit-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+  }
+  .exhibit-label::before,
+  .exhibit-label::after {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--divider);
+  }
+
+  /* --- PROSE (dark mode only) --- */
+  .prose {
+    text-align: left;
+    --tw-prose-body: var(--color-text-primary);
+    --tw-prose-headings: var(--color-text-primary);
+    --tw-prose-links: var(--color-accent-text);
+    --tw-prose-bold: var(--color-text-primary);
+    --tw-prose-counters: var(--color-text-secondary);
+    --tw-prose-bullets: var(--color-text-tertiary);
+    --tw-prose-hr: var(--divider);
+    --tw-prose-quotes: var(--color-text-secondary);
+    --tw-prose-quote-borders: var(--divider);
+    --tw-prose-code: var(--color-text-primary);
+    --tw-prose-pre-code: var(--color-text-primary);
+    --tw-prose-pre-bg: var(--color-bg-secondary);
+  }
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+@layer utilities {
+  .font-heading { font-family: 'EB Garamond', 'Garamond', Georgia, serif; }
+  .font-body { font-family: 'Inter', system-ui, sans-serif; }
+  .text-balance { text-wrap: balance; }
+
+  /* --- MASONRY GRID via CSS columns --- */
+  .masonry-grid {
+    column-count: 1;
+    column-gap: 3.5rem;
+  }
+  @media (min-width: 640px) {
+    .masonry-grid { column-count: 2; }
+  }
+  @media (min-width: 1024px) {
+    .masonry-grid { column-count: 3; }
+  }
+  .masonry-grid > * {
+    break-inside: avoid;
+    margin-bottom: 3.5rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+}
+
+/* ============================================================
+   CATEGORY BADGES (subtle, dark-only)
+   ============================================================ */
+.gallery-cat-green {
+  color: #6ee7a0;
+}
+.gallery-cat-blue {
+  color: #7ab8f5;
+}
+.gallery-cat-purple {
+  color: #c4a1f0;
+}
+.gallery-cat-default {
+  color: var(--color-text-secondary);
 }

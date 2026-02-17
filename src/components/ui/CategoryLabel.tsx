@@ -1,18 +1,18 @@
-import { Pill } from './base';
 import { cn } from '../../utils/styles';
 
 interface CategoryLabelProps {
     label: string;
-    color: string;
+    color?: string;
     className?: string;
 }
 
-export function CategoryLabel({ label, color, className = "" }: CategoryLabelProps) {
+export function CategoryLabel({ label, className = "" }: CategoryLabelProps) {
     return (
         <div className={cn('flex justify-center', className)}>
-            <Pill variant="custom" color={`${color} shadow-sm`} className="py-1.5 text-xs font-semibold">
+            <span className="text-xs font-body tracking-[0.15em] uppercase"
+                  style={{ color: 'var(--color-text-tertiary)' }}>
                 {label}
-            </Pill>
+            </span>
         </div>
     );
 }

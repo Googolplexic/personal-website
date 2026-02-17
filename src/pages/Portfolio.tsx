@@ -3,20 +3,21 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { ProjectDetail } from "./ProjectDetail";
 import { SEO } from "../components/layout/SEO";
 import { ProjectGrid } from "../components/portfolio/ProjectGrid";
-import { Heading, Text, Link } from "../components/ui/base";
-import { spacing } from "../utils/styles";
 
 function PortfolioGrid() {
     return (
-        <div className="text-center">
-            <Heading level={1}>Portfolio</Heading>
-            <Text className={spacing({ mb: '8' })}>
-                These project pages are all dynamically generated! See my{' '}
-                <Link href="https://www.colemanlai.com/portfolio/personal-website" target="_blank" rel="noopener">
-                    personal website
-                </Link>
-                {' '}page for more detail.
-            </Text>
+        <div className="max-w-6xl mx-auto px-6 pt-32 pb-20">
+            <div className="text-center mb-14">
+                <p className="gallery-overline mb-4">Selected Works</p>
+                <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4"
+                    style={{ color: 'var(--color-text-primary)' }}>
+                    Portfolio
+                </h1>
+                <p className="text-base font-body max-w-lg mx-auto"
+                   style={{ color: 'var(--color-text-secondary)' }}>
+                    A collection of software projects — each page dynamically generated.
+                </p>
+            </div>
             <ProjectGrid />
         </div>
     );
@@ -25,7 +26,6 @@ function PortfolioGrid() {
 export function Portfolio() {
     const location = useLocation();
     const projectSlug = location.pathname.split('/portfolio/')[1];
-
     const currentProject = projectSlug ? projects.find(p => p.slug === projectSlug) : null;
 
     return (

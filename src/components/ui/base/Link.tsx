@@ -1,21 +1,12 @@
 import { ReactNode } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { cn, createVariants } from '../../../utils/styles';
-import { patterns } from '../../../theme/design-tokens';
+import { cn } from '../../../utils/styles';
 
-const linkVariants = createVariants({
-    base: '',
-    variants: {
-        variant: {
-            primary: patterns.link.primary,
-            nav: patterns.link.nav,
-            default: '',
-        },
-    },
-    defaultVariants: {
-        variant: 'default',
-    },
-});
+const variantStyles: Record<string, string> = {
+    primary: 'font-medium underline-offset-4 hover:underline transition-colors',
+    nav: 'nav-link-gallery',
+    default: 'transition-colors hover:opacity-80',
+};
 
 export interface LinkProps {
     children: ReactNode;
@@ -23,6 +14,7 @@ export interface LinkProps {
     href?: string;
     variant?: 'primary' | 'nav' | 'default';
     className?: string;
+    style?: React.CSSProperties;
     onClick?: (e: React.MouseEvent) => void;
     target?: string;
     rel?: string;
@@ -38,19 +30,21 @@ export function Link({
     href,
     variant,
     className,
+    style,
     onClick,
     target,
     rel,
     ...props
 }: LinkProps) {
-    const classes = cn(linkVariants({ variant }), className);
+    const classes = cn(variantStyles[variant || 'default'], className);
+    const linkStyle = { color: 'var(--color-accent-text)', ...style };
 
-    // Internal link using React Router
     if (to) {
         return (
             <RouterLink
                 to={to}
                 className={classes}
+                style={linkStyle}
                 onClick={onClick}
                 {...props}
             >
@@ -59,11 +53,11 @@ export function Link({
         );
     }
 
-    // External link
     return (
         <a
             href={href}
             className={classes}
+            style={linkStyle}
             onClick={onClick}
             target={target}
             rel={rel}

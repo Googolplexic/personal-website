@@ -1,20 +1,13 @@
 import { ReactNode } from 'react';
-import { cn, createVariants } from '../../../utils/styles';
-import { patterns } from '../../../theme/design-tokens';
+import { cn } from '../../../utils/styles';
 
-const buttonVariants = createVariants({
-    base: patterns.button.base,
-    variants: {
-        variant: {
-            primary: patterns.button.primary,
-            secondary: patterns.button.secondary,
-            icon: patterns.button.icon,
-        },
-    },
-    defaultVariants: {
-        variant: 'primary',
-    },
-});
+const baseStyle = 'transition-all duration-300 no-underline font-body cursor-pointer';
+
+const variantStyles: Record<string, string> = {
+    primary: 'bg-transparent border-b border-b-[var(--color-accent)] border-t-0 border-x-0 text-[var(--color-text-primary)] hover:text-[var(--color-accent)] px-1 pb-1 pt-0 text-xs tracking-[0.15em] uppercase',
+    secondary: 'bg-transparent border-b border-b-[var(--color-border)] border-t-0 border-x-0 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-b-[var(--color-text-primary)] px-1 pb-1 pt-0 text-xs tracking-[0.15em] uppercase',
+    icon: 'p-2 border-none focus:outline-none hover:opacity-70 active:opacity-60',
+};
 
 export interface ButtonProps {
     children: ReactNode;
@@ -28,11 +21,10 @@ export interface ButtonProps {
 
 /**
  * Button - Interactive button component
- * Handles all button interactions with consistent styling
  */
 export function Button({
     children,
-    variant,
+    variant = 'primary',
     className,
     onClick,
     type = 'button',
@@ -43,7 +35,8 @@ export function Button({
         <button
             type={type}
             className={cn(
-                buttonVariants({ variant }),
+                baseStyle,
+                variantStyles[variant],
                 className
             )}
             onClick={onClick}

@@ -1,7 +1,5 @@
 import { FiMail } from 'react-icons/fi';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
-import { Heading, Card, Flex, Text, Stack } from '../ui/base';
-import { spacing, themeClasses } from '../../utils/styles';
 
 export function Contact() {
     const contacts = [
@@ -32,35 +30,38 @@ export function Contact() {
     ];
 
     return (
-        <section id="contact" className={spacing({ mb: '12' })}>
-            <Heading level={2}>Contact</Heading>
-            <Stack spacing="4">
+        <div id="contact">
+            <p className="gallery-overline mb-4">Get in Touch</p>
+            <h2 className="gallery-heading text-3xl md:text-4xl mb-8"
+                style={{ color: 'var(--color-text-primary)' }}>
+                Contact
+            </h2>
+            <div className="space-y-4">
                 {contacts.map((contact) => (
                     <a
                         key={contact.name}
                         href={contact.href}
                         target="_blank"
                         rel="noopener"
-                        className="no-underline"
+                        className="no-underline flex items-center gap-4 py-3 transition-colors duration-300 group"
+                        style={{ color: 'var(--color-text-secondary)' }}
                     >
-                        <Card variant="interactive" padding="md" className="h-full">
-                            <Flex align="center" gap="4">
-                                <Text color="secondary" className={themeClasses('text-gray-600', 'text-gray-200')}>
-                                    {contact.icon}
-                                </Text>
-                                <Flex direction="col" className="text-left">
-                                    <Text weight="bold">
-                                        {contact.name}
-                                    </Text>
-                                    <Text color="secondary">
-                                        {contact.value}
-                                    </Text>
-                                </Flex>
-                            </Flex>
-                        </Card>
+                        <span className="transition-colors duration-300 group-hover:text-[var(--color-accent-text)]" style={{ color: 'var(--color-text-tertiary)' }}>
+                            {contact.icon}
+                        </span>
+                        <div className="text-left">
+                            <p className="text-sm font-body"
+                               style={{ color: 'var(--color-text-primary)' }}>
+                                {contact.name}
+                            </p>
+                            <p className="text-xs font-body"
+                               style={{ color: 'var(--color-text-tertiary)' }}>
+                                {contact.value}
+                            </p>
+                        </div>
                     </a>
                 ))}
-            </Stack>
-        </section>
+            </div>
+        </div>
     );
 }

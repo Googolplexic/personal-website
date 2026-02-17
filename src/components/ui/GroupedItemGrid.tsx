@@ -3,8 +3,7 @@ import { useState, useMemo } from 'react';
 import { GroupedSearch, SortOption, CategoryFilter } from "../search/GroupedSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
-import { Heading, Text } from "./base";
-import { spacing, grid } from "../../utils/styles";
+import { MasonrySpotlightGrid } from "./MasonrySpotlightGrid";
 
 interface GroupedItemGridProps {
     items?: ItemProps[];
@@ -72,10 +71,10 @@ export function GroupedItemGrid({
 
     const getCategoryColor = (category: string): string => {
         switch (category) {
-            case 'my-designs': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-            case 'other-designs': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-            case 'software': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
-            default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+            case 'my-designs': return 'gallery-cat-green';
+            case 'other-designs': return 'gallery-cat-blue';
+            case 'software': return 'gallery-cat-purple';
+            default: return 'gallery-cat-default';
         }
     };
 
@@ -161,8 +160,8 @@ export function GroupedItemGrid({
     };
 
     return (
-        <section className={`${spacing({ mb: '12' })} ${className}`}>
-            {title && <Heading level={2}>{title}</Heading>}
+        <section className={`mb-12 ${className}`}>
+            {title && <h2 className="gallery-heading text-2xl md:text-3xl mb-4" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>}
 
             {!hideControls && (
                 <GroupedSearch
@@ -186,7 +185,7 @@ export function GroupedItemGrid({
                 />
             )}
 
-            <div className={grid('2', '6')}>
+            <MasonrySpotlightGrid>
                 {sortedAndFilteredItems.map((item) => {
                     const category = getItemCategory(item);
                     const categoryLabel = getCategoryLabel(category);
@@ -222,12 +221,12 @@ export function GroupedItemGrid({
                         );
                     }
                 })}
-            </div>
+            </MasonrySpotlightGrid>
 
             {sortedAndFilteredItems.length === 0 && (
-                <Text color="secondary" className={`text-center ${spacing({ mt: '8' })}`}>
+                <p className="text-center mt-8 font-body" style={{ color: 'var(--color-text-secondary)' }}>
                     No items found matching your criteria.
-                </Text>
+                </p>
             )}
         </section>
     );

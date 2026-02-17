@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 import { ProjectProps } from '../../types';
 import { useNavigate } from 'react-router-dom';
-import { ProjectLinks } from './ProjectLinks';
-import { ProjectTechnologies } from './ProjectTechnologies';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
-import { Card, Heading, Text, Flex } from '../ui/base';
+import { LazyImage } from '../ui/LazyImage';
 import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage } from '../../utils/lazyImages';
-import { spacing } from '../../utils/styles';
 
 interface ProjectWithBasePath extends ProjectProps {
     basePath?: string;
@@ -24,7 +21,6 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
 
     const projectPath = `${basePath}/${props.slug}${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
 
-    // Load first image if it's lazy
     useEffect(() => {
         if (props.images) {
             if (typeof props.images === 'object' && 'loaders' in props.images) {
@@ -52,37 +48,52 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
     };
 
     return (
-        <Card
+        <div
             onClick={handleClick}
-            variant="interactive"
-            padding="lg"
-            className={`${spacing({ mb: '4' })} h-full flex flex-col`}
+            className="spotlight-item flex flex-col cursor-pointer group break-inside-avoid"
         >
-            {showCategory && categoryLabel && categoryColor && (
-                <CategoryLabel label={categoryLabel} color={categoryColor} className={spacing({ mb: '3' })} />
+            {/* Image — no rounding, raw edge */}
+            {firstImage && (
+                <div className="relative overflow-hidden aspect-[16/10]">
+                    <LazyImage
+                        src={firstImage}
+                        alt={props.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                    />
+                </div>
             )}
-            <div className="flex-1 flex flex-col justify-center">
-                {firstImage && (
-                    <Flex gap="2" justify="center" className={`${spacing({ mb: '4' })} mx-auto`}>
-                        <img
-                            src={firstImage}
-                            alt={`${props.title}`}
-                            className="max-h-[12rem] w-auto h-auto object-contain rounded-lg"
-                        />
-                    </Flex>
+
+            {/* Content — minimal, below the image */}
+            <div className="pt-4 pb-6 flex-1 flex flex-col">
+                {showCategory && categoryLabel && categoryColor && (
+                    <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-2" />
                 )}
-                <Heading level={2} className={spacing({ mb: '2' })}>
+
+                <h3 className="gallery-heading text-lg md:text-xl mb-1"
+                    style={{ color: 'var(--color-text-primary)' }}>
                     <HighlightedText text={props.title} searchTerm={searchTerm} />
-                </Heading>
-                <Text size="sm" color="secondary" className={spacing({ mb: '2' })}>
-                    {props.startDate === props.endDate ? props.startDate : `${props.startDate} - ${props.endDate || 'Present'}`}
-                </Text>
-                <Text>
+                </h3>
+
+                <p className="text-xs tracking-[0.2em] uppercase mb-3 font-body"
+                   style={{ color: 'var(--color-text-secondary)' }}>
+                    {props.startDate === props.endDate ? props.startDate : `${props.startDate} – ${props.endDate || 'Present'}`}
+                </p>
+
+                <p className="text-sm leading-relaxed mb-4 font-body"
+                   style={{ color: 'var(--color-text-secondary)' }}>
                     <HighlightedText text={props.summary} searchTerm={searchTerm} />
-                </Text>
-                <ProjectTechnologies technologies={props.technologies} searchTerm={searchTerm} />
-                <ProjectLinks project={props} />
+                </p>
+
+                <div className="mt-auto space-y-3">
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-body" style={{ color: 'var(--color-text-secondary)' }}>
+                        {props.technologies.map((tech, i) => (
+                            <span key={i}>
+                                <HighlightedText text={tech} searchTerm={searchTerm} />
+                            </span>
+                        ))}
+                    </div>
+                </div>
             </div>
-        </Card>
+        </div>
     );
 }

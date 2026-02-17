@@ -1,5 +1,3 @@
-import { colors } from '../../theme/design-tokens';
-
 interface HighlightedTextProps {
     text: string;
     searchTerm: string;
@@ -31,7 +29,7 @@ export function HighlightedText({ text, searchTerm, className = "", allowHtml = 
 
                 const matchLower = match.toLowerCase();
                 if (matchLower === searchTerm.toLowerCase()) {
-                    return `<mark class="${colors.accent.highlight.light} ${colors.accent.highlight.dark} dark:text-white rounded px-0.5">${match}</mark>`;
+                    return `<mark class="px-0.5" style="background: rgba(201,168,76,0.25); color: var(--color-text-primary)">${match}</mark>`;
                 }
                 return match;
             }
@@ -45,7 +43,7 @@ export function HighlightedText({ text, searchTerm, className = "", allowHtml = 
         <span className={className}>
             {parts.map((part, i) => (
                 part.toLowerCase() === searchTerm.toLowerCase()
-                    ? <mark key={i} className={`${colors.accent.highlight.light} ${colors.accent.highlight.dark} dark:text-white rounded px-0.5`}>{part}</mark>
+                    ? <mark key={i} className="px-0.5" style={{ background: 'rgba(201,168,76,0.25)', color: 'var(--color-text-primary)' }}>{part}</mark>
                     : <span key={i}>{part}</span>
             ))}
         </span>

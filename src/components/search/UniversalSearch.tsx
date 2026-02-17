@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { ItemProps } from '../../types';
 import { Button } from '../ui/base';
-import { spacing, formInput, formSelect } from '../../utils/styles';
+import { formInput, formSelect } from '../../utils/styles';
 
 export type SortOption = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'tech-count';
 
@@ -68,10 +68,8 @@ export function UniversalSearch({
     };
 
     return (
-        <div className={spacing({ mb: '6' })}>
-            {/* Search and filter controls */}
+        <div className="mb-6">
             <div className="flex flex-col gap-4">
-                {/* Top row: Search input (full width) */}
                 <input
                     type="text"
                     placeholder={getPlaceholderText()}
@@ -80,7 +78,6 @@ export function UniversalSearch({
                     className={formInput()}
                 />
 
-                {/* Bottom row: Filters and controls */}
                 <div className="flex flex-col sm:flex-row gap-3">
                     {showTechFilter && (
                         <select
@@ -125,7 +122,7 @@ export function UniversalSearch({
 
                     <Button
                         variant="secondary"
-                        className={`${spacing({ px: '4', py: '2' })} whitespace-nowrap`}
+                        className="px-4 py-2 whitespace-nowrap"
                         onClick={() => {
                             setSearchTerm('');
                             setSelectedTech('');
