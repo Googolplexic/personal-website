@@ -8,14 +8,14 @@ function PortfolioGrid() {
     return (
         <div className="max-w-6xl mx-auto px-6 pt-32 pb-20">
             <div className="text-center mb-14">
-                <p className="gallery-overline mb-4">Selected Works</p>
+                <p className="gallery-overline mb-4">The Collection</p>
                 <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4"
                     style={{ color: 'var(--color-text-primary)' }}>
                     Portfolio
                 </h1>
-                <p className="text-base font-body max-w-lg mx-auto"
+                <p className="text-base font-heading italic max-w-lg mx-auto"
                    style={{ color: 'var(--color-text-secondary)' }}>
-                    A collection of software projects — each page dynamically generated.
+                    Software crafted with care. Explore all the exhibits!
                 </p>
             </div>
             <ProjectGrid />

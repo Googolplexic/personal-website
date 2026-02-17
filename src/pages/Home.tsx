@@ -125,7 +125,7 @@ export function Home() {
                 <div className="hero-spotlight" />
 
                 <div className="relative z-10 text-center max-w-3xl mx-auto">
-                    <p className="gallery-overline mb-6 animate-fade-in opacity-0">Portfolio 2025</p>
+                    <p className="gallery-overline mb-6 animate-fade-in opacity-0">Portfolio 2026</p>
 
                     <h1 ref={nameRef} className="gallery-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-8 animate-fade-in opacity-0"
                         style={{ color: 'var(--color-text-primary)', animationDelay: '0.15s' }}>
@@ -134,7 +134,7 @@ export function Home() {
 
                     <p className="text-lg sm:text-xl md:text-2xl font-heading italic tracking-wide mb-6 animate-fade-in opacity-0"
                        style={{ color: 'var(--color-text-secondary)', animationDelay: '0.35s' }}>
-                        Curating digital experiences through code and paper.
+                        Showcasing a gallery of code and paper.
                     </p>
 
                     <div className="gallery-divider mb-6 animate-fade-in opacity-0" style={{ animationDelay: '0.5s' }} />
@@ -166,6 +166,9 @@ export function Home() {
                 </div>
             </ScrollSection>
 
+            {/* Divider */}
+            <div className="gallery-divider" />
+
             {/* ===== CONTACT & RESUME ===== */}
             <ScrollSection className="py-20 md:py-32">
                 <div className="max-w-4xl mx-auto px-6">
@@ -176,15 +179,22 @@ export function Home() {
                 </div>
             </ScrollSection>
 
+            {/* Divider */}
+            <div className="gallery-divider" />
+
             {/* ===== FEATURED WORKS ===== */}
             <ScrollSection className="py-20 md:py-32">
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="text-center mb-14">
-                        <p className="gallery-overline mb-4">Selected Works</p>
-                        <h2 className="gallery-heading text-3xl md:text-4xl"
+                        <p className="gallery-overline mb-4">The Collection</p>
+                        <h2 className="gallery-heading text-3xl md:text-4xl mb-2"
                             style={{ color: 'var(--color-text-primary)' }}>
                             Featured Projects
                         </h2>
+                        <p className="text-sm font-heading italic"
+                           style={{ color: 'var(--color-text-secondary)' }}>
+                            A curated selection of my proudest works.
+                        </p>
                     </div>
                     <ProjectGrid
                         featuredSlugs={featuredSlugs}

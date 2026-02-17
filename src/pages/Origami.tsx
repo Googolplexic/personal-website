@@ -24,14 +24,14 @@ export function Origami() {
             />
             <div className="max-w-6xl mx-auto px-6 pt-32 pb-20">
                 <div className="text-center mb-14">
-                    <p className="gallery-overline mb-4">Paper & Form</p>
+                    <p className="gallery-overline mb-4">The Collection</p>
                     <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4"
                         style={{ color: 'var(--color-text-primary)' }}>
                         Origami
                     </h1>
-                    <p className="text-base font-body max-w-lg mx-auto mb-2"
+                    <p className="text-base font-heading italic max-w-lg mx-auto mb-2"
                        style={{ color: 'var(--color-text-secondary)' }}>
-                        A study of light, shadow, and geometric precision.
+                        Where geometric precision meets artistic expression.
                     </p>
                     <p className="text-sm font-body"
                        style={{ color: 'var(--color-text-tertiary)' }}>

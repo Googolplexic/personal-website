@@ -138,18 +138,18 @@ export function ContentList() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-8">
-                <Text className="text-gray-600 dark:text-gray-400">Loading content...</Text>
+                <Text className="text-[var(--color-text-tertiary)]">Loading content...</Text>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
-                <Text className="text-red-700 dark:text-red-300">{error}</Text>
+            <div className="border border-red-500/20 bg-red-500/10 rounded-md p-4">
+                <Text className="text-red-400">{error}</Text>
                 <Button
                     onClick={refetchContent}
-                    className="mt-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 underline"
+                    className="mt-2 text-sm text-red-400 hover:text-red-300 underline"
                 >
                     Try again
                 </Button>
@@ -159,7 +159,7 @@ export function ContentList() {
 
     if (!content) {
         return (
-            <Text className="text-gray-600 dark:text-gray-400">No content found</Text>
+            <Text className="text-[var(--color-text-tertiary)]">No content found</Text>
         );
     }
 
@@ -189,23 +189,23 @@ export function ContentList() {
                             {content.projects.map((project) => (
                                 <div
                                     key={project.slug}
-                                    className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
+                                    className="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4 hover:border-[var(--color-border-hover)] transition-colors"
                                 >
                                     <div className="flex items-center justify-between">
                                         <Heading level={4}>
                                             {String(project.title)}
                                         </Heading>
-                                        <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
+                                        <span className="text-xs bg-[var(--color-accent)]/10 text-[var(--color-accent)] px-2 py-1 rounded">
                                             project
                                         </span>
                                     </div>
-                                    <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    <Text className="text-sm text-[var(--color-text-tertiary)] mt-1">
                                         /src/assets/projects/{String(project.slug)}/
                                     </Text>
                                     <div className="mt-3 flex space-x-2">
                                         <Button
                                             onClick={() => openEditModal(project.title, project.slug, 'project')}
-                                            className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
+                                            className="text-xs border border-[var(--color-accent)]/30 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
                                         </Button>
@@ -214,7 +214,7 @@ export function ContentList() {
                             ))}
                         </div>
                     ) : (
-                        <Text className="text-gray-600 dark:text-gray-400 text-center py-8">
+                        <Text className="text-[var(--color-text-tertiary)] text-center py-8">
                             No projects found
                         </Text>
                     )}
@@ -230,23 +230,23 @@ export function ContentList() {
                             {content.origami.myDesigns.map((design) => (
                                 <div
                                     key={design.slug}
-                                    className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
+                                    className="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4 hover:border-[var(--color-border-hover)] transition-colors"
                                 >
                                     <div className="flex items-center justify-between">
                                         <Heading level={4}>
                                             {String(design.title)}
                                         </Heading>
-                                        <span className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
+                                        <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded">
                                             my design
                                         </span>
                                     </div>
-                                    <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    <Text className="text-sm text-[var(--color-text-tertiary)] mt-1">
                                         /src/assets/origami/my-designs/{String(design.slug)}/
                                     </Text>
                                     <div className="mt-3 flex space-x-2">
                                         <Button
                                             onClick={() => openEditModal(String(design.title), String(design.slug), 'origami', 'my-designs')}
-                                            className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
+                                            className="text-xs border border-[var(--color-accent)]/30 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
                                         </Button>
@@ -255,7 +255,7 @@ export function ContentList() {
                             ))}
                         </div>
                     ) : (
-                        <Text className="text-gray-600 dark:text-gray-400 text-center py-8">
+                        <Text className="text-[var(--color-text-tertiary)] text-center py-8">
                             No designs found
                         </Text>
                     )}
@@ -271,23 +271,23 @@ export function ContentList() {
                             {content.origami.otherDesigns.map((design) => (
                                 <div
                                     key={design.slug}
-                                    className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
+                                    className="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4 hover:border-[var(--color-border-hover)] transition-colors"
                                 >
                                     <div className="flex items-center justify-between">
                                         <Heading level={4}>
                                             {String(design.title)}
                                         </Heading>
-                                        <span className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded">
+                                        <span className="text-xs bg-purple-500/10 text-purple-400 px-2 py-1 rounded">
                                             other design
                                         </span>
                                     </div>
-                                    <Text className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    <Text className="text-sm text-[var(--color-text-tertiary)] mt-1">
                                         /src/assets/origami/other-designs/{String(design.slug)}/
                                     </Text>
                                     <div className="mt-3 flex space-x-2">
                                         <Button
                                             onClick={() => openEditModal(String(design.title), String(design.slug), 'origami', 'other-designs')}
-                                            className="text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors"
+                                            className="text-xs border border-[var(--color-accent)]/30 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 px-2 py-1 rounded transition-colors"
                                         >
                                             Edit Content
                                         </Button>
@@ -296,35 +296,35 @@ export function ContentList() {
                             ))}
                         </div>
                     ) : (
-                        <Text className="text-gray-600 dark:text-gray-400 text-center py-8">
+                        <Text className="text-[var(--color-text-tertiary)] text-center py-8">
                             No other designs found
                         </Text>
                     )}
                 </div>
 
                 {/* Summary */}
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+                <div className="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-6">
                     <Heading level={3} className="mb-4">
                         Content Summary
                     </Heading>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                        <div className="bg-blue-100 dark:bg-blue-900/20 p-4 rounded-lg">
-                            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                        <div className="bg-[var(--color-accent)]/5 border border-[var(--color-accent)]/10 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-[var(--color-accent)]">
                                 {content.projects.length}
                             </div>
-                            <div className="text-sm text-blue-700 dark:text-blue-300">Projects</div>
+                            <div className="text-sm text-[var(--color-text-secondary)]">Projects</div>
                         </div>
-                        <div className="bg-green-100 dark:bg-green-900/20 p-4 rounded-lg">
-                            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                        <div className="bg-green-500/5 border border-green-500/10 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-green-400">
                                 {content.origami.myDesigns.length}
                             </div>
-                            <div className="text-sm text-green-700 dark:text-green-300">My Designs</div>
+                            <div className="text-sm text-[var(--color-text-secondary)]">My Designs</div>
                         </div>
-                        <div className="bg-purple-100 dark:bg-purple-900/20 p-4 rounded-lg">
-                            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                        <div className="bg-purple-500/5 border border-purple-500/10 p-4 rounded-lg">
+                            <div className="text-2xl font-bold text-purple-400">
                                 {content.origami.otherDesigns.length}
                             </div>
-                            <div className="text-sm text-purple-700 dark:text-purple-300">Other Designs</div>
+                            <div className="text-sm text-[var(--color-text-secondary)]">Other Designs</div>
                         </div>
                     </div>
                 </div>

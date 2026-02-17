@@ -443,20 +443,20 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
     return (
         <>
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-6xl h-[90vh] flex flex-col">
-                    <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
+            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                <div className="bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-lg w-full max-w-6xl h-[90vh] flex flex-col">
+                    <div className="flex justify-between items-center p-6 border-b border-[var(--color-border)] flex-shrink-0">
                         <div>
                             <Heading level={3}>
                                 Edit {title}
                             </Heading>
                             {activeTab === 'edit' && (
                                 <div className="flex items-center gap-4 mt-2">
-                                    <label className="text-sm text-gray-600 dark:text-gray-400">File:</label>
+                                    <label className="text-sm text-[var(--color-text-tertiary)]">File:</label>
                                     <select
                                         value={selectedFile}
                                         onChange={(e) => setSelectedFile(e.target.value)}
-                                        className="text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1"
+                                        className="admin-select w-auto text-sm px-2 py-1"
                                         title="Select markdown file to edit"
                                     >
                                         {markdownFiles.map(file => (
@@ -468,28 +468,28 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         </div>
                         <button
                             onClick={onClose}
-                            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                            className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
                         >
                             ✕
                         </button>
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
+                    <div className="flex border-b border-[var(--color-border)] flex-shrink-0">
                         <button
                             onClick={() => setActiveTab('edit')}
-                            className={`px-6 py-3 text-sm font-medium ${activeTab === 'edit'
-                                ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                            className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'edit'
+                                ? 'border-b-2 border-[var(--color-accent)] text-[var(--color-accent)]'
+                                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
                                 }`}
                         >
                             📝 Edit Markdown
                         </button>
                         <button
                             onClick={() => setActiveTab('images')}
-                            className={`px-6 py-3 text-sm font-medium ${activeTab === 'images'
-                                ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                            className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'images'
+                                ? 'border-b-2 border-[var(--color-accent)] text-[var(--color-accent)]'
+                                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
                                 }`}
                         >
                             🖼️ Manage Images ({images.length})
@@ -498,14 +498,14 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
                     <div className="flex-1 overflow-y-auto">
                         {error && (
-                            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-3 m-4">
-                                <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
+                            <div className="border border-red-500/20 bg-red-500/10 rounded p-3 m-4">
+                                <p className="text-red-400 text-sm">{error}</p>
                             </div>
                         )}                        {activeTab === 'edit' ? (
                             <div className="h-full p-6">
                                 {loading ? (
                                     <div className="flex items-center justify-center h-full">
-                                        <div className="text-gray-600 dark:text-gray-400">Loading markdown content...</div>
+                                        <div className="text-[var(--color-text-tertiary)]">Loading markdown content...</div>
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-2 gap-6 h-full">
@@ -517,7 +517,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                             <textarea
                                                 value={content}
                                                 onChange={(e) => setContent(e.target.value)}
-                                                className="flex-1 p-4 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                className="flex-1 p-4 border border-[var(--color-border)] rounded bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] font-mono text-sm resize-none focus:border-[var(--color-accent)] focus:outline-none"
                                                 placeholder="Enter your markdown content here..."
                                             />
                                         </div>
@@ -527,7 +527,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                             <Heading level={4} className="text-sm mb-2">
                                                 Preview (without frontmatter)
                                             </Heading>
-                                            <div className="flex-1 p-4 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-900 overflow-y-auto">
+                                            <div className="flex-1 p-4 border border-[var(--color-border)] rounded bg-[var(--color-bg-primary)] overflow-y-auto">
                                                 <div className="prose dark:prose-invert max-w-none text-sm markdown-preview text-left">
                                                     {content ? (
                                                         <div
@@ -540,7 +540,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                             }}
                                                         />
                                                     ) : (
-                                                        <p className="text-gray-500 dark:text-gray-400 italic">
+                                                        <p className="text-[var(--color-text-tertiary)] italic">
                                                             Markdown preview will appear here...
                                                         </p>
                                                     )}
@@ -548,51 +548,41 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                 <style>{`
                                                     .markdown-preview { text-align: left !important; }
                                                     .markdown-preview * { text-align: left !important; }
-                                                    .markdown-preview h1 { font-size: 1.5rem; font-weight: bold; margin: 1rem 0 0.5rem 0; text-align: left; }
-                                                    .markdown-preview h2 { font-size: 1.25rem; font-weight: bold; margin: 0.75rem 0 0.5rem 0; text-align: left; }
-                                                    .markdown-preview h3 { font-size: 1.1rem; font-weight: bold; margin: 0.5rem 0 0.25rem 0; text-align: left; }
-                                                    .markdown-preview p { margin: 0.5rem 0; line-height: 1.5; text-align: left; }
-                                                    .markdown-preview ul, .markdown-preview ol { margin: 0.5rem 0; padding-left: 1.5rem; text-align: left; }
+                                                    .markdown-preview h1 { font-size: 1.5rem; font-weight: bold; margin: 1rem 0 0.5rem 0; text-align: left; color: var(--color-text-primary); }
+                                                    .markdown-preview h2 { font-size: 1.25rem; font-weight: bold; margin: 0.75rem 0 0.5rem 0; text-align: left; color: var(--color-text-primary); }
+                                                    .markdown-preview h3 { font-size: 1.1rem; font-weight: bold; margin: 0.5rem 0 0.25rem 0; text-align: left; color: var(--color-text-primary); }
+                                                    .markdown-preview p { margin: 0.5rem 0; line-height: 1.5; text-align: left; color: var(--color-text-secondary); }
+                                                    .markdown-preview ul, .markdown-preview ol { margin: 0.5rem 0; padding-left: 1.5rem; text-align: left; color: var(--color-text-secondary); }
                                                     .markdown-preview li { margin: 0.25rem 0; text-align: left; }
                                                     .markdown-preview code { 
-                                                        background: rgba(156, 163, 175, 0.2); 
-                                                        color: #374151; 
+                                                        background: rgba(255, 255, 255, 0.06); 
+                                                        color: var(--color-text-primary); 
                                                         padding: 0.125rem 0.25rem; 
                                                         border-radius: 0.25rem; 
                                                         font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; 
                                                         font-size: 0.875em;
                                                     }
-                                                    .dark .markdown-preview code { 
-                                                        background: rgba(75, 85, 99, 0.3); 
-                                                        color: #e5e7eb; 
-                                                    }
                                                     .markdown-preview pre { 
-                                                        background: #f8fafc; 
-                                                        border: 1px solid #e2e8f0;
+                                                        background: var(--color-bg-elevated); 
+                                                        border: 1px solid var(--color-border);
                                                         padding: 0.75rem; 
                                                         border-radius: 0.5rem; 
                                                         overflow-x: auto; 
                                                         margin: 0.5rem 0; 
                                                         text-align: left;
-                                                    }
-                                                    .dark .markdown-preview pre { 
-                                                        background: #1f2937; 
-                                                        border: 1px solid #374151;
-                                                        color: #e5e7eb;
+                                                        color: var(--color-text-primary);
                                                     }
                                                     .markdown-preview pre code { 
                                                         background: transparent; 
                                                         padding: 0; 
                                                         color: inherit;
                                                     }
-                                                    .markdown-preview blockquote { border-left: 3px solid #d1d5db; padding-left: 1rem; margin: 0.5rem 0; color: #6b7280; text-align: left; }
-                                                    .markdown-preview a { color: #3b82f6; text-decoration: underline; }
+                                                    .markdown-preview blockquote { border-left: 3px solid var(--color-border); padding-left: 1rem; margin: 0.5rem 0; color: var(--color-text-tertiary); text-align: left; }
+                                                    .markdown-preview a { color: var(--color-accent); text-decoration: underline; }
                                                     .markdown-preview img { max-width: 100%; height: auto; margin: 0.5rem 0; }
                                                     .markdown-preview table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; }
-                                                    .markdown-preview th, .markdown-preview td { border: 1px solid #d1d5db; padding: 0.5rem; text-align: left; }
-                                                    .markdown-preview th { background: #f3f4f6; font-weight: bold; }
-                                                    .dark .markdown-preview th { background: #374151; }
-                                                    .dark .markdown-preview th, .dark .markdown-preview td { border-color: #4b5563; }
+                                                    .markdown-preview th, .markdown-preview td { border: 1px solid var(--color-border); padding: 0.5rem; text-align: left; color: var(--color-text-secondary); }
+                                                    .markdown-preview th { background: var(--color-bg-elevated); font-weight: bold; color: var(--color-text-primary); }
                                                 `}</style>
                                             </div>
                                         </div>
@@ -607,7 +597,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                         <Heading level={4} className="text-sm">
                                             Upload New Images
                                         </Heading>
-                                        <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">
+                                        <label className="cursor-pointer bg-[var(--color-accent)] hover:opacity-90 text-[var(--color-bg-primary)] px-4 py-2 rounded text-sm font-medium transition-opacity">
                                             {uploading ? 'Uploading...' : 'Choose Files'}
                                             <input
                                                 type="file"
@@ -619,7 +609,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                             />
                                         </label>
                                     </div>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    <p className="text-xs text-[var(--color-text-tertiary)]">
                                         Supported formats: JPG, PNG, GIF, WebP, SVG
                                     </p>
                                 </div>
@@ -627,8 +617,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                 {/* Image Grid */}
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                     {images.map((image) => (
-                                        <div key={image.name} className="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
-                                            <div className="bg-gray-100 dark:bg-gray-700 rounded mb-2 overflow-hidden">
+                                        <div key={image.name} className="border border-[var(--color-border)] rounded-lg p-3">
+                                            <div className="bg-[var(--color-bg-elevated)] rounded mb-2 overflow-hidden">
                                                 <img
                                                     src={image.url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5QzEwLjMzIDkgOSAxMC4zMyA5IDEyUzEwLjMzIDE1IDEyIDE1IDE1IDEzLjY3IDE1IDEyUzEzLjY3IDkgMTIgOVpNMTIgMTNDMTEuNDUgMTMgMTEgMTIuNTUgMTEgMTJTMTEuNDUgMTEgMTIgMTFTMTMgMTEuNDUgMTMgMTJTMTIuNTUgMTMgMTIgMTNaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo='}
                                                     alt={image.name}
@@ -645,7 +635,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                         value={newImageName}
                                                         onChange={(e) => setNewImageName(e.target.value)}
                                                         placeholder="Enter new filename"
-                                                        className="w-full text-xs border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-2 py-1 rounded mb-2"
+                                                        className="admin-input text-xs px-2 py-1 mb-2"
                                                         onKeyDown={(e) => {
                                                             if (e.key === 'Enter') {
                                                                 handleImageRename(image.name, newImageName);
@@ -659,7 +649,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                     <div className="flex gap-1">
                                                         <button
                                                             onClick={() => handleImageRename(image.name, newImageName)}
-                                                            className="flex-1 text-xs bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 px-2 py-1 rounded"
+                                                            className="flex-1 text-xs border border-green-500/30 text-green-400 hover:bg-green-500/10 px-2 py-1 rounded transition-colors"
                                                         >
                                                             Save
                                                         </button>
@@ -668,14 +658,14 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                                 setRenamingImage(null);
                                                                 setNewImageName('');
                                                             }}
-                                                            className="flex-1 text-xs bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded"
+                                                            className="flex-1 text-xs border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] px-2 py-1 rounded transition-colors"
                                                         >
                                                             Cancel
                                                         </button>
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 truncate mb-2" title={image.name}>
+                                                <p className="text-xs text-[var(--color-text-tertiary)] truncate mb-2" title={image.name}>
                                                     {image.name}
                                                 </p>
                                             )}
@@ -689,13 +679,13 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                             : image.name;
                                                         setNewImageName(editName);
                                                     }}
-                                                    className="flex-1 text-xs bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-300 px-2 py-1 rounded"
+                                                    className="flex-1 text-xs border border-[var(--color-accent)]/30 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 px-2 py-1 rounded transition-colors"
                                                 >
                                                     Rename
                                                 </button>
                                                 <button
                                                     onClick={() => handleImageDelete(image.name)}
-                                                    className="flex-1 text-xs bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 text-red-700 dark:text-red-300 px-2 py-1 rounded"
+                                                    className="flex-1 text-xs border border-red-500/30 text-red-400 hover:bg-red-500/10 px-2 py-1 rounded transition-colors"
                                                 >
                                                     Delete
                                                 </button>
@@ -703,7 +693,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                         </div>
                                     ))}
                                 </div>                                {images.length === 0 && (
-                                    <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                                    <div className="text-center py-12 text-[var(--color-text-tertiary)]">
                                         <div className="text-4xl mb-4">🖼️</div>
                                         <p>No images found. Upload some images to get started!</p>
                                     </div>
@@ -712,8 +702,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         )}
                     </div>
 
-                    <div className="flex justify-between items-center p-6 border-t border-gray-200 dark:border-gray-600 flex-shrink-0">
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex justify-between items-center p-6 border-t border-[var(--color-border)] flex-shrink-0">
+                        <div className="text-sm text-[var(--color-text-tertiary)]">
                             {activeTab === 'edit' && selectedFile && (
                                 <>
                                     Editing: <span className="font-mono">{selectedFile}</span>
@@ -723,7 +713,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         <div className="flex gap-3">
                             <button
                                 onClick={onClose}
-                                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 rounded"
+                                className="px-4 py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border)] rounded transition-colors"
                             >
                                 Close
                             </button>
@@ -731,7 +721,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                 <button
                                     onClick={handleSave}
                                     disabled={saving || loading}
-                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded"
+                                    className="px-4 py-2 bg-[var(--color-accent)] hover:opacity-90 disabled:opacity-40 text-[var(--color-bg-primary)] rounded font-medium transition-opacity"
                                 >
                                     {saving ? 'Saving...' : 'Save Changes'}
                                 </button>

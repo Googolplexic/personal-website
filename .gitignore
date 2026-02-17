@@ -36,3 +36,4 @@ server/.env.production
 
 # howard
 howard.js
+/.hintrc

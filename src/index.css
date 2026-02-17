@@ -373,6 +373,56 @@
     outline: none;
     border-bottom-color: var(--color-text-secondary);
   }
+  .gallery-select option {
+    background-color: #141414;
+    color: var(--color-text-primary);
+  }
+
+  /* --- ADMIN PANEL — gallery-integrated form elements --- */
+  .admin-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    color: var(--color-text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.875rem;
+    transition: border-color 0.3s ease;
+  }
+  .admin-input::placeholder {
+    color: var(--color-text-tertiary);
+  }
+  .admin-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+  .admin-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .admin-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    color: var(--color-text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.875rem;
+    transition: border-color 0.3s ease;
+  }
+  .admin-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+  .admin-select option {
+    background-color: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+  }
 
   /* --- EXHIBIT LABEL --- */
   .exhibit-label {

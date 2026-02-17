@@ -145,9 +145,9 @@ export function ProjectForm() {
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             {message && (
-                <div className={`p-4 rounded-md ${message.type === 'success'
-                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
-                    : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+                <div className={`p-4 rounded-md border ${message.type === 'success'
+                    ? 'border-green-500/20 bg-green-500/10 text-green-400'
+                    : 'border-red-500/20 bg-red-500/10 text-red-400'
                     }`}>
                     {message.text}
                 </div>
@@ -159,7 +159,7 @@ export function ProjectForm() {
                     <Heading level={3}>Basic Information</Heading>
 
                     <div>
-                        <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="title" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Title *
                         </label>
                         <input
@@ -169,12 +169,12 @@ export function ProjectForm() {
                             required
                             value={formData.title}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="slug" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Slug * (auto-generated)
                         </label>
                         <input
@@ -184,12 +184,12 @@ export function ProjectForm() {
                             required
                             value={formData.slug}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="summary" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="summary" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Summary *
                         </label>
                         <textarea
@@ -199,12 +199,12 @@ export function ProjectForm() {
                             rows={3}
                             value={formData.summary}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="technologies" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="technologies" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Technologies (comma-separated)
                         </label>
                         <input
@@ -213,12 +213,12 @@ export function ProjectForm() {
                             value={formData.technologies.join(', ')}
                             onChange={(e) => handleArrayInputChange('technologies', e.target.value)}
                             placeholder="React, TypeScript, Node.js"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="githubUrl" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             GitHub URL *
                         </label>
                         <input
@@ -228,12 +228,12 @@ export function ProjectForm() {
                             required
                             value={formData.githubUrl}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="liveUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="liveUrl" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Live URL (optional)
                         </label>
                         <input
@@ -242,7 +242,7 @@ export function ProjectForm() {
                             name="liveUrl"
                             value={formData.liveUrl}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
                 </div>
@@ -253,7 +253,7 @@ export function ProjectForm() {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label htmlFor="startDate" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                                 Start Date (YYYY-MM)
                             </label>
                             <input
@@ -263,11 +263,11 @@ export function ProjectForm() {
                                 value={formData.startDate}
                                 onChange={handleInputChange}
                                 placeholder="2024-01"
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                className="admin-input"
                             />
                         </div>
                         <div>
-                            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label htmlFor="endDate" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                                 End Date (YYYY-MM)
                             </label>
                             <input
@@ -277,13 +277,13 @@ export function ProjectForm() {
                                 value={formData.endDate}
                                 onChange={handleInputChange}
                                 placeholder="2024-03"
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                className="admin-input"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="tags" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Tags (comma-separated)
                         </label>
                         <input
@@ -292,12 +292,12 @@ export function ProjectForm() {
                             value={formData.tags.join(', ')}
                             onChange={(e) => handleArrayInputChange('tags', e.target.value)}
                             placeholder="web-app, full-stack, school-project"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="keywords" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="keywords" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             SEO Keywords (comma-separated)
                         </label>
                         <input
@@ -306,12 +306,12 @@ export function ProjectForm() {
                             value={formData.keywords.join(', ')}
                             onChange={(e) => handleArrayInputChange('keywords', e.target.value)}
                             placeholder="web development, react app, student project"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="SEOdescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="SEOdescription" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             SEO Description
                         </label>
                         <textarea
@@ -321,12 +321,12 @@ export function ProjectForm() {
                             value={formData.SEOdescription}
                             onChange={handleInputChange}
                             placeholder="A detailed description for search engines and social sharing..."
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="images" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="images" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Images
                         </label>
                         <input
@@ -335,9 +335,9 @@ export function ProjectForm() {
                             multiple
                             accept="image/*"
                             onChange={handleImageChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-[var(--color-bg-surface)] file:text-[var(--color-text-secondary)] hover:file:text-[var(--color-text-primary)]"
                         />
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
                             Select multiple images for the project gallery
                         </p>
                     </div>
@@ -346,7 +346,7 @@ export function ProjectForm() {
 
             {/* Description */}
             <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="description" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                     Description (Markdown) *
                 </label>
                 <textarea
@@ -357,7 +357,7 @@ export function ProjectForm() {
                     value={formData.description}
                     onChange={handleInputChange}
                     placeholder="## Project Overview&#10;&#10;A detailed description of your project...&#10;&#10;### Features&#10;&#10;- Feature 1&#10;- Feature 2"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
+                    className="admin-input font-mono text-sm"
                 />
             </div>
 
@@ -365,7 +365,7 @@ export function ProjectForm() {
                 <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-2.5 bg-[var(--color-accent)] text-[var(--color-bg-primary)] rounded-md hover:opacity-90 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-opacity text-sm font-medium tracking-wide"
                 >
                     {isSubmitting ? 'Creating...' : 'Create Project'}
                 </Button>

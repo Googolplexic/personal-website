@@ -3,11 +3,7 @@ import { FiDownload } from 'react-icons/fi';
 export function ResumeSection() {
     return (
         <div id="resume">
-            <p className="gallery-overline mb-4">Documents</p>
-            <h2 className="gallery-heading text-3xl md:text-4xl mb-8"
-                style={{ color: 'var(--color-text-primary)' }}>
-                Resume
-            </h2>
+            <p className="gallery-overline mb-6">Documents</p>
             <a
                 href="/resume.pdf"
                 target="_blank"

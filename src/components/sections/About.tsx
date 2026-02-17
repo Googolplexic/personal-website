@@ -3,15 +3,11 @@ import { Link } from '../ui/base';
 export function About() {
     return (
         <div id="about">
-            <p className="gallery-overline mb-4">About</p>
-            <h2 className="gallery-heading text-3xl md:text-4xl mb-8"
-                style={{ color: 'var(--color-text-primary)' }}>
-                A Brief Introduction
-            </h2>
+            <p className="gallery-overline mb-6">An Introduction</p>
             <div className="space-y-5">
                 <p className="text-base md:text-lg leading-relaxed font-body"
                    style={{ color: 'var(--color-text-secondary)' }}>
-                    Hi! I'm a third-year Computing Science student at Simon Fraser University, passionate about building intuitive user interfaces and efficient solutions.
+                    Hi there, welcome to my gallery! I'm a third-year Computing Science student at Simon Fraser University, passionate about building intuitive user interfaces and efficient solutions.
                 </p>
                 <p className="text-base md:text-lg leading-relaxed font-body"
                    style={{ color: 'var(--color-text-secondary)' }}>
@@ -30,7 +26,7 @@ export function About() {
                     <Link to="/origami" onClick={() => window.scrollTo(0, 0)}>
                         origami models
                     </Link>
-                    {' '}in my free time. Come check my work out!
+                    {' '}in my free time. Come check my work out! The site's still a work in progress, so any feedback is welcome!
                 </p>
             </div>
         </div>

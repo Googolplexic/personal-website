@@ -31,11 +31,7 @@ export function Contact() {
 
     return (
         <div id="contact">
-            <p className="gallery-overline mb-4">Get in Touch</p>
-            <h2 className="gallery-heading text-3xl md:text-4xl mb-8"
-                style={{ color: 'var(--color-text-primary)' }}>
-                Contact
-            </h2>
+            <p className="gallery-overline mb-6">Connect</p>
             <div className="space-y-4">
                 {contacts.map((contact) => (
                     <a

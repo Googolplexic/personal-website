@@ -121,19 +121,19 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-4xl h-[80vh] flex flex-col">
-                <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-600">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+            <div className="bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-lg w-full max-w-4xl h-[80vh] flex flex-col">
+                <div className="flex justify-between items-center p-6 border-b border-[var(--color-border)]">
                     <div>
                         <Heading level={3}>
                             Edit {title}
                         </Heading>
                         <div className="flex items-center gap-4 mt-2">
-                            <label className="text-sm text-gray-600 dark:text-gray-400">File:</label>
+                            <label className="text-sm text-[var(--color-text-tertiary)]">File:</label>
                             <select
                                 value={selectedFile}
                                 onChange={(e) => setSelectedFile(e.target.value)}
-                                className="text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1"
+                                className="admin-select w-auto text-sm px-2 py-1"
                                 title="Select file to edit"
                             >
                                 {files.map(file => (
@@ -144,7 +144,7 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
                     >
                         ✕
                     </button>
@@ -152,29 +152,29 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
 
                 <div className="flex-1 p-6 overflow-hidden">
                     {error && (
-                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-3 mb-4">
-                            <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
+                        <div className="border border-red-500/20 bg-red-500/10 rounded p-3 mb-4">
+                            <p className="text-red-400 text-sm">{error}</p>
                         </div>
                     )}
 
                     {loading ? (
                         <div className="flex items-center justify-center h-full">
-                            <div className="text-gray-600 dark:text-gray-400">Loading file content...</div>
+                            <div className="text-[var(--color-text-tertiary)]">Loading file content...</div>
                         </div>
                     ) : (
                         <div className="h-full">
                             <textarea
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
-                                className="w-full h-full p-4 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full h-full p-4 border border-[var(--color-border)] rounded bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] font-mono text-sm resize-none focus:border-[var(--color-accent)] focus:outline-none"
                                 placeholder="File content will appear here..."
                             />
                         </div>
                     )}
                 </div>
 
-                <div className="flex justify-between items-center p-6 border-t border-gray-200 dark:border-gray-600">
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex justify-between items-center p-6 border-t border-[var(--color-border)]">
+                    <div className="text-sm text-[var(--color-text-tertiary)]">
                         {selectedFile && (
                             <>
                                 Editing: <span className="font-mono">{selectedFile}</span>
@@ -184,14 +184,14 @@ export function EditContentModal({ isOpen, onClose, title, path, type, category,
                     <div className="flex gap-3">
                         <button
                             onClick={onClose}
-                            className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 rounded"
+                            className="px-4 py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border)] rounded transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleSave}
                             disabled={saving || loading}
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded"
+                            className="px-4 py-2 bg-[var(--color-accent)] hover:opacity-90 disabled:opacity-40 text-[var(--color-bg-primary)] rounded font-medium transition-opacity"
                         >
                             {saving ? 'Saving...' : 'Save Changes'}
                         </button>

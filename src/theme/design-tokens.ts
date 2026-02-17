@@ -1,100 +1,39 @@
 /**
  * Design Tokens — Art Gallery / Spotlight Theme
  * Central source of truth for all design values.
- * Uses CSS custom properties for dynamic theme switching.
+ * Dark-only theme. Uses CSS custom properties.
  */
 
 /* ================================================================
-   COLORS
+   COLORS — dark-only, no light mode
    ================================================================ */
 export const colors = {
     background: {
-        primary: {
-            light: 'bg-gallery-bg',
-            dark: 'bg-gallery-bg-dark',
-        },
-        secondary: {
-            light: 'bg-gallery-secondary',
-            dark: 'bg-gallery-secondary-dark',
-        },
-        surface: {
-            light: 'bg-gallery-surface',
-            dark: 'bg-gallery-surface-dark',
-        },
+        primary: 'bg-[var(--color-bg-primary)]',
+        secondary: 'bg-[var(--color-bg-secondary)]',
+        surface: 'bg-[var(--color-bg-surface)]',
+        elevated: 'bg-[var(--color-bg-elevated)]',
     },
     text: {
-        primary: {
-            light: 'text-gallery-text',
-            dark: 'text-gallery-text-dark',
-        },
-        secondary: {
-            light: 'text-gallery-muted',
-            dark: 'text-gallery-muted-dark',
-        },
-        tertiary: {
-            light: 'text-gallery-dim',
-            dark: 'text-gallery-dim-dark',
-        },
-        inverse: {
-            light: 'text-white',
-            dark: 'text-gallery-text',
-        },
+        primary: 'text-[var(--color-text-primary)]',
+        secondary: 'text-[var(--color-text-secondary)]',
+        tertiary: 'text-[var(--color-text-tertiary)]',
     },
     border: {
-        default: {
-            light: 'border-black/8',
-            dark: 'border-white/6',
-        },
-        hover: {
-            light: 'border-black/15',
-            dark: 'border-white/12',
-        },
-    },
-    interactive: {
-        primary: {
-            light: 'text-gallery-text',
-            dark: 'text-gallery-text-dark',
-        },
-        hover: {
-            light: 'hover:text-gallery-accent',
-            dark: 'hover:text-gallery-accent-dark',
-        },
+        default: 'border-[var(--color-border)]',
+        hover: 'border-[var(--color-border-hover)]',
     },
     accent: {
-        highlight: {
-            light: 'bg-amber-100',
-            dark: 'bg-amber-900/50',
-        },
-    },
-    button: {
-        primary: {
-            light: 'bg-gallery-text hover:bg-gallery-accent',
-            dark: 'bg-gallery-text-dark hover:bg-white',
-        },
-        secondary: {
-            light: 'bg-transparent hover:bg-black/5',
-            dark: 'bg-transparent hover:bg-white/5',
-        },
+        text: 'text-[var(--color-accent-text)]',
+        soft: 'bg-[var(--color-accent-soft)]',
     },
     pill: {
-        background: {
-            light: 'bg-black/5',
-            dark: 'bg-white/8',
-        },
-        text: {
-            light: 'text-gallery-text',
-            dark: 'text-gallery-text-dark',
-        },
+        background: 'bg-white/8',
+        text: 'text-[var(--color-text-primary)]',
     },
     indicator: {
-        active: {
-            light: 'bg-gallery-text',
-            dark: 'bg-gallery-text-dark',
-        },
-        inactive: {
-            light: 'bg-black/15 hover:bg-black/25',
-            dark: 'bg-white/15 hover:bg-white/25',
-        },
+        active: 'bg-[var(--color-text-primary)]',
+        inactive: 'bg-white/15 hover:bg-white/25',
     },
 } as const;
 
@@ -120,7 +59,7 @@ export const spacing = {
    ================================================================ */
 export const typography = {
     family: {
-        heading: "font-heading",  // 'Playfair Display', Georgia, serif
+        heading: "font-heading",  // 'EB Garamond', Georgia, serif
         body: "font-body",        // 'Inter', system-ui, sans-serif
     },
     size: {
@@ -184,14 +123,8 @@ export const shadows = {
     md: 'shadow-md',
     lg: 'shadow-lg',
     xl: 'shadow-xl',
-    spotlight: {
-        light: '',
-        dark: '',
-    },
-    spotlightStrong: {
-        light: '',
-        dark: '',
-    },
+    spotlight: 'shadow-[0_0_80px_rgba(201,168,76,0.08)]',
+    spotlightStrong: 'shadow-[0_0_120px_rgba(201,168,76,0.15)]',
 } as const;
 
 /* ================================================================
@@ -299,13 +232,4 @@ export const patterns = {
     },
 } as const;
 
-/* ================================================================
-   UTILITY: theme-aware class builder
-   ================================================================ */
-export function getThemeClasses(
-    lightClass: string,
-    darkClass: string
-): string {
-    return `${lightClass} dark:${darkClass}`;
-}
 

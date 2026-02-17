@@ -134,9 +134,9 @@ export function OrigamiForm() {
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             {message && (
-                <div className={`p-4 rounded-md ${message.type === 'success'
-                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
-                    : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+                <div className={`p-4 rounded-md border ${message.type === 'success'
+                    ? 'border-green-500/20 bg-green-500/10 text-green-400'
+                    : 'border-red-500/20 bg-red-500/10 text-red-400'
                     }`}>
                     {message.text}
                 </div>
@@ -148,7 +148,7 @@ export function OrigamiForm() {
                     <Heading level={3}>Basic Information</Heading>
 
                     <div>
-                        <label htmlFor="origami-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="origami-title" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Title *
                         </label>
                         <input
@@ -158,12 +158,12 @@ export function OrigamiForm() {
                             required
                             value={formData.title}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="origami-slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="origami-slug" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Slug * (auto-generated)
                         </label>
                         <input
@@ -173,12 +173,12 @@ export function OrigamiForm() {
                             required
                             value={formData.slug}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="origami-category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="origami-category" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Category *
                         </label>
                         <select
@@ -187,7 +187,7 @@ export function OrigamiForm() {
                             required
                             value={formData.category}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-select"
                         >
                             <option value="my-designs">My Designs</option>
                             <option value="other-designs">Other Designs</option>
@@ -195,7 +195,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="origami-date" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Date (YYYY-MM) *
                         </label>
                         <input
@@ -206,15 +206,15 @@ export function OrigamiForm() {
                             value={formData.date}
                             onChange={handleInputChange}
                             placeholder={getCurrentDate()}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
                             When you completed/folded this model
                         </p>
                     </div>
 
                     <div>
-                        <label htmlFor="origami-designer" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="origami-designer" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Designer {formData.category === 'other-designs' && '*'}
                         </label>
                         <input
@@ -225,7 +225,7 @@ export function OrigamiForm() {
                             value={formData.designer}
                             onChange={handleInputChange}
                             placeholder={formData.category === 'my-designs' ? 'Coleman Lai' : 'Original designer name'}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
                 </div>
@@ -235,7 +235,7 @@ export function OrigamiForm() {
                     <Heading level={3}>Additional Information</Heading>
 
                     <div>
-                        <label htmlFor="origami-description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="origami-description" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Description
                         </label>
                         <textarea
@@ -245,12 +245,12 @@ export function OrigamiForm() {
                             value={formData.description}
                             onChange={handleInputChange}
                             placeholder="Brief description of the model, folding technique, or story behind it..."
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="origami-images" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label htmlFor="origami-images" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
                             Images *
                         </label>
                         <input
@@ -260,16 +260,16 @@ export function OrigamiForm() {
                             accept="image/*"
                             required
                             onChange={handleImageChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="admin-input file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-[var(--color-bg-surface)] file:text-[var(--color-text-secondary)] hover:file:text-[var(--color-text-primary)]"
                         />
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
                             Upload model photos. Name crease pattern files with "pattern" in the filename (e.g., "pattern.jpg")
                         </p>
                     </div>
 
-                    <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                        <Heading level={4} className="font-medium text-blue-900 dark:text-blue-100 mb-2">Image Tips</Heading>
-                        <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                    <div className="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] p-4 rounded-lg">
+                        <Heading level={4} className="font-medium text-[var(--color-text-primary)] mb-2">Image Tips</Heading>
+                        <ul className="text-sm text-[var(--color-text-secondary)] space-y-1">
                             <li>• Upload multiple angles of your finished model</li>
                             <li>• Include crease patterns if available (name with "pattern")</li>
                             <li>• Use good lighting for clear photos</li>
@@ -283,7 +283,7 @@ export function OrigamiForm() {
                 <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-2.5 bg-[var(--color-accent)] text-[var(--color-bg-primary)] rounded-md hover:opacity-90 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-opacity text-sm font-medium tracking-wide"
                 >
                     {isSubmitting ? 'Creating...' : 'Add Origami'}
                 </Button>
