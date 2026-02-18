@@ -12,11 +12,10 @@ interface LazyImageProps {
 }
 
 /**
- * LazyImage — loads images with IntersectionObserver,
- * shows a shimmer skeleton placeholder, and fades in on load.
- *
- * Priority images skip all JS preloading and render immediately
- * with fetchpriority="high" so the browser can start the fetch ASAP.
+ * LazyImage — defers image loading with IntersectionObserver.
+ * Priority images render immediately with fetchpriority="high".
+ * No per-image opacity animation; entrance effects are handled
+ * by the parent's stagger animation to avoid conflicts.
  */
 export function LazyImage({
     src,
@@ -28,7 +27,6 @@ export function LazyImage({
     height,
     priority = false,
 }: LazyImageProps) {
-    const [isLoaded, setIsLoaded] = useState(priority);
     const [isInView, setIsInView] = useState(priority);
     const [hasError, setHasError] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -53,47 +51,31 @@ export function LazyImage({
         return () => { observer.unobserve(el); };
     }, [priority, isInView]);
 
-    useEffect(() => {
-        if (priority || !isInView || !src) return;
-        const img = new Image();
-        img.onload = () => setIsLoaded(true);
-        img.onerror = () => setHasError(true);
-        img.src = src;
-    }, [priority, isInView, src]);
-
     return (
         <div
             ref={containerRef}
             className={`relative overflow-hidden ${className}`}
             style={{ width, height }}
         >
-            {!isLoaded && !hasError && (
-                <div className="absolute inset-0 img-skeleton rounded-xl" />
-            )}
-
-            {(priority || isInView) && src && !hasError && (
+            {(priority || isInView) && src && !hasError ? (
                 <img
                     src={src}
                     alt={alt}
                     title={title}
                     onClick={onClick}
-                    className={`w-full h-full object-contain ${priority ? '' : 'transition-opacity duration-500'} ${isLoaded ? 'opacity-100' : 'opacity-0'
-                        } ${onClick ? 'cursor-pointer' : ''}`}
+                    className={`w-full h-full object-contain ${onClick ? 'cursor-pointer' : ''}`}
                     loading={priority ? 'eager' : 'lazy'}
                     decoding={priority ? 'sync' : 'async'}
                     fetchPriority={priority ? 'high' : undefined}
-                    onLoad={priority ? undefined : () => setIsLoaded(true)}
                     onError={() => setHasError(true)}
                     width={width}
                     height={height}
                 />
-            )}
-
-            {hasError && (
+            ) : hasError ? (
                 <div className="absolute inset-0 flex items-center justify-center text-[var(--color-text-tertiary)] text-sm">
                     Failed to load
                 </div>
-            )}
+            ) : null}
         </div>
     );
 }

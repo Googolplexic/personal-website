@@ -54,32 +54,60 @@ function inlineCssPlugin(): Plugin {
 }
 
 /**
- * Prune non-critical modulepreload hints to avoid connection congestion.
- * Keeps only the chunks needed for the initial home page render.
+ * Route-aware modulepreload plugin.
+ * Keeps universal critical chunks as static <link> tags and injects a small
+ * inline script that adds route-specific preloads based on location.pathname.
+ * This eliminates the lazy-import waterfall for direct navigations.
  */
-function pruneModulePreloadsPlugin(): Plugin {
-  const criticalChunks = [
-    'vendor-react',
-    'vendor-misc',
-    'utils',
-    'ui-base',
-    'page-home',
-    'index'
-  ]
+function routePreloadsPlugin(): Plugin {
+  const universalChunks = ['vendor-react', 'utils', 'ui-base', 'index']
+
+  const routeChunks: Record<string, string[]> = {
+    '/': ['page-home'],
+    '/origami': [
+      'page-origami', 'origami-components', 'origami-assets',
+      'search-components', 'vendor-content'
+    ],
+    '/portfolio': [
+      'page-portfolio', 'portfolio-components', 'search-components'
+    ]
+  }
+
   return {
-    name: 'vite-plugin-prune-modulepreloads',
+    name: 'vite-plugin-route-preloads',
     enforce: 'post',
     apply: 'build',
     transformIndexHtml: {
       order: 'post',
       handler(html) {
-        return html.replace(
+        const allPreloads = new Map<string, string>()
+
+        html = html.replace(
           /<link\s+rel="modulepreload"[^>]*href="([^"]*)"[^>]*>/gi,
-          (match, href) => {
-            const isCritical = criticalChunks.some(chunk => href.includes(chunk))
-            return isCritical ? match : ''
+          (match, href: string) => {
+            const isUniversal = universalChunks.some(c => href.includes(c))
+            if (isUniversal) return match
+
+            for (const [route, chunks] of Object.entries(routeChunks)) {
+              if (chunks.some(c => href.includes(c))) {
+                if (!allPreloads.has(route)) allPreloads.set(route, '')
+                allPreloads.set(route, allPreloads.get(route)! + match)
+              }
+            }
+            return ''
           }
         )
+
+        const routeMap: Record<string, string[]> = {}
+        for (const [route, chunks] of Object.entries(routeChunks)) {
+          const links = allPreloads.get(route) || ''
+          const hrefs = [...links.matchAll(/href="([^"]*)"/g)].map(m => m[1])
+          if (hrefs.length > 0) routeMap[route] = hrefs
+        }
+
+        const script = `<script>(function(){var p=location.pathname,m=${JSON.stringify(routeMap)},h=m[p]||[];h.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.href=u;document.head.appendChild(l)})})()</script>`
+
+        return html.replace('</head>', script + '</head>')
       }
     }
   }
@@ -259,7 +287,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     inlineCssPlugin(),
-    pruneModulePreloadsPlugin(),
+    routePreloadsPlugin(),
     Sitemap({
       hostname: "https://www.colemanlai.com",
       readable: true,
@@ -337,8 +365,19 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-ui';
             }
 
-            // Markdown and content processing
-            if (id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter')) {
+            // Markdown and content processing (including all transitive deps)
+            if (
+              id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter') ||
+              id.includes('hast') || id.includes('mdast') || id.includes('unist') ||
+              id.includes('micromark') || id.includes('remark') || id.includes('rehype') ||
+              id.includes('vfile') || id.includes('property-information') ||
+              id.includes('space-separated') || id.includes('comma-separated') ||
+              id.includes('estree') || id.includes('bail') || id.includes('trough') ||
+              id.includes('longest-streak') || id.includes('devlop') || id.includes('ccount') ||
+              id.includes('character-entities') || id.includes('trim-lines') ||
+              id.includes('style-to-object') || id.includes('decode-named') ||
+              id.includes('stringify-entities')
+            ) {
               return 'vendor-content';
             }
 

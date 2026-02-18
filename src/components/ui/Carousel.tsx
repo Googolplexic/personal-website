@@ -13,8 +13,6 @@ interface CarouselProps {
 export function Carousel({ modelImages, modelImagesFull, creasePattern, creasePatternFull, priority = false }: CarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [loadedSlides, setLoadedSlides] = useState<Set<number>>(() => new Set([0]));
-    const [renderedImages, setRenderedImages] = useState<Set<number>>(new Set());
-    const [cpRendered, setCpRendered] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [lightboxCPOpen, setLightboxCPOpen] = useState(false);
     const [isNearViewport, setIsNearViewport] = useState(priority);
@@ -68,19 +66,12 @@ export function Carousel({ modelImages, modelImagesFull, creasePattern, creasePa
                         >
                             {modelImages.map((img, i) => (
                                 <div key={i} className="w-full flex-shrink-0 flex items-center justify-center relative">
-                                    {!renderedImages.has(i) && (
-                                        <div className="absolute inset-0 img-skeleton rounded" />
-                                    )}
                                     {(isNearViewport && loadedSlides.has(i)) ? (
                                         <img
                                             src={img}
                                             alt={`Model View ${i + 1}`}
-                                            className={cn(
-                                                'h-full w-full object-contain cursor-pointer transition-opacity duration-500',
-                                                renderedImages.has(i) ? 'opacity-100' : 'opacity-0'
-                                            )}
+                                            className="h-full w-full object-contain cursor-pointer"
                                             onClick={() => setLightboxIndex(i)}
-                                            onLoad={() => setRenderedImages(prev => new Set(prev).add(i))}
                                             loading={priority && i === 0 ? 'eager' : 'lazy'}
                                             decoding={priority && i === 0 ? 'sync' : 'async'}
                                             fetchPriority={priority && i === 0 ? 'high' : undefined}
@@ -143,20 +134,13 @@ export function Carousel({ modelImages, modelImagesFull, creasePattern, creasePa
                 </div>
 
                 {creasePattern && (
-                    <div className="h-72 mx-auto flex items-center justify-center bg-transparent relative">
-                        {!cpRendered && (
-                            <div className="absolute inset-0 img-skeleton rounded" />
-                        )}
+                    <div className="h-72 mx-auto flex items-center justify-center bg-transparent">
                         {isNearViewport ? (
                             <img
                                 src={creasePattern}
                                 alt="Crease Pattern"
-                                className={cn(
-                                    'h-full w-full object-contain cursor-pointer transition-opacity duration-500',
-                                    cpRendered ? 'opacity-100' : 'opacity-0'
-                                )}
+                                className="h-full w-full object-contain cursor-pointer"
                                 onClick={() => setLightboxCPOpen(true)}
-                                onLoad={() => setCpRendered(true)}
                                 loading="lazy"
                             />
                         ) : (

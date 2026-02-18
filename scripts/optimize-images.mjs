@@ -30,8 +30,8 @@ const DIRS = [
 ];
 
 const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
-const MAX_WIDTH = 800;
-const WEBP_QUALITY = 80;
+const MAX_WIDTH = 600;
+const WEBP_QUALITY = 65;
 const FORCE = process.argv.includes('--force');
 
 let optimized = 0;
