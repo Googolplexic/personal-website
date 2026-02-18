@@ -31,17 +31,6 @@ tags:
 
 A web-based tool that helps users mark fractions on square paper using origami folding techniques. Users can input any fraction, and the application will generate visual step-by-step folding sequences.
 
-### Additional Information
-
-This interactive application demonstrates mathematical concepts through origami. The project features:
-
-- Two different folding methods for now:
-  - Crossing Diagonals method
-  - Fujimoto's Construction method
-- Dynamically generated folding sequences, showing each folding step
-- Automatic fraction simplification
-- Step-by-step navigation controls
-- Input validation to ensure valid fractions
-- Some mobile responsiveness
+It currently supports two folding methods: the Crossing Diagonals method and Fujimoto's Construction method. The sequences are dynamically generated for each fraction, with automatic simplification, step-by-step navigation, and input validation. There's some mobile responsiveness too.
 
 As this was my first time working with web development, this doubled as a learning project. I learned a lot about SVG, JavaScript, and CSS during the development process. I also learned how to structure a project and manage its dependencies.

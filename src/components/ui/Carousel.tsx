@@ -65,6 +65,7 @@ export function Carousel({ modelImages, creasePattern, priority = false }: Carou
                                         onClick={() => setLightboxIndex(i)}
                                         loading={priority && i === 0 ? 'eager' : 'lazy'}
                                         decoding={priority && i === 0 ? 'sync' : 'async'}
+                                        fetchPriority={priority && i === 0 ? 'high' : undefined}
                                         width="640"
                                         height="288"
                                     />

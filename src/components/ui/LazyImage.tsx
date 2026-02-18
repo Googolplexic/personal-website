@@ -14,6 +14,9 @@ interface LazyImageProps {
 /**
  * LazyImage — loads images with IntersectionObserver,
  * shows a shimmer skeleton placeholder, and fades in on load.
+ *
+ * Priority images skip all JS preloading and render immediately
+ * with fetchpriority="high" so the browser can start the fetch ASAP.
  */
 export function LazyImage({
     src,
@@ -25,16 +28,13 @@ export function LazyImage({
     height,
     priority = false,
 }: LazyImageProps) {
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(priority);
     const [isInView, setIsInView] = useState(priority);
     const [hasError, setHasError] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (priority) {
-            setIsInView(true);
-            return;
-        }
+        if (priority || isInView) return;
 
         const el = containerRef.current;
         if (!el) return;
@@ -46,21 +46,20 @@ export function LazyImage({
                     observer.unobserve(el);
                 }
             },
-            { rootMargin: '200px' } // start loading 200px before visible
+            { rootMargin: '200px' }
         );
 
         observer.observe(el);
         return () => { observer.unobserve(el); };
-    }, [priority]);
+    }, [priority, isInView]);
 
-    // Preload image in memory for smooth fade-in
     useEffect(() => {
-        if (!isInView || !src) return;
+        if (priority || !isInView || !src) return;
         const img = new Image();
         img.onload = () => setIsLoaded(true);
         img.onerror = () => setHasError(true);
         img.src = src;
-    }, [isInView, src]);
+    }, [priority, isInView, src]);
 
     return (
         <div
@@ -68,28 +67,28 @@ export function LazyImage({
             className={`relative overflow-hidden ${className}`}
             style={{ width, height }}
         >
-            {/* Skeleton placeholder */}
             {!isLoaded && !hasError && (
                 <div className="absolute inset-0 img-skeleton rounded-xl" />
             )}
 
-            {/* Actual image */}
-            {isInView && src && !hasError && (
+            {(priority || isInView) && src && !hasError && (
                 <img
                     src={src}
                     alt={alt}
                     title={title}
                     onClick={onClick}
-                    className={`w-full h-full object-contain ${priority ? '' : 'transition-opacity duration-500'} ${priority || isLoaded ? 'opacity-100' : 'opacity-0'
+                    className={`w-full h-full object-contain ${priority ? '' : 'transition-opacity duration-500'} ${isLoaded ? 'opacity-100' : 'opacity-0'
                         } ${onClick ? 'cursor-pointer' : ''}`}
                     loading={priority ? 'eager' : 'lazy'}
                     decoding={priority ? 'sync' : 'async'}
+                    fetchPriority={priority ? 'high' : undefined}
+                    onLoad={priority ? undefined : () => setIsLoaded(true)}
+                    onError={() => setHasError(true)}
                     width={width}
                     height={height}
                 />
             )}
 
-            {/* Error state */}
             {hasError && (
                 <div className="absolute inset-0 flex items-center justify-center text-[var(--color-text-tertiary)] text-sm">
                     Failed to load

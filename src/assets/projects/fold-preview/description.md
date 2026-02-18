@@ -30,39 +30,16 @@ tags:
 
 A Visual Studio Code extension that provides comprehensive support for working with FOLD (Flexible Origami List Datastructure) files. It features an interactive preview window and enhanced editing capabilities.
 
-### Key Features
+### Preview
 
-- **Interactive Preview**
-  - Real-time visualization of FOLD files
-    - Pan and zoom functionality
-    - Full-window canvas support
-    - Auto-updates with file changes
-  - Customizable visualization
-    - Mountain, valley, and boundary fold styles
-    - Vertex display options
-    - Color schemes and line styles
-  - Advanced labeling system
-    - Indexed labels for vertices, edges, and faces
-    - Dynamic scaling with zoom level
-    - Customizable label appearance
+The extension gives you a real-time visualization of FOLD files with pan and zoom, full-window canvas support, and auto-updates when you change the file. You can customize how mountain, valley, and boundary folds look, toggle vertex display, and adjust color schemes and line styles. There's also a labeling system for vertices, edges, and faces with indexed labels that scale dynamically with zoom.
 
-- **Editor Integration**
-  - Syntax highlighting for .fold files
-  - JSON formatting capabilities
-    - Customizable indentation
-    - Format on save support
-  - Editor enhancements
-    - Custom file icon
-    - Bracket matching
-    - Auto-closing pairs
+### Editor Integration
 
-- **Customization Options**
-  - Extensive settings for:
-    - Fold colors and styles
-    - Label appearance
-    - Canvas properties
-    - Line styles
-    - Vertex display
-  - All configurable through VS Code's settings UI
+FOLD files get syntax highlighting, JSON formatting with customizable indentation, and format-on-save support. There's also a custom file icon, bracket matching, and auto-closing pairs.
+
+### Customization
+
+Pretty much everything is configurable through VS Code's settings UI: fold colors and styles, label appearance, canvas properties, line styles, and vertex display.
 
 The extension is available on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview)!

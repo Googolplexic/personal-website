@@ -32,24 +32,12 @@ tags:
 
 ### Winner of best Artificial Intelligence hack at StormHacks V2 2024
 
-This is an Adobe Express add-on that utilizes OpenAI’s function calling capabilities to dynamically generate elements. Say hi to Doug!
+This is an Adobe Express add-on that utilizes OpenAI's function calling capabilities to dynamically generate elements. Say hi to Doug!
 
-### Key features
+Doug is the AI assistant that interprets natural language to process requests. It runs on OpenAI's GPT platform through a Node server using function calling capabilities. There's also voice-to-text input via OpenAI's Whisper API, and the transcription is editable so you can refine things before sending.
 
-- Meet the AI assistant Doug!
-  - Interprets natural language to process requests
-- Uses OpenAI’s GPT platform on a Node server to process requests using function calling capabilities
-- Voice to text input via OpenAI’s Whisper API
-  - Transcription is editable for further refinement and accuracy
-- Context support, allowing for a user to build upon previous requests
-- High potential for further customizability
-  - Source code can be modified to further add more possible functions, such as specific shapes or custom templates, allowing for huge flexibility
-  - Only a small amount was implemented by us as it was a hackathon project
-  - Can also possibly allow for integration with other add-ons
+The add-on supports context, so you can build on previous requests. There's a lot of potential for further customizability since the source code can be modified to add more functions like specific shapes or custom templates. We only implemented a small amount since it was a hackathon project, but it could also potentially integrate with other add-ons.
 
-### Challenges Encountered
+### Challenges
 
-- Adobe doesn’t allow external modules on the client side, preventing an easy way to make OpenAI API calls
-- Functions had to be called through the Node server, which required a different approach as the function calling capabilities could not call these functions directly
-- Hackathons being hackathons :)
-- Learning new technologies
+Adobe doesn't allow external modules on the client side, which prevented an easy way to make OpenAI API calls. Functions had to be called through the Node server, which required a different approach since the function calling capabilities couldn't call these functions directly. Add in the usual hackathon chaos and learning new technologies on the fly, and it was quite the experience.

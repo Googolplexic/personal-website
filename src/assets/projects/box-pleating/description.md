@@ -33,39 +33,10 @@ tags:
 
 `box-pleating` is a Python package that provides tools for working with box-pleating origami patterns. It includes features for pattern creation, validation, and FOLD format conversion. It was meant to be a basis for an AI origami crease pattern generation project, but we'll see where it goes from here. :)
 
-### Key Features
+### What it does
 
-- **Pattern Creation**
-  - Create patterns on customizable grids
-  - Add mountain, valley, and border folds
-  - Automatic intersection handling
-  - Grid-based validation (45° and 90° angles)
+You can create patterns on customizable grids with mountain, valley, and border folds. The package handles intersection detection automatically and validates that creases align to the grid at 45 and 90 degree angles.
 
-- **Pattern Validation**
-  - Flat-foldability checking
-    - Kawasaki's theorem implementation
-    - Maekawa's theorem verification
-  - Crease intersection detection
-  - Grid alignment verification
+For validation, it implements Kawasaki's theorem (alternating angles sum to 180) and Maekawa's theorem (mountain/valley crease difference is 2), along with crease intersection detection and grid alignment verification.
 
-- **FOLD Format Integration**
-  - Import from FOLD format
-  - Export to FOLD format
-  - Automatic grid size optimization
-  - Redundant vertex removal
-
-### Technical Implementation
-
-The package implements several key algorithms and features:
-
-- **Validation Algorithms**
-  - Kawasaki's theorem (alternating angles sum to 180°)
-  - Maekawa's theorem (mountain/valley crease difference is 2)
-  - Grid alignment checking
-  - Intersection detection
-
-- **Pattern Management**
-  - Efficient grid-based data structure
-  - Automatic crease handling
-  - Pattern cleanup utilities
-  - FOLD format conversion
+It also supports importing from and exporting to the FOLD format, with automatic grid size optimization and redundant vertex removal.

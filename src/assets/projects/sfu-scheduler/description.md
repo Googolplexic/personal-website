@@ -35,49 +35,18 @@ tags:
 
 This project was a group project with 4 other students. We wanted to create a web app that would allow SFU students to plan their courses and view course offerings and information.
 
-Here are some of the features and functions of the project:
+### Schedule Planning
 
-- **Schedule Planning**
-  - Schedule view displaying course timeslots
-    - Automatic conflict detection when adding courses
-    - Generate all possible schedule combinations
-    - Pin or hide courses to customize schedule generation
-  - Schedule management with user accounts
-    - Save and load schedules to a secure database
-    - Semester-specific schedule storage
+The schedule view displays course timeslots with automatic conflict detection when adding courses. You can generate all possible schedule combinations and pin or hide courses to customize the generation. Schedules can be saved and loaded to a secure database tied to your account, with semester-specific storage.
 
-- **Course Information**
-  - See all of SFU's course offerings
-    - Access current, previous, and future semester offerings
-    - Search and filter course listings
-  - Detailed course information
-    - Prerequisites and corequisites
-    - Course descriptions and requirements
-    - Section-specific details
-      - Instructor information
-      - Class times and locations
-      - Current enrollment and capacity
-- **User Accounts**
-  - Multiple login methods
-    - Email and password login
-      - Email verification
-      - Password reset
-    - Google sign-in
-    - Guest mode for quick access
-  - Account deletion
-  - Secure user data storage
-- **Database and Backend**
-  - Firebase Realtime Database
-    - Secure user data storage
-    - Course information storage
-  - Firebase Functions
-    - Backend for secure data handling
-    - Course information retrieval and processing
-  - Firebase Hosting
-    - Web hosting for the project
-    - Custom domain support
-- **Other**
-  - Mobile responsiveness
-  - User-friendly interface
-  - Robust error handling
-  - Complex algorithm implementation for schedule generation
+### Course Information
+
+You can browse all of SFU's course offerings across current, previous, and future semesters, with search and filtering. Each course shows prerequisites, corequisites, descriptions, and requirements, plus section-specific details like instructor information, class times and locations, and current enrollment and capacity.
+
+### User Accounts
+
+The app supports email/password login (with verification and password reset), Google sign-in, and a guest mode for quick access. Users can delete their accounts and all data is stored securely.
+
+### Technical Details
+
+The backend runs on Firebase with Realtime Database for data storage, Firebase Functions for secure data handling and course information processing, and Firebase Hosting with custom domain support. We also put work into mobile responsiveness, error handling, and the schedule generation algorithm.

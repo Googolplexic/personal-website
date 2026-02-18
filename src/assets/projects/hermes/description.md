@@ -34,144 +34,28 @@ tags:
 - ai-tools
 ---
 
-## Automated Asynchronous REST API Monitoring for AI Agents and Humans
+## Automated asynchronous REST API monitoring for AI agents and humans
 
-### Built for the MCP (Model Context Protocol) Hackathon 2024
+### Built for the MCP (Model Context Protocol) Hackathon
 
-Hermes is a comprehensive API monitoring system designed primarily for AI agents (like Claude) but also usable by humans. It allows users to input any API configuration and monitor responses over time, enabling data collection, tracking, and API performance analysis.
+Hermes is an API monitoring system designed primarily for AI agents (like Claude) but also usable by humans. You input any API configuration and it monitors responses over time, enabling data collection, tracking, and performance analysis.
 
-### 🏆 Hackathon Achievement
+This was created by a team of 4 CS students, and it was our first experience with many of the technologies involved, including database management, servers, and hosting platforms.
 
-Created as part of the MCP Hackathon by a team of 4 CS students, this was our first experience with many technologies including database management, servers, and hosting platforms.
+### How it works
 
-### Key Features
+You start by getting an MCP API key through the [key generation portal](https://mcp-hackathon.vercel.app/main) using Google authentication. Then you input your API endpoint details and set a monitoring schedule (anywhere from every 15 minutes to once a week). After testing the API call and verifying the response, you get a `config_id` that you use to activate monitoring and retrieve collected data.
 
-#### 🔍 API Validation & Configuration
+Data retrieval has three modes: summary (quick overview optimized for LLMs), details (full API responses with minimal metadata), and full (everything including debug info).
 
-- Test API endpoints before monitoring
-- Verify response data matches expectations
-- Support for GET, POST, PUT, DELETE methods
-- Custom headers and parameters configuration
-- JSON body support for complex requests
+### Architecture
 
-#### ⚡ Automated Monitoring
+The frontend is a Next.js app with Tailwind CSS deployed on Vercel, handling API key generation through Firebase Authentication with Google OAuth. The monitoring backend runs on Python with Gradio, deployed on Hugging Face Spaces. There's also a Node.js/Express API server for key management. Everything sits on PostgreSQL with Prisma ORM, and the monitoring service is containerized with Docker on Render.
 
-- Background task scheduling (15 minutes to 1 week intervals)
-- Asynchronous API calls at specified intervals
-- Automatic data collection and storage
-- Start immediately or schedule for future activation
+### Challenges
 
-#### 📊 Flexible Data Retrieval
+The biggest challenge was working around Gradio's stateless nature. We ended up using MCP API keys as user identifiers to enable secure data persistence across sessions. We also implemented a multi-step validation process so users can verify API responses look right before committing to a monitoring schedule. Data gets automatically cleaned up after 14 days for privacy.
 
-- **Summary mode**: Quick overview with recent results (optimized for LLMs)
-- **Details mode**: Full API responses with minimal metadata
-- **Full mode**: Complete data including all metadata and debug info
+### Links
 
-#### 🔐 Secure User Management
-
-- Google OAuth authentication
-- MCP API key generation and validation
-- User data isolation and privacy protection
-- 14-day automatic data cleanup for privacy
-
-### Technical Architecture
-
-#### Frontend (Key Generation Portal)
-
-- Next.js with TypeScript
-- Tailwind CSS for modern neumorphic design
-- Firebase Authentication (Google OAuth)
-- Deployed on Vercel
-
-#### Backend Services
-
-- Python with Gradio for the main monitoring interface
-- Node.js/Express API server for key management
-- PostgreSQL database with Prisma ORM
-- Docker containerization
-- Deployed on Render and Hugging Face Spaces
-
-#### Database Design
-
-- PostgreSQL for production data storage
-- Prisma for type-safe database operations
-- User authentication and API key management
-- Monitoring configuration and results storage
-
-### Workflow Process
-
-**Step 1: Get MCP API Key**
-Visit the [key generation portal](https://mcp-hackathon.vercel.app/main) to create your unique API key using Google authentication.
-
-#### Step 2: Validate API Configuration
-
-- Input your API endpoint details (URL, method, headers, parameters)
-- Set monitoring schedule (interval and duration)
-- Test the API call and verify response data
-- Receive a `config_id` for the next steps
-
-#### Step 3: Activate Monitoring
-
-- Use the `config_id` to start background monitoring
-- Monitoring begins immediately or at scheduled time
-- API calls made automatically at specified intervals
-
-#### Step 4: Retrieve Data
-
-- Access collected data anytime using the `config_id`
-- Choose data format based on your needs
-- Monitor progress and API performance
-
-### Use Cases
-
-#### For AI Agents
-
-- Monitor external APIs for data changes
-- Track API availability and performance
-- Collect data for analysis and decision making
-- Automated API health checking
-
-#### For Developers
-
-- API uptime monitoring
-- Performance benchmarking
-- Data collection for analysis
-- Integration testing automation
-
-### Technical Challenges Solved
-
-#### Stateless Architecture
-
-Overcame Gradio's stateless nature by using MCP API keys as user identifiers, enabling secure data persistence across sessions.
-
-#### Data Validation
-
-Implemented multi-step validation process to ensure users are satisfied with API responses before activating monitoring.
-
-#### Scalable Design
-
-Built with microservices architecture allowing independent scaling of authentication, monitoring, and data retrieval services.
-
-#### Security & Privacy
-
-- Strict CORS policies
-- User data isolation
-- Automatic data cleanup
-- Secure API key generation
-
-### Future Enhancements
-
-- **Response Formatting**: Allow users to specify custom response formats to save storage space
-- **Infrastructure Optimization**: Move from Render to eliminate cold start delays
-- **Advanced Analytics**: Add trend analysis and anomaly detection
-- **Webhook Integration**: Real-time notifications for API changes
-- **Team Collaboration**: Multi-user access to monitoring configurations
-
-### Demo & Links
-
-- **Live Application**: [Hermes on Hugging Face](https://huggingface.co/spaces/Agents-MCP-Hackathon/hermes)
-- **API Key Portal**: [Generate MCP API Key](https://mcp-hackathon.vercel.app/main)
-- **Demo Video**: [Watch on YouTube](https://youtu.be/NldpnfHg6eg)
-- **Source Code**: [GitHub Repository](https://github.com/IsithaT/MCP-Hackathon)
-
-This project showcases our ability to rapidly learn new technologies, build scalable full-stack applications, and create tools that bridge the gap between human and AI interactions with APIs.
+The [live application](https://huggingface.co/spaces/Agents-MCP-Hackathon/hermes) is on Hugging Face, and there's a [demo video](https://youtu.be/NldpnfHg6eg) on YouTube.

@@ -86,7 +86,7 @@ export function GroupedSearch({
         'px-3 py-1 text-xs font-body tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer bg-transparent',
         active
             ? 'opacity-100 border-b border-b-[var(--color-accent)] border-t-0 border-x-0'
-            : 'opacity-60 hover:opacity-85 border-b border-b-transparent hover:border-b-[var(--color-accent-text)] border-t-0 border-x-0'
+            : 'opacity-75 hover:opacity-90 border-b border-b-transparent hover:border-b-[var(--color-accent-text)] border-t-0 border-x-0'
     );
 
     const categoryButtons = [
@@ -131,7 +131,7 @@ export function GroupedSearch({
                             >
                                 {button.label}
                                 {button.count !== undefined && (
-                                    <span className="ml-1.5 text-xs opacity-50">({button.count})</span>
+                                    <span className="ml-1.5 text-xs" style={{ color: 'var(--color-text-tertiary)' }}>({button.count})</span>
                                 )}
                             </button>
                         ))}

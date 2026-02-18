@@ -35,50 +35,16 @@ tags:
 
 MACHI-NE- is a client-side emergency reporting system developed for CMPT 272 at Simon Fraser University. As it is purely client-side, it is more of a proof-of-concept than a fully-fledged emergency response system.
 
-The project features:
+### Reporting
 
-- **Emergency Reporting System**
-  - A user can report an incident with the following parameters:
-    - Incident type
-      - Allows for custom incident types
-    - Location
-      - Both name and coordinates
-      - Coordinates are input through a map interface
-    - Description
-    - Image attachment
-    - Contact information
-  - Incident list view
-    - Sortable by time, region, type, and status
+Users can report an incident by specifying the type (including custom types), location (both name and coordinates selected through a map interface), a description, an image attachment, and contact information. Reported incidents show up in a list view that can be sorted by time, region, type, and status.
 
-- **Interactive Map Interface**
-  - Leaflet integration with OpenStreetMaps
-    - Full pan and zoom functionality
-    - Custom markers for incident locations
-  - Sidebar incident list
-    - Shows incidents on the map
-      - Can toggle to show all or only map-visible incidents
-    - Clickable incident markers
-    - Incident details and focus on click
+### Map Interface
 
-- **Incident Management**
-  - Password-protected operations
-    - MD5 hashed passwords
-    - Operators can edit incidents and change status
-  - Password changing functionality
-    - Passwords are hashed and stored in local storage
-    - Password change requires old password verification
+The map uses Leaflet with OpenStreetMaps and supports full pan and zoom with custom markers for incident locations. There's a sidebar that lists incidents on the map, with the option to show all incidents or just the ones currently visible. Clicking a marker focuses on that incident and shows its details.
 
-- **Technical Implementation**
-  - Client-side architecture
-    - DOM Storage API for data persistence
-    - Responsive design patterns
-    - TypeScript type safety
-  - Security features
-    - MD5 hash verification
-    - Input sanitization
-    - Error handling
-  - User interface
-    - React components
-    - Tailwind CSS styling
-    - Mobile responsiveness
-    - Intuitive navigation
+### Incident Management
+
+Operators can edit incidents and change their status through password-protected operations. Passwords are MD5 hashed and stored in local storage, and changing a password requires verification of the old one.
+
+The whole thing is built with React and TypeScript, styled with Tailwind CSS, and uses the DOM Storage API for data persistence since there's no backend.

@@ -21,32 +21,10 @@ tags:
 
 ## Jump King style multiplayer platformer game made with Pygame and socket programming
 
-## Made for CMPT 371: Networking
+### Made for CMPT 371: Networking
 
-### Game Description
+Territory Ascent is a multiplayer platformer where up to 8 players compete to reach the top of a challenging map. The gameplay is similar to Jump King: you navigate a 2D tile map by timing precise jumps across platforms.
 
-Territory Ascent is a multiplayer platformer game where up to 8 players compete to reach the top of a challenging map. The game features a 2D tile map with platforms that players must navigate by timing precise jumps, similar to the popular game Jump King.
+The twist is that platforms change color to match whoever is standing on them, and those sections become exclusive to that player. If you land on someone else's platform, you fall and respawn at the bottom. Movement uses A and D keys, and jumping works with a slingshot-style mechanism where you drag the mouse to aim with a visual trajectory indicator.
 
-### Key Features
-
-- **Competitive Multiplayer**
-  - Free-for-all gameplay for up to 8 players
-  - LAN connectivity with simplified connection process
-  - Real-time synchronization between all players
-
-- **Unique Platform Mechanics**
-  - Platforms change color to match the player currently standing on them
-  - Platform sections become exclusive to the occupying player
-  - Players who land on occupied platforms fall and respawn at the bottom
-
-- **Intuitive Controls**
-  - "A" and "D" keys for left and right movement
-  - Slingshot-style jumping mechanism with visual trajectory indicator
-  - Varying jump power based on mouse drag distance
-
-- **Technical Implementation**
-  - Custom networking protocol using TCP sockets
-  - Hub-and-spoke communication model between server and clients
-  - Efficient data synchronization for shared game objects
-
-The game was developed as a project for CMPT 371: Networking, focusing on implementing reliable multiplayer functionality through socket programming while creating an engaging gameplay experience.
+The multiplayer runs on a custom networking protocol using TCP sockets in a hub-and-spoke model between the server and clients, with efficient data synchronization for shared game objects.

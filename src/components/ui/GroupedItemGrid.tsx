@@ -264,13 +264,13 @@ export function GroupedItemGrid({
                                         onClick={() => toggleGroup(group.key)}
                                         className="flex items-center gap-3 mb-5 w-full text-left cursor-pointer bg-transparent border-none p-0 group/header"
                                     >
-                                        <h3
+                                        <h2
                                             className="text-sm font-body tracking-[0.15em] uppercase transition-colors group-hover/header:!text-[var(--color-accent-text)]"
                                             style={{ color: 'var(--color-text-secondary)' }}
                                         >
                                             {group.label}
-                                            <span className="ml-2 opacity-50">({group.items.length})</span>
-                                        </h3>
+                                            <span className="ml-2" style={{ color: 'var(--color-text-tertiary)' }}>({group.items.length})</span>
+                                        </h2>
                                         <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border)' }} />
                                         <svg
                                             width="14" height="14" viewBox="0 0 24 24"

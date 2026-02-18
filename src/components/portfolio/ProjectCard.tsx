@@ -7,6 +7,16 @@ import { LazyImage } from '../ui/LazyImage';
 import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage } from '../../utils/lazyImages';
 
+function resolveFirstImageSync(images: ProjectProps['images']): string {
+    if (!images) return '';
+    if (Array.isArray(images) && images.length > 0) return images[0];
+    if (typeof images === 'object' && 'loaders' in images) {
+        const collection = images as LazyImageCollection;
+        if (collection.resolved[0]) return collection.resolved[0];
+    }
+    return '';
+}
+
 interface ProjectWithBasePath extends ProjectProps {
     basePath?: string;
     searchTerm?: string;
@@ -18,28 +28,19 @@ interface ProjectWithBasePath extends ProjectProps {
 
 export function ProjectCard({ basePath = '/portfolio', searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false, ...props }: ProjectWithBasePath) {
     const navigate = useNavigate();
-    const [firstImage, setFirstImage] = useState<string>('');
+    const [firstImage, setFirstImage] = useState<string>(() => resolveFirstImageSync(props.images));
 
     const projectPath = `${basePath}/${props.slug}${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
 
     useEffect(() => {
-        if (props.images) {
-            if (typeof props.images === 'object' && 'loaders' in props.images) {
-                const collection = props.images as LazyImageCollection;
-                if (collection.loaders.length > 0) {
-                    if (collection.resolved[0]) {
-                        setFirstImage(collection.resolved[0]);
-                    } else {
-                        loadImage(collection, 0).then((url) => {
-                            setFirstImage(url);
-                        });
-                    }
-                }
-            } else if (Array.isArray(props.images) && props.images.length > 0) {
-                setFirstImage(props.images[0]);
+        if (firstImage) return;
+        if (props.images && typeof props.images === 'object' && 'loaders' in props.images) {
+            const collection = props.images as LazyImageCollection;
+            if (collection.loaders.length > 0 && !collection.resolved[0]) {
+                loadImage(collection, 0).then(url => setFirstImage(url));
             }
         }
-    }, [props.images]);
+    }, [props.images, firstImage]);
 
     const handleClick = (e: React.MouseEvent) => {
         if (!(e.target as HTMLElement).closest('a')) {

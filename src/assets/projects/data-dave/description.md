@@ -33,40 +33,10 @@ tags:
 
 ### Made for nwHacks 2025 hackathon
 
-Data Dave makes data analysis accessible and efficient through a chat-based interface. Upload your CSV file and get instant insights and visualizations without needing to know coding or Excel functions.
+Data Dave makes data analysis accessible through a chat-based interface. Upload your CSV file and get instant insights and visualizations without needing to know coding or Excel functions.
 
-### Key Features
+The tool uses a fine-tuned function calling system to figure out what kind of analysis you're asking for. We put a lot of work into optimizing how data gets fed to the LLM to prevent context loss, which keeps the analysis accurate even with larger datasets.
 
-- **Accessible Data Analysis**
-  - Natural language interface for data queries
-  - No coding or Excel knowledge required
-  - Instant insights from CSV files
-  - Real-time analysis feedback
-
-- **Smart Context Management**
-  - Optimized data feeding to prevent LLM context loss
-  - Maintains analysis accuracy while limiting data overhead
-  - Context-aware function selection
-
-- **Interactive Visualizations**
-  - Dynamic graph and chart generation
-  - Visualization adjustments through natural language
-  - Real-time visual feedback
-
-### Technical Implementation
-
-The project uses several modern technologies:
-
-- **AI Integration**
-  - Fine-tuned function calling system
-  - Context-aware analysis selection
-  - Prompt-engineered data processing
-
-- **Architecture**
-  - React-TypeScript frontend
-  - Flask backend
-  - WebSocket communication
-  - Markdown message rendering for assistant responses
-  - Real-time data processing pipeline
+You can also ask for visualizations in natural language and tweak them through follow-up messages. The frontend is built with React and TypeScript, the backend runs on Flask, and the two communicate over WebSocket. Assistant responses render as Markdown for clean formatting.
 
 Alternative name: Data Daddy
