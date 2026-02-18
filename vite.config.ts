@@ -54,60 +54,26 @@ function inlineCssPlugin(): Plugin {
 }
 
 /**
- * Route-aware modulepreload plugin.
- * Keeps universal critical chunks as static <link> tags and injects a small
- * inline script that adds route-specific preloads based on location.pathname.
- * This eliminates the lazy-import waterfall for direct navigations.
+ * Prune modulepreload hints to only the critical chunks needed for initial render.
+ * Keeps React, utils, and UI base — everything else loads on demand via the import chain.
  */
-function routePreloadsPlugin(): Plugin {
-  const universalChunks = ['vendor-react', 'utils', 'ui-base', 'index']
-
-  const routeChunks: Record<string, string[]> = {
-    '/': ['page-home'],
-    '/origami': [
-      'page-origami', 'origami-components', 'origami-assets',
-      'search-components', 'vendor-content'
-    ],
-    '/portfolio': [
-      'page-portfolio', 'portfolio-components', 'search-components'
-    ]
-  }
+function pruneModulePreloadsPlugin(): Plugin {
+  const keepChunks = ['vendor-react', 'utils', 'ui-base', 'index']
 
   return {
-    name: 'vite-plugin-route-preloads',
+    name: 'vite-plugin-prune-preloads',
     enforce: 'post',
     apply: 'build',
     transformIndexHtml: {
       order: 'post',
       handler(html) {
-        const allPreloads = new Map<string, string>()
-
-        html = html.replace(
+        return html.replace(
           /<link\s+rel="modulepreload"[^>]*href="([^"]*)"[^>]*>/gi,
           (match, href: string) => {
-            const isUniversal = universalChunks.some(c => href.includes(c))
-            if (isUniversal) return match
-
-            for (const [route, chunks] of Object.entries(routeChunks)) {
-              if (chunks.some(c => href.includes(c))) {
-                if (!allPreloads.has(route)) allPreloads.set(route, '')
-                allPreloads.set(route, allPreloads.get(route)! + match)
-              }
-            }
+            if (keepChunks.some(c => href.includes(c))) return match
             return ''
           }
         )
-
-        const routeMap: Record<string, string[]> = {}
-        for (const route of Object.keys(routeChunks)) {
-          const links = allPreloads.get(route) || ''
-          const hrefs = [...links.matchAll(/href="([^"]*)"/g)].map(m => m[1])
-          if (hrefs.length > 0) routeMap[route] = hrefs
-        }
-
-        const script = `<script>(function(){var p=location.pathname,m=${JSON.stringify(routeMap)},h=m[p]||[];h.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.href=u;document.head.appendChild(l)})})()</script>`
-
-        return html.replace('</head>', script + '</head>')
       }
     }
   }
@@ -287,7 +253,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     inlineCssPlugin(),
-    routePreloadsPlugin(),
+    pruneModulePreloadsPlugin(),
     Sitemap({
       hostname: "https://www.colemanlai.com",
       readable: true,
@@ -366,17 +332,25 @@ export default defineConfig(({ mode }) => ({
             }
 
             // Markdown and content processing (including all transitive deps)
+            // IMPORTANT: every transitive dep of react-markdown/remark/rehype/unified
+            // must be here to avoid circular chunk dependencies at runtime
             if (
               id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter') ||
               id.includes('hast') || id.includes('mdast') || id.includes('unist') ||
               id.includes('micromark') || id.includes('remark') || id.includes('rehype') ||
+              id.includes('unified') ||
               id.includes('vfile') || id.includes('property-information') ||
               id.includes('space-separated') || id.includes('comma-separated') ||
               id.includes('estree') || id.includes('bail') || id.includes('trough') ||
               id.includes('longest-streak') || id.includes('devlop') || id.includes('ccount') ||
-              id.includes('character-entities') || id.includes('trim-lines') ||
-              id.includes('style-to-object') || id.includes('decode-named') ||
-              id.includes('stringify-entities')
+              id.includes('character-entities') || id.includes('character-reference-invalid') ||
+              id.includes('parse-entities') || id.includes('trim-lines') ||
+              id.includes('is-alphabetical') || id.includes('is-alphanumerical') ||
+              id.includes('is-decimal') || id.includes('is-hexadecimal') ||
+              id.includes('style-to-object') || id.includes('inline-style-parser') ||
+              id.includes('decode-named') || id.includes('stringify-entities') ||
+              id.includes('html-url-attributes') || id.includes('zwitch') ||
+              id.includes('is-plain-obj') || id.includes('/extend/')
             ) {
               return 'vendor-content';
             }
