@@ -15,7 +15,7 @@ function PortfolioGrid() {
                 </h1>
                 <p className="text-base font-heading italic max-w-lg mx-auto"
                    style={{ color: 'var(--color-text-secondary)' }}>
-                    Software crafted with care. Explore all the exhibits!
+                    Software crafted with care.
                 </p>
             </div>
             <ProjectGrid />

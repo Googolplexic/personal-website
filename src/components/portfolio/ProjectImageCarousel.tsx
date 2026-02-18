@@ -3,6 +3,7 @@ import { useImagePreloader } from '../../utils/useImagePreloader';
 import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage, getResolvedImages } from '../../utils/lazyImages';
 import { cn } from '../../utils/styles';
+import { Lightbox } from '../ui/Lightbox';
 
 interface ProjectImageCarouselProps {
     images: string[] | LazyImageCollection;
@@ -13,6 +14,7 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [resolvedImages, setResolvedImages] = useState<string[]>([]);
     const [isLazyCollection, setIsLazyCollection] = useState(false);
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
     // Check if images is a lazy collection
     useEffect(() => {
@@ -84,7 +86,7 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                                 alt={`${title} - Image ${i + 1}`}
                                 title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
                                 className="max-h-[24rem] w-auto object-contain cursor-pointer"
-                                onClick={() => window.open(img, '_blank')}
+                                onClick={() => setLightboxIndex(i)}
                                 loading={i <= 1 ? 'eager' : 'lazy'}
                                 width="640"
                                 height="384"
@@ -143,6 +145,15 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
                         ))}
                     </div>
                 </>
+            )}
+
+            {lightboxIndex !== null && (
+                <Lightbox
+                    images={resolvedImages}
+                    initialIndex={lightboxIndex}
+                    alt={title}
+                    onClose={() => setLightboxIndex(null)}
+                />
             )}
         </div>
     );

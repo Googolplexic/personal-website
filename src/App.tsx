@@ -13,9 +13,11 @@ import { Footer } from './components/layout/Footer'
 import { PageTransition } from './components/layout/PageTransition'
 import { BackToTop } from './components/ui/BackToTop'
 import { useSmoothScroll } from './utils/useSmoothScroll'
+import { useCustomCursor } from './utils/useCustomCursor'
 
 function AppContent() {
     useSmoothScroll();
+    useCustomCursor();
 
     return (
         <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-500 md:text-base text-sm"

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { cn } from '../../utils/styles';
+import { Lightbox } from './Lightbox';
 
 interface CarouselProps {
     modelImages: string[];
@@ -9,6 +10,8 @@ interface CarouselProps {
 export function Carousel({ modelImages, creasePattern }: CarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+    const [lightboxCPOpen, setLightboxCPOpen] = useState(false);
 
     // Preload current image and next/previous images
     useEffect(() => {
@@ -55,7 +58,7 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                                         src={img}
                                         alt={`Model View ${i + 1}`}
                                         className="max-h-72 w-auto object-contain cursor-pointer"
-                                        onClick={() => window.open(img, '_blank')}
+                                        onClick={() => setLightboxIndex(i)}
                                         loading="lazy"
                                         width="640"
                                         height="288"
@@ -120,7 +123,7 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                             src={creasePattern}
                             alt="Crease Pattern"
                             className="max-h-72 w-auto object-contain cursor-pointer"
-                            onClick={() => window.open(creasePattern, '_blank')}
+                            onClick={() => setLightboxCPOpen(true)}
                             loading="lazy"
                             width="640"
                             height="288"
@@ -128,6 +131,24 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                     </div>
                 )}
             </div>
+
+            {lightboxIndex !== null && (
+                <Lightbox
+                    images={modelImages}
+                    initialIndex={lightboxIndex}
+                    alt="Origami Model"
+                    onClose={() => setLightboxIndex(null)}
+                />
+            )}
+
+            {lightboxCPOpen && creasePattern && (
+                <Lightbox
+                    images={[creasePattern]}
+                    initialIndex={0}
+                    alt="Crease Pattern"
+                    onClose={() => setLightboxCPOpen(false)}
+                />
+            )}
         </div>
     );
 }

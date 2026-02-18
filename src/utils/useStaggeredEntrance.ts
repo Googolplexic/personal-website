@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState, RefObject } from 'react';
+import { useEffect, useRef, RefObject } from 'react';
 
 /**
  * Hook to stagger the reveal of child items within a container.
  * Each .spotlight-item inside the container gets revealed one-by-one
  * with a configurable delay, like lights turning on in a gallery.
  * 
- * Uses IntersectionObserver — only triggers when container enters view.
+ * Uses IntersectionObserver — only triggers once when container enters view.
  * Respects prefers-reduced-motion.
  * 
  * Pass an existing ref to attach to, or omit to create a new one.
@@ -16,12 +16,12 @@ export function useStaggeredEntrance(
 ) {
     const internalRef = useRef<HTMLDivElement>(null);
     const containerRef = externalRef || internalRef;
-    const [hasTriggered, setHasTriggered] = useState(false);
+    const hasTriggered = useRef(false);
 
     useEffect(() => {
-        if (hasTriggered) return;
+        if (hasTriggered.current) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            setHasTriggered(true);
+            hasTriggered.current = true;
             return;
         }
 
@@ -30,37 +30,34 @@ export function useStaggeredEntrance(
 
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting) {
+                if (entry.isIntersecting && !hasTriggered.current) {
+                    hasTriggered.current = true;
+                    observer.disconnect();
+
                     const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
 
-                    items.forEach((item) => {
-                        item.style.opacity = '0';
-                        item.style.transform = 'translateY(20px)';
-                        item.style.transition = 'none';
+                    // Add stagger-hidden class to all items
+                    items.forEach(item => {
+                        item.classList.add('stagger-hidden');
                     });
 
                     // Force reflow
                     void container.offsetHeight;
 
+                    // Reveal each item with staggered delay
                     items.forEach((item, i) => {
                         setTimeout(() => {
-                            item.style.transition = 'opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1)';
-                            item.style.opacity = '1';
-                            item.style.transform = 'translateY(0)';
+                            item.classList.remove('stagger-hidden');
+                            item.classList.add('stagger-visible');
                         }, i * staggerDelay);
                     });
 
-                    // Clean up inline styles after all animations complete
+                    // Remove animation class after all complete, leaving no trace
                     setTimeout(() => {
                         items.forEach(item => {
-                            item.style.transition = '';
-                            item.style.opacity = '';
-                            item.style.transform = '';
+                            item.classList.remove('stagger-visible');
                         });
-                    }, items.length * staggerDelay + 800);
-
-                    setHasTriggered(true);
-                    observer.disconnect();
+                    }, items.length * staggerDelay + 700);
                 }
             },
             { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
@@ -69,7 +66,7 @@ export function useStaggeredEntrance(
         observer.observe(container);
 
         return () => observer.disconnect();
-    }, [hasTriggered, staggerDelay]);
+    }, [containerRef, staggerDelay]);
 
     return containerRef;
 }

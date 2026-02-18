@@ -192,6 +192,18 @@
     .page-enter { animation: none; }
   }
 
+  /* --- STAGGERED ENTRANCE --- */
+  .stagger-hidden {
+    opacity: 0 !important;
+    transform: translateY(18px) !important;
+    transition: none !important;
+  }
+  .stagger-visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    transition: opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1) !important;
+  }
+
   /* --- SCROLL REVEAL --- */
   .scroll-reveal {
     opacity: 0;
@@ -212,16 +224,16 @@
     border-radius: 4px;
   }
 
-  /* --- IMAGE SKELETON --- */
+  /* --- IMAGE SKELETON (gold-tinted shimmer) --- */
   .img-skeleton {
     background: linear-gradient(
       90deg,
       var(--color-bg-secondary) 25%,
-      var(--color-bg-surface) 50%,
+      rgba(201, 168, 76, 0.06) 50%,
       var(--color-bg-secondary) 75%
     );
     background-size: 200% 100%;
-    animation: skeleton-shimmer 1.5s infinite ease-in-out;
+    animation: skeleton-shimmer 1.8s infinite ease-in-out;
   }
   @keyframes skeleton-shimmer {
     0% { background-position: 200% 0; }
@@ -530,4 +542,76 @@
 }
 .gallery-cat-default {
   color: var(--color-text-secondary);
+}
+
+/* ============================================================
+   CUSTOM CURSOR (desktop only)
+   Gold dot with soft glow, pulses on interactive elements.
+   ============================================================ */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* Dot core */
+.custom-cursor-dot {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100000;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--color-accent);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(.4,0,.2,1);
+  will-change: left, top;
+}
+
+/* Outer glow ring */
+.custom-cursor-glow {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(201, 168, 76, 0.25) 0%,
+    rgba(201, 168, 76, 0.06) 50%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.2s ease, width 0.35s cubic-bezier(.4,0,.2,1), height 0.35s cubic-bezier(.4,0,.2,1), background 0.35s ease;
+  will-change: left, top;
+}
+
+.custom-cursor-dot.visible,
+.custom-cursor-glow.visible {
+  opacity: 1;
+}
+
+/* Hovering interactive elements: dot shrinks, glow expands + pulses */
+.custom-cursor-dot.hovering {
+  transform: translate(-50%, -50%) scale(0.6);
+  background: #e2c76a;
+}
+
+.custom-cursor-glow.hovering {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(
+    circle,
+    rgba(201, 168, 76, 0.4) 0%,
+    rgba(201, 168, 76, 0.1) 70%,
+    transparent 70%
+  );
+  animation: cursor-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes cursor-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
 }
