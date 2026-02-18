@@ -135,26 +135,84 @@ function breakVendorCyclePlugin(): Plugin {
 }
 
 /**
- * Prune modulepreload hints to only the critical chunks needed for initial render.
- * Keeps React, utils, and UI base — everything else loads on demand via the import chain.
+ * Prune modulepreload hints then inject route-specific preloads for JS chunks
+ * AND the LCP image. Eliminates the waterfall where route chunks + images can
+ * only start downloading after the entry JS executes.
  */
-function pruneModulePreloadsPlugin(): Plugin {
+function routePreloadsPlugin(): Plugin {
   const keepChunks = ['vendor-react', 'vendor-ui', 'vendor-misc', 'utils', 'ui-base', 'index']
 
+  const routeChunkPatterns: Record<string, string[]> = {
+    '/': ['page-home', 'portfolio-components', 'search-components'],
+    '/origami': ['page-origami', 'origami-components', 'origami-assets', 'search-components'],
+    '/portfolio': ['page-portfolio', 'portfolio-components', 'search-components'],
+  }
+
+  // First image filename prefixes per route (matched against emitted assets)
+  const routeFirstImage: Record<string, string> = {
+    '/origami': '01-tonberry',
+  }
+
   return {
-    name: 'vite-plugin-prune-preloads',
+    name: 'vite-plugin-route-preloads',
     enforce: 'post',
     apply: 'build',
-    transformIndexHtml: {
-      order: 'post',
-      handler(html) {
-        return html.replace(
-          /<link\s+rel="modulepreload"[^>]*href="([^"]*)"[^>]*>/gi,
-          (match, href: string) => {
-            if (keepChunks.some(c => href.includes(c))) return match
-            return ''
+    generateBundle(_opts, bundle) {
+      const chunksByPattern: Record<string, string> = {}
+      const imagesByPrefix: Record<string, string> = {}
+
+      for (const [fileName, asset] of Object.entries(bundle)) {
+        if (asset.type === 'chunk') {
+          for (const patterns of Object.values(routeChunkPatterns)) {
+            for (const pat of patterns) {
+              if (fileName.includes(pat) && !chunksByPattern[pat]) {
+                chunksByPattern[pat] = '/' + fileName
+              }
+            }
           }
-        )
+        }
+        if (asset.type === 'asset' && /\.(webp|jpg|jpeg|png)$/.test(fileName)) {
+          for (const prefix of Object.values(routeFirstImage)) {
+            if (fileName.includes(prefix) && fileName.includes('.webp') && !imagesByPrefix[prefix]) {
+              imagesByPrefix[prefix] = '/' + fileName
+            }
+          }
+        }
+      }
+
+      // Build the route mapping as JSON
+      const routeMap: Record<string, { js: string[]; img?: string }> = {}
+      for (const [route, patterns] of Object.entries(routeChunkPatterns)) {
+        routeMap[route] = {
+          js: patterns.map(p => chunksByPattern[p]).filter(Boolean)
+        }
+      }
+      for (const [route, prefix] of Object.entries(routeFirstImage)) {
+        if (routeMap[route] && imagesByPrefix[prefix]) {
+          routeMap[route].img = imagesByPrefix[prefix]
+        }
+      }
+
+      // Find index.html in the bundle and inject the preload script
+      for (const [fileName, asset] of Object.entries(bundle)) {
+        if (fileName === 'index.html' && asset.type === 'asset' && typeof asset.source === 'string') {
+          let html = asset.source
+
+          // Prune non-critical modulepreloads
+          html = html.replace(
+            /<link\s+rel="modulepreload"[^>]*href="([^"]*)"[^>]*>/gi,
+            (match: string, href: string) => {
+              if (keepChunks.some(c => href.includes(c))) return match
+              return ''
+            }
+          )
+
+          // Inject route preload script right before </head>
+          const preloadScript = `<script>(function(){var m=${JSON.stringify(routeMap)};var p=location.pathname;var r=m[p];if(!r)return;var h=document.head;r.js.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.href=u;h.appendChild(l)});if(r.img){var l=document.createElement('link');l.rel='preload';l.as='image';l.href=r.img;h.appendChild(l)}})()</script>`
+          html = html.replace('</head>', preloadScript + '</head>')
+
+          asset.source = html
+        }
       }
     }
   }
@@ -336,7 +394,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     inlineCssPlugin(),
     breakVendorCyclePlugin(),
-    pruneModulePreloadsPlugin(),
+    routePreloadsPlugin(),
     Sitemap({
       hostname: "https://www.colemanlai.com",
       readable: true,
