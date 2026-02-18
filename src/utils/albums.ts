@@ -1,4 +1,3 @@
-import matter from 'front-matter';
 export interface ImagePair {
     modelImages: string[];
     creasePattern?: string;
@@ -26,11 +25,13 @@ interface AlbumMetadata {
     designer?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ParsedMd = { attributes: Record<string, any>; body: string };
+
 const myDesignsMetadata = import.meta.glob('../assets/origami/my-designs/**/info.md', {
     eager: true,
-    query: '?raw',
-    import: 'default'
-}) as Record<string, string>;
+    query: '?parsed',
+}) as Record<string, ParsedMd>;
 
 const myDesignsImages = import.meta.glob('../assets/origami/my-designs/**/*.{png,jpg,jpeg,webp}', {
     eager: true,
@@ -39,33 +40,27 @@ const myDesignsImages = import.meta.glob('../assets/origami/my-designs/**/*.{png
 
 const otherDesignsMetadata = import.meta.glob('../assets/origami/other-designs/**/info.md', {
     eager: true,
-    query: '?raw',
-    import: 'default'
-}) as Record<string, string>;
+    query: '?parsed',
+}) as Record<string, ParsedMd>;
 
 const otherDesignsImages = import.meta.glob('../assets/origami/other-designs/**/*.{png,jpg,jpeg,webp}', {
     eager: true,
     import: 'default'
 }) as Record<string, string>;
 
-function processImages(metadataContext: Record<string, string>, imagesContext: Record<string, string>, baseFolder: string): AlbumSection {
+function processImages(metadataContext: Record<string, ParsedMd>, imagesContext: Record<string, string>, baseFolder: string): AlbumSection {
     const albums = new Map<string, {
         modelImages: string[],
         creasePattern?: string,
         metadata?: AlbumMetadata
     }>();
 
-    Object.entries(metadataContext).forEach(([path, content]) => {
+    Object.entries(metadataContext).forEach(([path, mod]) => {
         const albumName = path.split(`${baseFolder}/`)[1].split('/')[0];
         if (!albums.has(albumName)) {
             albums.set(albumName, { modelImages: [] });
         }
-        try {
-            const parsed = matter(content);
-            albums.get(albumName)!.metadata = parsed.attributes as AlbumMetadata;
-        } catch (error) {
-            console.error(`Error processing metadata for ${albumName}:`, error);
-        }
+        albums.get(albumName)!.metadata = mod.attributes as AlbumMetadata;
     });
 
     Object.entries(imagesContext).forEach(([path, url]) => {

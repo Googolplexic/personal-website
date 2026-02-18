@@ -2,8 +2,64 @@ import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import Sitemap from 'vite-plugin-sitemap'
 import { statSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { resolve, dirname } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
+
+/**
+ * Process markdown frontmatter at build time so front-matter/js-yaml
+ * never ship to the client. Handles `*.md?parsed` imports returning
+ * `{ attributes, body }` as static JSON.
+ */
+function markdownFrontmatterPlugin(): Plugin {
+  return {
+    name: 'vite-plugin-md-frontmatter',
+    enforce: 'pre',
+    resolveId(source, importer) {
+      if (!source.endsWith('?parsed')) return
+      const mdPath = source.slice(0, -7)
+      if (importer) {
+        const importerDir = dirname(importer.replace(/\?.*$/, ''))
+        return resolve(importerDir, mdPath) + '?parsed'
+      }
+    },
+    load(id) {
+      if (!id.endsWith('?parsed')) return
+      const filePath = id.slice(0, -7)
+      const raw = readFileSync(filePath, 'utf-8')
+
+      // Minimal frontmatter parser (avoids shipping js-yaml to client)
+      const attributes: Record<string, unknown> = {}
+      let body = raw
+      if (raw.startsWith('---')) {
+        const end = raw.indexOf('\n---', 3)
+        if (end !== -1) {
+          const yamlStr = raw.slice(4, end)
+          body = raw.slice(end + 4).replace(/^\n/, '')
+          // Simple YAML parser for flat/array values
+          let currentKey = ''
+          for (const line of yamlStr.split('\n')) {
+            const kvMatch = line.match(/^(\w[\w\s]*?):\s*(.*)$/)
+            if (kvMatch) {
+              currentKey = kvMatch[1].trim()
+              const val = kvMatch[2].trim()
+              if (val === '') {
+                attributes[currentKey] = []
+              } else {
+                attributes[currentKey] = val
+              }
+            } else if (line.match(/^-\s+/) && currentKey) {
+              const item = line.replace(/^-\s+/, '').trim()
+              if (!Array.isArray(attributes[currentKey])) attributes[currentKey] = []
+              ;(attributes[currentKey] as string[]).push(item)
+            }
+          }
+        }
+      }
+
+      return `export const attributes = ${JSON.stringify(attributes)};\nexport const body = ${JSON.stringify(body)};`
+    }
+  }
+}
 
 /**
  * Vite plugin to inline CSS <link> tags into <style> blocks in the HTML.
@@ -54,11 +110,36 @@ function inlineCssPlugin(): Plugin {
 }
 
 /**
+ * Break circular vendor-react <-> vendor-content dependency by inlining the
+ * getDefaultExportFromCjs helper. Without this, loading vendor-react forces
+ * vendor-content (53 KB gzip of react-markdown) to load on every page.
+ */
+function breakVendorCyclePlugin(): Plugin {
+  const HELPER = 'function(e){return e&&e.__esModule&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}';
+  return {
+    name: 'vite-plugin-break-vendor-cycle',
+    enforce: 'post',
+    apply: 'build',
+    generateBundle(_opts, bundle) {
+      for (const [fileName, chunk] of Object.entries(bundle)) {
+        if (chunk.type !== 'chunk' || !fileName.includes('vendor-react')) continue
+        const importRe = /import\{(\w+) as (\w+)\}from"\.\/vendor-content[^"]*\.js";?/
+        const m = chunk.code.match(importRe)
+        if (!m) continue
+        const alias = m[2]
+        chunk.code = chunk.code
+          .replace(importRe, `var ${alias}=${HELPER};`)
+      }
+    }
+  }
+}
+
+/**
  * Prune modulepreload hints to only the critical chunks needed for initial render.
  * Keeps React, utils, and UI base — everything else loads on demand via the import chain.
  */
 function pruneModulePreloadsPlugin(): Plugin {
-  const keepChunks = ['vendor-react', 'utils', 'ui-base', 'index']
+  const keepChunks = ['vendor-react', 'vendor-ui', 'vendor-misc', 'utils', 'ui-base', 'index']
 
   return {
     name: 'vite-plugin-prune-preloads',
@@ -251,8 +332,10 @@ saveCache(cache)
 
 export default defineConfig(({ mode }) => ({
   plugins: [
+    markdownFrontmatterPlugin(),
     react(),
     inlineCssPlugin(),
+    breakVendorCyclePlugin(),
     pruneModulePreloadsPlugin(),
     Sitemap({
       hostname: "https://www.colemanlai.com",
@@ -319,9 +402,10 @@ export default defineConfig(({ mode }) => ({
           // to prevent broad patterns (e.g. 'react') from swallowing
           // react-markdown, react-icons, react-helmet-async, etc.
           if (id.includes('node_modules')) {
-            // Markdown and content processing (check BEFORE 'react' to catch react-markdown)
+            // Markdown rendering (react-markdown + remark/rehype/unified ecosystem)
+            // Only needed on project detail pages that render markdown
             if (
-              id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter') ||
+              id.includes('marked') || id.includes('react-markdown') ||
               id.includes('hast') || id.includes('mdast') || id.includes('unist') ||
               id.includes('micromark') || id.includes('remark') || id.includes('rehype') ||
               id.includes('unified') ||

@@ -1,13 +1,5 @@
 import { OrigamiProps } from '../../../../types';
-import info from './info.md?raw';
-import matter from 'front-matter';
-
-interface OrigamiMetadata {
-    title: string;
-    date: string;
-    description?: string;
-    designer?: string;
-}
+import { attributes } from './info.md?parsed';
 
 // Optimized web images (from scripts/optimize-images.mjs)
 const webImages = Object.values(import.meta.glob('./web/*.webp', { eager: true, import: 'default' }))
@@ -24,8 +16,6 @@ const fullCP = Object.values(import.meta.glob('./*pattern*.{png,jpg,jpeg,webp}',
 const creasePattern = (webCP[0] || fullCP[0]) as string | undefined;
 const creasePatternFull = fullCP[0] as string | undefined;
 
-// Parse metadata from info.md
-const { attributes } = matter<OrigamiMetadata>(info);
 
 export default {
     title: attributes.title,
