@@ -126,14 +126,16 @@ export function ItemGrid({
                 />
             )}
 
-            <MasonrySpotlightGrid>
-                {sortedAndFilteredItems.map((item) => {
+            <MasonrySpotlightGrid skipCount={4}>
+                {sortedAndFilteredItems.map((item, index) => {
+                    const isPriority = index < 4;
                     if (item.type === 'project') {
                         return (
                             <ProjectCard
                                 key={item.slug}
                                 {...(item as ProjectProps)}
                                 searchTerm={searchTerm}
+                                priority={isPriority}
                             />
                         );
                     } else {
@@ -148,6 +150,7 @@ export function ItemGrid({
                                 date={origami.date}
                                 designer={origami.designer}
                                 searchTerm={searchTerm}
+                                priority={isPriority}
                             />
                         );
                     }

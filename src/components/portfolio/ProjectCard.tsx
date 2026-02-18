@@ -13,9 +13,10 @@ interface ProjectWithBasePath extends ProjectProps {
     categoryLabel?: string;
     categoryColor?: string;
     showCategory?: boolean;
+    priority?: boolean;
 }
 
-export function ProjectCard({ basePath = '/portfolio', searchTerm = '', categoryLabel, categoryColor, showCategory = false, ...props }: ProjectWithBasePath) {
+export function ProjectCard({ basePath = '/portfolio', searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false, ...props }: ProjectWithBasePath) {
     const navigate = useNavigate();
     const [firstImage, setFirstImage] = useState<string>('');
 
@@ -59,6 +60,7 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
                         src={firstImage}
                         alt={props.title}
                         className="w-full h-full object-cover"
+                        priority={priority}
                     />
                 </div>
             )}

@@ -12,7 +12,9 @@ import { useEffect, useRef, RefObject } from 'react';
  */
 export function useStaggeredEntrance(
     externalRef?: RefObject<HTMLDivElement | null>,
-    staggerDelay = 80
+    staggerDelay = 80,
+    /** Number of items to show immediately (no stagger) for LCP */
+    skipCount = 0
 ) {
     const internalRef = useRef<HTMLDivElement>(null);
     const containerRef = externalRef || internalRef;
@@ -36,28 +38,33 @@ export function useStaggeredEntrance(
 
                     const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
 
-                    // Add stagger-hidden class to all items
-                    items.forEach(item => {
-                        item.classList.add('stagger-hidden');
+                    // Add stagger-hidden class only to items beyond skipCount
+                    items.forEach((item, i) => {
+                        if (i >= skipCount) {
+                            item.classList.add('stagger-hidden');
+                        }
                     });
 
                     // Force reflow
                     void container.offsetHeight;
 
-                    // Reveal each item with staggered delay
+                    // Reveal each staggered item with delay (offset by skipCount)
                     items.forEach((item, i) => {
-                        setTimeout(() => {
-                            item.classList.remove('stagger-hidden');
-                            item.classList.add('stagger-visible');
-                        }, i * staggerDelay);
+                        if (i >= skipCount) {
+                            setTimeout(() => {
+                                item.classList.remove('stagger-hidden');
+                                item.classList.add('stagger-visible');
+                            }, (i - skipCount) * staggerDelay);
+                        }
                     });
 
+                    const staggeredCount = Math.max(0, items.length - skipCount);
                     // Remove animation class after all complete, leaving no trace
                     setTimeout(() => {
                         items.forEach(item => {
                             item.classList.remove('stagger-visible');
                         });
-                    }, items.length * staggerDelay + 700);
+                    }, staggeredCount * staggerDelay + 700);
                 }
             },
             { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }

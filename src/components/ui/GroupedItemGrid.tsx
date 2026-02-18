@@ -169,7 +169,7 @@ export function GroupedItemGrid({
         software: software.length
     };
 
-    const renderCard = (item: ItemProps, showCategoryBadge: boolean) => {
+    const renderCard = (item: ItemProps, showCategoryBadge: boolean, isPriority = false) => {
         const category = getItemCategory(item);
         const categoryLabel = getCategoryLabel(category);
         const categoryCls = getCategoryClass(category);
@@ -183,6 +183,7 @@ export function GroupedItemGrid({
                     categoryLabel={categoryLabel}
                     categoryColor={categoryCls}
                     showCategory={showCategoryBadge}
+                    priority={isPriority}
                 />
             );
         } else {
@@ -200,6 +201,7 @@ export function GroupedItemGrid({
                     categoryLabel={categoryLabel}
                     categoryColor={categoryCls}
                     showCategory={showCategoryBadge}
+                    priority={isPriority}
                 />
             );
         }
@@ -285,8 +287,8 @@ export function GroupedItemGrid({
                                         }`}
                                     >
                                         <div className="overflow-hidden">
-                                            <MasonrySpotlightGrid>
-                                                {group.items.map(item => renderCard(item, false))}
+                                            <MasonrySpotlightGrid skipCount={4}>
+                                                {group.items.map((item, i) => renderCard(item, false, i < 4))}
                                             </MasonrySpotlightGrid>
                                         </div>
                                     </div>
@@ -302,8 +304,8 @@ export function GroupedItemGrid({
             ) : (
                 /* List view: flat masonry with category badges */
                 <>
-                    <MasonrySpotlightGrid>
-                        {sortedAndFilteredItems.map(item => renderCard(item, true))}
+                    <MasonrySpotlightGrid skipCount={4}>
+                        {sortedAndFilteredItems.map((item, i) => renderCard(item, true, i < 4))}
                     </MasonrySpotlightGrid>
 
                     {sortedAndFilteredItems.length === 0 && (

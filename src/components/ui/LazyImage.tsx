@@ -80,10 +80,10 @@ export function LazyImage({
                     alt={alt}
                     title={title}
                     onClick={onClick}
-                    className={`w-full h-full object-contain transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'
+                    className={`w-full h-full object-contain ${priority ? '' : 'transition-opacity duration-500'} ${priority || isLoaded ? 'opacity-100' : 'opacity-0'
                         } ${onClick ? 'cursor-pointer' : ''}`}
                     loading={priority ? 'eager' : 'lazy'}
-                    decoding="async"
+                    decoding={priority ? 'sync' : 'async'}
                     width={width}
                     height={height}
                 />

@@ -5,11 +5,15 @@ import { Lightbox } from './Lightbox';
 interface CarouselProps {
     modelImages: string[];
     creasePattern?: string;
+    priority?: boolean;
 }
 
-export function Carousel({ modelImages, creasePattern }: CarouselProps) {
+export function Carousel({ modelImages, creasePattern, priority = false }: CarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+    const [loadedImages, setLoadedImages] = useState<Set<string>>(
+        // If priority, mark the first image as already loaded to skip JS preload
+        () => priority && modelImages[0] ? new Set([modelImages[0]]) : new Set()
+    );
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [lightboxCPOpen, setLightboxCPOpen] = useState(false);
 
@@ -59,7 +63,8 @@ export function Carousel({ modelImages, creasePattern }: CarouselProps) {
                                         alt={`Model View ${i + 1}`}
                                         className="max-h-72 w-auto object-contain cursor-pointer"
                                         onClick={() => setLightboxIndex(i)}
-                                        loading="lazy"
+                                        loading={priority && i === 0 ? 'eager' : 'lazy'}
+                                        decoding={priority && i === 0 ? 'sync' : 'async'}
                                         width="640"
                                         height="288"
                                     />

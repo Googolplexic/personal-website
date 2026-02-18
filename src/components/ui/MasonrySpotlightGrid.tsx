@@ -6,6 +6,8 @@ import { useStaggeredEntrance } from '../../utils/useStaggeredEntrance';
 interface MasonrySpotlightGridProps {
     children: ReactNode;
     className?: string;
+    /** Number of items to show immediately (no stagger) for LCP */
+    skipCount?: number;
 }
 
 /**
@@ -14,10 +16,10 @@ interface MasonrySpotlightGridProps {
  * the cursor to position a radial-gradient follow-spot.
  * On mobile/touch devices, uses scroll-proximity dimming instead.
  */
-export function MasonrySpotlightGrid({ children, className = '' }: MasonrySpotlightGridProps) {
+export function MasonrySpotlightGrid({ children, className = '', skipCount = 0 }: MasonrySpotlightGridProps) {
     const { ref, onMouseMove, onMouseEnter, onMouseLeave } = useSpotlight();
     useScrollProximity(ref);
-    useStaggeredEntrance(ref);
+    useStaggeredEntrance(ref, 80, skipCount);
 
     return (
         <div

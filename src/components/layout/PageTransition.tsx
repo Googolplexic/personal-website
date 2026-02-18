@@ -14,6 +14,7 @@ export function PageTransition({ children }: PageTransitionProps) {
     const location = useLocation();
     const prevPathRef = useRef(location.pathname);
     const isFirstRender = useRef(true);
+    const isInitialLoad = useRef(true);
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -23,12 +24,14 @@ export function PageTransition({ children }: PageTransitionProps) {
 
         if (location.pathname !== prevPathRef.current) {
             prevPathRef.current = location.pathname;
+            isInitialLoad.current = false;
             window.scrollTo(0, 0);
         }
     }, [location.pathname]);
 
+    // Skip page-enter animation on initial load to avoid delaying LCP
     return (
-        <div key={location.pathname} className="page-enter">
+        <div key={location.pathname} className={isInitialLoad.current ? '' : 'page-enter'}>
             {children}
         </div>
     );
