@@ -11,8 +11,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        heading: ['EB Garamond', 'Garamond', 'Georgia', 'serif'],
-        body: ['PT Sans', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['EB Garamond', 'EB Garamond Fallback', 'Garamond', 'Georgia', 'serif'],
+        body: ['PT Sans', 'PT Sans Fallback', 'system-ui', '-apple-system', 'sans-serif'],
         signature: ['Grape Nuts', 'cursive'],
       },
       animation: {

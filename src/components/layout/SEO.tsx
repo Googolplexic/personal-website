@@ -9,13 +9,13 @@ interface SEOProps {
     children?: React.ReactNode;
 }
 
-export function SEO({ 
-    title, 
-    description, 
+export function SEO({
+    title,
+    description,
     keywords,
     type = "website",
     pathname = "",
-    children 
+    children
 }: SEOProps) {
     const baseUrl = "https://www.colemanlai.com";
     const url = pathname ? `${baseUrl}${pathname}` : baseUrl;
@@ -27,18 +27,18 @@ export function SEO({
             <title>{title}</title>
             <meta name="description" content={description} />
             {keywordsString && <meta name="keywords" content={keywordsString} />}
-            
+
             {/* Open Graph / Facebook */}
             <meta property="og:type" content={type} />
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />
             <meta property="og:url" content={url} />
-            
+
             {/* Twitter */}
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />
-            
+
             {/* Canonical */}
             <link rel="canonical" href={url} />
 

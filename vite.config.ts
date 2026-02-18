@@ -305,6 +305,11 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-content';
             }
 
+            // Smooth scrolling (loaded on demand)
+            if (id.includes('lenis')) {
+              return 'vendor-lenis';
+            }
+
             // Other vendor code
             return 'vendor-misc';
           }
