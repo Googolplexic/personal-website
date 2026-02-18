@@ -30,7 +30,7 @@ const DIRS = [
 ];
 
 const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
-const MAX_WIDTH = 1200;
+const MAX_WIDTH = 800;
 const WEBP_QUALITY = 80;
 const FORCE = process.argv.includes('--force');
 

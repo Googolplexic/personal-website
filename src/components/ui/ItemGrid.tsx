@@ -126,9 +126,9 @@ export function ItemGrid({
                 />
             )}
 
-            <MasonrySpotlightGrid skipCount={3}>
+            <MasonrySpotlightGrid skipCount={1}>
                 {sortedAndFilteredItems.map((item, index) => {
-                    const isPriority = index < 3;
+                    const isPriority = index < 1;
                     if (item.type === 'project') {
                         return (
                             <ProjectCard
