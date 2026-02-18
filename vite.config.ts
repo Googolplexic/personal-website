@@ -304,22 +304,8 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-ui';
             }
 
-            // Markdown and content processing (including transitive deps: micromark, mdast, unist, remark, rehype, etc.)
-            if (
-              id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter') ||
-              id.includes('micromark') || id.includes('mdast') || id.includes('unist') ||
-              id.includes('remark') || id.includes('rehype') || id.includes('hast') ||
-              id.includes('unified') || id.includes('bail') || id.includes('trough') ||
-              id.includes('vfile') || id.includes('property-information') ||
-              id.includes('comma-separated') || id.includes('space-separated') ||
-              id.includes('decode-named') || id.includes('character-entities') ||
-              id.includes('devlop') || id.includes('ccount') || id.includes('escape-string') ||
-              id.includes('markdown-table') || id.includes('longest-streak') ||
-              id.includes('html-void-elements') || id.includes('trim-lines') ||
-              id.includes('stringify-entities') || id.includes('character-reference') ||
-              id.includes('character-entities-legacy') ||
-              id.includes('style-to-object') || id.includes('inline-style-parser')
-            ) {
+            // Markdown and content processing
+            if (id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter')) {
               return 'vendor-content';
             }
 
