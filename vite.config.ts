@@ -317,10 +317,8 @@ export default defineConfig(({ mode }) => ({
               id.includes('markdown-table') || id.includes('longest-streak') ||
               id.includes('html-void-elements') || id.includes('trim-lines') ||
               id.includes('stringify-entities') || id.includes('character-reference') ||
-              id.includes('character-entities-legacy') || id.includes('is-') ||
-              id.includes('css-') || id.includes('/css/') || id.includes('debug') ||
-              id.includes('extend') || id.includes('style-to-object') ||
-              id.includes('inline-style-parser')
+              id.includes('character-entities-legacy') ||
+              id.includes('style-to-object') || id.includes('inline-style-parser')
             ) {
               return 'vendor-content';
             }
