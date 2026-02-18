@@ -17,7 +17,9 @@ export function useSpotlight() {
             ([entry]) => {
                 if (!entry.isIntersecting) {
                     const overlay = document.getElementById('global-spotlight');
+                    const dim = document.getElementById('page-dim');
                     if (overlay) overlay.classList.remove('visible');
+                    if (dim) dim.classList.remove('visible');
                 }
             },
             { threshold: 0 }
@@ -27,7 +29,9 @@ export function useSpotlight() {
         return () => {
             observer.disconnect();
             const overlay = document.getElementById('global-spotlight');
+            const dim = document.getElementById('page-dim');
             if (overlay) overlay.classList.remove('visible');
+            if (dim) dim.classList.remove('visible');
         };
     }, []);
 
@@ -36,32 +40,51 @@ export function useSpotlight() {
     const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
         if (!isHoverDevice()) return;
         const overlay = document.getElementById('global-spotlight');
-        if (!overlay) return;
-        overlay.style.setProperty('--spot-x', `${e.clientX}px`);
-        overlay.style.setProperty('--spot-y', `${e.clientY}px`);
+        const dim = document.getElementById('page-dim');
+        if (overlay) {
+            overlay.style.setProperty('--spot-x', `${e.clientX}px`);
+            overlay.style.setProperty('--spot-y', `${e.clientY}px`);
+        }
+        if (dim) {
+            dim.style.setProperty('--spot-x', `${e.clientX}px`);
+            dim.style.setProperty('--spot-y', `${e.clientY}px`);
+        }
     }, []);
 
     const onMouseEnter = useCallback(() => {
         if (!isHoverDevice()) return;
         const overlay = document.getElementById('global-spotlight');
+        const dim = document.getElementById('page-dim');
         if (overlay) {
             overlay.classList.remove('expanding');
             overlay.classList.add('visible');
+        }
+        if (dim) {
+            dim.classList.remove('expanding');
+            dim.classList.add('visible');
         }
     }, []);
 
     const onMouseLeave = useCallback(() => {
         const overlay = document.getElementById('global-spotlight');
+        const dim = document.getElementById('page-dim');
         if (overlay) {
-            // Expand spotlight outward while fading
             overlay.classList.remove('visible');
             overlay.classList.add('expanding');
-            // Clean up expanding class after transition
             const cleanup = () => {
                 overlay.classList.remove('expanding');
                 overlay.removeEventListener('transitionend', cleanup);
             };
             overlay.addEventListener('transitionend', cleanup);
+        }
+        if (dim) {
+            dim.classList.remove('visible');
+            dim.classList.add('expanding');
+            const cleanup = () => {
+                dim.classList.remove('expanding');
+                dim.removeEventListener('transitionend', cleanup);
+            };
+            dim.addEventListener('transitionend', cleanup);
         }
     }, []);
 

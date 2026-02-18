@@ -24,6 +24,8 @@ function AppContent() {
             style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
             {/* Global spotlight overlay — at root level so no ancestor transform can clip it */}
             <div id="global-spotlight" />
+            {/* Page-wide dim overlay — darkens everything outside cursor area */}
+            <div id="page-dim" />
             <Navbar />
             <main>
                 <PageTransition>

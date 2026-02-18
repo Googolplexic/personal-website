@@ -41,7 +41,7 @@
     --spotlight-warm-strong: rgba(255, 248, 230, 0.10);
 
     /* --- Nav --- */
-    --nav-bg: rgba(10, 10, 10, 0.92);
+    --nav-bg: rgba(10, 10, 10, 0.82);
     --nav-border: rgba(255, 255, 255, 0.08);
 
     /* --- Frosted glass --- */
@@ -119,7 +119,7 @@
    ============================================================ */
 @layer components {
 
-  /* Global spotlight overlay — fixed to viewport, immune to transforms */
+  /* Global spotlight overlay — warm glow behind content, exactly as originally designed */
   #global-spotlight {
     position: fixed;
     inset: 0;
@@ -148,6 +148,33 @@
     --spot-size: 2000px;
   }
 
+  /* Separate page-wide dim — dark overlay above content, transparent hole at cursor */
+  #page-dim {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    --spot-x: 50%;
+    --spot-y: 50%;
+    --spot-size: 320px;
+    background: radial-gradient(
+      circle at var(--spot-x) var(--spot-y),
+      transparent 0%,
+      transparent calc(var(--spot-size) * 0.8),
+      rgba(0, 0, 0, 0.35) var(--spot-size),
+      rgba(0, 0, 0, 0.45) calc(var(--spot-size) * 1.1),
+      rgba(0, 0, 0, 0.45) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  #page-dim.visible {
+    opacity: 1;
+  }
+  #page-dim.expanding {
+    opacity: 0;
+  }
+
   .spotlight-group {
     position: relative;
     overflow: visible;
@@ -161,16 +188,16 @@
     z-index: 1;
   }
 
-  /* Dim non-hovered items */
+  /* Dim non-hovered items (subtle — global overlay handles most dimming) */
   .spotlight-group:hover .spotlight-item:not(:hover) {
-    opacity: 0.35;
-    filter: brightness(0.55) saturate(0.5);
+    opacity: 0.5;
+    filter: brightness(0.7) saturate(0.6);
   }
 
   /* Illuminate the hovered item */
   .spotlight-group:hover .spotlight-item:hover {
     opacity: 1;
-    filter: brightness(1.05);
+    filter: brightness(1.08);
   }
 
   /* Touch devices: disable spotlight dimming */

@@ -23,7 +23,7 @@ export function Navbar() {
     return (
         <nav
             className={cn(
-                'fixed top-0 w-full z-50 transition-all duration-500',
+                'fixed top-0 w-full z-[200] transition-all duration-500',
                 scrolled
                     ? 'shadow-sm'
                     : 'bg-transparent'

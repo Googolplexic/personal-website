@@ -58,7 +58,7 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
                     <LazyImage
                         src={firstImage}
                         alt={props.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                        className="w-full h-full object-cover"
                     />
                 </div>
             )}
@@ -75,12 +75,12 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
                 </h3>
 
                 <p className="text-xs tracking-[0.2em] uppercase mb-3 font-body"
-                   style={{ color: 'var(--color-text-secondary)' }}>
+                    style={{ color: 'var(--color-text-secondary)' }}>
                     {props.startDate === props.endDate ? props.startDate : `${props.startDate} – ${props.endDate || 'Present'}`}
                 </p>
 
                 <p className="text-sm leading-relaxed mb-4 font-body"
-                   style={{ color: 'var(--color-text-secondary)' }}>
+                    style={{ color: 'var(--color-text-secondary)' }}>
                     <HighlightedText text={props.summary} searchTerm={searchTerm} />
                 </p>
 
