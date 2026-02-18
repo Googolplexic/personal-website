@@ -35,7 +35,7 @@ export function useSpotlight() {
         };
     }, []);
 
-    const isHoverDevice = () => window.matchMedia('(hover: hover)').matches;
+    const isHoverDevice = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
     const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
         if (!isHoverDevice()) return;

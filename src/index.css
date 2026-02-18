@@ -219,7 +219,8 @@
   }
 
   /* Touch devices: disable spotlight dimming */
-  @media (hover: none) {
+  /* Using (pointer: coarse) as fallback because Chrome Android can falsely report (hover: hover) */
+  @media (hover: none), (pointer: coarse) {
     .spotlight-group:hover .spotlight-item:not(:hover) {
       opacity: 1; filter: none;
     }

@@ -8,8 +8,9 @@ import { useEffect } from 'react';
  */
 export function useCustomCursor() {
     useEffect(() => {
-        // Only on hover-capable (desktop) devices
-        if (!window.matchMedia('(hover: hover)').matches) return;
+        // Only on hover-capable (desktop) devices with a fine pointer (mouse/trackpad)
+        // Using both checks because Chrome Android can falsely report (hover: hover)
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
         // Create dot (sharp center) and glow (soft aura)

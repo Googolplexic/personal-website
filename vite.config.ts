@@ -53,6 +53,38 @@ function inlineCssPlugin(): Plugin {
   }
 }
 
+/**
+ * Prune non-critical modulepreload hints to avoid connection congestion.
+ * Keeps only the chunks needed for the initial home page render.
+ */
+function pruneModulePreloadsPlugin(): Plugin {
+  const criticalChunks = [
+    'vendor-react',
+    'vendor-misc',
+    'utils',
+    'page-home',
+    'ui-base',
+    'index'
+  ]
+  return {
+    name: 'vite-plugin-prune-modulepreloads',
+    enforce: 'post',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html) {
+        return html.replace(
+          /<link\s+rel="modulepreload"[^>]*href="([^"]*)"[^>]*>/gi,
+          (match, href) => {
+            const isCritical = criticalChunks.some(chunk => href.includes(chunk))
+            return isCritical ? match : ''
+          }
+        )
+      }
+    }
+  }
+}
+
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 // Auto-detect projects from the filesystem
@@ -227,6 +259,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     inlineCssPlugin(),
+    pruneModulePreloadsPlugin(),
     Sitemap({
       hostname: "https://www.colemanlai.com",
       readable: true,
@@ -332,6 +365,10 @@ export default defineConfig(({ mode }) => ({
           }
 
           // Component chunks
+          if (id.includes('src/components/ui/base/')) {
+            return 'ui-base';
+          }
+
           if (id.includes('src/components/admin/')) {
             return 'admin-components';
           }

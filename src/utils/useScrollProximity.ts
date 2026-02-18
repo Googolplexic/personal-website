@@ -9,7 +9,8 @@ import { useEffect, RefObject } from 'react';
 export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null>) {
     useEffect(() => {
         // Only activate on touch / no-hover devices
-        if (window.matchMedia('(hover: hover)').matches) return;
+        // Using pointer: fine to avoid false positives on Chrome Android
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
         const container = containerRef.current;
         if (!container) return;

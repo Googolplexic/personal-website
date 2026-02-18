@@ -47,7 +47,7 @@ export function Home() {
     }, []);
 
     const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
-        if (!window.matchMedia('(hover: hover)').matches) return;
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         const section = e.currentTarget;
         const spotlight = section.querySelector('.hero-spotlight') as HTMLElement;
         if (!spotlight) return;
@@ -132,20 +132,20 @@ export function Home() {
                 <div className="relative z-10 text-center max-w-3xl mx-auto">
                     <p className="gallery-overline mb-6 animate-fade-in opacity-0">Portfolio 2026</p>
 
-                    <h1 ref={nameRef} className="gallery-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-8 animate-fade-in opacity-0"
-                        style={{ color: 'var(--color-text-primary)', animationDelay: '0.15s' }}>
+                    <h1 ref={nameRef} className="gallery-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-8"
+                        style={{ color: 'var(--color-text-primary)' }}>
                         Coleman Lai
                     </h1>
 
                     <p className="text-lg sm:text-xl md:text-2xl font-heading italic tracking-wide mb-6 animate-fade-in opacity-0"
-                        style={{ color: 'var(--color-text-secondary)', animationDelay: '0.35s' }}>
+                        style={{ color: 'var(--color-text-secondary)', animationDelay: '0.1s' }}>
                         A gallery of code and paper.
                     </p>
 
-                    <div className="gallery-divider mb-6 animate-fade-in opacity-0" style={{ animationDelay: '0.5s' }} />
+                    <div className="gallery-divider mb-6 animate-fade-in opacity-0" style={{ animationDelay: '0.2s' }} />
 
                     <p className="text-xs tracking-[0.2em] uppercase font-body animate-fade-in opacity-0"
-                        style={{ color: 'var(--color-text-tertiary)', animationDelay: '0.6s' }}>
+                        style={{ color: 'var(--color-text-tertiary)', animationDelay: '0.3s' }}>
                         Computing Science &nbsp;<Link to="/admin" className="!no-underline cursor-default" style={{ color: 'inherit', opacity: 1 }}>·</Link>&nbsp; Origami Artist
 
                     </p>

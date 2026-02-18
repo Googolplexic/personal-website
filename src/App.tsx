@@ -1,10 +1,7 @@
 import './App.css'
+import { lazy, Suspense } from 'react'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
-import { Portfolio } from './pages/Portfolio'
-import { Origami } from './pages/Origami'
-import { NotFound } from './pages/NotFound'
-import { AdminPage } from './pages/AdminPage'
 import { Analytics } from '@vercel/analytics/react';
 import { HelmetProvider } from 'react-helmet-async';
 import { SpeedInsights } from "@vercel/speed-insights/react"
@@ -14,6 +11,12 @@ import { PageTransition } from './components/layout/PageTransition'
 import { BackToTop } from './components/ui/BackToTop'
 import { useSmoothScroll } from './utils/useSmoothScroll'
 import { useCustomCursor } from './utils/useCustomCursor'
+
+// Lazy-load non-critical routes to keep the initial bundle small
+const Portfolio = lazy(() => import('./pages/Portfolio').then(m => ({ default: m.Portfolio })))
+const Origami = lazy(() => import('./pages/Origami').then(m => ({ default: m.Origami })))
+const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
+const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })))
 
 function AppContent() {
     useSmoothScroll();
@@ -29,13 +32,15 @@ function AppContent() {
             <Navbar />
             <main>
                 <PageTransition>
-                    <Routes>
-                        <Route path="/" element={<RootRoute />} />
-                        <Route path="/portfolio/*" element={<Portfolio />} />
-                        <Route path="/origami" element={<Origami />} />
-                        <Route path="/admin" element={<AdminPage />} />
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
+                    <Suspense fallback={null}>
+                        <Routes>
+                            <Route path="/" element={<RootRoute />} />
+                            <Route path="/portfolio/*" element={<Portfolio />} />
+                            <Route path="/origami" element={<Origami />} />
+                            <Route path="/admin" element={<AdminPage />} />
+                            <Route path="*" element={<NotFound />} />
+                        </Routes>
+                    </Suspense>
                 </PageTransition>
             </main>
             <Footer />
