@@ -99,7 +99,7 @@ function routePreloadsPlugin(): Plugin {
         )
 
         const routeMap: Record<string, string[]> = {}
-        for (const [route, chunks] of Object.entries(routeChunks)) {
+        for (const route of Object.keys(routeChunks)) {
           const links = allPreloads.get(route) || ''
           const hrefs = [...links.matchAll(/href="([^"]*)"/g)].map(m => m[1])
           if (hrefs.length > 0) routeMap[route] = hrefs
