@@ -25,34 +25,6 @@ export function useCustomCursor() {
         document.documentElement.classList.add('custom-cursor-active');
 
         let isVisible = false;
-        let spotlightActive = false;
-
-        // Watch #global-spotlight for 'visible' class to adjust cursor in spotlight zones
-        const spotlight = document.getElementById('global-spotlight');
-        const spotlightObserver = spotlight
-            ? new MutationObserver(() => {
-                  const active = spotlight.classList.contains('visible');
-                  if (active !== spotlightActive) {
-                      spotlightActive = active;
-                      const isOrigami = window.location.pathname.startsWith('/origami');
-                      if (active) {
-                          glow.classList.add('spotlight-active');
-                          if (isOrigami) {
-                              dot.classList.add('spotlight-active-origami');
-                          } else {
-                              dot.classList.add('spotlight-active');
-                          }
-                      } else {
-                          dot.classList.remove('spotlight-active', 'spotlight-active-origami');
-                          glow.classList.remove('spotlight-active');
-                      }
-                  }
-              })
-            : null;
-
-        if (spotlight && spotlightObserver) {
-            spotlightObserver.observe(spotlight, { attributes: true, attributeFilter: ['class'] });
-        }
 
         const onMouseMove = (e: MouseEvent) => {
             const x = `${e.clientX}px`;
@@ -102,11 +74,6 @@ export function useCustomCursor() {
         const onClick = () => {
             dot.classList.remove('hovering');
             glow.classList.remove('hovering');
-            // Force-reset animation so glow snaps back to default size
-            glow.style.animation = 'none';
-            // Trigger reflow then restore
-            void glow.offsetHeight;
-            glow.style.animation = '';
         };
 
         window.addEventListener('mousemove', onMouseMove, { passive: true });
@@ -117,7 +84,6 @@ export function useCustomCursor() {
         document.documentElement.addEventListener('mouseenter', onMouseEnter);
 
         return () => {
-            spotlightObserver?.disconnect();
             window.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseover', onMouseOver);
             document.removeEventListener('mouseout', onMouseOut);

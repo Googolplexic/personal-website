@@ -615,22 +615,3 @@
   0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
   50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
 }
-
-/* Minimise custom cursor when spotlight is active — keep a subtle point */
-.custom-cursor-dot.spotlight-active,
-.custom-cursor-glow.spotlight-active {
-  opacity: 0 !important;
-  transition: opacity 0.2s ease;
-}
-
-/* On origami grid: keep a visible dot so users can target card sections */
-.custom-cursor-dot.spotlight-active-origami,
-.custom-cursor-dot.spotlight-active-origami.hovering {
-  width: 10px !important;
-  height: 10px !important;
-  opacity: 1 !important;
-  transform: translate(-50%, -50%) scale(1) !important;
-  background: var(--color-accent) !important;
-  box-shadow: 0 0 10px rgba(201, 168, 76, 0.6), 0 0 3px rgba(201, 168, 76, 0.9);
-  transition: opacity 0.2s ease, width 0.25s ease, height 0.25s ease;
-}
