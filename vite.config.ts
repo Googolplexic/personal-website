@@ -61,9 +61,16 @@ function pruneModulePreloadsPlugin(): Plugin {
   const criticalChunks = [
     'vendor-react',
     'vendor-misc',
+    'vendor-lenis',
     'utils',
-    'page-home',
     'ui-base',
+    'page-home',
+    'page-portfolio',
+    'page-origami',
+    'portfolio-components',
+    'origami-components',
+    'origami-assets',
+    'search-components',
     'index'
   ]
   return {
