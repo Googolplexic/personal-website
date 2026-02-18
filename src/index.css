@@ -558,8 +558,8 @@
   position: fixed;
   pointer-events: none;
   z-index: 100000;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   background: var(--color-accent);
@@ -595,23 +595,23 @@
 
 /* Hovering interactive elements: dot shrinks, glow expands + pulses */
 .custom-cursor-dot.hovering {
-  transform: translate(-50%, -50%) scale(0.6);
+  transform: translate(-50%, -50%) scale(0.67);
   background: #e2c76a;
 }
 
 .custom-cursor-glow.hovering {
-  width: 60px;
-  height: 60px;
+  width: 55px;
+  height: 55px;
   background: radial-gradient(
     circle,
     rgba(201, 168, 76, 0.4) 0%,
     rgba(201, 168, 76, 0.1) 70%,
-    transparent 70%
+    transparent 80%
   );
   animation: cursor-pulse 1.6s ease-in-out infinite;
 }
 
 @keyframes cursor-pulse {
   0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+  50% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.7; }
 }
