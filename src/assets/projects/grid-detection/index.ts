@@ -14,4 +14,5 @@ export default {
     ...attributes as object,
     description: body,
     images: sortedImages,
+    imagesFull: fullImages,
 } as ProjectProps;

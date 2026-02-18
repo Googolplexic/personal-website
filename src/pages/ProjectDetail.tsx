@@ -101,7 +101,7 @@ export function ProjectDetail() {
 
                 {/* Hero image */}
                 <div className="mb-16 overflow-hidden">
-                    <ProjectImageCarousel images={project.images || []} title={project.title} />
+                    <ProjectImageCarousel images={project.images || []} imagesFull={project.imagesFull} title={project.title} />
                 </div>
 
                 {/* Two-column: description + sidebar metadata */}

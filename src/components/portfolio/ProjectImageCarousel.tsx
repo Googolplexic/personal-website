@@ -7,10 +7,11 @@ import { Lightbox } from '../ui/Lightbox';
 
 interface ProjectImageCarouselProps {
     images: string[] | LazyImageCollection;
+    imagesFull?: string[];
     title: string;
 }
 
-export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProps) {
+export function ProjectImageCarousel({ images, imagesFull, title }: ProjectImageCarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [resolvedImages, setResolvedImages] = useState<string[]>([]);
     const [isLazyCollection, setIsLazyCollection] = useState(false);
@@ -149,7 +150,7 @@ export function ProjectImageCarousel({ images, title }: ProjectImageCarouselProp
 
             {lightboxIndex !== null && (
                 <Lightbox
-                    images={resolvedImages}
+                    images={imagesFull && imagesFull.length === resolvedImages.length ? imagesFull : resolvedImages}
                     initialIndex={lightboxIndex}
                     alt={title}
                     onClose={() => setLightboxIndex(null)}

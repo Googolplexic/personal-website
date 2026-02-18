@@ -28,6 +28,7 @@ export interface ProjectProps extends BaseItem {
     liveUrl?: string;
     type: 'project';
     images?: string[] | LazyImageCollection;
+    imagesFull?: string[];
 }
 
 // Origami-specific properties
