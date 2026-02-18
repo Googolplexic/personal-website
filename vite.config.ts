@@ -290,8 +290,12 @@ export default defineConfig(({ mode }) => ({
         manualChunks: (id) => {
           // Vendor libraries
           if (id.includes('node_modules')) {
-            // React and core dependencies
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+            // React and core dependencies (including scheduler, router internals, and other transitive deps)
+            if (
+              id.includes('react') || id.includes('react-dom') || id.includes('react-router') ||
+              id.includes('scheduler') || id.includes('@remix-run') ||
+              id.includes('invariant') || id.includes('shallow-equal')
+            ) {
               return 'vendor-react';
             }
 
@@ -300,8 +304,24 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-ui';
             }
 
-            // Markdown and content processing
-            if (id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter')) {
+            // Markdown and content processing (including transitive deps: micromark, mdast, unist, remark, rehype, etc.)
+            if (
+              id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter') ||
+              id.includes('micromark') || id.includes('mdast') || id.includes('unist') ||
+              id.includes('remark') || id.includes('rehype') || id.includes('hast') ||
+              id.includes('unified') || id.includes('bail') || id.includes('trough') ||
+              id.includes('vfile') || id.includes('property-information') ||
+              id.includes('comma-separated') || id.includes('space-separated') ||
+              id.includes('decode-named') || id.includes('character-entities') ||
+              id.includes('devlop') || id.includes('ccount') || id.includes('escape-string') ||
+              id.includes('markdown-table') || id.includes('longest-streak') ||
+              id.includes('html-void-elements') || id.includes('trim-lines') ||
+              id.includes('stringify-entities') || id.includes('character-reference') ||
+              id.includes('character-entities-legacy') || id.includes('is-') ||
+              id.includes('css-') || id.includes('/css/') || id.includes('debug') ||
+              id.includes('extend') || id.includes('style-to-object') ||
+              id.includes('inline-style-parser')
+            ) {
               return 'vendor-content';
             }
 
