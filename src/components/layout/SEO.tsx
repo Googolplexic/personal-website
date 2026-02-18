@@ -22,7 +22,7 @@ export function SEO({
     const keywordsString = Array.isArray(keywords) ? keywords.join(', ') : keywords;
 
     return (
-        <Helmet>
+        <Helmet htmlAttributes={{ lang: 'en' }}>
             {/* Basic */}
             <title>{title}</title>
             <meta name="description" content={description} />

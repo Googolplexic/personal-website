@@ -1,9 +1,57 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import Sitemap from 'vite-plugin-sitemap'
 import { statSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
+
+/**
+ * Vite plugin to inline CSS <link> tags into <style> blocks in the HTML.
+ * Eliminates the render-blocking CSS network request for small bundles.
+ */
+function inlineCssPlugin(): Plugin {
+  return {
+    name: 'vite-plugin-inline-css',
+    enforce: 'post',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        if (!ctx.bundle) return html
+
+        // Find all CSS assets in the bundle
+        const cssAssets = new Map<string, string>()
+        for (const [fileName, chunk] of Object.entries(ctx.bundle)) {
+          if (fileName.endsWith('.css') && 'source' in chunk) {
+            cssAssets.set(fileName, chunk.source as string)
+          }
+        }
+
+        // Replace <link rel="stylesheet"> tags with inline <style> blocks
+        return html.replace(
+          /<link\s+[^>]*rel=["']stylesheet["'][^>]*href=["']\/([^"']+\.css)["'][^>]*\/?>/gi,
+          (match, href) => {
+            // Also try the reversed attribute order
+            const cssContent = cssAssets.get(href)
+            if (cssContent) {
+              return `<style>${cssContent}</style>`
+            }
+            return match
+          }
+        ).replace(
+          /<link\s+[^>]*href=["']\/([^"']+\.css)["'][^>]*rel=["']stylesheet["'][^>]*\/?>/gi,
+          (match, href) => {
+            const cssContent = cssAssets.get(href)
+            if (cssContent) {
+              return `<style>${cssContent}</style>`
+            }
+            return match
+          }
+        )
+      }
+    }
+  }
+}
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
@@ -178,6 +226,7 @@ saveCache(cache)
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
+    inlineCssPlugin(),
     Sitemap({
       hostname: "https://www.colemanlai.com",
       readable: true,
