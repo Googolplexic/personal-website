@@ -142,8 +142,8 @@ export function Home() {
 
                     <p className="text-xs tracking-[0.2em] uppercase font-body animate-fade-in opacity-0"
                        style={{ color: 'var(--color-text-tertiary)', animationDelay: '0.6s' }}>
-                        Computing Science &nbsp;·&nbsp; Origami Artist
-                        <Link to="/admin" className="!no-underline cursor-default" style={{ color: 'inherit', opacity: 1 }}>{'\u200B'}</Link>
+                        Computing Science &nbsp;<Link to="/admin" className="!no-underline cursor-default" style={{ color: 'inherit', opacity: 1 }}>·</Link>&nbsp; Origami Artist
+                        
                     </p>
                 </div>
 
