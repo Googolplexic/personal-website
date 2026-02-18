@@ -27,18 +27,23 @@ export function useCustomCursor() {
         let isVisible = false;
         let spotlightActive = false;
 
-        // Watch #global-spotlight for 'visible' class to hide cursor in spotlight zone
+        // Watch #global-spotlight for 'visible' class to adjust cursor in spotlight zones
         const spotlight = document.getElementById('global-spotlight');
         const spotlightObserver = spotlight
             ? new MutationObserver(() => {
                   const active = spotlight.classList.contains('visible');
                   if (active !== spotlightActive) {
                       spotlightActive = active;
+                      const isOrigami = window.location.pathname.startsWith('/origami');
                       if (active) {
-                          dot.classList.add('spotlight-active');
                           glow.classList.add('spotlight-active');
+                          if (isOrigami) {
+                              dot.classList.add('spotlight-active-origami');
+                          } else {
+                              dot.classList.add('spotlight-active');
+                          }
                       } else {
-                          dot.classList.remove('spotlight-active');
+                          dot.classList.remove('spotlight-active', 'spotlight-active-origami');
                           glow.classList.remove('spotlight-active');
                       }
                   }
@@ -97,6 +102,11 @@ export function useCustomCursor() {
         const onClick = () => {
             dot.classList.remove('hovering');
             glow.classList.remove('hovering');
+            // Force-reset animation so glow snaps back to default size
+            glow.style.animation = 'none';
+            // Trigger reflow then restore
+            void glow.offsetHeight;
+            glow.style.animation = '';
         };
 
         window.addEventListener('mousemove', onMouseMove, { passive: true });
