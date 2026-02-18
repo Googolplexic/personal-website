@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getLenis } from '../../utils/useSmoothScroll';
 
 /**
@@ -7,6 +7,7 @@ import { getLenis } from '../../utils/useSmoothScroll';
  */
 export function BackToTop() {
     const [visible, setVisible] = useState(false);
+    const btnRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         const onScroll = () => {
@@ -18,6 +19,13 @@ export function BackToTop() {
     }, []);
 
     const scrollToTop = () => {
+        // Hide immediately via DOM — don't wait for React re-render
+        if (btnRef.current) {
+            btnRef.current.style.opacity = '0';
+            btnRef.current.style.transform = 'translateY(12px)';
+            btnRef.current.style.pointerEvents = 'none';
+        }
+        setVisible(false);
         const lenis = getLenis();
         if (lenis) {
             lenis.scrollTo(0, { duration: 1.2 });
@@ -28,9 +36,10 @@ export function BackToTop() {
 
     return (
         <button
+            ref={btnRef}
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="fixed bottom-8 right-8 z-50 p-3 rounded-full transition-all duration-500"
+            className="fixed bottom-8 right-8 z-[150] p-3 rounded-full transition-all duration-500"
             style={{
                 opacity: visible ? 0.7 : 0,
                 pointerEvents: visible ? 'auto' : 'none',
@@ -39,11 +48,12 @@ export function BackToTop() {
                 border: '1px solid var(--color-border)',
             }}
             onMouseEnter={(e) => {
+                if (!visible) return;
                 e.currentTarget.style.opacity = '1';
                 e.currentTarget.style.borderColor = 'var(--color-accent)';
             }}
             onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '0.7';
+                e.currentTarget.style.opacity = visible ? '0.7' : '0';
                 e.currentTarget.style.borderColor = 'var(--color-border)';
             }}
         >
