@@ -9,20 +9,20 @@ interface OrigamiMetadata {
     designer?: string;
 }
 
-// Load all images in this folder (excluding patterns)
-const modelImages = Object.values(import.meta.glob('./*.{png,jpg,jpeg,webp}', {
-    eager: true,
-    import: 'default'
-}))
+// Optimized web images (from scripts/optimize-images.mjs)
+const webImages = Object.values(import.meta.glob('./web/*.webp', { eager: true, import: 'default' }))
     .filter((url: unknown) => !(url as string).includes('pattern'))
     .sort((a, b) => (a as string).localeCompare(b as string)) as string[];
+const fullImages = Object.values(import.meta.glob('./*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' }))
+    .filter((url: unknown) => !(url as string).includes('pattern'))
+    .sort((a, b) => (a as string).localeCompare(b as string)) as string[];
+const modelImages = webImages.length > 0 ? webImages : fullImages;
+const modelImagesFull = fullImages;
 
-// Load crease pattern if it exists
-const creasePatternModules = import.meta.glob('./*pattern*.{png,jpg,jpeg,webp}', {
-    eager: true,
-    import: 'default'
-});
-const creasePattern = Object.values(creasePatternModules)[0] as string | undefined;
+const webCP = Object.values(import.meta.glob('./web/*pattern*.webp', { eager: true, import: 'default' }));
+const fullCP = Object.values(import.meta.glob('./*pattern*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' }));
+const creasePattern = (webCP[0] || fullCP[0]) as string | undefined;
+const creasePatternFull = fullCP[0] as string | undefined;
 
 // Parse metadata from info.md
 const { attributes } = matter<OrigamiMetadata>(info);
@@ -34,7 +34,9 @@ export default {
     startDate: attributes.date,
     designer: attributes.designer,
     modelImages,
+    modelImagesFull,
     creasePattern,
+    creasePatternFull,
     keywords: ['origami', 'paper art', attributes.title?.toLowerCase().replace(/\s+/g, '-')].filter(Boolean),
     tags: ['origami', 'my-design']
 } as OrigamiProps;

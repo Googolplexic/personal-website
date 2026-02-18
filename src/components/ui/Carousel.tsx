@@ -1,18 +1,39 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { cn } from '../../utils/styles';
 import { Lightbox } from './Lightbox';
 
 interface CarouselProps {
     modelImages: string[];
+    modelImagesFull?: string[];
     creasePattern?: string;
+    creasePatternFull?: string;
     priority?: boolean;
 }
 
-export function Carousel({ modelImages, creasePattern, priority = false }: CarouselProps) {
+export function Carousel({ modelImages, modelImagesFull, creasePattern, creasePatternFull, priority = false }: CarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [loadedSlides, setLoadedSlides] = useState<Set<number>>(() => new Set([0]));
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [lightboxCPOpen, setLightboxCPOpen] = useState(false);
+    const [isNearViewport, setIsNearViewport] = useState(priority);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (priority || isNearViewport) return;
+        const el = containerRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsNearViewport(true);
+                    observer.unobserve(el);
+                }
+            },
+            { rootMargin: '200px' }
+        );
+        observer.observe(el);
+        return () => { observer.unobserve(el); };
+    }, [priority, isNearViewport]);
 
     const changeImage = useCallback((newIndex: number) => {
         setCurrentImageIndex(newIndex);
@@ -25,8 +46,11 @@ export function Carousel({ modelImages, creasePattern, priority = false }: Carou
         });
     }, [modelImages.length]);
 
+    const lightboxImages = modelImagesFull && modelImagesFull.length > 0 ? modelImagesFull : modelImages;
+    const lightboxCP = creasePatternFull || creasePattern;
+
     return (
-        <div className="w-full">
+        <div ref={containerRef} className="w-full">
             <div className={cn(
                 'gap-4',
                 creasePattern ? 'grid grid-cols-1 md:grid-cols-2' : 'grid grid-cols-1 max-w-2xl mx-auto'
@@ -42,7 +66,7 @@ export function Carousel({ modelImages, creasePattern, priority = false }: Carou
                         >
                             {modelImages.map((img, i) => (
                                 <div key={i} className="w-full flex-shrink-0 flex items-center justify-center">
-                                    {loadedSlides.has(i) ? (
+                                    {(isNearViewport && loadedSlides.has(i)) ? (
                                         <img
                                             src={img}
                                             alt={`Model View ${i + 1}`}
@@ -111,29 +135,33 @@ export function Carousel({ modelImages, creasePattern, priority = false }: Carou
 
                 {creasePattern && (
                     <div className="h-72 mx-auto flex items-center justify-center bg-transparent">
-                        <img
-                            src={creasePattern}
-                            alt="Crease Pattern"
-                            className="h-full w-full object-contain cursor-pointer"
-                            onClick={() => setLightboxCPOpen(true)}
-                            loading="lazy"
-                        />
+                        {isNearViewport ? (
+                            <img
+                                src={creasePattern}
+                                alt="Crease Pattern"
+                                className="h-full w-full object-contain cursor-pointer"
+                                onClick={() => setLightboxCPOpen(true)}
+                                loading="lazy"
+                            />
+                        ) : (
+                            <div className="h-full w-full" />
+                        )}
                     </div>
                 )}
             </div>
 
             {lightboxIndex !== null && (
                 <Lightbox
-                    images={modelImages}
+                    images={lightboxImages}
                     initialIndex={lightboxIndex}
                     alt="Origami Model"
                     onClose={() => setLightboxIndex(null)}
                 />
             )}
 
-            {lightboxCPOpen && creasePattern && (
+            {lightboxCPOpen && lightboxCP && (
                 <Lightbox
-                    images={[creasePattern]}
+                    images={[lightboxCP]}
                     initialIndex={0}
                     alt="Crease Pattern"
                     onClose={() => setLightboxCPOpen(false)}

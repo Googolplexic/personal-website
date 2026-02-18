@@ -194,7 +194,9 @@ export function GroupedItemGrid({
                     title={origami.title}
                     description={origami.description}
                     modelImages={origami.modelImages}
+                    modelImagesFull={origami.modelImagesFull}
                     creasePattern={origami.creasePattern}
+                    creasePatternFull={origami.creasePatternFull}
                     date={origami.date}
                     designer={origami.designer}
                     searchTerm={searchTerm}
@@ -287,8 +289,8 @@ export function GroupedItemGrid({
                                         }`}
                                     >
                                         <div className="overflow-hidden">
-                                            <MasonrySpotlightGrid skipCount={9}>
-                                                {group.items.map((item, i) => renderCard(item, false, i < 9))}
+                                            <MasonrySpotlightGrid skipCount={3}>
+                                                {group.items.map((item, i) => renderCard(item, false, i < 3))}
                                             </MasonrySpotlightGrid>
                                         </div>
                                     </div>
@@ -304,8 +306,8 @@ export function GroupedItemGrid({
             ) : (
                 /* List view: flat masonry with category badges */
                 <>
-                    <MasonrySpotlightGrid skipCount={9}>
-                        {sortedAndFilteredItems.map((item, i) => renderCard(item, true, i < 9))}
+                    <MasonrySpotlightGrid skipCount={3}>
+                        {sortedAndFilteredItems.map((item, i) => renderCard(item, true, i < 3))}
                     </MasonrySpotlightGrid>
 
                     {sortedAndFilteredItems.length === 0 && (

@@ -6,7 +6,9 @@ interface OrigamiCardProps {
     title: string;
     description?: string;
     modelImages: string[];
+    modelImagesFull?: string[];
     creasePattern?: string;
+    creasePatternFull?: string;
     date?: string;
     designer?: string;
     searchTerm?: string;
@@ -16,14 +18,16 @@ interface OrigamiCardProps {
     priority?: boolean;
 }
 
-export function OrigamiCard({ title, description, modelImages, creasePattern, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false }: OrigamiCardProps) {
+export function OrigamiCard({ title, description, modelImages, modelImagesFull, creasePattern, creasePatternFull, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false }: OrigamiCardProps) {
     return (
         <div className="spotlight-item flex flex-col break-inside-avoid group">
             {/* Image first — like project cards */}
             <div className="mb-3">
                 <Carousel
                     modelImages={modelImages}
+                    modelImagesFull={modelImagesFull}
                     creasePattern={creasePattern}
+                    creasePatternFull={creasePatternFull}
                     priority={priority}
                 />
             </div>

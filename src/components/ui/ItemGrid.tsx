@@ -126,9 +126,9 @@ export function ItemGrid({
                 />
             )}
 
-            <MasonrySpotlightGrid skipCount={9}>
+            <MasonrySpotlightGrid skipCount={3}>
                 {sortedAndFilteredItems.map((item, index) => {
-                    const isPriority = index < 9;
+                    const isPriority = index < 3;
                     if (item.type === 'project') {
                         return (
                             <ProjectCard
@@ -146,7 +146,9 @@ export function ItemGrid({
                                 title={origami.title}
                                 description={origami.description}
                                 modelImages={origami.modelImages}
+                                modelImagesFull={origami.modelImagesFull}
                                 creasePattern={origami.creasePattern}
+                                creasePatternFull={origami.creasePatternFull}
                                 date={origami.date}
                                 designer={origami.designer}
                                 searchTerm={searchTerm}

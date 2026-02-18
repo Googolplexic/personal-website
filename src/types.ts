@@ -34,7 +34,9 @@ export interface ProjectProps extends BaseItem {
 export interface OrigamiProps extends BaseItem {
     description?: string; // Plain text description
     modelImages: string[];
+    modelImagesFull?: string[];
     creasePattern?: string;
+    creasePatternFull?: string;
     date: string; // Keep original date field for compatibility
     designer?: string;
     type: 'origami';

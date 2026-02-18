@@ -241,12 +241,12 @@
   /* --- STAGGERED ENTRANCE --- */
   .stagger-hidden {
     opacity: 0 !important;
-    transform: translateY(18px) !important;
+    transform: scale(0.97) !important;
     transition: none !important;
   }
   .stagger-visible {
     opacity: 1 !important;
-    transform: translateY(0) !important;
+    transform: scale(1) !important;
     transition: opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1) !important;
   }
 
