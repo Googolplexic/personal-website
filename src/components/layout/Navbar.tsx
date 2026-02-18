@@ -29,10 +29,10 @@ export function Navbar() {
                     : 'bg-transparent'
             )}
             style={{
-                backgroundColor: scrolled ? 'var(--nav-bg)' : 'transparent',
-                borderBottom: scrolled ? '1px solid var(--nav-border)' : '1px solid transparent',
-                backdropFilter: scrolled ? 'blur(16px) saturate(1.2)' : 'none',
-                WebkitBackdropFilter: scrolled ? 'blur(16px) saturate(1.2)' : 'none',
+                backgroundColor: (scrolled || mobileOpen) ? 'var(--nav-bg)' : 'transparent',
+                borderBottom: (scrolled || mobileOpen) ? '1px solid var(--nav-border)' : '1px solid transparent',
+                backdropFilter: (scrolled || mobileOpen) ? 'blur(16px) saturate(1.2)' : 'none',
+                WebkitBackdropFilter: (scrolled || mobileOpen) ? 'blur(16px) saturate(1.2)' : 'none',
             }}
         >
             <div className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
@@ -72,7 +72,7 @@ export function Navbar() {
 
             {/* Mobile dropdown */}
             {mobileOpen && (
-                <div className="sm:hidden px-6 pb-5 flex flex-col gap-4" style={{ backgroundColor: 'var(--nav-bg)' }}>
+                <div className="sm:hidden px-6 pb-5 flex flex-col gap-4">
                     <NavLink to="/">Home</NavLink>
                     <NavLink to="/portfolio">Portfolio</NavLink>
                     <NavLink to="/origami">Origami</NavLink>
