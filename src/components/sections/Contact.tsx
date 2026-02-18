@@ -39,19 +39,18 @@ export function Contact() {
                         href={contact.href}
                         target="_blank"
                         rel="noopener"
-                        className="no-underline flex items-center gap-4 py-3 transition-colors duration-300 group"
+                        className="contact-link no-underline flex items-center gap-4 py-3 transition-colors duration-300"
                         style={{ color: 'var(--color-text-secondary)' }}
                     >
-                        <span className="transition-colors duration-300 group-hover:text-[var(--color-accent-text)]" style={{ color: 'var(--color-text-tertiary)' }}>
+                        <span className="contact-icon transition-colors duration-300">
                             {contact.icon}
                         </span>
                         <div className="text-left">
-                            <p className="text-sm font-body"
-                               style={{ color: 'var(--color-text-primary)' }}>
+                            <p className="contact-name text-sm font-body transition-colors duration-300">
                                 {contact.name}
                             </p>
                             <p className="text-xs font-body"
-                               style={{ color: 'var(--color-text-tertiary)' }}>
+                                style={{ color: 'var(--color-text-tertiary)' }}>
                                 {contact.value}
                             </p>
                         </div>

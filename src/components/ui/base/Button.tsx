@@ -5,7 +5,7 @@ const baseStyle = 'transition-all duration-300 no-underline font-body cursor-poi
 
 const variantStyles: Record<string, string> = {
     primary: 'bg-transparent border-b border-b-[var(--color-accent)] border-t-0 border-x-0 text-[var(--color-text-primary)] hover:text-[var(--color-accent)] px-1 pb-1 pt-0 text-xs tracking-[0.15em] uppercase',
-    secondary: 'bg-transparent border-b border-b-[var(--color-border)] border-t-0 border-x-0 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-b-[var(--color-text-primary)] px-1 pb-1 pt-0 text-xs tracking-[0.15em] uppercase',
+    secondary: 'bg-transparent border-b border-b-[var(--color-border)] border-t-0 border-x-0 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:border-b-[var(--color-accent)] px-1 pb-1 pt-0 text-xs tracking-[0.15em] uppercase',
     icon: 'p-2 border-none focus:outline-none hover:opacity-70 active:opacity-60',
 };
 

@@ -86,7 +86,7 @@ export function GroupedSearch({
         'px-3 py-1 text-xs font-body tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer bg-transparent',
         active
             ? 'opacity-100 border-b border-b-[var(--color-accent)] border-t-0 border-x-0'
-            : 'opacity-60 hover:opacity-85 border-b border-b-transparent border-t-0 border-x-0'
+            : 'opacity-60 hover:opacity-85 border-b border-b-transparent hover:border-b-[var(--color-accent-text)] border-t-0 border-x-0'
     );
 
     const categoryButtons = [
@@ -104,14 +104,14 @@ export function GroupedSearch({
                     <button
                         onClick={() => setShowGrouping(true)}
                         className={toggleBtnClass(showGrouping)}
-                        style={{ color: showGrouping ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
+                        style={{ color: showGrouping ? 'var(--color-accent-text)' : 'var(--color-text-secondary)' }}
                     >
                         Grouped View
                     </button>
                     <button
                         onClick={() => setShowGrouping(false)}
                         className={toggleBtnClass(!showGrouping)}
-                        style={{ color: !showGrouping ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
+                        style={{ color: !showGrouping ? 'var(--color-accent-text)' : 'var(--color-text-secondary)' }}
                     >
                         List View
                     </button>
@@ -127,7 +127,7 @@ export function GroupedSearch({
                                 key={button.value}
                                 onClick={() => setCategoryFilter(button.value)}
                                 className={toggleBtnClass(categoryFilter === button.value)}
-                                style={{ color: categoryFilter === button.value ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}
+                                style={{ color: categoryFilter === button.value ? 'var(--color-accent-text)' : 'var(--color-text-secondary)' }}
                             >
                                 {button.label}
                                 {button.count !== undefined && (

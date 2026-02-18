@@ -436,6 +436,18 @@
     margin: 0 auto;
   }
 
+  /* --- CONTACT LINKS — gold accent on hover --- */
+  .contact-icon {
+    color: var(--color-text-tertiary);
+  }
+  .contact-name {
+    color: var(--color-text-primary);
+  }
+  .contact-link:hover .contact-icon,
+  .contact-link:hover .contact-name {
+    color: var(--color-accent-text);
+  }
+
   /* --- FORM INPUTS — gallery-integrated, minimal --- */
   .gallery-input {
     background: transparent;

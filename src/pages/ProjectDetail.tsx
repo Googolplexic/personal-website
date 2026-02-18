@@ -81,7 +81,7 @@ export function ProjectDetail() {
                     onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
                 >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
                     </svg>
                     Back to Gallery
                 </button>
@@ -94,7 +94,7 @@ export function ProjectDetail() {
                         <HighlightedText text={project.title} searchTerm={searchTerm} />
                     </h1>
                     <p className="text-sm font-body italic max-w-xl"
-                       style={{ color: 'var(--color-text-secondary)' }}>
+                        style={{ color: 'var(--color-text-secondary)' }}>
                         {project.summary}
                     </p>
                 </div>
@@ -117,7 +117,7 @@ export function ProjectDetail() {
                             <div>
                                 <p className="gallery-overline mb-2">Timeline</p>
                                 <p className="text-sm font-heading italic"
-                                   style={{ color: 'var(--color-text-primary)' }}>
+                                    style={{ color: 'var(--color-text-primary)' }}>
                                     {project.startDate === project.endDate
                                         ? project.startDate
                                         : `${project.startDate} – ${project.endDate || 'Present'}`}
@@ -127,7 +127,7 @@ export function ProjectDetail() {
                             <div>
                                 <p className="gallery-overline mb-3">Technologies</p>
                                 <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-body"
-                                     style={{ color: 'var(--color-text-tertiary)' }}>
+                                    style={{ color: 'var(--color-text-tertiary)' }}>
                                     {project.technologies.map((tech, i) => (
                                         <span key={i}>
                                             <HighlightedText text={tech} searchTerm={searchTerm} />
@@ -139,22 +139,22 @@ export function ProjectDetail() {
                             <div className="space-y-2">
                                 {project.githubUrl && (
                                     <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
-                                       className="block text-xs tracking-[0.15em] uppercase font-body transition-colors"
-                                       style={{ color: 'var(--color-text-tertiary)' }}
-                                       onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-                                       onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}>
+                                        className="block text-xs tracking-[0.15em] uppercase font-body transition-colors"
+                                        style={{ color: 'var(--color-text-tertiary)' }}
+                                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
+                                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}>
                                         GitHub
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="inline ml-1"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="inline ml-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                                     </a>
                                 )}
                                 {project.liveUrl && (
                                     <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
-                                       className="block text-xs tracking-[0.15em] uppercase font-body transition-colors"
-                                       style={{ color: 'var(--color-text-tertiary)' }}
-                                       onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-                                       onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}>
+                                        className="block text-xs tracking-[0.15em] uppercase font-body transition-colors"
+                                        style={{ color: 'var(--color-text-tertiary)' }}
+                                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
+                                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}>
                                         Live Site
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="inline ml-1"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="inline ml-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                                     </a>
                                 )}
                             </div>
@@ -176,8 +176,8 @@ export function ProjectDetail() {
                             >
                                 {nextProject.title}
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
-                                     className="transition-transform duration-300 group-hover:translate-x-1">
-                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                    className="transition-transform duration-300 group-hover:translate-x-1">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
                                 </svg>
                             </button>
                         </div>
