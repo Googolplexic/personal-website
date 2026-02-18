@@ -6,6 +6,7 @@ import { ProjectGrid } from '../components/portfolio/ProjectGrid';
 import { Link } from '../components/ui/base';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
 import { useCallback, useEffect, useRef } from 'react';
+import { HeroParticles } from '../components/ui/HeroParticles';
 
 function ScrollSection({ children, className = '' }: { children: React.ReactNode; className?: string }) {
     const { ref, className: revealClass } = useScrollRevealClass({ threshold: 0.08 });
@@ -108,7 +109,7 @@ export function Home() {
             {/* ===== HERO ===== */}
             <section
                 ref={heroRef}
-                className="min-h-screen flex flex-col items-center justify-center relative px-6"
+                className="hero-black-fade min-h-screen flex flex-col items-center justify-center relative px-6"
                 onMouseMove={handleHeroMouseMove}
                 onMouseLeave={() => {
                     const spotlight = heroRef.current?.querySelector('.hero-spotlight');
@@ -125,6 +126,9 @@ export function Home() {
                 {/* Spotlight cone from above */}
                 <div className="hero-spotlight" />
 
+                {/* Floating dust motes */}
+                <HeroParticles />
+
                 <div className="relative z-10 text-center max-w-3xl mx-auto">
                     <p className="gallery-overline mb-6 animate-fade-in opacity-0">Portfolio 2026</p>
 
@@ -134,16 +138,16 @@ export function Home() {
                     </h1>
 
                     <p className="text-lg sm:text-xl md:text-2xl font-heading italic tracking-wide mb-6 animate-fade-in opacity-0"
-                       style={{ color: 'var(--color-text-secondary)', animationDelay: '0.35s' }}>
+                        style={{ color: 'var(--color-text-secondary)', animationDelay: '0.35s' }}>
                         A gallery of code and paper.
                     </p>
 
                     <div className="gallery-divider mb-6 animate-fade-in opacity-0" style={{ animationDelay: '0.5s' }} />
 
                     <p className="text-xs tracking-[0.2em] uppercase font-body animate-fade-in opacity-0"
-                       style={{ color: 'var(--color-text-tertiary)', animationDelay: '0.6s' }}>
+                        style={{ color: 'var(--color-text-tertiary)', animationDelay: '0.6s' }}>
                         Computing Science &nbsp;<Link to="/admin" className="!no-underline cursor-default" style={{ color: 'inherit', opacity: 1 }}>·</Link>&nbsp; Origami Artist
-                        
+
                     </p>
                 </div>
 
@@ -193,7 +197,7 @@ export function Home() {
                             Featured Projects
                         </h2>
                         <p className="text-sm font-heading italic"
-                           style={{ color: 'var(--color-text-secondary)' }}>
+                            style={{ color: 'var(--color-text-secondary)' }}>
                             A curated selection of my proudest works.
                         </p>
                     </div>

@@ -378,6 +378,17 @@
     100% { transform: translate(-50%, -50%); }
   }
 
+  /* --- HERO BACKGROUND FADE --- */
+  .hero-black-fade {
+    position: relative;
+    background: linear-gradient(
+      180deg,
+      #000 0%,
+      #000 35%,
+      var(--color-bg-primary) 100%
+    );
+  }
+
   /* --- SCROLL INDICATOR --- */
   @keyframes bounce-subtle {
     0%, 100% { transform: translateY(0) translateX(-50%); }
