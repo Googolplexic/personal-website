@@ -18,7 +18,7 @@ interface OrigamiCardProps {
 
 export function OrigamiCard({ title, description, modelImages, creasePattern, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false }: OrigamiCardProps) {
     return (
-        <div className="spotlight-item flex flex-col break-inside-avoid">
+        <div className="spotlight-item flex flex-col break-inside-avoid group">
             {/* Image first — like project cards */}
             <div className="mb-3">
                 <Carousel
@@ -34,7 +34,7 @@ export function OrigamiCard({ title, description, modelImages, creasePattern, da
                     <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-2" />
                 )}
 
-                <h3 className="gallery-heading text-lg md:text-xl mb-1"
+                <h3 className="gallery-heading text-lg md:text-xl mb-1 transition-colors duration-300 group-hover:!text-[var(--color-accent-text)]"
                     style={{ color: 'var(--color-text-primary)' }}>
                     <HighlightedText text={title} searchTerm={searchTerm} />
                 </h3>

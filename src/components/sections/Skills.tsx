@@ -13,7 +13,7 @@ export function Skills() {
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
                 {skills.map((skill, i) => (
                     <span key={skill} className="text-sm font-body tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>
-                        {skill}{i < skills.length - 1 && <span className="ml-6" style={{ color: 'var(--color-text-tertiary)' }}>·</span>}
+                        {skill}{i < skills.length - 1 && <span className="ml-6" style={{ color: 'var(--color-accent)', opacity: 0.5 }}>·</span>}
                     </span>
                 ))}
             </div>

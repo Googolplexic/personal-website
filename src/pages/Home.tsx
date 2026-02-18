@@ -155,7 +155,7 @@ export function Home() {
                 <button
                     onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
                     className="absolute bottom-10 left-1/2 scroll-indicator cursor-pointer bg-transparent border-none p-2"
-                    style={{ color: 'var(--color-text-tertiary)' }}
+                    style={{ color: 'var(--color-accent)' }}
                     aria-label="Scroll to content"
                 >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">

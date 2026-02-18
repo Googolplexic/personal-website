@@ -8,10 +8,11 @@ export function ResumeSection() {
                 href="/resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 font-body text-xs tracking-[0.15em] uppercase no-underline transition-colors duration-300"
+                className="inline-flex items-center gap-2 px-5 py-2.5 font-body text-xs tracking-[0.15em] uppercase no-underline transition-all duration-300 hover:!text-[var(--color-accent)] hover:!border-[var(--color-accent)]"
                 style={{
                     color: 'var(--color-text-primary)',
-                    border: '1px solid var(--color-text-tertiary)'
+                    border: '1px solid var(--color-accent)',
+                    borderColor: 'rgba(201, 168, 76, 0.4)'
                 }}
             >
                 <FiDownload className="w-3.5 h-3.5" />

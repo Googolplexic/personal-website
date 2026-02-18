@@ -40,7 +40,7 @@ export function Navbar() {
                 <RouterLink
                     to="/"
                     onClick={() => window.scrollTo(0, 0)}
-                    className="font-signature text-2xl tracking-wide no-underline select-none"
+                    className="font-signature text-2xl tracking-wide no-underline select-none transition-colors duration-300 hover:!text-[var(--color-accent)]"
                     style={{ color: 'var(--color-text-primary)', opacity: 1 }}
                 >
                     CL

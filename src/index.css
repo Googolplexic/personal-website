@@ -305,14 +305,14 @@
     letter-spacing: -0.01em;
   }
 
-  /* --- OVERLINE — tiny uppercase label (bumped for readability) --- */
+  /* --- OVERLINE — tiny uppercase label in accent gold --- */
   .gallery-overline {
     font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
     font-size: 0.65rem;
     font-weight: 500;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: var(--color-text-secondary);
+    color: var(--color-accent-text);
   }
 
   /* --- NAV LINKS --- */
@@ -427,11 +427,12 @@
     animation: bounce-subtle 3s ease-in-out infinite;
   }
 
-  /* --- DECORATIVE DIVIDER --- */
+  /* --- DECORATIVE DIVIDER — accent gold dash --- */
   .gallery-divider {
     width: 32px;
     height: 1px;
-    background: var(--divider);
+    background: var(--color-accent);
+    opacity: 0.35;
     margin: 0 auto;
   }
 
@@ -456,7 +457,7 @@
   }
   .gallery-input:focus {
     outline: none;
-    border-bottom-color: var(--color-text-secondary);
+    border-bottom-color: var(--color-accent);
   }
 
   .gallery-select {
@@ -477,7 +478,7 @@
   }
   .gallery-select:focus {
     outline: none;
-    border-bottom-color: var(--color-text-secondary);
+    border-bottom-color: var(--color-accent);
   }
   .gallery-select option {
     background-color: #141414;
@@ -540,14 +541,15 @@
     font-weight: 500;
     letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: var(--color-text-tertiary);
+    color: var(--color-accent-text);
   }
   .exhibit-label::before,
   .exhibit-label::after {
     content: '';
     width: 24px;
     height: 1px;
-    background: var(--divider);
+    background: var(--color-accent);
+    opacity: 0.4;
   }
 
   /* --- PROSE (dark mode only) --- */

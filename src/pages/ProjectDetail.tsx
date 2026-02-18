@@ -77,7 +77,7 @@ export function ProjectDetail() {
                     onClick={() => navigate('/portfolio')}
                     className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300"
                     style={{ color: 'var(--color-text-tertiary)', background: 'none', border: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-text-primary)')}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
                     onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
                 >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -175,7 +175,7 @@ export function ProjectDetail() {
                                 style={{ color: 'var(--color-text-primary)', background: 'none', border: 'none' }}
                             >
                                 {nextProject.title}
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
                                      className="transition-transform duration-300 group-hover:translate-x-1">
                                     <path d="M5 12h14M12 5l7 7-7 7"/>
                                 </svg>
