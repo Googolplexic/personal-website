@@ -315,25 +315,11 @@ export default defineConfig(({ mode }) => ({
           return 'assets/js/[name]-[hash].js';
         },
         manualChunks: (id) => {
-          // Vendor libraries
+          // Vendor libraries — ordering matters! More specific checks first
+          // to prevent broad patterns (e.g. 'react') from swallowing
+          // react-markdown, react-icons, react-helmet-async, etc.
           if (id.includes('node_modules')) {
-            // React and core dependencies (including scheduler, router internals, and other transitive deps)
-            if (
-              id.includes('react') || id.includes('react-dom') || id.includes('react-router') ||
-              id.includes('scheduler') || id.includes('@remix-run') ||
-              id.includes('invariant') || id.includes('shallow-equal')
-            ) {
-              return 'vendor-react';
-            }
-
-            // UI and styling libraries
-            if (id.includes('react-icons') || id.includes('react-helmet') || id.includes('@vercel')) {
-              return 'vendor-ui';
-            }
-
-            // Markdown and content processing (including all transitive deps)
-            // IMPORTANT: every transitive dep of react-markdown/remark/rehype/unified
-            // must be here to avoid circular chunk dependencies at runtime
+            // Markdown and content processing (check BEFORE 'react' to catch react-markdown)
             if (
               id.includes('marked') || id.includes('react-markdown') || id.includes('front-matter') ||
               id.includes('hast') || id.includes('mdast') || id.includes('unist') ||
@@ -347,12 +333,27 @@ export default defineConfig(({ mode }) => ({
               id.includes('parse-entities') || id.includes('trim-lines') ||
               id.includes('is-alphabetical') || id.includes('is-alphanumerical') ||
               id.includes('is-decimal') || id.includes('is-hexadecimal') ||
-              id.includes('style-to-object') || id.includes('inline-style-parser') ||
+              id.includes('style-to-object') || id.includes('style-to-js') ||
+              id.includes('inline-style-parser') ||
               id.includes('decode-named') || id.includes('stringify-entities') ||
               id.includes('html-url-attributes') || id.includes('zwitch') ||
-              id.includes('is-plain-obj') || id.includes('/extend/')
+              id.includes('is-plain-obj') || id.includes('/extend/') ||
+              id.includes('/debug/') || id.includes('/ms/')
             ) {
               return 'vendor-content';
+            }
+
+            // UI and styling libraries (check BEFORE 'react' to catch react-icons, react-helmet)
+            if (id.includes('react-icons') || id.includes('react-helmet') || id.includes('@vercel')) {
+              return 'vendor-ui';
+            }
+
+            // React core and router
+            if (
+              id.includes('react') || id.includes('scheduler') || id.includes('@remix-run') ||
+              id.includes('invariant') || id.includes('shallowequal')
+            ) {
+              return 'vendor-react';
             }
 
             // Smooth scrolling (loaded on demand)
