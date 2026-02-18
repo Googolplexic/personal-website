@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { cn } from '../../utils/styles';
 import { Lightbox } from './Lightbox';
 
@@ -10,36 +10,20 @@ interface CarouselProps {
 
 export function Carousel({ modelImages, creasePattern, priority = false }: CarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [loadedImages, setLoadedImages] = useState<Set<string>>(
-        // If priority, mark the first image as already loaded to skip JS preload
-        () => priority && modelImages[0] ? new Set([modelImages[0]]) : new Set()
-    );
+    const [loadedSlides, setLoadedSlides] = useState<Set<number>>(() => new Set([0]));
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [lightboxCPOpen, setLightboxCPOpen] = useState(false);
 
-    // Preload current image and next/previous images
-    useEffect(() => {
-        const imagesToLoad = [
-            modelImages[currentImageIndex],
-            modelImages[currentImageIndex + 1],
-            modelImages[currentImageIndex - 1],
-            creasePattern
-        ].filter((img): img is string => img !== undefined);
-
-        imagesToLoad.forEach(src => {
-            if (!loadedImages.has(src)) {
-                const img = new Image();
-                img.onload = () => {
-                    setLoadedImages(prev => new Set(prev).add(src));
-                };
-                img.src = src;
-            }
-        });
-    }, [currentImageIndex, modelImages, creasePattern, loadedImages]);
-
-    const changeImage = (newIndex: number) => {
+    const changeImage = useCallback((newIndex: number) => {
         setCurrentImageIndex(newIndex);
-    };
+        setLoadedSlides(prev => {
+            const next = new Set(prev);
+            next.add(newIndex);
+            if (newIndex > 0) next.add(newIndex - 1);
+            if (newIndex < modelImages.length - 1) next.add(newIndex + 1);
+            return next;
+        });
+    }, [modelImages.length]);
 
     return (
         <div className="w-full">
@@ -49,7 +33,7 @@ export function Carousel({ modelImages, creasePattern, priority = false }: Carou
             )}>
                 <div className="relative group">
                     <div className={cn(
-                        'h-72 mx-auto overflow-hidden flex items-center justify-center bg-transparent',
+                        'h-72 mx-auto overflow-hidden bg-transparent',
                         modelImages.length > 1 ? 'max-w-[90%]' : 'max-w-full'
                     )}>
                         <div
@@ -58,17 +42,19 @@ export function Carousel({ modelImages, creasePattern, priority = false }: Carou
                         >
                             {modelImages.map((img, i) => (
                                 <div key={i} className="w-full flex-shrink-0 flex items-center justify-center">
-                                    <img
-                                        src={img}
-                                        alt={`Model View ${i + 1}`}
-                                        className="max-h-72 w-auto object-contain cursor-pointer"
-                                        onClick={() => setLightboxIndex(i)}
-                                        loading={priority && i === 0 ? 'eager' : 'lazy'}
-                                        decoding={priority && i === 0 ? 'sync' : 'async'}
-                                        fetchPriority={priority && i === 0 ? 'high' : undefined}
-                                        width="640"
-                                        height="288"
-                                    />
+                                    {loadedSlides.has(i) ? (
+                                        <img
+                                            src={img}
+                                            alt={`Model View ${i + 1}`}
+                                            className="h-full w-full object-contain cursor-pointer"
+                                            onClick={() => setLightboxIndex(i)}
+                                            loading={priority && i === 0 ? 'eager' : 'lazy'}
+                                            decoding={priority && i === 0 ? 'sync' : 'async'}
+                                            fetchPriority={priority && i === 0 ? 'high' : undefined}
+                                        />
+                                    ) : (
+                                        <div className="h-full w-full" />
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -124,15 +110,13 @@ export function Carousel({ modelImages, creasePattern, priority = false }: Carou
                 </div>
 
                 {creasePattern && (
-                    <div className="max-w-[100%] h-72 mx-auto flex items-center justify-center bg-transparent">
+                    <div className="h-72 mx-auto flex items-center justify-center bg-transparent">
                         <img
                             src={creasePattern}
                             alt="Crease Pattern"
-                            className="max-h-72 w-auto object-contain cursor-pointer"
+                            className="h-full w-full object-contain cursor-pointer"
                             onClick={() => setLightboxCPOpen(true)}
                             loading="lazy"
-                            width="640"
-                            height="288"
                         />
                     </div>
                 )}

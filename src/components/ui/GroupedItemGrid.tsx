@@ -287,8 +287,8 @@ export function GroupedItemGrid({
                                         }`}
                                     >
                                         <div className="overflow-hidden">
-                                            <MasonrySpotlightGrid skipCount={4}>
-                                                {group.items.map((item, i) => renderCard(item, false, i < 4))}
+                                            <MasonrySpotlightGrid skipCount={9}>
+                                                {group.items.map((item, i) => renderCard(item, false, i < 9))}
                                             </MasonrySpotlightGrid>
                                         </div>
                                     </div>
@@ -304,8 +304,8 @@ export function GroupedItemGrid({
             ) : (
                 /* List view: flat masonry with category badges */
                 <>
-                    <MasonrySpotlightGrid skipCount={4}>
-                        {sortedAndFilteredItems.map((item, i) => renderCard(item, true, i < 4))}
+                    <MasonrySpotlightGrid skipCount={9}>
+                        {sortedAndFilteredItems.map((item, i) => renderCard(item, true, i < 9))}
                     </MasonrySpotlightGrid>
 
                     {sortedAndFilteredItems.length === 0 && (

@@ -29,7 +29,7 @@ function AppContent() {
             {/* Page-wide dim overlay — darkens everything outside cursor area */}
             <div id="page-dim" />
             <Navbar />
-            <main>
+            <main className="min-h-screen">
                 <PageTransition>
                     <Suspense fallback={null}>
                         <Routes>

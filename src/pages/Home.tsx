@@ -139,7 +139,7 @@ export function Home() {
 
                     <p className="text-lg sm:text-xl md:text-2xl font-heading italic tracking-wide mb-6 animate-fade-in opacity-0"
                         style={{ color: 'var(--color-text-secondary)', animationDelay: '0.1s' }}>
-                        A gallery of code and paper.
+                        My gallery of code and paper.
                     </p>
 
                     <div className="gallery-divider mb-6 animate-fade-in opacity-0" style={{ animationDelay: '0.2s' }} />
