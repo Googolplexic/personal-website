@@ -34,15 +34,11 @@ function makeParticle(w: number, h: number): Particle {
     };
 }
 
-const SPOTLIGHT_DECAY = 0.965;  // per frame when pointer inactive — smooth fade-out
-const SPOTLIGHT_RAMP_UP = 0.12; // per frame when pointer active
-
 export function HeroParticles({ count = 110 }: { count?: number }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const mouseRef = useRef({ x: -9999, y: -9999 });
-    const lastSpotlightRef = useRef({ x: -9999, y: -9999 }); // last position for smooth fade-out
     const pointerClientRef = useRef({ x: -9999, y: -9999, active: false });
-    const spotlightInfluenceRef = useRef(0); // 0..1, smooths spotlight on/off (especially for touch)
+    const isTouchLikeDeviceRef = useRef(false);
     const particlesRef = useRef<Particle[]>([]);
     const rafRef = useRef<number>(0);
 
@@ -51,6 +47,18 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
+        // Match project-wide mobile/touch fallback:
+        // treat as touch-like when either no hover or coarse pointer is reported.
+        const touchLikeQuery = window.matchMedia('(hover: none), (pointer: coarse)');
+        isTouchLikeDeviceRef.current = touchLikeQuery.matches;
+        const onPointerCapabilityChange = (e: MediaQueryListEvent) => {
+            isTouchLikeDeviceRef.current = e.matches;
+        };
+        if (typeof touchLikeQuery.addEventListener === 'function') {
+            touchLikeQuery.addEventListener('change', onPointerCapabilityChange);
+        } else {
+            touchLikeQuery.addListener(onPointerCapabilityChange);
+        }
 
         const resize = () => {
             const rect = canvas.parentElement!.getBoundingClientRect();
@@ -102,7 +110,7 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             clearTimeout(touchClearId);
             touchClearId = setTimeout(() => {
                 mouseRef.current = { x: -9999, y: -9999 };
-            }, 80);
+            }, 400);
         };
 
         const parent = canvas.parentElement!;
@@ -120,18 +128,6 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
 
             const mx = mouseRef.current.x;
             const my = mouseRef.current.y;
-            const pointerActive = mx > -9000;
-            const influence = spotlightInfluenceRef.current;
-            spotlightInfluenceRef.current = pointerActive
-                ? Math.min(1, influence + SPOTLIGHT_RAMP_UP)
-                : influence * SPOTLIGHT_DECAY;
-            const spotlightInfluence = spotlightInfluenceRef.current;
-
-            if (pointerActive) {
-                lastSpotlightRef.current = { x: mx, y: my };
-            }
-            const sx = lastSpotlightRef.current.x;
-            const sy = lastSpotlightRef.current.y;
 
             for (const p of particlesRef.current) {
                 const dx = p.x - mx;
@@ -157,12 +153,13 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
                 if (p.x < -4) p.x = w + 4;
                 if (p.x > w + 4) p.x = -4;
 
-                const distToSpotlight = Math.sqrt((p.x - sx) ** 2 + (p.y - sy) ** 2);
                 const spotlightRadius = 170;
-                const spotlightRaw = Math.max(0, 1 - distToSpotlight / spotlightRadius);
-                const spotlightStrength = (spotlightRaw * spotlightRaw) * spotlightInfluence;
-                const finalSize = p.size * (1 + spotlightStrength * 1.6);
-                const haloRadius = spotlightStrength > 0.01
+                const spotlightRaw = Math.max(0, 1 - dist / spotlightRadius);
+                const spotlightStrength = spotlightRaw * spotlightRaw;
+                const isTouchLikeDevice = isTouchLikeDeviceRef.current;
+                const visualStrength = isTouchLikeDevice ? 0 : spotlightStrength;
+                const finalSize = p.size * (1 + visualStrength * 1.6);
+                const haloRadius = visualStrength > 0.01
                     ? finalSize * (2.6 + spotlightStrength * 1.8)
                     : 0;
                 const renderRadius = Math.max(finalSize, haloRadius);
@@ -177,18 +174,20 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
                     : 1;
                 const edgeFade = Math.max(0, Math.min(topFade, bottomFade));
                 const baseOpacity = p.opacity * edgeFade;
-                const finalOpacity = Math.min(0.95, baseOpacity * (1 + spotlightStrength * 1.8));
+                const finalOpacity = isTouchLikeDevice
+                    ? baseOpacity
+                    : Math.min(0.95, baseOpacity * (1 + spotlightStrength * 1.8));
 
-                if (spotlightStrength > 0.01 && edgeFade > 0.01) {
+                if (visualStrength > 0.01 && edgeFade > 0.01) {
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, haloRadius, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 244, 212, ${0.14 * spotlightStrength * edgeFade})`;
+                    ctx.fillStyle = `rgba(255, 244, 212, ${0.14 * visualStrength * edgeFade})`;
                     ctx.fill();
                 }
 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, finalSize, 0, Math.PI * 2);
-                ctx.shadowBlur = 20 * spotlightStrength * edgeFade;
+                ctx.shadowBlur = 20 * visualStrength * edgeFade;
                 ctx.shadowColor = 'rgba(255, 240, 200, 0.95)';
                 ctx.fillStyle = `${p.color}${finalOpacity})`;
                 ctx.fill();
@@ -210,6 +209,11 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             window.removeEventListener('resize', onViewportChange);
             parent.removeEventListener('touchmove', onTouchMove);
             parent.removeEventListener('touchend', onTouchEnd);
+            if (typeof touchLikeQuery.removeEventListener === 'function') {
+                touchLikeQuery.removeEventListener('change', onPointerCapabilityChange);
+            } else {
+                touchLikeQuery.removeListener(onPointerCapabilityChange);
+            }
         };
     }, [count]);
 
