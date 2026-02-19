@@ -179,34 +179,25 @@ designer: ${designer}` : ''}
 `;
 
     // Create index.ts content matching existing structure
+    const tagValue = category === 'my-designs' ? 'my-design' : 'other-design';
     const indexTs = `import { OrigamiProps } from '../../../../types';
-import info from './info.md?raw';
-import matter from 'front-matter';
+import { attributes } from './info.md?parsed';
 
-interface OrigamiMetadata {
-    title: string;
-    date: string;
-    description?: string;
-    designer?: string;
-}
+// Optimized web images (from scripts/optimize-images.mjs)
+const webImages = Object.values(import.meta.glob('./web/*.webp', { eager: true, import: 'default' }))
+    .filter((url: unknown) => !(url as string).includes('pattern'))
+    .sort((a, b) => (a as string).localeCompare(b as string)) as string[];
+const fullImages = Object.values(import.meta.glob('./*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' }))
+    .filter((url: unknown) => !(url as string).includes('pattern'))
+    .sort((a, b) => (a as string).localeCompare(b as string)) as string[];
+const modelImages = webImages.length > 0 ? webImages : fullImages;
+const modelImagesFull = fullImages;
 
-// Load all images in this folder (excluding patterns)
-const modelImages = Object.values(import.meta.glob('./*.{png,jpg,jpeg,webp}', { 
-    eager: true, 
-    import: 'default' 
-}))
-.filter((url: unknown) => !(url as string).includes('pattern'))
-.sort((a, b) => (a as string).localeCompare(b as string)) as string[];
+const webCP = Object.values(import.meta.glob('./web/*pattern*.webp', { eager: true, import: 'default' }));
+const fullCP = Object.values(import.meta.glob('./*pattern*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' }));
+const creasePattern = (webCP[0] || fullCP[0]) as string | undefined;
+const creasePatternFull = fullCP[0] as string | undefined;
 
-// Load crease pattern if it exists
-const creasePatternModules = import.meta.glob('./*pattern*.{png,jpg,jpeg,webp}', { 
-    eager: true, 
-    import: 'default' 
-});
-const creasePattern = Object.values(creasePatternModules)[0] as string | undefined;
-
-// Parse metadata from info.md
-const { attributes } = matter<OrigamiMetadata>(info);
 
 export default {
     title: attributes.title,
@@ -215,9 +206,11 @@ export default {
     startDate: attributes.date,
     designer: attributes.designer,
     modelImages,
+    modelImagesFull,
     creasePattern,
+    creasePatternFull,
     keywords: ['origami', 'paper art', attributes.title?.toLowerCase().replace(/\\s+/g, '-')].filter(Boolean),
-    tags: ['origami', '${category === 'my-designs' ? 'my-design' : 'other-design'}']
+    tags: ['origami', '${tagValue}']
 } as OrigamiProps;
 `;
 
@@ -262,21 +255,26 @@ ${allTags.map(tag => `- ${tag.toLowerCase()}`).join('\n')}
 ${description}
 `;
 
-    // Create index.ts content similar to be-square structure
+    // Create index.ts content matching existing project structure
     const indexTs = `import { ProjectProps } from '../../../types';
-import description from './description.md?raw';
-import matter from 'front-matter';
+import { attributes, body } from './description.md?parsed';
 
-const sortedImages = Object.values(import.meta.glob('./images/*.(png|jpg|jpeg)', { eager: true, import: 'default' }))
-    .sort((a, b) => (a as string).localeCompare(b as string)) as string[];
 
-const { attributes, body } = matter<ProjectProps>(description);
+const webImages = Object.entries(import.meta.glob('./images/web/*.webp', { eager: true, import: 'default' }))
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, url]) => url) as string[];
+const fullImages = Object.entries(import.meta.glob('./images/*.(png|jpg|jpeg)', { eager: true, import: 'default' }))
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, url]) => url) as string[];
+const sortedImages = webImages.length > 0 ? webImages : fullImages;
+
+
 
 export default {
     ...attributes as object,
     description: body,
     images: sortedImages,
-    slug: '${slug}',
+    imagesFull: fullImages,
 } as ProjectProps;
 `;
 
