@@ -18,34 +18,26 @@ function PortfolioGrid() {
             setShowGallery(true);
             return;
         }
-
-        const el = galleryRef.current;
-        if (!el) return;
-
         let timer: number | null = null;
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setShowGallery(true);
-                    observer.disconnect();
-                    if (timer !== null) {
-                        window.clearTimeout(timer);
-                        timer = null;
-                    }
-                }
-            },
-            { rootMargin: '500px 0px', threshold: 0 }
-        );
+        let idleId: number | null = null;
+        const enable = () => setShowGallery(true);
+        const ric = (window as Window & {
+            requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
+            cancelIdleCallback?: (id: number) => void;
+        }).requestIdleCallback;
 
-        observer.observe(el);
-        timer = window.setTimeout(() => {
-            setShowGallery(true);
-            observer.disconnect();
-        }, 2200);
+        if (ric) {
+            idleId = ric(enable, { timeout: 1400 });
+        } else {
+            timer = window.setTimeout(enable, 1300);
+        }
 
         return () => {
-            observer.disconnect();
             if (timer !== null) window.clearTimeout(timer);
+            if (idleId !== null) {
+                const cic = (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
+                if (cic) cic(idleId);
+            }
         };
     }, []);
 
