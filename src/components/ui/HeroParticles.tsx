@@ -37,6 +37,7 @@ function makeParticle(w: number, h: number): Particle {
 export function HeroParticles({ count = 110 }: { count?: number }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const mouseRef = useRef({ x: -9999, y: -9999 });
+    const pointerClientRef = useRef({ x: -9999, y: -9999, active: false });
     const particlesRef = useRef<Particle[]>([]);
     const rafRef = useRef<number>(0);
 
@@ -62,11 +63,36 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
         const ro = new ResizeObserver(resize);
         ro.observe(canvas.parentElement!);
 
-        const onMouseMove = (e: MouseEvent) => {
+        const syncPointerToCanvas = () => {
+            const { x, y, active } = pointerClientRef.current;
+            if (!active) {
+                mouseRef.current = { x: -9999, y: -9999 };
+                return;
+            }
+
             const rect = canvas.getBoundingClientRect();
-            mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            const isInside =
+                x >= rect.left &&
+                x <= rect.right &&
+                y >= rect.top &&
+                y <= rect.bottom;
+
+            mouseRef.current = isInside
+                ? { x: x - rect.left, y: y - rect.top }
+                : { x: -9999, y: -9999 };
         };
-        const onMouseLeave = () => { mouseRef.current = { x: -9999, y: -9999 }; };
+
+        const onMouseMove = (e: MouseEvent) => {
+            pointerClientRef.current = { x: e.clientX, y: e.clientY, active: true };
+            syncPointerToCanvas();
+        };
+        const onMouseLeaveWindow = () => {
+            pointerClientRef.current.active = false;
+            mouseRef.current = { x: -9999, y: -9999 };
+        };
+        const onViewportChange = () => {
+            syncPointerToCanvas();
+        };
 
         const onTouchMove = (e: TouchEvent) => {
             const rect = canvas.getBoundingClientRect();
@@ -82,8 +108,10 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
         };
 
         const parent = canvas.parentElement!;
-        parent.addEventListener('mousemove', onMouseMove);
-        parent.addEventListener('mouseleave', onMouseLeave);
+        window.addEventListener('mousemove', onMouseMove, { passive: true });
+        window.addEventListener('mouseleave', onMouseLeaveWindow);
+        window.addEventListener('scroll', onViewportChange, { passive: true });
+        window.addEventListener('resize', onViewportChange, { passive: true });
         parent.addEventListener('touchmove', onTouchMove, { passive: true });
         parent.addEventListener('touchend', onTouchEnd, { passive: true });
 
@@ -124,15 +152,43 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
                 if (p.x < -4) p.x = w + 4;
                 if (p.x > w + 4) p.x = -4;
 
-                // Fade out in top 15% (just entered) and bottom 25% (blends with gradient)
-                const topFade = p.y < h * 0.15 ? p.y / (h * 0.15) : 1;
-                const bottomFade = p.y > h * 0.75 ? 1 - (p.y - h * 0.75) / (h * 0.25) : 1;
-                const finalOpacity = p.opacity * Math.max(0, Math.min(topFade, bottomFade));
+                // Spotlight interaction: brighten + enlarge particles near the cursor.
+                const spotlightRadius = 170;
+                const spotlightRaw = Math.max(0, 1 - dist / spotlightRadius);
+                const spotlightStrength = spotlightRaw * spotlightRaw;
+                const finalSize = p.size * (1 + spotlightStrength * 1.6);
+                const haloRadius = spotlightStrength > 0.01
+                    ? finalSize * (2.6 + spotlightStrength * 1.8)
+                    : 0;
+                const renderRadius = Math.max(finalSize, haloRadius);
+
+                // Edge-aware fade so enlarged particles/halos disappear before canvas clipping.
+                const topFadeLimit = h * 0.15;
+                const bottomFadeStart = h * 0.68;
+                const topFade = (p.y - renderRadius) < topFadeLimit
+                    ? Math.max(0, (p.y + renderRadius) / (topFadeLimit + renderRadius))
+                    : 1;
+                const bottomFade = (p.y + renderRadius) > bottomFadeStart
+                    ? Math.max(0, 1 - ((p.y + renderRadius) - bottomFadeStart) / ((h - bottomFadeStart) + renderRadius))
+                    : 1;
+                const edgeFade = Math.max(0, Math.min(topFade, bottomFade));
+                const baseOpacity = p.opacity * edgeFade;
+                const finalOpacity = Math.min(0.95, baseOpacity * (1 + spotlightStrength * 1.8));
+
+                if (spotlightStrength > 0.01 && edgeFade > 0.01) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, haloRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 244, 212, ${0.14 * spotlightStrength * edgeFade})`;
+                    ctx.fill();
+                }
 
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.arc(p.x, p.y, finalSize, 0, Math.PI * 2);
+                ctx.shadowBlur = 20 * spotlightStrength * edgeFade;
+                ctx.shadowColor = 'rgba(255, 240, 200, 0.95)';
                 ctx.fillStyle = `${p.color}${finalOpacity})`;
                 ctx.fill();
+                ctx.shadowBlur = 0;
             }
 
             rafRef.current = requestAnimationFrame(draw);
@@ -144,8 +200,10 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             cancelAnimationFrame(rafRef.current);
             clearTimeout(touchClearId);
             ro.disconnect();
-            parent.removeEventListener('mousemove', onMouseMove);
-            parent.removeEventListener('mouseleave', onMouseLeave);
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseleave', onMouseLeaveWindow);
+            window.removeEventListener('scroll', onViewportChange);
+            window.removeEventListener('resize', onViewportChange);
             parent.removeEventListener('touchmove', onTouchMove);
             parent.removeEventListener('touchend', onTouchEnd);
         };
