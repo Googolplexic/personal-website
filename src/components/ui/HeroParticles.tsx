@@ -25,7 +25,7 @@ function makeParticle(w: number, h: number): Particle {
         x: Math.random() * w,
         y: Math.random() * h,
         vx: (Math.random() - 0.5) * 0.18,
-        vy: Math.random() * 0.22 + 0.06, // drift downward
+        vy: Math.random() * 0.22 + 0.06,
         size: Math.random() * 1.4 + 0.3,
         opacity,
         opacityTarget: opacity,
@@ -51,7 +51,6 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             const rect = canvas.parentElement!.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
-            // Re-seed only if empty
             if (particlesRef.current.length === 0) {
                 particlesRef.current = Array.from({ length: count }, () =>
                     makeParticle(canvas.width, canvas.height)
@@ -69,14 +68,10 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
                 mouseRef.current = { x: -9999, y: -9999 };
                 return;
             }
-
             const rect = canvas.getBoundingClientRect();
             const isInside =
-                x >= rect.left &&
-                x <= rect.right &&
-                y >= rect.top &&
-                y <= rect.bottom;
-
+                x >= rect.left && x <= rect.right &&
+                y >= rect.top && y <= rect.bottom;
             mouseRef.current = isInside
                 ? { x: x - rect.left, y: y - rect.top }
                 : { x: -9999, y: -9999 };
@@ -90,9 +85,7 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             pointerClientRef.current.active = false;
             mouseRef.current = { x: -9999, y: -9999 };
         };
-        const onViewportChange = () => {
-            syncPointerToCanvas();
-        };
+        const onViewportChange = () => { syncPointerToCanvas(); };
 
         const onTouchMove = (e: TouchEvent) => {
             const rect = canvas.getBoundingClientRect();
@@ -124,7 +117,6 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             const my = mouseRef.current.y;
 
             for (const p of particlesRef.current) {
-                // Subtle mouse repulsion
                 const dx = p.x - mx;
                 const dy = p.y - my;
                 const dist = Math.sqrt(dx * dx + dy * dy);
@@ -134,25 +126,20 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
                     p.vy += (dy / dist) * force;
                 }
 
-                // Dampen velocity drift back to normal
                 p.vx *= 0.98;
                 p.vy = p.vy * 0.98 + (Math.random() * 0.22 + 0.06) * 0.02;
-
                 p.x += p.vx;
                 p.y += p.vy;
 
-                // Opacity breathing
                 p.opacity += (p.opacityTarget - p.opacity) * p.opacitySpeed * 60;
                 if (Math.abs(p.opacity - p.opacityTarget) < 0.005) {
                     p.opacityTarget = Math.random() * 0.28 + 0.04;
                 }
 
-                // Wrap — respawn at top when leaving bottom
                 if (p.y > h + 4) { p.y = -4; p.x = Math.random() * w; }
                 if (p.x < -4) p.x = w + 4;
                 if (p.x > w + 4) p.x = -4;
 
-                // Spotlight interaction: brighten + enlarge particles near the cursor.
                 const spotlightRadius = 170;
                 const spotlightRaw = Math.max(0, 1 - dist / spotlightRadius);
                 const spotlightStrength = spotlightRaw * spotlightRaw;
@@ -162,7 +149,6 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
                     : 0;
                 const renderRadius = Math.max(finalSize, haloRadius);
 
-                // Edge-aware fade so enlarged particles/halos disappear before canvas clipping.
                 const topFadeLimit = h * 0.15;
                 const bottomFadeStart = h * 0.68;
                 const topFade = (p.y - renderRadius) < topFadeLimit
