@@ -1,0 +1,52 @@
+name: Optimize Images
+
+# Runs when images are pushed to main (e.g. via admin panel / GitHub API).
+# Generates web-optimized WebP versions and commits them back.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/assets/origami/**/*.jpg'
+      - 'src/assets/origami/**/*.jpeg'
+      - 'src/assets/origami/**/*.png'
+      - 'src/assets/origami/**/*.webp'
+      - 'src/assets/projects/**/*.jpg'
+      - 'src/assets/projects/**/*.jpeg'
+      - 'src/assets/projects/**/*.png'
+      - 'src/assets/projects/**/*.webp'
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+
+    # Don't run if the push was made by this action (avoid infinite loop)
+    if: github.actor != 'github-actions[bot]'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run image optimization
+        run: node scripts/optimize-images.mjs
+
+      - name: Commit optimized images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/assets/origami/**/web/*.webp src/assets/projects/**/web/*.webp || true
+          # Only commit if there are actually changes
+          if git diff --cached --quiet; then
+            echo "No new optimized images to commit."
+          else
+            git commit -m "chore: auto-optimize images [skip ci]"
+            git push
+          fi
