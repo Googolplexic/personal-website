@@ -34,7 +34,16 @@ export function useStaggeredEntrance(
 
         const container = containerRef.current;
         if (!container) return;
-        const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
+        const rawItems = container.querySelectorAll<HTMLElement>('.spotlight-item');
+
+        // Sort by data-stagger-index when present (masonry row-order),
+        // otherwise keep DOM order.
+        const items = Array.from(rawItems).sort((a, b) => {
+            const ai = (a.closest('[data-stagger-index]') as HTMLElement | null)?.dataset.staggerIndex;
+            const bi = (b.closest('[data-stagger-index]') as HTMLElement | null)?.dataset.staggerIndex;
+            if (ai != null && bi != null) return Number(ai) - Number(bi);
+            return 0;
+        });
 
         // Pre-hide staggered items immediately so they never flash visible then hide.
         items.forEach((item, i) => {
