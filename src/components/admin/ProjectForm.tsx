@@ -88,29 +88,13 @@ export function ProjectForm() {
         }
 
         try {
-            // Convert images to base64 if present
-            const imageData = [];
-            if (images) {
-                for (const file of Array.from(images)) {
-                    const base64 = await new Promise<string>((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result as string);
-                        reader.readAsDataURL(file);
-                    });
-
-                    imageData.push({
-                        data: base64,
-                        ext: file.name.split('.').pop()
-                    });
-                }
-            }
-
+            // Step 1: Create project metadata (description.md + index.ts) — no images
             const response = await fetch(apiUrl('/create-content'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include', // Use cookies instead of Authorization header
+                credentials: 'include',
                 body: JSON.stringify({
                     type: 'project',
                     title: formData.title,
@@ -124,17 +108,55 @@ export function ProjectForm() {
                     tags: formData.tags,
                     keywords: formData.keywords,
                     SEOdescription: formData.SEOdescription,
-                    images: imageData,
                 }),
             });
 
-            if (response.ok) {
-                setMessage({ type: 'success', text: 'Project created successfully!' });
-                setFormData(initialFormData);
-                setImages(null);
-                // Reset file input
-                const fileInput = document.getElementById('images') as HTMLInputElement;
-                if (fileInput) fileInput.value = '';
+            if (!response.ok) {
+                const error = await response.json();
+                setMessage({ type: 'error', text: error.error || 'Failed to create project' });
+                return;
+            }
+
+            const result = await response.json();
+            const slug = result.slug;
+
+            // Step 2: Upload images one-by-one via /api/upload-image
+            if (images && images.length > 0) {
+                for (let i = 0; i < images.length; i++) {
+                    const file = Array.from(images)[i];
+                    const base64 = await new Promise<string>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result as string);
+                        reader.readAsDataURL(file);
+                    });
+
+                    const ext = file.name.split('.').pop();
+                    const fileName = `${String(i + 1).padStart(2, '0')}-${slug}.${ext}`;
+
+                    const imgRes = await fetch(apiUrl('/upload-image'), {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            type: 'project',
+                            slug,
+                            imageData: base64,
+                            fileName,
+                        }),
+                    });
+
+                    if (!imgRes.ok) {
+                        const err = await imgRes.json();
+                        console.error(`Failed to upload image ${i + 1}:`, err);
+                    }
+                }
+            }
+
+            setMessage({ type: 'success', text: 'Project created successfully!' });
+            setFormData(initialFormData);
+            setImages(null);
+            const fileInput = document.getElementById('images') as HTMLInputElement;
+            if (fileInput) fileInput.value = '';
             } else {
                 const error = await response.json();
                 setMessage({ type: 'error', text: error.error || 'Failed to create project' });
