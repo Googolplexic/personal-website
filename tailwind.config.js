@@ -13,7 +13,7 @@ export default {
       fontFamily: {
         heading: ['EB Garamond', 'EB Garamond Fallback', 'Garamond', 'Georgia', 'serif'],
         body: ['PT Sans', 'PT Sans Fallback', 'system-ui', '-apple-system', 'sans-serif'],
-        signature: ['Grape Nuts', 'cursive'],
+        signature: ['EB Garamond', 'EB Garamond Fallback', 'Garamond', 'Georgia', 'serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-out forwards',
