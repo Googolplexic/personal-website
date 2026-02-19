@@ -14,6 +14,7 @@ export function useSmoothScroll() {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
         let destroyed = false;
+        let rafId: number | null = null;
 
         import('lenis').then(({ default: Lenis }) => {
             if (destroyed) return;
@@ -27,15 +28,17 @@ export function useSmoothScroll() {
             lenisInstance = lenis;
 
             function raf(time: number) {
+                if (destroyed) return;
                 lenis.raf(time);
-                requestAnimationFrame(raf);
+                rafId = requestAnimationFrame(raf);
             }
 
-            requestAnimationFrame(raf);
+            rafId = requestAnimationFrame(raf);
         });
 
         return () => {
             destroyed = true;
+            if (rafId != null) cancelAnimationFrame(rafId);
             if (lenisInstance) {
                 lenisInstance.destroy();
                 lenisInstance = null;

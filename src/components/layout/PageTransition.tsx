@@ -1,5 +1,6 @@
 import { useEffect, useRef, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { getLenis } from '../../utils/useSmoothScroll';
 
 interface PageTransitionProps {
     children: ReactNode;
@@ -25,7 +26,18 @@ export function PageTransition({ children }: PageTransitionProps) {
         if (location.pathname !== prevPathRef.current) {
             prevPathRef.current = location.pathname;
             isInitialLoad.current = false;
-            window.scrollTo(0, 0);
+
+            // Safety: ensure body overflow is never left hidden by a
+            // lightbox (or similar) that was unmounted during navigation.
+            document.body.style.overflow = '';
+
+            // Use Lenis for scroll-to-top when active, fall back to native.
+            const lenis = getLenis();
+            if (lenis) {
+                lenis.scrollTo(0, { immediate: true });
+            } else {
+                window.scrollTo(0, 0);
+            }
         }
     }, [location.pathname]);
 
