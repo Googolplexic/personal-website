@@ -126,8 +126,10 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             const h = canvas.height;
             ctx.clearRect(0, 0, w, h);
 
-            const mx = mouseRef.current.x;
-            const my = mouseRef.current.y;
+            const customCursorVisible = document.documentElement.classList.contains('custom-cursor-visible');
+            const hasInteractivePointer = isTouchLikeDeviceRef.current || customCursorVisible;
+            const mx = hasInteractivePointer ? mouseRef.current.x : -9999;
+            const my = hasInteractivePointer ? mouseRef.current.y : -9999;
 
             for (const p of particlesRef.current) {
                 const dx = p.x - mx;

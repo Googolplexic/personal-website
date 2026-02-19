@@ -33,6 +33,7 @@ export function useCustomCursor() {
             isVisible = false;
             dot.classList.remove('visible');
             glow.classList.remove('visible');
+            document.documentElement.classList.remove('custom-cursor-visible');
         };
 
         const scheduleIdleFade = () => {
@@ -54,6 +55,7 @@ export function useCustomCursor() {
                 isVisible = true;
                 dot.classList.add('visible');
                 glow.classList.add('visible');
+                document.documentElement.classList.add('custom-cursor-visible');
             }
             scheduleIdleFade();
         };
@@ -84,6 +86,7 @@ export function useCustomCursor() {
             isVisible = true;
             dot.classList.add('visible');
             glow.classList.add('visible');
+            document.documentElement.classList.add('custom-cursor-visible');
             scheduleIdleFade();
         };
 
@@ -109,6 +112,7 @@ export function useCustomCursor() {
             document.documentElement.removeEventListener('mouseleave', onMouseLeave);
             document.documentElement.removeEventListener('mouseenter', onMouseEnter);
             document.documentElement.classList.remove('custom-cursor-active');
+            document.documentElement.classList.remove('custom-cursor-visible');
             dot.remove();
             glow.remove();
         };
