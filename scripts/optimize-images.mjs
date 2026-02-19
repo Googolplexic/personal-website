@@ -16,7 +16,7 @@
  */
 
 import sharp from 'sharp';
-import { readdir, stat, mkdir } from 'node:fs/promises';
+import { readdir, stat, mkdir, unlink } from 'node:fs/promises';
 import { resolve, join, basename, extname } from 'node:path';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -36,6 +36,7 @@ const FORCE = process.argv.includes('--force');
 
 let optimized = 0;
 let skipped = 0;
+let removedOrphans = 0;
 let errors = 0;
 
 async function walk(dir) {
@@ -99,6 +100,67 @@ function fmt(bytes) {
   return `${(bytes / 1024).toFixed(0)}KB`;
 }
 
+// Remove orphaned web/*.webp files when the corresponding full-size image no longer exists.
+// Traverses directories under `root` and deletes any web/<name>.webp where no file
+// with the same base name and one of IMAGE_EXTS exists in the parent folder.
+async function removeOrphanedWebs(root) {
+  let removed = 0;
+
+  async function walker(dir) {
+    let entries;
+    try {
+      entries = await readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+
+    for (const entry of entries) {
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name === 'web') {
+          // inspect files inside this web/ directory
+          let webFiles;
+          try {
+            webFiles = await readdir(full);
+          } catch {
+            continue;
+          }
+
+          for (const wf of webFiles) {
+            if (extname(wf).toLowerCase() !== '.webp') continue;
+            const base = basename(wf, '.webp');
+            const parentDir = dir; // parent of web/
+            let existsFull = false;
+            for (const ext of IMAGE_EXTS) {
+              const candidate = join(parentDir, `${base}${ext}`);
+              if (existsSync(candidate)) {
+                existsFull = true;
+                break;
+              }
+            }
+
+            if (!existsFull) {
+              const target = join(full, wf);
+              try {
+                await unlink(target);
+                removed++;
+                console.log(`  - removed orphan ${target.replace(ROOT, '.')}`);
+              } catch (err) {
+                console.error(`  ✗ failed to remove orphan ${target}: ${err.message}`);
+              }
+            }
+          }
+        } else {
+          await walker(full);
+        }
+      }
+    }
+  }
+
+  await walker(root);
+  return removed;
+}
+
 async function main() {
   console.log('🖼  Optimizing images...\n');
 
@@ -111,10 +173,22 @@ async function main() {
     for (const img of images) {
       await optimizeImage(img);
     }
+
+    // Remove orphaned web/ images in this subtree (if any)
+    try {
+      const removed = await removeOrphanedWebs(dir);
+      if (removed > 0) {
+        removedOrphans += removed;
+        console.log(`  Removed ${removed} orphaned web image(s) from ${dir.replace(ROOT, '.')}\n`);
+      }
+    } catch (err) {
+      console.error('Failed to clean orphaned web images:', err.message);
+    }
+
     console.log();
   }
 
-  console.log(`Done! ${optimized} optimized, ${skipped} skipped, ${errors} errors`);
+  console.log(`Done! ${optimized} optimized, ${skipped} skipped, ${removedOrphans} removed, ${errors} errors`);
   if (errors > 0) process.exit(1);
 }
 
