@@ -32,9 +32,8 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
 
     // Lock body scroll
     useEffect(() => {
-        const original = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
-        return () => { document.body.style.overflow = original; };
+        return () => { document.body.style.overflow = ''; };
     }, []);
 
     const goTo = useCallback((index: number) => {
