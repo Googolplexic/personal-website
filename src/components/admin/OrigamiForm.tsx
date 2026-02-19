@@ -138,10 +138,6 @@ export function OrigamiForm() {
             setImages(null);
             const fileInput = document.getElementById('origami-images') as HTMLInputElement;
             if (fileInput) fileInput.value = '';
-            } else {
-                const error = await response.json();
-                setMessage({ type: 'error', text: error.error || 'Failed to create origami' });
-            }
         } catch (error) {
             setMessage({ type: 'error', text: 'Failed to create origami' });
             console.error('Submit error:', error);
