@@ -93,6 +93,9 @@ export function SpotlightDust() {
             const scrollY = window.scrollY;
             const dy = scrollY - lastScrollY.current;
             lastScrollY.current = scrollY;
+            // Ignore abrupt programmatic scroll jumps (e.g. route navigation reset to top)
+            // so particles do not all wrap to one edge in a single frame.
+            if (Math.abs(dy) > canvas.height * 0.75) return;
             const h = canvas.height;
             for (const p of particlesRef.current) {
                 p.y -= dy;
