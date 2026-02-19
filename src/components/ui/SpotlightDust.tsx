@@ -110,8 +110,9 @@ export function SpotlightDust() {
             const h = canvas.height;
             ctx.clearRect(0, 0, w, h);
 
-            const mx = mouseRef.current.x;
-            const my = mouseRef.current.y;
+            const customCursorVisible = document.documentElement.classList.contains('custom-cursor-visible');
+            const mx = customCursorVisible ? mouseRef.current.x : -9999;
+            const my = customCursorVisible ? mouseRef.current.y : -9999;
 
             for (const p of particlesRef.current) {
                 const dx = p.x - mx;

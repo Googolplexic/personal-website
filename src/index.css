@@ -679,7 +679,7 @@
   background: #e2c76a;
 }
 
-.custom-cursor-glow.hovering {
+.custom-cursor-glow.visible.hovering {
   width: 55px;
   height: 55px;
   background: radial-gradient(
