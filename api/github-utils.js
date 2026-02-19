@@ -2,7 +2,6 @@
 // This replaces the local file-based admin server with GitHub API calls
 
 import { Octokit } from '@octokit/rest';
-import sharp from 'sharp';
 
 // Initialize GitHub client
 const octokit = new Octokit({
@@ -129,7 +128,10 @@ export function isOptimizableImage(filePath) {
 }
 
 // Generate an optimized WebP buffer from a raw image buffer (same settings as optimize-images.mjs).
+// sharp is loaded lazily so endpoints that never call this function don't pay the
+// native-module import cost (and don't crash if sharp isn't available).
 export async function optimizeImageBuffer(imageBuffer) {
+    const sharp = (await import('sharp')).default;
     return sharp(imageBuffer)
         .resize(WEBP_MAX_WIDTH, null, { withoutEnlargement: true, fit: 'inside' })
         .webp({ quality: WEBP_QUALITY })

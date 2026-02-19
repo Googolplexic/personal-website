@@ -71,30 +71,13 @@ export function OrigamiForm() {
         }
 
         try {
-            // Convert images to base64 if present
-            const imageData = [];
-            if (images) {
-                for (const file of Array.from(images)) {
-                    const base64 = await new Promise<string>((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result as string);
-                        reader.readAsDataURL(file);
-                    });
-
-                    imageData.push({
-                        data: base64,
-                        ext: file.name.split('.').pop(),
-                        isPattern: file.name.toLowerCase().includes('pattern')
-                    });
-                }
-            }
-
+            // Step 1: Create origami metadata (info.md + index.ts) — no images
             const response = await fetch(apiUrl('/create-content'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include', // Use cookies instead of Authorization header
+                credentials: 'include',
                 body: JSON.stringify({
                     type: 'origami',
                     title: formData.title,
@@ -102,17 +85,59 @@ export function OrigamiForm() {
                     category: formData.category,
                     designer: formData.designer,
                     date: formData.date || new Date().toISOString().slice(0, 7),
-                    images: imageData,
                 }),
             });
 
-            if (response.ok) {
-                setMessage({ type: 'success', text: 'Origami created successfully!' });
-                setFormData(initialFormData);
-                setImages(null);
-                // Reset file input
-                const fileInput = document.getElementById('origami-images') as HTMLInputElement;
-                if (fileInput) fileInput.value = '';
+            if (!response.ok) {
+                const error = await response.json();
+                setMessage({ type: 'error', text: error.error || 'Failed to create origami' });
+                return;
+            }
+
+            const result = await response.json();
+            const slug = result.slug;
+
+            // Step 2: Upload images one-by-one via /api/upload-image
+            if (images && images.length > 0) {
+                for (let i = 0; i < images.length; i++) {
+                    const file = Array.from(images)[i];
+                    const base64 = await new Promise<string>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result as string);
+                        reader.readAsDataURL(file);
+                    });
+
+                    const isPattern = file.name.toLowerCase().includes('pattern');
+                    const ext = file.name.split('.').pop();
+                    const fileName = isPattern
+                        ? `${slug}-pattern.${ext}`
+                        : `${String(i + 1).padStart(2, '0')}-${slug}.${ext}`;
+
+                    const imgRes = await fetch(apiUrl('/upload-image'), {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            type: 'origami',
+                            slug,
+                            category: formData.category,
+                            imageData: base64,
+                            fileName,
+                        }),
+                    });
+
+                    if (!imgRes.ok) {
+                        const err = await imgRes.json();
+                        console.error(`Failed to upload image ${i + 1}:`, err);
+                    }
+                }
+            }
+
+            setMessage({ type: 'success', text: 'Origami created successfully!' });
+            setFormData(initialFormData);
+            setImages(null);
+            const fileInput = document.getElementById('origami-images') as HTMLInputElement;
+            if (fileInput) fileInput.value = '';
             } else {
                 const error = await response.json();
                 setMessage({ type: 'error', text: error.error || 'Failed to create origami' });

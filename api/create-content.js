@@ -1,5 +1,5 @@
 // Vercel serverless function to create projects/origami via GitHub API
-import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, uploadImageToGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer } from './github-utils.js';
+import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, getFileFromGitHub } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
 }
 
 async function createOrigami(data) {
-    const { title, description, date, designer, category, images } = data;
+    const { title, description, date, designer, category } = data;
 
     if (!title || !category) {
         throw new Error('Title and category are required for origami');
@@ -110,42 +110,7 @@ async function createOrigami(data) {
         `Add origami ${title} - configuration`
     );
 
-    // Upload images if provided
-    if (images && images.length > 0) {
-        for (let i = 0; i < images.length; i++) {
-            const image = images[i];
-            const fileName = image.isPattern
-                ? `${slug}-pattern.${image.ext}`
-                : `${String(i + 1).padStart(2, '0')}-${slug}.${image.ext}`;
-            const imagePath = `${structure.basePath}/${fileName}`;
-
-            // Convert base64 to buffer
-            const imageBuffer = Buffer.from(image.data.split(',')[1], 'base64');
-
-            await uploadImageToGitHub(
-                imagePath,
-                imageBuffer,
-                `Add origami ${title} - ${image.isPattern ? 'pattern' : 'image'} ${i + 1}`
-            );
-
-            // Generate webp for optimizable images
-            try {
-                if (isOptimizableImage(imagePath)) {
-                    const webpBuffer = await optimizeImageBuffer(imageBuffer);
-                    const webpPath = getWebpPath(imagePath);
-                    await uploadImageToGitHub(
-                        webpPath,
-                        webpBuffer,
-                        `Upload optimized webp for ${fileName}`
-                    );
-                }
-            } catch (webpErr) {
-                console.error('Warning: webp optimization failed for', imagePath, webpErr);
-            }
-        }
-    }
-
-    // Note: Index files use import.meta.glob, so no manual updates needed
+    // Images are uploaded separately via /api/upload-image to avoid payload size limits
 }
 
 async function createProject(data) {
@@ -156,7 +121,6 @@ async function createProject(data) {
         technologies,
         githubUrl,
         liveUrl,
-        images,
         startDate,
         endDate,
         tags,
@@ -205,39 +169,7 @@ async function createProject(data) {
         `Add project ${title} - configuration`
     );
 
-    // Create images directory if images are provided
-    if (images && images.length > 0) {
-        for (let i = 0; i < images.length; i++) {
-            const image = images[i];
-            const imagePath = `${structure.basePath}/images/${String(i + 1).padStart(2, '0')}-${slug}.${image.ext}`;
-
-            // Convert base64 to buffer
-            const imageBuffer = Buffer.from(image.data.split(',')[1], 'base64');
-
-            await uploadImageToGitHub(
-                imagePath,
-                imageBuffer,
-                `Add project ${title} - image ${i + 1}`
-            );
-
-            // Generate webp for optimizable images
-            try {
-                if (isOptimizableImage(imagePath)) {
-                    const webpBuffer = await optimizeImageBuffer(imageBuffer);
-                    const webpPath = getWebpPath(imagePath);
-                    await uploadImageToGitHub(
-                        webpPath,
-                        webpBuffer,
-                        `Upload optimized webp for image ${i + 1}`
-                    );
-                }
-            } catch (webpErr) {
-                console.error('Warning: webp optimization failed for', imagePath, webpErr);
-            }
-        }
-    }
-
-    // Note: Index files use import.meta.glob, so no manual updates needed
+    // Images are uploaded separately via /api/upload-image to avoid payload size limits
 }
 
 /**
