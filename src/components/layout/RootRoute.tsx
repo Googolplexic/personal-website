@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Home } from '../../pages/Home';
+
+const Home = lazy(() => import('../../pages/Home').then(m => ({ default: m.Home })));
 
 const RICK_ROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
@@ -42,5 +43,5 @@ export function RootRoute() {
         );
     }
 
-    return <Home />;
+    return <Suspense fallback={null}><Home /></Suspense>;
 }
