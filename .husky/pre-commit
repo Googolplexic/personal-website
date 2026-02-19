@@ -4,5 +4,5 @@
 # Optimize ALL images (idempotent — skips up-to-date ones)
 node scripts/optimize-images.mjs
 
-# Stage any new / changed web-optimized images so they're part of this commit
-git add src/assets/origami/**/web/*.webp src/assets/projects/**/web/*.webp 2>/dev/null || true
+# Stage new/changed/deleted web-optimized images so they're part of this commit
+git add -A src/assets/origami/**/web src/assets/projects/**/web 2>/dev/null || true
