@@ -131,7 +131,12 @@ export function ProjectForm() {
                     });
 
                     const ext = file.name.split('.').pop();
-                    const fileName = `${String(i + 1).padStart(2, '0')}-${slug}.${ext}`;
+                    const cleanName = file.name
+                        .replace(/\.[^.]+$/, '')          // strip extension
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')      // non-alphanumeric → dash
+                        .replace(/(^-|-$)/g, '');          // trim leading/trailing dashes
+                    const fileName = `${String(i + 1).padStart(2, '0')}-${cleanName}.${ext}`;
 
                     const imgRes = await fetch(apiUrl('/upload-image'), {
                         method: 'POST',

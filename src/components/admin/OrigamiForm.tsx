@@ -99,6 +99,7 @@ export function OrigamiForm() {
 
             // Step 2: Upload images one-by-one via /api/upload-image
             if (images && images.length > 0) {
+                let regularIndex = 0;
                 for (let i = 0; i < images.length; i++) {
                     const file = Array.from(images)[i];
                     const base64 = await new Promise<string>((resolve) => {
@@ -109,9 +110,13 @@ export function OrigamiForm() {
 
                     const isPattern = file.name.toLowerCase().includes('pattern');
                     const ext = file.name.split('.').pop();
-                    const fileName = isPattern
-                        ? `${slug}-pattern.${ext}`
-                        : `${String(i + 1).padStart(2, '0')}-${slug}.${ext}`;
+                    let fileName: string;
+                    if (isPattern) {
+                        fileName = `${slug}-pattern.${ext}`;
+                    } else {
+                        regularIndex++;
+                        fileName = `${String(regularIndex).padStart(2, '0')}-${slug}.${ext}`;
+                    }
 
                     const imgRes = await fetch(apiUrl('/upload-image'), {
                         method: 'POST',
