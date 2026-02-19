@@ -59,7 +59,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # Pull latest in case another commit landed while we were building
           git pull --rebase origin main || true
-          git add -A 'src/assets/origami/**/web' 'src/assets/projects/**/web' || true
+          git add -A -- ':(glob)src/assets/origami/**/web/**' ':(glob)src/assets/projects/**/web/**' || true
           # Only commit if there are actually changes
           if git diff --cached --quiet; then
             echo "No new optimized images to commit."

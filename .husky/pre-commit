@@ -5,5 +5,5 @@
 node scripts/optimize-images.mjs
 
 # Stage new/changed/deleted web-optimized images so they're part of this commit
-# Pathspecs MUST be quoted so Git (not /bin/sh) does the ** globbing
-git add -A 'src/assets/origami/**/web' 'src/assets/projects/**/web' 2>/dev/null || true
+# Use :(glob) pathspec magic so ** works reliably on all platforms
+git add -A -- ':(glob)src/assets/origami/**/web/**' ':(glob)src/assets/projects/**/web/**' 2>/dev/null || true
