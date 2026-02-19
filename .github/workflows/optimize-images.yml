@@ -3,31 +3,43 @@ name: Optimize Images
 permissions:
   contents: write
 
-# Runs when images are pushed to main (e.g. via admin panel / GitHub API).
-# Generates web-optimized WebP versions and commits them back.
+# Safety-net: runs on any push to main that touches image dirs.
+# The admin API and pre-commit hook handle most cases inline,
+# but this catches anything that slips through (direct pushes, etc.).
 on:
   push:
     branches: [main]
     paths:
-      - 'src/assets/origami/**/*.jpg'
-      - 'src/assets/origami/**/*.jpeg'
-      - 'src/assets/origami/**/*.png'
-      - 'src/assets/origami/**/*.webp'
-      - 'src/assets/projects/**/*.jpg'
-      - 'src/assets/projects/**/*.jpeg'
-      - 'src/assets/projects/**/*.png'
-      - 'src/assets/projects/**/*.webp'
+      - 'src/assets/origami/**'
+      - 'src/assets/projects/**'
 
 jobs:
   optimize:
     runs-on: ubuntu-latest
 
+    # Only one optimization run at a time; if a new push arrives, cancel the
+    # in-progress run so we always process the latest state of the repo.
+    concurrency:
+      group: optimize-images
+      cancel-in-progress: true
+
     # Don't run if the push was made by this action (avoid infinite loop)
     if: github.actor != 'github-actions[bot]'
 
     steps:
+      # Wait a few seconds so multi-commit admin operations (rename = upload + delete)
+      # land before we checkout, giving concurrency cancel a chance to fire.
+      - name: Wait for related commits
+        run: sleep 10
+
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Fetch full history so rebase works if main advanced
+          fetch-depth: 0
+
+      - name: Pull latest
+        run: git pull --rebase origin main || true
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -45,6 +57,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Pull latest in case another commit landed while we were building
+          git pull --rebase origin main || true
           git add -A src/assets/origami/**/web src/assets/projects/**/web || true
           # Only commit if there are actually changes
           if git diff --cached --quiet; then

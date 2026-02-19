@@ -1,5 +1,5 @@
 // Vercel serverless function to rename images via GitHub API
-import { getFileFromGitHub, uploadImageToGitHub, deleteFileFromGitHub } from './github-utils.js';
+import { getFileFromGitHub, getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -51,17 +51,43 @@ export default async function handler(req, res) {
             const oldFilePath = `${basePath}/${file}`;
             const newFilePath = `${basePath}/${newName}`;
 
-            // Get the existing file
-            const existingFileData = await getFileFromGitHub(oldFilePath);
+            // Get the existing image as raw base64 so we can re-upload it
+            const existingFileData = await getImageFromGitHub(oldFilePath);
             if (!existingFileData) {
                 return res.status(404).json({ error: 'File not found' });
             }
 
+            const imageBuffer = Buffer.from(existingFileData.content, 'base64');
+
             // Upload the file with the new name
-            await uploadImageToGitHub(newFilePath, existingFileData.content, `Rename ${file} to ${newName}`);
+            await uploadImageToGitHub(newFilePath, imageBuffer, `Rename ${file} to ${newName}`);
 
             // Delete the old file
             await deleteFileFromGitHub(oldFilePath, `Remove old file ${file} after renaming to ${newName}`);
+
+            // Handle the web/ optimized versions
+            if (isOptimizableImage(oldFilePath)) {
+                const oldWebpPath = getWebpPath(oldFilePath);
+                const newWebpPath = getWebpPath(newFilePath);
+
+                try {
+                    // Generate fresh webp from the image and upload at new path
+                    const webpBuffer = await optimizeImageBuffer(imageBuffer);
+                    await uploadImageToGitHub(newWebpPath, webpBuffer, `Upload optimized webp for renamed ${newName}`);
+                } catch (webpErr) {
+                    console.error('Warning: webp generation for renamed file failed:', webpErr.message);
+                }
+
+                try {
+                    // Delete old webp if it exists
+                    const oldWebp = await getFileFromGitHub(oldWebpPath);
+                    if (oldWebp) {
+                        await deleteFileFromGitHub(oldWebpPath, `Remove old webp after renaming ${file}`);
+                    }
+                } catch (webpErr) {
+                    console.error('Warning: failed to delete old webp:', webpErr.message);
+                }
+            }
 
             res.status(200).json({
                 message: `File renamed from ${file} to ${newName}`,
