@@ -1,14 +1,10 @@
 import { SEO } from '../components/layout/SEO';
+import { GroupedItemGrid } from '../components/ui/GroupedItemGrid';
 import { myDesigns, otherDesigns } from '../assets/origami';
 import foldPreviewData from '../assets/projects/fold-preview';
 import boxPleatingData from '../assets/projects/box-pleating';
 import origamiFractionsData from '../assets/projects/origami-fractions';
 import { ItemProps, ProjectProps } from '../types';
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-
-const GroupedItemGrid = lazy(() =>
-    import('../components/ui/GroupedItemGrid').then((m) => ({ default: m.GroupedItemGrid }))
-);
 
 export function Origami() {
     const featuredProjects: ProjectProps[] = [
@@ -22,37 +18,6 @@ export function Origami() {
         ...otherDesigns,
         ...featuredProjects
     ];
-    const galleryRef = useRef<HTMLDivElement>(null);
-    const [showGallery, setShowGallery] = useState(false);
-
-    useEffect(() => {
-        const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-        if (isDesktop) {
-            setShowGallery(true);
-            return;
-        }
-        let timer: number | null = null;
-        let idleId: number | null = null;
-        const enable = () => setShowGallery(true);
-        const ric = (window as Window & {
-            requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
-            cancelIdleCallback?: (id: number) => void;
-        }).requestIdleCallback;
-
-        if (ric) {
-            idleId = ric(enable, { timeout: 1500 });
-        } else {
-            timer = window.setTimeout(enable, 1400);
-        }
-
-        return () => {
-            if (timer !== null) window.clearTimeout(timer);
-            if (idleId !== null) {
-                const cic = (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
-                if (cic) cic(idleId);
-            }
-        };
-    }, []);
 
     return (
         <>
@@ -87,23 +52,15 @@ export function Origami() {
                     </p>
                 </div>
 
-                <div ref={galleryRef}>
-                    {showGallery ? (
-                        <Suspense fallback={<div style={{ minHeight: '42rem' }} />}>
-                            <GroupedItemGrid
-                                items={allItems}
-                                itemType="mixed"
-                                showGrouping={true}
-                                allowGroupingToggle={true}
-                                myDesigns={myDesigns}
-                                otherDesigns={otherDesigns}
-                                software={featuredProjects}
-                            />
-                        </Suspense>
-                    ) : (
-                        <div style={{ minHeight: '42rem' }} />
-                    )}
-                </div>
+                <GroupedItemGrid
+                    items={allItems}
+                    itemType="mixed"
+                    showGrouping={true}
+                    allowGroupingToggle={true}
+                    myDesigns={myDesigns}
+                    otherDesigns={otherDesigns}
+                    software={featuredProjects}
+                />
             </div>
         </>
     );
