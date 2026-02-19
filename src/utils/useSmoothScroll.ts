@@ -9,6 +9,8 @@ let lenisInstance: any = null;
  */
 export function useSmoothScroll() {
     useEffect(() => {
+        // Smooth scrolling is a desktop enhancement; skip on touch/coarse pointers.
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
         let destroyed = false;

@@ -16,6 +16,9 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
         if (!container) return;
 
         let ticking = false;
+        let enabled = false;
+        let initTimer: number | null = null;
+        let idleId: number | null = null;
 
         const update = () => {
             const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
@@ -28,6 +31,11 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
 
             items.forEach(item => {
                 const rect = item.getBoundingClientRect();
+                if (rect.bottom < -220 || rect.top > window.innerHeight + 220) {
+                    item.style.opacity = '';
+                    item.style.filter = '';
+                    return;
+                }
                 const itemCenter = rect.top + rect.height / 2;
                 const distance = Math.abs(itemCenter - viewportCenter);
 
@@ -42,32 +50,49 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
                     t = raw * raw * (3 - 2 * raw);
                 }
 
-                // Map t to opacity range [0.3, 1] and brightness [0.35, 1.0]
+                // Keep to opacity only; filter-based brightness is expensive on mobile.
                 const opacity = 0.2 + t * 0.8;
-                const brightness = 0.35 + t * 0.65;
 
                 item.style.opacity = String(opacity);
-                item.style.filter = `brightness(${brightness})`;
+                item.style.filter = '';
             });
 
             ticking = false;
         };
 
         const onScroll = () => {
+            if (!enabled) return;
             if (!ticking) {
                 ticking = true;
                 requestAnimationFrame(update);
             }
         };
 
-        // Defer initial run to avoid blocking first paint
-        requestAnimationFrame(() => {
-            requestAnimationFrame(update);
-        });
+        // Delay activation until browser is idle so this never competes with LCP.
+        const enableAndRun = () => {
+            enabled = true;
+            requestAnimationFrame(() => {
+                requestAnimationFrame(update);
+            });
+        };
+        const ric = (window as Window & {
+            requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
+            cancelIdleCallback?: (id: number) => void;
+        }).requestIdleCallback;
+        if (ric) {
+            idleId = ric(enableAndRun, { timeout: 2500 });
+        } else {
+            initTimer = window.setTimeout(enableAndRun, 1800);
+        }
         window.addEventListener('scroll', onScroll, { passive: true });
 
         return () => {
             window.removeEventListener('scroll', onScroll);
+            if (initTimer !== null) window.clearTimeout(initTimer);
+            if (idleId !== null) {
+                const cic = (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
+                if (cic) cic(idleId);
+            }
             // Clean up inline styles
             const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
             items.forEach(item => {

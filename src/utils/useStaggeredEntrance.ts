@@ -22,6 +22,11 @@ export function useStaggeredEntrance(
 
     useEffect(() => {
         if (hasTriggered.current) return;
+        // On touch devices, skip stagger animation to reduce first-load main-thread work.
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            hasTriggered.current = true;
+            return;
+        }
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             hasTriggered.current = true;
             return;
