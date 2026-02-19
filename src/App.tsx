@@ -9,6 +9,7 @@ import { RootRoute } from './components/layout/RootRoute'
 import { Footer } from './components/layout/Footer'
 import { PageTransition } from './components/layout/PageTransition'
 import { BackToTop } from './components/ui/BackToTop'
+import { SpotlightDust } from './components/ui/SpotlightDust'
 import { useSmoothScroll } from './utils/useSmoothScroll'
 import { useCustomCursor } from './utils/useCustomCursor'
 
@@ -28,6 +29,8 @@ function AppContent() {
             <div id="global-spotlight" />
             {/* Page-wide dim overlay — darkens everything outside cursor area */}
             <div id="page-dim" />
+            {/* Floating dust motes — visible when spotlight is active */}
+            <SpotlightDust />
             <Navbar />
             <main className="min-h-screen">
                 <PageTransition>
