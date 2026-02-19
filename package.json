@@ -17,9 +17,6 @@
     "dev:watch": "concurrently \"npm run dev\" \"npm run watch-projects\""
   },
   "dependencies": {
-    "@fontsource/eb-garamond": "^5.2.7",
-    "@fontsource/grape-nuts": "^5.2.8",
-    "@fontsource/pt-sans": "^5.2.8",
     "@octokit/rest": "^20.0.2",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
