@@ -34,6 +34,14 @@ export function useStaggeredEntrance(
 
         const container = containerRef.current;
         if (!container) return;
+        const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
+
+        // Pre-hide staggered items immediately so they never flash visible then hide.
+        items.forEach((item, i) => {
+            if (i >= skipCount) {
+                item.classList.add('stagger-hidden');
+            }
+        });
 
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -41,26 +49,13 @@ export function useStaggeredEntrance(
                     hasTriggered.current = true;
                     observer.disconnect();
 
-                    const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
-
-                    // Defer stagger to avoid blocking first paint
-                    requestAnimationFrame(() => {
-                        items.forEach((item, i) => {
-                            if (i >= skipCount) {
-                                item.classList.add('stagger-hidden');
-                            }
-                        });
-
-                        requestAnimationFrame(() => {
-                            items.forEach((item, i) => {
-                                if (i >= skipCount) {
-                                    setTimeout(() => {
-                                        item.classList.remove('stagger-hidden');
-                                        item.classList.add('stagger-visible');
-                                    }, (i - skipCount) * staggerDelay);
-                                }
-                            });
-                        });
+                    items.forEach((item, i) => {
+                        if (i >= skipCount) {
+                            setTimeout(() => {
+                                item.classList.remove('stagger-hidden');
+                                item.classList.add('stagger-visible');
+                            }, (i - skipCount) * staggerDelay);
+                        }
                     });
 
                     const staggeredCount = Math.max(0, items.length - skipCount);
@@ -77,7 +72,13 @@ export function useStaggeredEntrance(
 
         observer.observe(container);
 
-        return () => observer.disconnect();
+        return () => {
+            observer.disconnect();
+            items.forEach(item => {
+                item.classList.remove('stagger-hidden');
+                item.classList.remove('stagger-visible');
+            });
+        };
     }, [containerRef, staggerDelay]);
 
     return containerRef;

@@ -2,14 +2,11 @@ import { About } from '../components/sections/About';
 import { Contact } from '../components/sections/Contact';
 import { SEO } from '../components/layout/SEO';
 import { ResumeSection } from '../components/sections/ResumeSection';
+import { ProjectGrid } from '../components/portfolio/ProjectGrid';
 import { Link } from '../components/ui/base';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { HeroParticles } from '../components/ui/HeroParticles';
-
-const ProjectGrid = lazy(() =>
-    import('../components/portfolio/ProjectGrid').then((m) => ({ default: m.ProjectGrid }))
-);
 
 function ScrollSection({ children, className = '' }: { children: React.ReactNode; className?: string }) {
     const { ref, className: revealClass } = useScrollRevealClass({ threshold: 0.08 });
@@ -24,8 +21,6 @@ export function Home() {
     const featuredSlugs = ['hermes', 'personal-website', 'be-square', 'origami-fractions'];
     const nameRef = useRef<HTMLHeadingElement>(null);
     const heroRef = useRef<HTMLElement>(null);
-    const featuredSectionRef = useRef<HTMLDivElement>(null);
-    const [showFeaturedProjects, setShowFeaturedProjects] = useState(false);
 
     // Reset hero text illumination and hide hero spotlight when hero scrolls out of view
     useEffect(() => {
@@ -47,31 +42,6 @@ export function Home() {
             },
             { threshold: 0 }
         );
-        observer.observe(el);
-        return () => observer.disconnect();
-    }, []);
-
-    // Defer featured projects module/render on mobile until section is near viewport.
-    useEffect(() => {
-        const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-        if (isDesktop) {
-            setShowFeaturedProjects(true);
-            return;
-        }
-
-        const el = featuredSectionRef.current;
-        if (!el) return;
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setShowFeaturedProjects(true);
-                    observer.disconnect();
-                }
-            },
-            { rootMargin: '500px 0px', threshold: 0 }
-        );
-
         observer.observe(el);
         return () => observer.disconnect();
     }, []);
@@ -219,7 +189,7 @@ export function Home() {
 
             {/* ===== FEATURED WORKS ===== */}
             <ScrollSection className="py-20 md:py-32">
-                <div ref={featuredSectionRef} className="max-w-6xl mx-auto px-6">
+                <div className="max-w-6xl mx-auto px-6">
                     <div className="text-center mb-14">
                         <p className="gallery-overline mb-4">The Gallery</p>
                         <h2 className="gallery-heading text-3xl md:text-4xl mb-2"
@@ -231,16 +201,10 @@ export function Home() {
                             A curated selection of my proudest works.
                         </p>
                     </div>
-                    {showFeaturedProjects ? (
-                        <Suspense fallback={null}>
-                            <ProjectGrid
-                                featuredSlugs={featuredSlugs}
-                                hideControls
-                            />
-                        </Suspense>
-                    ) : (
-                        <div style={{ minHeight: '22rem' }} />
-                    )}
+                    <ProjectGrid
+                        featuredSlugs={featuredSlugs}
+                        hideControls
+                    />
                 </div>
             </ScrollSection>
         </>
