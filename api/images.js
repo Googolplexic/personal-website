@@ -1,5 +1,5 @@
 // Vercel serverless function to manage images via GitHub API
-import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub } from './github-utils.js';
+import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -94,6 +94,21 @@ export default async function handler(req, res) {
                 `Upload image ${fileName} to ${requestPath}`
             );
 
+            // Also generate and upload the optimized web/ version
+            if (isOptimizableImage(fullPath)) {
+                try {
+                    const webpBuffer = await optimizeImageBuffer(imageBuffer);
+                    const webpPath = getWebpPath(fullPath);
+                    await uploadImageToGitHub(
+                        webpPath,
+                        webpBuffer,
+                        `Upload optimized webp for ${fileName}`
+                    );
+                } catch (webpErr) {
+                    console.error('Warning: webp optimization failed (original still uploaded):', webpErr.message);
+                }
+            }
+
             return res.status(200).json({
                 success: true,
                 message: 'Image uploaded successfully',
@@ -112,6 +127,22 @@ export default async function handler(req, res) {
                 fullPath,
                 `Delete image ${file} from ${requestPath}`
             );
+
+            // Also delete the optimized web/ version if it exists
+            if (isOptimizableImage(fullPath)) {
+                try {
+                    const webpPath = getWebpPath(fullPath);
+                    const webpFile = await getFileFromGitHub(webpPath);
+                    if (webpFile) {
+                        await deleteFileFromGitHub(
+                            webpPath,
+                            `Delete optimized webp for ${file}`
+                        );
+                    }
+                } catch (webpErr) {
+                    console.error('Warning: failed to delete webp (original still deleted):', webpErr.message);
+                }
+            }
 
             return res.status(200).json({
                 success: true,

@@ -1,5 +1,5 @@
 // Vercel serverless function to upload images via GitHub API
-import { uploadImageToGitHub } from './github-utils.js';
+import { uploadImageToGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -53,6 +53,21 @@ export default async function handler(req, res) {
                 imageBuffer,
                 `Upload image for ${type.slice(0, -1)} ${slug}`
             );
+
+            // Also generate and upload the optimized web/ version
+            if (isOptimizableImage(imagePath)) {
+                try {
+                    const webpBuffer = await optimizeImageBuffer(imageBuffer);
+                    const webpPath = getWebpPath(imagePath);
+                    await uploadImageToGitHub(
+                        webpPath,
+                        webpBuffer,
+                        `Upload optimized webp for ${type.slice(0, -1)} ${slug}`
+                    );
+                } catch (webpErr) {
+                    console.error('Warning: webp optimization failed (original still uploaded):', webpErr.message);
+                }
+            }
 
             return res.status(200).json({
                 success: true,

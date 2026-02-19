@@ -2,6 +2,7 @@
 // This replaces the local file-based admin server with GitHub API calls
 
 import { Octokit } from '@octokit/rest';
+import sharp from 'sharp';
 
 // Initialize GitHub client
 const octokit = new Octokit({
@@ -101,6 +102,38 @@ export async function updateFileInGitHub(path, content, message, sha = null) {
     }
 
     return await octokit.rest.repos.createOrUpdateFileContents(params);
+}
+
+const IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.webp'];
+const WEBP_MAX_WIDTH = 600;
+const WEBP_QUALITY = 65;
+
+// Compute the web/ optimized path for a given image path.
+// e.g. "src/assets/origami/my-designs/foo/bar.png" → "src/assets/origami/my-designs/foo/web/bar.webp"
+export function getWebpPath(imagePath) {
+    const lastSlash = imagePath.lastIndexOf('/');
+    const dir = imagePath.substring(0, lastSlash);
+    const filename = imagePath.substring(lastSlash + 1);
+    const dotIdx = filename.lastIndexOf('.');
+    const name = dotIdx !== -1 ? filename.substring(0, dotIdx) : filename;
+    return `${dir}/web/${name}.webp`;
+}
+
+// Returns true if the path looks like a full-size image that should have a webp.
+export function isOptimizableImage(filePath) {
+    // Ignore files already inside web/ directories
+    if (filePath.includes('/web/')) return false;
+    const dot = filePath.lastIndexOf('.');
+    if (dot === -1) return false;
+    return IMAGE_EXTS.includes(filePath.substring(dot).toLowerCase());
+}
+
+// Generate an optimized WebP buffer from a raw image buffer (same settings as optimize-images.mjs).
+export async function optimizeImageBuffer(imageBuffer) {
+    return sharp(imageBuffer)
+        .resize(WEBP_MAX_WIDTH, null, { withoutEnlargement: true, fit: 'inside' })
+        .webp({ quality: WEBP_QUALITY })
+        .toBuffer();
 }
 
 // Helper function to upload images to GitHub
