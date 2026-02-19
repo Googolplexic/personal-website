@@ -157,10 +157,6 @@ export function ProjectForm() {
             setImages(null);
             const fileInput = document.getElementById('images') as HTMLInputElement;
             if (fileInput) fileInput.value = '';
-            } else {
-                const error = await response.json();
-                setMessage({ type: 'error', text: error.error || 'Failed to create project' });
-            }
         } catch (error) {
             setMessage({ type: 'error', text: 'Failed to create project' });
             console.error('Submit error:', error);
