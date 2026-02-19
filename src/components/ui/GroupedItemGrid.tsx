@@ -1,5 +1,5 @@
 import { ItemProps, ProjectProps, OrigamiProps } from "../../types";
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { GroupedSearch, SortOption, CategoryFilter } from "../search/GroupedSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
@@ -39,7 +39,38 @@ export function GroupedItemGrid({
     const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
     const [showGrouping, setShowGrouping] = useState(initialShowGrouping);
     const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+    const [showAllMobileItems, setShowAllMobileItems] = useState(false);
     const norm = (value?: string) => (value ?? '').toLowerCase();
+
+    useEffect(() => {
+        const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (isDesktop) {
+            setShowAllMobileItems(true);
+            return;
+        }
+
+        let timer: number | null = null;
+        let idleId: number | null = null;
+        const done = () => setShowAllMobileItems(true);
+        const ric = (window as Window & {
+            requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
+            cancelIdleCallback?: (id: number) => void;
+        }).requestIdleCallback;
+
+        if (ric) {
+            idleId = ric(done, { timeout: 1800 });
+        } else {
+            timer = window.setTimeout(done, 1400);
+        }
+
+        return () => {
+            if (timer !== null) window.clearTimeout(timer);
+            if (idleId !== null) {
+                const cic = (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
+                if (cic) cic(idleId);
+            }
+        };
+    }, []);
 
     const toggleGroup = (key: string) => {
         setCollapsedGroups(prev => {
@@ -229,6 +260,9 @@ export function GroupedItemGrid({
         return groups;
     }, [sortedAndFilteredItems]);
 
+    const mobileInitialPerGroup = 3;
+    const mobileInitialList = 6;
+
     return (
         <section className={`mb-12 ${className}`}>
             {title && <h2 className="gallery-heading text-2xl md:text-3xl mb-4" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>}
@@ -291,7 +325,8 @@ export function GroupedItemGrid({
                                     >
                                         <div className="overflow-hidden">
                                             <MasonrySpotlightGrid skipCount={1}>
-                                                {group.items.map((item, i) => renderCard(item, false, i < 1))}
+                                                {(showAllMobileItems ? group.items : group.items.slice(0, mobileInitialPerGroup))
+                                                    .map((item, i) => renderCard(item, false, i < 1))}
                                             </MasonrySpotlightGrid>
                                         </div>
                                     </div>
@@ -308,7 +343,8 @@ export function GroupedItemGrid({
                 /* List view: flat masonry with category badges */
                 <>
                     <MasonrySpotlightGrid skipCount={1}>
-                        {sortedAndFilteredItems.map((item, i) => renderCard(item, true, i < 1))}
+                        {(showAllMobileItems ? sortedAndFilteredItems : sortedAndFilteredItems.slice(0, mobileInitialList))
+                            .map((item, i) => renderCard(item, true, i < 1))}
                     </MasonrySpotlightGrid>
 
                     {sortedAndFilteredItems.length === 0 && (
