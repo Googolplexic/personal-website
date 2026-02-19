@@ -39,6 +39,7 @@ export function GroupedItemGrid({
     const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
     const [showGrouping, setShowGrouping] = useState(initialShowGrouping);
     const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+    const norm = (value?: string) => (value ?? '').toLowerCase();
 
     const toggleGroup = (key: string) => {
         setCollapsedGroups(prev => {
@@ -107,19 +108,19 @@ export function GroupedItemGrid({
             const matchesTech = selectedTech === '' ||
                 (item.type === 'project' && (item as ProjectProps).technologies?.includes(selectedTech));
             const matchesTag = selectedTag === '' || item.tags?.includes(selectedTag);
-            const matchesTitle = item.title.toLowerCase().includes(searchLower);
+            const matchesTitle = norm(item.title).includes(searchLower);
 
             let matchesContent = false;
             if (item.type === 'project') {
                 const project = item as ProjectProps;
-                matchesContent = project.summary.toLowerCase().includes(searchLower) ||
-                    project.description?.toLowerCase().includes(searchLower) || false;
+                matchesContent = norm(project.summary).includes(searchLower) ||
+                    norm(project.description).includes(searchLower);
             } else {
                 const origami = item as OrigamiProps;
-                matchesContent = origami.description?.toLowerCase().includes(searchLower) || false;
+                matchesContent = norm(origami.description).includes(searchLower);
                 // Also search designer name for other designs
                 if (origami.designer) {
-                    matchesContent = matchesContent || origami.designer.toLowerCase().includes(searchLower);
+                    matchesContent = matchesContent || norm(origami.designer).includes(searchLower);
                 }
             }
 
@@ -129,17 +130,17 @@ export function GroupedItemGrid({
         return filtered.sort((a, b) => {
             if (searchTerm) {
                 // First priority: title matches
-                const aTitle = a.title.toLowerCase().includes(searchLower);
-                const bTitle = b.title.toLowerCase().includes(searchLower);
+                const aTitle = norm(a.title).includes(searchLower);
+                const bTitle = norm(b.title).includes(searchLower);
                 if (aTitle !== bTitle) return aTitle ? -1 : 1;
 
                 // Second priority: content matches
                 const aContent = a.type === 'project' ?
-                    (a as ProjectProps).summary.toLowerCase().includes(searchLower) :
-                    (a as OrigamiProps).description?.toLowerCase().includes(searchLower) || false;
+                    norm((a as ProjectProps).summary).includes(searchLower) :
+                    norm((a as OrigamiProps).description).includes(searchLower);
                 const bContent = b.type === 'project' ?
-                    (b as ProjectProps).summary.toLowerCase().includes(searchLower) :
-                    (b as OrigamiProps).description?.toLowerCase().includes(searchLower) || false;
+                    norm((b as ProjectProps).summary).includes(searchLower) :
+                    norm((b as OrigamiProps).description).includes(searchLower);
                 if (aContent !== bContent) return aContent ? -1 : 1;
             }
 
