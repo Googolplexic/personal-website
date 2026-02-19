@@ -1,10 +1,14 @@
 import { SEO } from '../components/layout/SEO';
-import { GroupedItemGrid } from '../components/ui/GroupedItemGrid';
 import { myDesigns, otherDesigns } from '../assets/origami';
 import foldPreviewData from '../assets/projects/fold-preview';
 import boxPleatingData from '../assets/projects/box-pleating';
 import origamiFractionsData from '../assets/projects/origami-fractions';
 import { ItemProps, ProjectProps } from '../types';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+
+const GroupedItemGrid = lazy(() =>
+    import('../components/ui/GroupedItemGrid').then((m) => ({ default: m.GroupedItemGrid }))
+);
 
 export function Origami() {
     const featuredProjects: ProjectProps[] = [
@@ -18,6 +22,45 @@ export function Origami() {
         ...otherDesigns,
         ...featuredProjects
     ];
+    const galleryRef = useRef<HTMLDivElement>(null);
+    const [showGallery, setShowGallery] = useState(false);
+
+    useEffect(() => {
+        const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (isDesktop) {
+            setShowGallery(true);
+            return;
+        }
+
+        const el = galleryRef.current;
+        if (!el) return;
+
+        let timer: number | null = null;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setShowGallery(true);
+                    observer.disconnect();
+                    if (timer !== null) {
+                        window.clearTimeout(timer);
+                        timer = null;
+                    }
+                }
+            },
+            { rootMargin: '500px 0px', threshold: 0 }
+        );
+
+        observer.observe(el);
+        timer = window.setTimeout(() => {
+            setShowGallery(true);
+            observer.disconnect();
+        }, 2200);
+
+        return () => {
+            observer.disconnect();
+            if (timer !== null) window.clearTimeout(timer);
+        };
+    }, []);
 
     return (
         <>
@@ -52,15 +95,23 @@ export function Origami() {
                     </p>
                 </div>
 
-                <GroupedItemGrid
-                    items={allItems}
-                    itemType="mixed"
-                    showGrouping={true}
-                    allowGroupingToggle={true}
-                    myDesigns={myDesigns}
-                    otherDesigns={otherDesigns}
-                    software={featuredProjects}
-                />
+                <div ref={galleryRef}>
+                    {showGallery ? (
+                        <Suspense fallback={<div style={{ minHeight: '42rem' }} />}>
+                            <GroupedItemGrid
+                                items={allItems}
+                                itemType="mixed"
+                                showGrouping={true}
+                                allowGroupingToggle={true}
+                                myDesigns={myDesigns}
+                                otherDesigns={otherDesigns}
+                                software={featuredProjects}
+                            />
+                        </Suspense>
+                    ) : (
+                        <div style={{ minHeight: '42rem' }} />
+                    )}
+                </div>
             </div>
         </>
     );
