@@ -8,7 +8,6 @@ import { useEffect } from 'react';
  */
 export function useCustomCursor() {
     useEffect(() => {
-        return;
         // Only on hover-capable (desktop) devices with a fine pointer (mouse/trackpad)
         // Using both checks because Chrome Android can falsely report (hover: hover)
         if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
