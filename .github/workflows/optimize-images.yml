@@ -1,5 +1,8 @@
 name: Optimize Images
 
+permissions:
+  contents: write
+
 # Runs when images are pushed to main (e.g. via admin panel / GitHub API).
 # Generates web-optimized WebP versions and commits them back.
 on:
