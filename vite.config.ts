@@ -37,7 +37,8 @@ function markdownFrontmatterPlugin(): Plugin {
           body = raw.slice(end + 4).replace(/^\n/, '')
           // Simple YAML parser for flat/array values
           let currentKey = ''
-          for (const line of yamlStr.split('\n')) {
+          for (const rawLine of yamlStr.split('\n')) {
+            const line = rawLine.replace(/\r$/, '')
             const kvMatch = line.match(/^(\w[\w\s]*?):\s*(.*)$/)
             if (kvMatch) {
               currentKey = kvMatch[1].trim()
