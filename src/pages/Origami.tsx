@@ -1,12 +1,17 @@
 import { SEO } from '../components/layout/SEO';
 import { GroupedItemGrid } from '../components/ui/GroupedItemGrid';
 import { myDesigns, otherDesigns } from '../assets/origami';
-import projects from '../assets/projects';
-import { ItemProps } from '../types';
+import foldPreviewData from '../assets/projects/fold-preview';
+import boxPleatingData from '../assets/projects/box-pleating';
+import origamiFractionsData from '../assets/projects/origami-fractions';
+import { ItemProps, ProjectProps } from '../types';
 
 export function Origami() {
-    const origamiProjects = ['fold-preview', 'box-pleating', 'origami-fractions'];
-    const featuredProjects = projects.filter(project => origamiProjects.includes(project.slug));
+    const featuredProjects: ProjectProps[] = [
+        { ...foldPreviewData, slug: 'fold-preview', type: 'project' as const },
+        { ...boxPleatingData, slug: 'box-pleating', type: 'project' as const },
+        { ...origamiFractionsData, slug: 'origami-fractions', type: 'project' as const },
+    ];
 
     const allItems: ItemProps[] = [
         ...myDesigns,

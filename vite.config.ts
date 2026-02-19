@@ -143,9 +143,9 @@ function routePreloadsPlugin(): Plugin {
   const keepChunks = ['vendor-react', 'vendor-ui', 'vendor-misc', 'utils', 'ui-base', 'index']
 
   const routeChunkPatterns: Record<string, string[]> = {
-    '/': ['page-home', 'portfolio-components', 'search-components'],
-    '/origami': ['page-origami', 'origami-components', 'origami-assets', 'search-components'],
-    '/portfolio': ['page-portfolio', 'portfolio-components', 'search-components'],
+    '/': ['page-home', 'shared-components', 'project-grid'],
+    '/origami': ['page-origami', 'shared-components', 'origami-assets'],
+    '/portfolio': ['page-portfolio', 'shared-components', 'project-grid'],
   }
 
   // First image filename prefixes per route (matched against emitted assets)
@@ -513,6 +513,8 @@ export default defineConfig(({ mode }) => ({
             if (projectMatch) {
               return `project-${projectMatch[1]}`;
             }
+            // Projects barrel (index.ts) — keep with ProjectGrid
+            return 'project-grid';
           }
 
           // Origami chunks
@@ -525,20 +527,32 @@ export default defineConfig(({ mode }) => ({
             return 'ui-base';
           }
 
+          // Layout components (Navbar, Footer, SEO, etc.) are used on every
+          // page — keep them with the always-loaded base UI chunk
+          if (id.includes('src/components/layout/')) {
+            return 'ui-base';
+          }
+
           if (id.includes('src/components/admin/')) {
             return 'admin-components';
           }
 
-          if (id.includes('src/components/portfolio/')) {
-            return 'portfolio-components';
+          // ProjectGrid + projects barrel: heavy chunk that eagerly imports all
+          // project data via import.meta.glob — isolate from lighter card/UI code
+          if (id.includes('components/portfolio/ProjectGrid')) {
+            return 'project-grid';
           }
 
-          if (id.includes('src/components/origami/')) {
-            return 'origami-components';
-          }
-
-          if (id.includes('src/components/search/')) {
-            return 'search-components';
+          // Merge all visual display components (cards, grids, carousels,
+          // search, lightbox) into one chunk to prevent circular cross-chunk
+          // dependencies between portfolio-card ↔ origami-card ↔ shared-grid
+          if (
+            id.includes('src/components/portfolio/') ||
+            id.includes('src/components/origami/') ||
+            (id.includes('src/components/ui/') && !id.includes('src/components/ui/base/')) ||
+            id.includes('src/components/search/')
+          ) {
+            return 'shared-components';
           }
 
           // Page chunks
@@ -556,8 +570,22 @@ export default defineConfig(({ mode }) => ({
         }
       }
     },
-    assetsInlineLimit: 2048, // Reduce inline limit to prevent large base64 images
-    chunkSizeWarningLimit: 500, // Warn for chunks larger than 500kb
+    modulePreload: {
+      resolveDependencies: (filename, deps) => {
+        // vendor-content (react-markdown ecosystem, ~53KB gzip) is only needed
+        // by ProjectDetail and AdminPage. Remove it from all other routes'
+        // modulepreload lists to avoid downloading + parsing 176KB of JS.
+        const needsMarkdown = filename.includes('page-projectdetail') ||
+                              filename.includes('admin-components') ||
+                              filename.includes('page-adminpage');
+        return deps.filter(dep => {
+          if (dep.includes('vendor-content')) return needsMarkdown;
+          return true;
+        });
+      }
+    },
+    assetsInlineLimit: 2048,
+    chunkSizeWarningLimit: 500,
   },
   assetsInclude: ['**/*.md'],
   optimizeDeps: {
