@@ -58,9 +58,9 @@ export function GroupedItemGrid({
         }).requestIdleCallback;
 
         if (ric) {
-            idleId = ric(done, { timeout: 1800 });
+            idleId = ric(done, { timeout: 2600 });
         } else {
-            timer = window.setTimeout(done, 1400);
+            timer = window.setTimeout(done, 2200);
         }
 
         return () => {
@@ -260,8 +260,8 @@ export function GroupedItemGrid({
         return groups;
     }, [sortedAndFilteredItems]);
 
-    const mobileInitialPerGroup = 3;
-    const mobileInitialList = 6;
+    const mobileInitialPerGroup = 1;
+    const mobileInitialList = 3;
 
     return (
         <section className={`mb-12 ${className}`}>
