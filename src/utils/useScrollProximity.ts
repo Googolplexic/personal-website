@@ -60,8 +60,10 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
             }
         };
 
-        // Initial run + listen for scroll
-        update();
+        // Defer initial run to avoid blocking first paint
+        requestAnimationFrame(() => {
+            requestAnimationFrame(update);
+        });
         window.addEventListener('scroll', onScroll, { passive: true });
 
         return () => {

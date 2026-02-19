@@ -38,24 +38,24 @@ export function useStaggeredEntrance(
 
                     const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
 
-                    // Add stagger-hidden class only to items beyond skipCount
-                    items.forEach((item, i) => {
-                        if (i >= skipCount) {
-                            item.classList.add('stagger-hidden');
-                        }
-                    });
+                    // Defer stagger to avoid blocking first paint
+                    requestAnimationFrame(() => {
+                        items.forEach((item, i) => {
+                            if (i >= skipCount) {
+                                item.classList.add('stagger-hidden');
+                            }
+                        });
 
-                    // Force reflow
-                    void container.offsetHeight;
-
-                    // Reveal each staggered item with delay (offset by skipCount)
-                    items.forEach((item, i) => {
-                        if (i >= skipCount) {
-                            setTimeout(() => {
-                                item.classList.remove('stagger-hidden');
-                                item.classList.add('stagger-visible');
-                            }, (i - skipCount) * staggerDelay);
-                        }
+                        requestAnimationFrame(() => {
+                            items.forEach((item, i) => {
+                                if (i >= skipCount) {
+                                    setTimeout(() => {
+                                        item.classList.remove('stagger-hidden');
+                                        item.classList.add('stagger-visible');
+                                    }, (i - skipCount) * staggerDelay);
+                                }
+                            });
+                        });
                     });
 
                     const staggeredCount = Math.max(0, items.length - skipCount);
