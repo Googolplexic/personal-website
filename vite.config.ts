@@ -411,6 +411,7 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode === 'development',
     rollupOptions: {
       output: {
+        hoistTransitiveImports: false,
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name?.split('.') || [];
           const ext = info[info.length - 1];
@@ -479,8 +480,7 @@ export default defineConfig(({ mode }) => ({
               id.includes('inline-style-parser') ||
               id.includes('decode-named') || id.includes('stringify-entities') ||
               id.includes('html-url-attributes') || id.includes('zwitch') ||
-              id.includes('is-plain-obj') || id.includes('/extend/') ||
-              id.includes('/debug/') || id.includes('/ms/')
+              id.includes('is-plain-obj')
             ) {
               return 'vendor-content';
             }
