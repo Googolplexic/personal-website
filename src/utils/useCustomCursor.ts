@@ -26,6 +26,21 @@ export function useCustomCursor() {
         document.documentElement.classList.add('custom-cursor-active');
 
         let isVisible = false;
+        let idleFadeId: ReturnType<typeof setTimeout> | undefined;
+        const IDLE_FADE_MS = 1400;
+
+        const hideCursor = () => {
+            isVisible = false;
+            dot.classList.remove('visible');
+            glow.classList.remove('visible');
+        };
+
+        const scheduleIdleFade = () => {
+            if (idleFadeId) clearTimeout(idleFadeId);
+            idleFadeId = setTimeout(() => {
+                hideCursor();
+            }, IDLE_FADE_MS);
+        };
 
         const onMouseMove = (e: MouseEvent) => {
             const x = `${e.clientX}px`;
@@ -40,6 +55,7 @@ export function useCustomCursor() {
                 dot.classList.add('visible');
                 glow.classList.add('visible');
             }
+            scheduleIdleFade();
         };
 
         // Detect hoverable elements
@@ -60,15 +76,15 @@ export function useCustomCursor() {
         };
 
         const onMouseLeave = () => {
-            isVisible = false;
-            dot.classList.remove('visible');
-            glow.classList.remove('visible');
+            if (idleFadeId) clearTimeout(idleFadeId);
+            hideCursor();
         };
 
         const onMouseEnter = () => {
             isVisible = true;
             dot.classList.add('visible');
             glow.classList.add('visible');
+            scheduleIdleFade();
         };
 
         // Clear hovering on click — navigation may prevent mouseout from firing
@@ -85,6 +101,7 @@ export function useCustomCursor() {
         document.documentElement.addEventListener('mouseenter', onMouseEnter);
 
         return () => {
+            if (idleFadeId) clearTimeout(idleFadeId);
             window.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseover', onMouseOver);
             document.removeEventListener('mouseout', onMouseOut);
