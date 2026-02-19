@@ -216,10 +216,17 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
         setUploading(true);
         try {
-
+            // Find the highest existing numbered index across current images
+            let maxIndex = 0;
+            for (const img of images) {
+                const match = img.name.match(/^(\d+)-/);
+                if (match) maxIndex = Math.max(maxIndex, parseInt(match[1], 10));
+            }
 
             // Upload each file individually using the images API
-            for (const file of Array.from(files)) {
+            const fileArr = Array.from(files);
+            for (let i = 0; i < fileArr.length; i++) {
+                const file = fileArr[i];
                 // Convert file to base64
                 const base64Data = await new Promise<string>((resolve) => {
                     const reader = new FileReader();
@@ -229,6 +236,28 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     };
                     reader.readAsDataURL(file);
                 });
+
+                // Build a properly formatted filename
+                const ext = file.name.split('.').pop() || 'jpg';
+                let renamedFile: string;
+
+                if (type === 'project') {
+                    // Projects: NN-descriptive-name.ext
+                    const cleanName = file.name
+                        .replace(/\.[^.]+$/, '')
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/(^-|-$)/g, '');
+                    renamedFile = `${String(maxIndex + i + 1).padStart(2, '0')}-${cleanName}.${ext}`;
+                } else {
+                    // Origami: pattern → slug-pattern.ext, regular → NN-slug.ext
+                    const isPattern = file.name.toLowerCase().includes('pattern');
+                    if (isPattern) {
+                        renamedFile = `${path}-pattern.${ext}`;
+                    } else {
+                        renamedFile = `${String(maxIndex + i + 1).padStart(2, '0')}-${path}.${ext}`;
+                    }
+                }
 
                 // Upload using the images API
                 const uploadUrl = type === 'project'
@@ -243,7 +272,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     },
                     body: JSON.stringify({
                         imageData: base64Data,
-                        fileName: file.name
+                        fileName: renamedFile
                     })
                 });
 
