@@ -119,6 +119,11 @@ export function ProjectForm() {
                     technologies: formData.technologies,
                     githubUrl: formData.githubUrl,
                     liveUrl: formData.liveUrl,
+                    startDate: formData.startDate,
+                    endDate: formData.endDate,
+                    tags: formData.tags,
+                    keywords: formData.keywords,
+                    SEOdescription: formData.SEOdescription,
                     images: imageData,
                 }),
             });

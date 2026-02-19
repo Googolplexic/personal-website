@@ -1,5 +1,5 @@
 // Vercel serverless function to create projects/origami via GitHub API
-import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, uploadImageToGitHub, getFileFromGitHub } from './github-utils.js';
+import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, uploadImageToGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -127,6 +127,21 @@ async function createOrigami(data) {
                 imageBuffer,
                 `Add origami ${title} - ${image.isPattern ? 'pattern' : 'image'} ${i + 1}`
             );
+
+            // Generate webp for optimizable images
+            try {
+                if (isOptimizableImage(imagePath)) {
+                    const webpBuffer = await optimizeImageBuffer(imageBuffer);
+                    const webpPath = getWebpPath(imagePath);
+                    await uploadImageToGitHub(
+                        webpPath,
+                        webpBuffer,
+                        `Upload optimized webp for ${fileName}`
+                    );
+                }
+            } catch (webpErr) {
+                console.error('Warning: webp optimization failed for', imagePath, webpErr);
+            }
         }
     }
 
@@ -204,6 +219,21 @@ async function createProject(data) {
                 imageBuffer,
                 `Add project ${title} - image ${i + 1}`
             );
+
+            // Generate webp for optimizable images
+            try {
+                if (isOptimizableImage(imagePath)) {
+                    const webpBuffer = await optimizeImageBuffer(imageBuffer);
+                    const webpPath = getWebpPath(imagePath);
+                    await uploadImageToGitHub(
+                        webpPath,
+                        webpBuffer,
+                        `Upload optimized webp for image ${i + 1}`
+                    );
+                }
+            } catch (webpErr) {
+                console.error('Warning: webp optimization failed for', imagePath, webpErr);
+            }
         }
     }
 
