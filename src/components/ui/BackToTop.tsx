@@ -44,8 +44,10 @@ export function BackToTop() {
                 opacity: visible ? 0.7 : 0,
                 pointerEvents: visible ? 'auto' : 'none',
                 transform: visible ? 'translateY(0)' : 'translateY(12px)',
-                backgroundColor: 'var(--color-bg-elevated)',
-                border: '1px solid var(--color-border)',
+                backgroundColor: 'var(--nav-bg)',
+                border: '1px solid var(--nav-border)',
+                backdropFilter: 'blur(16px) saturate(1.2)',
+                WebkitBackdropFilter: 'blur(16px) saturate(1.2)',
             }}
             onMouseEnter={(e) => {
                 if (!visible) return;

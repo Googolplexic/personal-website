@@ -11,7 +11,7 @@ export function About() {
                 </p>
                 <p className="text-base md:text-lg leading-relaxed font-body"
                     style={{ color: 'var(--color-text-secondary)' }}>
-                    This site showcases my software development projects and all of my origami work. Thematically, I wanted this site to appear like an gallery or a theatre, hence the spotlight effects and the dark and gold colour scheme. (If you don't see spotlights, try taking a look on desktop!). Take a look at my projects on{' '}
+                    This site showcases my software development projects and all of my origami work. Thematically, I wanted this site to appear like an gallery or a theatre, hence the spotlight effects and the dark and gold colour scheme. (If you don't see spotlights, try taking a look on desktop! There's a bit more cool stuff there). Take a look at my projects on{' '}
                     <Link href="https://github.com/Googolplexic" target="_blank" rel="noopener">
                         GitHub
                     </Link>
