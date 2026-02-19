@@ -26,7 +26,6 @@ export function Home() {
     const heroRef = useRef<HTMLElement>(null);
     const featuredSectionRef = useRef<HTMLDivElement>(null);
     const [showFeaturedProjects, setShowFeaturedProjects] = useState(false);
-    const [isDesktopPointer, setIsDesktopPointer] = useState(false);
 
     // Reset hero text illumination and hide hero spotlight when hero scrolls out of view
     useEffect(() => {
@@ -55,7 +54,6 @@ export function Home() {
     // Defer featured projects module/render on mobile until section is near viewport.
     useEffect(() => {
         const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-        setIsDesktopPointer(isDesktop);
         if (isDesktop) {
             setShowFeaturedProjects(true);
             return;
@@ -130,8 +128,6 @@ export function Home() {
         }
     }, []);
 
-    const heroFadeClass = isDesktopPointer ? 'animate-fade-in opacity-0' : '';
-
     return (
         <>
             <SEO
@@ -161,24 +157,24 @@ export function Home() {
                 <div className="hero-spotlight" />
 
                 {/* Floating dust motes */}
-                {isDesktopPointer ? <HeroParticles /> : null}
+                <HeroParticles />
 
                 <div className="relative z-10 text-center max-w-3xl mx-auto">
-                    <p className={`gallery-overline mb-6 ${heroFadeClass}`.trim()}>Portfolio 2026</p>
+                    <p className="gallery-overline mb-6 animate-fade-in opacity-0">Portfolio 2026</p>
 
                     <h1 ref={nameRef} className="gallery-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-8"
                         style={{ color: 'var(--color-text-primary)' }}>
                         Coleman Lai
                     </h1>
 
-                    <p className={`text-lg sm:text-xl md:text-2xl font-heading italic tracking-wide mb-6 ${heroFadeClass}`.trim()}
+                    <p className="text-lg sm:text-xl md:text-2xl font-heading italic tracking-wide mb-6 animate-fade-in opacity-0"
                         style={{ color: 'var(--color-text-secondary)', animationDelay: '0.1s' }}>
                         My gallery of code and paper.
                     </p>
 
-                    <div className={`gallery-divider mb-6 ${heroFadeClass}`.trim()} style={{ animationDelay: '0.2s' }} />
+                    <div className="gallery-divider mb-6 animate-fade-in opacity-0" style={{ animationDelay: '0.2s' }} />
 
-                    <p className={`text-xs tracking-[0.2em] uppercase font-body ${heroFadeClass}`.trim()}
+                    <p className="text-xs tracking-[0.2em] uppercase font-body animate-fade-in opacity-0"
                         style={{ color: 'var(--color-text-tertiary)', animationDelay: '0.3s' }}>
                         Computing Science &nbsp;<Link to="/admin" className="!no-underline cursor-default" style={{ color: 'inherit', opacity: 1 }}>·</Link>&nbsp; Origami Artist
 
