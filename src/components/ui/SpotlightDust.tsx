@@ -47,6 +47,7 @@ export function SpotlightDust() {
     const rafRef = useRef<number>(0);
     const visibleRef = useRef(false);
     const lastScrollY = useRef(window.scrollY);
+    const lastPathname = useRef(window.location.pathname);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -93,14 +94,22 @@ export function SpotlightDust() {
             const scrollY = window.scrollY;
             const dy = scrollY - lastScrollY.current;
             lastScrollY.current = scrollY;
-            // Ignore abrupt programmatic scroll jumps (e.g. route navigation reset to top)
-            // so particles do not all wrap to one edge in a single frame.
-            if (Math.abs(dy) > canvas.height * 0.75) return;
+            // On large scroll jumps (e.g. route navigation), redistribute all particles
+            // so they don't stay clustered in the same region.
+            if (Math.abs(dy) > canvas.height * 0.75) {
+                for (const p of particlesRef.current) {
+                    p.x = Math.random() * canvas.width;
+                    p.y = Math.random() * canvas.height;
+                    p.vx = (Math.random() - 0.5) * 0.12;
+                    p.vy = Math.random() * 0.16 + 0.04;
+                }
+                return;
+            }
             const h = canvas.height;
             for (const p of particlesRef.current) {
                 p.y -= dy;
-                if (p.y < -10) { p.y = h + Math.random() * 10; p.x = Math.random() * canvas.width; }
-                else if (p.y > h + 10) { p.y = -Math.random() * 10; p.x = Math.random() * canvas.width; }
+                if (p.y < -10) { p.y = h + Math.random() * 40; p.x = Math.random() * canvas.width; }
+                else if (p.y > h + 10) { p.y = -(Math.random() * 40); p.x = Math.random() * canvas.width; }
             }
         };
 
@@ -112,6 +121,18 @@ export function SpotlightDust() {
             const w = canvas.width;
             const h = canvas.height;
             ctx.clearRect(0, 0, w, h);
+
+            const currentPath = window.location.pathname;
+            if (currentPath !== lastPathname.current) {
+                lastPathname.current = currentPath;
+                lastScrollY.current = window.scrollY;
+                for (const p of particlesRef.current) {
+                    p.x = Math.random() * w;
+                    p.y = Math.random() * h;
+                    p.vx = (Math.random() - 0.5) * 0.12;
+                    p.vy = Math.random() * 0.16 + 0.04;
+                }
+            }
 
             const customCursorVisible = document.documentElement.classList.contains('custom-cursor-visible');
             const mx = customCursorVisible ? mouseRef.current.x : -9999;
@@ -137,9 +158,9 @@ export function SpotlightDust() {
                     p.opacityTarget = Math.random() * 0.25 + 0.04;
                 }
 
-                if (p.y > h + 4) { p.y = -4; p.x = Math.random() * w; }
-                if (p.x < -4) p.x = w + 4;
-                if (p.x > w + 4) p.x = -4;
+                if (p.y > h + 4) { p.y = -(Math.random() * 30); p.x = Math.random() * w; p.vx = (Math.random() - 0.5) * 0.12; }
+                if (p.x < -4) { p.x = w + Math.random() * 4; p.y = Math.random() * h; }
+                if (p.x > w + 4) { p.x = -(Math.random() * 4); p.y = Math.random() * h; }
 
                 const spotlightRadius = 150;
                 const spotlightRaw = Math.max(0, 1 - dist / spotlightRadius);
