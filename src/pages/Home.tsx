@@ -34,7 +34,7 @@ export function Home() {
                         name.style.backgroundImage = 'none';
                         name.style.color = '#e8e4de';
                         name.style.webkitTextFillColor = 'unset';
-                        name.style.filter = 'none';
+                        name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0))';
                     }
                     const spotlight = el.querySelector('.hero-spotlight');
                     if (spotlight) spotlight.classList.remove('visible');
@@ -59,42 +59,39 @@ export function Home() {
         spotlight.style.setProperty('--hero-x', `${x}%`);
         spotlight.style.setProperty('--hero-y', `${y}%`);
 
-        // Text illumination — direction-sensitive glow with eased falloff
+        // Text illumination — radial spotlight follows cursor in 2D for a directional beam
         const name = nameRef.current;
         if (name) {
             const nameRect = name.getBoundingClientRect();
-            // Horizontal position relative to name for the gradient sweep
+            // Cursor position relative to name (0–100) so the highlight tracks the mouse in 2D
             const relX = ((e.clientX - nameRect.left) / nameRect.width) * 100;
-            // Distance from name center (both axes)
+            const relY = ((e.clientY - nameRect.top) / nameRect.height) * 100;
+            // Distance from name center for overall intensity falloff
             const cx = nameRect.left + nameRect.width / 2;
             const cy = nameRect.top + nameRect.height / 2;
             const dx = (e.clientX - cx) / (nameRect.width * 1.5);
             const dy = (e.clientY - cy) / 300;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            // Cubic ease-out for smooth falloff
             const raw = Math.max(0, 1 - dist);
             const intensity = raw * raw * (3 - 2 * raw); // smoothstep
 
-            // Gradient spread narrows as mouse gets closer (tighter beam when near)
-            const spread = 15 + 20 * (1 - intensity);
+            // Tighter radial = more directional spotlight; size shrinks when cursor is closer
+            const radius = 22 + 20 * (1 - intensity);
 
-            if (intensity > 0.01) {
-                const bright = `rgba(255, 255, 255, ${Math.min(1, 0.7 + intensity * 0.3)})`;
-                const base = '#e8e4de';
-                name.style.backgroundImage = `linear-gradient(90deg, ${base} ${relX - spread}%, ${bright} ${relX}%, ${base} ${relX + spread}%)`;
-                name.style.webkitBackgroundClip = 'text';
-                name.style.backgroundClip = 'text';
-                name.style.color = 'transparent';
-                name.style.webkitTextFillColor = 'transparent';
-                name.style.filter = `drop-shadow(0 0 ${40 * intensity}px rgba(255, 248, 230, ${0.85 * intensity})) drop-shadow(0 0 ${14 * intensity}px rgba(255, 255, 248, ${0.5 * intensity}))`;
-                name.style.transition = 'filter 0.3s ease-out';
-            } else {
-                name.style.backgroundImage = 'none';
-                name.style.color = '#e8e4de';
-                name.style.webkitTextFillColor = 'unset';
-                name.style.filter = 'none';
-                name.style.transition = 'filter 0.5s ease-out';
-            }
+            // Smooth edge: blend base→white only in low intensity so no snap; full punch when near
+            const t = intensity <= 0 ? 0 : intensity < 0.06 ? intensity / 0.06 : 1;
+            const r = Math.round(232 + 23 * t);
+            const g = Math.round(228 + 27 * t);
+            const b = Math.round(222 + 33 * t);
+            const bright = `rgb(${r}, ${g}, ${b})`;
+            const base = '#e8e4de';
+            name.style.backgroundImage = `radial-gradient(ellipse ${radius}% ${radius * 0.7}% at ${relX}% ${relY}%, ${bright}, ${base})`;
+            name.style.webkitBackgroundClip = 'text';
+            name.style.backgroundClip = 'text';
+            name.style.color = 'transparent';
+            name.style.webkitTextFillColor = 'transparent';
+            name.style.filter = `drop-shadow(0 0 ${40 * intensity}px rgba(255, 248, 230, ${0.85 * intensity})) drop-shadow(0 0 ${14 * intensity}px rgba(255, 255, 248, ${0.5 * intensity}))`;
+            name.style.transition = 'none';
         }
     }, []);
 
@@ -116,10 +113,9 @@ export function Home() {
                     if (spotlight) spotlight.classList.remove('visible');
                     const name = nameRef.current;
                     if (name) {
-                        name.style.backgroundImage = 'none';
-                        name.style.color = '#e8e4de';
-                        name.style.webkitTextFillColor = 'unset';
-                        name.style.filter = 'none';
+                        name.style.transition = 'filter 0.5s ease-out';
+                        name.style.backgroundImage = 'linear-gradient(90deg, #e8e4de 0%, #e8e4de 100%)';
+                        name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0)) drop-shadow(0 0 0px rgba(255, 255, 248, 0))';
                     }
                 }}
             >
