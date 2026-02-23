@@ -15,6 +15,7 @@ export function useSmoothScroll() {
 
         let destroyed = false;
         let rafId: number | null = null;
+        let loadCleanup: (() => void) | null = null;
 
         import('lenis').then(({ default: Lenis }) => {
             if (destroyed) return;
@@ -34,9 +35,27 @@ export function useSmoothScroll() {
             }
 
             rafId = requestAnimationFrame(raf);
+
+            // Recalculate scroll dimensions after load so first-load scroll works (Lenis
+            // can attach before layout is final — e.g. lazy content or fonts).
+            const onLoad = () => {
+                if (destroyed || !lenisInstance) return;
+                lenis.resize();
+            };
+            if (document.readyState === 'complete') {
+                requestAnimationFrame(onLoad);
+            } else {
+                window.addEventListener('load', onLoad);
+            }
+            const timeoutId = window.setTimeout(onLoad, 500);
+            loadCleanup = () => {
+                window.removeEventListener('load', onLoad);
+                window.clearTimeout(timeoutId);
+            };
         });
 
         return () => {
+            loadCleanup?.();
             destroyed = true;
             if (rafId != null) cancelAnimationFrame(rafId);
             if (lenisInstance) {

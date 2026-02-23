@@ -1,12 +1,26 @@
 import { About } from '../components/sections/About';
-import { Contact } from '../components/sections/Contact';
+import { LinkSection, type LinkSectionItem } from '../components/sections/LinkSection';
 import { SEO } from '../components/layout/SEO';
-import { ResumeSection } from '../components/sections/ResumeSection';
 import { ProjectGrid } from '../components/portfolio/ProjectGrid';
 import { Link } from '../components/ui/base';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
 import { useCallback, useEffect, useRef } from 'react';
 import { HeroParticles } from '../components/ui/HeroParticles';
+import { FiDownload, FiMail } from 'react-icons/fi';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
+
+const iconClass = 'w-5 h-5';
+
+const CONNECT_LINKS: LinkSectionItem[] = [
+    { name: 'Personal Email', value: 'coleman@colemanlai.com', href: 'mailto:coleman@colemanlai.com', icon: <FiMail className={iconClass} /> },
+    { name: 'University Email', value: 'ccl46@sfu.ca', href: 'mailto:ccl46@sfu.ca', icon: <FiMail className={iconClass} /> },
+    { name: 'LinkedIn', value: 'coleman-lai', href: 'https://www.linkedin.com/in/coleman-lai', icon: <FaLinkedin className={iconClass} /> },
+];
+
+const WORK_LINKS: LinkSectionItem[] = [
+    { name: 'Resume', value: 'View PDF', href: '/resume.pdf', icon: <FiDownload className={iconClass} /> },
+    { name: 'GitHub', value: 'Googolplexic', href: 'https://github.com/Googolplexic', icon: <FaGithub className={iconClass} /> },
+];
 
 function ScrollSection({ children, className = '' }: { children: React.ReactNode; className?: string }) {
     const { ref, className: revealClass } = useScrollRevealClass({ threshold: 0.08 });
@@ -170,12 +184,16 @@ export function Home() {
             {/* Divider */}
             <div className="gallery-divider" />
 
-            {/* ===== CONTACT & RESUME ===== */}
+            {/* ===== CONNECT & WORK ===== */}
             <ScrollSection className="py-20 md:py-32">
                 <div className="max-w-4xl mx-auto px-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 text-center lg:text-left">
-                        <Contact />
-                        <ResumeSection />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-16 gap-x-24 justify-items-center lg:justify-items-stretch items-start text-center lg:text-left">
+                        <div className="w-full max-w-[280px] lg:justify-self-end">
+                            <LinkSection id="contact" title="Connect" links={CONNECT_LINKS} align="right" />
+                        </div>
+                        <div className="w-full max-w-[280px] lg:justify-self-start">
+                            <LinkSection id="work" title="Work" links={WORK_LINKS} />
+                        </div>
                     </div>
                 </div>
             </ScrollSection>
