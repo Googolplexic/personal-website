@@ -1,6 +1,7 @@
+import Lenis from 'lenis';
 import { useEffect } from 'react';
 
-let lenisInstance: any = null;
+let lenisInstance: Lenis | null = null;
 
 /**
  * Global smooth scroll via Lenis.

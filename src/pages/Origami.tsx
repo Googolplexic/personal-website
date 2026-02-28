@@ -6,6 +6,8 @@ import boxPleatingData from '../assets/projects/box-pleating';
 import origamiFractionsData from '../assets/projects/origami-fractions';
 import { ItemProps, ProjectProps } from '../types';
 
+const BASE_URL = "https://www.colemanlai.com";
+
 export function Origami() {
     const featuredProjects: ProjectProps[] = [
         { ...foldPreviewData, slug: 'fold-preview', type: 'project' as const },
@@ -19,13 +21,68 @@ export function Origami() {
         ...featuredProjects
     ];
 
+
+    const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Origami Gallery | Coleman Lai",
+        "description": "A curated gallery of intricate origami creations by Coleman Lai, featuring complex paper art designs, original patterns, and folding software.",
+        "url": `${BASE_URL}/origami`,
+        "isPartOf": { "@type": "WebSite", "name": "Coleman Lai", "url": BASE_URL },
+        "author": {
+            "@type": "Person",
+            "name": "Coleman Lai",
+            "url": BASE_URL,
+            "sameAs": ["https://www.instagram.com/12googolplex"]
+        },
+        "about": {
+            "@type": "Thing",
+            "name": "Origami",
+            "description": "The art of paper folding"
+        },
+        "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": myDesigns.length + otherDesigns.length,
+            "itemListElement": myDesigns.map((d, i) => ({
+                "@type": "ListItem",
+                "position": i + 1,
+                "item": {
+                    "@type": "VisualArtwork",
+                    "name": d.title,
+                    "artMedium": "Paper",
+                    "artform": "Origami",
+                    "creator": { "@type": "Person", "name": d.designer || "Coleman Lai" }
+                }
+            }))
+        }
+    };
+
     return (
         <>
             <SEO
-                title="Origami | Coleman Lai"
-                description="Discover intricate origami creations by Coleman Lai. View complex paper art designs and follow my origami journey."
-                keywords="origami, paper art, Coleman Lai, complex origami, paper folding, origami artist, Vancouver origami"
+                title="Origami Gallery | Coleman Lai"
+                description="Discover intricate origami creations by Coleman Lai. View complex paper art designs, original patterns, and folding software. Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026)."
+                keywords={[
+                    "origami",
+                    "paper art",
+                    "Coleman Lai",
+                    "IFS Copperleaf",
+                    "Gen AI software developer",
+                    "complex origami",
+                    "paper folding",
+                    "origami artist",
+                    "Vancouver origami",
+                    "origami gallery",
+                    "paper sculpture",
+                    "geometric origami",
+                    "origami designs"
+                ]}
                 pathname="/origami"
+                breadcrumbs={[
+                    { name: "Home", url: BASE_URL },
+                    { name: "Origami", url: `${BASE_URL}/origami` }
+                ]}
+                structuredData={structuredData}
             />
             <div className="max-w-6xl mx-auto px-6 pt-32 pb-20">
                 <div className="text-center mb-14">
@@ -35,11 +92,11 @@ export function Origami() {
                         Origami
                     </h1>
                     <p className="text-base font-heading italic max-w-lg mx-auto mb-2"
-                       style={{ color: 'var(--color-text-secondary)' }}>
+                        style={{ color: 'var(--color-text-secondary)' }}>
                         Where geometric precision meets artistic expression.
                     </p>
                     <p className="text-sm font-body"
-                       style={{ color: 'var(--color-text-tertiary)' }}>
+                        style={{ color: 'var(--color-text-tertiary)' }}>
                         More on{' '}
                         <a
                             href="https://www.instagram.com/12googolplex"
