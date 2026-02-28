@@ -67,57 +67,10 @@ export function SpotlightDust() {
         resize();
         window.addEventListener('resize', resize, { passive: true });
 
-        // Watch #page-dim for the "visible" class to sync dust visibility
         const pageDim = document.getElementById('page-dim');
-        const syncVisibility = () => {
-            const active = pageDim?.classList.contains('visible') ?? false;
-            if (active !== visibleRef.current) {
-                visibleRef.current = active;
-                canvas.style.opacity = active ? '0.55' : '0';
-            }
-        };
-
-        let observer: MutationObserver | null = null;
-        if (pageDim) {
-            observer = new MutationObserver(syncVisibility);
-            observer.observe(pageDim, { attributes: true, attributeFilter: ['class'] });
-        }
-
-        const onMouseMove = (e: MouseEvent) => {
-            mouseRef.current = { x: e.clientX, y: e.clientY };
-        };
-        const onMouseLeave = () => {
-            mouseRef.current = { x: -9999, y: -9999 };
-        };
-
-        const onScroll = () => {
-            const scrollY = window.scrollY;
-            const dy = scrollY - lastScrollY.current;
-            lastScrollY.current = scrollY;
-            // On large scroll jumps (e.g. route navigation), redistribute all particles
-            // so they don't stay clustered in the same region.
-            if (Math.abs(dy) > canvas.height * 0.75) {
-                for (const p of particlesRef.current) {
-                    p.x = Math.random() * canvas.width;
-                    p.y = Math.random() * canvas.height;
-                    p.vx = (Math.random() - 0.5) * 0.12;
-                    p.vy = Math.random() * 0.16 + 0.04;
-                }
-                return;
-            }
-            const h = canvas.height;
-            for (const p of particlesRef.current) {
-                p.y -= dy;
-                if (p.y < -10) { p.y = h + Math.random() * 40; p.x = Math.random() * canvas.width; }
-                else if (p.y > h + 10) { p.y = -(Math.random() * 40); p.x = Math.random() * canvas.width; }
-            }
-        };
-
-        window.addEventListener('mousemove', onMouseMove, { passive: true });
-        window.addEventListener('mouseleave', onMouseLeave);
-        window.addEventListener('scroll', onScroll, { passive: true });
 
         const draw = () => {
+            if (!visibleRef.current) return;
             const w = canvas.width;
             const h = canvas.height;
             ctx.clearRect(0, 0, w, h);
@@ -185,10 +138,57 @@ export function SpotlightDust() {
                 ctx.shadowBlur = 0;
             }
 
-            rafRef.current = requestAnimationFrame(draw);
+            if (visibleRef.current) rafRef.current = requestAnimationFrame(draw);
         };
 
-        rafRef.current = requestAnimationFrame(draw);
+        // Only run the animation loop when dust is visible (spotlight hover).
+        // Avoids main-thread work during FCP→TTI and reduces TBT variance.
+        const syncVisibility = () => {
+            const active = pageDim?.classList.contains('visible') ?? false;
+            if (active !== visibleRef.current) {
+                visibleRef.current = active;
+                canvas.style.opacity = active ? '0.55' : '0';
+                if (active) rafRef.current = requestAnimationFrame(draw);
+            }
+        };
+
+        let observer: MutationObserver | null = null;
+        if (pageDim) {
+            observer = new MutationObserver(syncVisibility);
+            observer.observe(pageDim, { attributes: true, attributeFilter: ['class'] });
+        }
+
+        const onMouseMove = (e: MouseEvent) => {
+            mouseRef.current = { x: e.clientX, y: e.clientY };
+        };
+        const onMouseLeave = () => {
+            mouseRef.current = { x: -9999, y: -9999 };
+        };
+
+        const onScroll = () => {
+            const scrollY = window.scrollY;
+            const dy = scrollY - lastScrollY.current;
+            lastScrollY.current = scrollY;
+            if (Math.abs(dy) > canvas.height * 0.75) {
+                for (const p of particlesRef.current) {
+                    p.x = Math.random() * canvas.width;
+                    p.y = Math.random() * canvas.height;
+                    p.vx = (Math.random() - 0.5) * 0.12;
+                    p.vy = Math.random() * 0.16 + 0.04;
+                }
+                return;
+            }
+            const h = canvas.height;
+            for (const p of particlesRef.current) {
+                p.y -= dy;
+                if (p.y < -10) { p.y = h + Math.random() * 40; p.x = Math.random() * canvas.width; }
+                else if (p.y > h + 10) { p.y = -(Math.random() * 40); p.x = Math.random() * canvas.width; }
+            }
+        };
+
+        window.addEventListener('mousemove', onMouseMove, { passive: true });
+        window.addEventListener('mouseleave', onMouseLeave);
+        window.addEventListener('scroll', onScroll, { passive: true });
 
         return () => {
             cancelAnimationFrame(rafRef.current);

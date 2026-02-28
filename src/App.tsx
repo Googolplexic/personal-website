@@ -1,5 +1,5 @@
 import './App.css'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
 import { Analytics } from '@vercel/analytics/react';
@@ -17,6 +17,30 @@ const Portfolio = lazy(() => import('./pages/Portfolio').then(m => ({ default: m
 const Origami = lazy(() => import('./pages/Origami').then(m => ({ default: m.Origami })))
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
 const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })))
+
+/** Mount Vercel scripts after main thread is idle to avoid adding to TBT during FCP→TTI. */
+function DeferredVercelScripts() {
+    const [ready, setReady] = useState(false);
+    useEffect(() => {
+        const cb = () => setReady(true);
+        let cleanup: () => void;
+        if (typeof requestIdleCallback !== 'undefined') {
+            const id = requestIdleCallback(cb, { timeout: 4000 });
+            cleanup = () => cancelIdleCallback(id);
+        } else {
+            const id = setTimeout(cb, 1500);
+            cleanup = () => clearTimeout(id);
+        }
+        return cleanup;
+    }, []);
+    if (!ready) return null;
+    return (
+        <>
+            <Analytics />
+            <SpeedInsights />
+        </>
+    );
+}
 
 function AppContent() {
     useSmoothScroll();
@@ -47,8 +71,7 @@ function AppContent() {
             </main>
             <Footer />
             <BackToTop />
-            <Analytics />
-            <SpeedInsights />
+            <DeferredVercelScripts />
         </div>
     );
 }
