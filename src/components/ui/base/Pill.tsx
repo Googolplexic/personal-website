@@ -13,7 +13,6 @@ export interface PillProps {
  */
 export function Pill({
     children,
-    variant = 'default',
     color,
     className,
     ...props

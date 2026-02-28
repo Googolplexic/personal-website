@@ -51,7 +51,7 @@ function markdownFrontmatterPlugin(): Plugin {
             } else if (line.match(/^-\s+/) && currentKey) {
               const item = line.replace(/^-\s+/, '').trim()
               if (!Array.isArray(attributes[currentKey])) attributes[currentKey] = []
-              ;(attributes[currentKey] as string[]).push(item)
+                ; (attributes[currentKey] as string[]).push(item)
             }
           }
         }
@@ -59,6 +59,63 @@ function markdownFrontmatterPlugin(): Plugin {
 
       return `export const attributes = ${JSON.stringify(attributes)};\nexport const body = ${JSON.stringify(body)};`
     }
+  }
+}
+
+/**
+ * Serve favicon assets from src during dev and emit them at root during build
+ * so /favicon.ico, /favicon.svg, /apple-touch-icon.png, and Android icon URLs
+ * always resolve correctly.
+ */
+function faviconAssetsPlugin(): Plugin {
+  const faviconDir = resolve(__dirname, 'src/assets/favicon')
+  const faviconFiles = [
+    'favicon.ico',
+    'favicon.svg',
+    'apple-touch-icon.png',
+    'android-chrome-192x192.png',
+    'android-chrome-512x512.png',
+  ]
+
+  const requestPathToSource = new Map(
+    faviconFiles.map((fileName) => [
+      `/${fileName}`,
+      resolve(faviconDir, fileName),
+    ])
+  )
+
+  const getMimeType = (filePath: string) => {
+    if (filePath.endsWith('.ico')) return 'image/x-icon'
+    if (filePath.endsWith('.svg')) return 'image/svg+xml'
+    if (filePath.endsWith('.png')) return 'image/png'
+    return 'application/octet-stream'
+  }
+
+  return {
+    name: 'vite-plugin-favicon-assets',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const requestPath = req.url?.split('?')[0]
+        if (!requestPath) return next()
+
+        const sourcePath = requestPathToSource.get(requestPath)
+        if (!sourcePath || !existsSync(sourcePath)) return next()
+
+        res.setHeader('Content-Type', getMimeType(sourcePath))
+        res.end(readFileSync(sourcePath))
+      })
+    },
+    generateBundle() {
+      for (const [requestPath, sourcePath] of requestPathToSource.entries()) {
+        if (!existsSync(sourcePath)) continue
+
+        this.emitFile({
+          type: 'asset',
+          fileName: requestPath.slice(1),
+          source: readFileSync(sourcePath),
+        })
+      }
+    },
   }
 }
 
@@ -392,6 +449,7 @@ saveCache(cache)
 export default defineConfig(({ mode }) => ({
   plugins: [
     markdownFrontmatterPlugin(),
+    faviconAssetsPlugin(),
     react(),
     inlineCssPlugin(),
     breakVendorCyclePlugin(),
@@ -577,8 +635,8 @@ export default defineConfig(({ mode }) => ({
         // by ProjectDetail and AdminPage. Remove it from all other routes'
         // modulepreload lists to avoid downloading + parsing 176KB of JS.
         const needsMarkdown = filename.includes('page-projectdetail') ||
-                              filename.includes('admin-components') ||
-                              filename.includes('page-adminpage');
+          filename.includes('admin-components') ||
+          filename.includes('page-adminpage');
         return deps.filter(dep => {
           if (dep.includes('vendor-content')) return needsMarkdown;
           return true;

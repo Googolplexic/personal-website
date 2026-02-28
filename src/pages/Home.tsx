@@ -109,12 +109,83 @@ export function Home() {
         }
     }, []);
 
+    const structuredData = [
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Coleman Lai",
+            "alternateName": "Coleman Lai Portfolio",
+            "url": "https://www.colemanlai.com",
+            "description": "Portfolio of software projects and origami art by Coleman Lai, currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+            "author": { "@type": "Person", "name": "Coleman Lai" },
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://www.colemanlai.com/portfolio?search={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Coleman Lai",
+            "url": "https://www.colemanlai.com",
+            "jobTitle": "Gen AI Software Developer (Co-op)",
+            "worksFor": {
+                "@type": "Organization",
+                "name": "IFS Copperleaf"
+            },
+            "alumniOf": {
+                "@type": "CollegeOrUniversity",
+                "name": "Simon Fraser University",
+                "sameAs": "https://www.sfu.ca"
+            },
+            "knowsAbout": ["Software Development", "Full-Stack Development", "Origami", "Paper Art", "React", "TypeScript"],
+            "sameAs": [
+                "https://www.linkedin.com/in/coleman-lai",
+                "https://github.com/Googolplexic",
+                "https://www.instagram.com/12googolplex"
+            ]
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "mainEntity": {
+                "@type": "Person",
+                "name": "Coleman Lai"
+            },
+            "dateCreated": "2024-01-01",
+            "dateModified": new Date().toISOString().split('T')[0]
+        }
+    ];
+
     return (
         <>
             <SEO
                 title="Coleman Lai | Software Developer & Origami Artist | Vancouver"
-                description="Explore innovative software projects and intricate origami designs by Coleman Lai, a Computing Science student at SFU. View my portfolio now!"
-                keywords="Coleman Lai, software developer, computing science, origami artist, SFU, Vancouver, full-stack developer, origami, paper art, portfolio"
+                description="Explore innovative software projects and intricate origami designs by Coleman Lai. Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026)."
+                keywords={[
+                    "Coleman Lai",
+                    "software developer",
+                    "Gen AI software developer",
+                    "IFS Copperleaf",
+                    "co-op",
+                    "computing science",
+                    "origami artist",
+                    "SFU",
+                    "Simon Fraser University",
+                    "Vancouver",
+                    "full-stack developer",
+                    "origami",
+                    "paper art",
+                    "portfolio",
+                    "web developer",
+                    "data science"
+                ]}
+                pathname="/"
+                structuredData={structuredData}
+                breadcrumbs={[
+                    { name: "Home", url: "https://www.colemanlai.com" }
+                ]}
             />
 
             {/* ===== HERO ===== */}

@@ -6,11 +6,8 @@ export function NotFound() {
         <>
             <SEO
                 title="Page Not Found | 404 Error | Coleman Lai"
-                description="Sorry, the page you're looking for doesn't exist. Return to Coleman Lai's homepage to explore software projects and origami creations."
-                type="website"
-                children={
-                    <meta name="robots" content="noindex, follow" />
-                }
+                description="Sorry, the page you're looking for doesn't exist. Return to Coleman Lai's homepage to explore software projects and origami creations. Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026)."
+                noindex
             />
 
             <div className="min-h-screen flex flex-col items-center justify-center px-5 text-center">
