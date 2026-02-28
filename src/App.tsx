@@ -1,5 +1,5 @@
 import './App.css'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState, useEffect } from 'react'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
 import { HelmetProvider } from 'react-helmet-async';
@@ -20,6 +20,24 @@ const SpotlightDust = lazy(() => import('./components/ui/SpotlightDust').then(m 
 function AppContent() {
     useSmoothScroll();
     useCustomCursor();
+    // Don’t mount SpotlightDust until after main content can paint (preserves LCP).
+    // Otherwise we pull in the shared-components chunk for dust before Home uses it for LCP.
+    const [mountSpotlightDust, setMountSpotlightDust] = useState(false);
+    useEffect(() => {
+        const schedule = () => {
+            if (typeof (window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback === 'function') {
+                (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback(() => setMountSpotlightDust(true), { timeout: 1500 });
+            } else {
+                const t = setTimeout(() => setMountSpotlightDust(true), 800);
+                return () => clearTimeout(t);
+            }
+        };
+        if (document.readyState === 'complete') {
+            schedule();
+        } else {
+            window.addEventListener('load', schedule, { once: true });
+        }
+    }, []);
 
     return (
         <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-500 md:text-base text-sm"
@@ -28,10 +46,12 @@ function AppContent() {
             <div id="global-spotlight" />
             {/* Page-wide dim overlay — darkens everything outside cursor area */}
             <div id="page-dim" />
-            {/* Floating dust motes — visible when spotlight is active; lazy to reduce initial TBT */}
-            <Suspense fallback={null}>
-                <SpotlightDust />
-            </Suspense>
+            {/* Mount only after idle so shared-components isn’t fetched for dust before LCP (Home) */}
+            {mountSpotlightDust && (
+                <Suspense fallback={null}>
+                    <SpotlightDust />
+                </Suspense>
+            )}
             <Navbar />
             <main className="min-h-screen">
                 <PageTransition>
