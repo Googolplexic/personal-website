@@ -1,5 +1,5 @@
-import Lenis from 'lenis';
 import { useEffect } from 'react';
+import type Lenis from 'lenis';
 
 let lenisInstance: Lenis | null = null;
 

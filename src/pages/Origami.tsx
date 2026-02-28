@@ -25,8 +25,8 @@ export function Origami() {
     const structuredData = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
-        "name": "Origami Gallery | Coleman Lai",
-        "description": "A curated gallery of intricate origami creations by Coleman Lai, featuring complex paper art designs, original patterns, and folding software.",
+        "name": "Origami | Coleman Lai",
+        "description": "A gallery of intricate origami creations by Coleman Lai, featuring complex designs, original patterns, and folding software.",
         "url": `${BASE_URL}/origami`,
         "isPartOf": { "@type": "WebSite", "name": "Coleman Lai", "url": BASE_URL },
         "author": {
@@ -61,7 +61,7 @@ export function Origami() {
         <>
             <SEO
                 title="Origami Gallery | Coleman Lai"
-                description="Discover intricate origami creations by Coleman Lai. View complex paper art designs, original patterns, and folding software. Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026)."
+                description="Discover intricate origami creations by Coleman Lai. View complex paper art designs, original patterns, and folding software."
                 keywords={[
                     "origami",
                     "paper art",
