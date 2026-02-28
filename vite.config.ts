@@ -198,7 +198,7 @@ function breakVendorCyclePlugin(): Plugin {
  * only start downloading after the entry JS executes.
  */
 function routePreloadsPlugin(): Plugin {
-  const keepChunks = ['vendor-react', 'vendor-ui', 'vendor-misc', 'utils', 'ui-base', 'index']
+  const keepChunks = ['vendor-react', 'vendor-router', 'vendor-ui', 'vendor-misc', 'utils', 'ui-base', 'index']
 
   const routeChunkPatterns: Record<string, string[]> = {
     '/': ['page-home', 'shared-components', 'project-grid'],
@@ -549,9 +549,14 @@ export default defineConfig(({ mode }) => ({
               return 'vendor-ui';
             }
 
-            // React core and router
+            // React Router (separate chunk to shorten main-thread tasks; one big chunk = one long task)
+            if (id.includes('@remix-run')) {
+              return 'vendor-router';
+            }
+
+            // React core (react, react-dom, scheduler, invariant, shallowequal)
             if (
-              id.includes('react') || id.includes('scheduler') || id.includes('@remix-run') ||
+              id.includes('react') || id.includes('scheduler') ||
               id.includes('invariant') || id.includes('shallowequal')
             ) {
               return 'vendor-react';

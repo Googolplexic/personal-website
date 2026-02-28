@@ -1,36 +1,61 @@
-import { useState, useEffect } from 'react';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
+import { useState, useEffect, type ComponentType } from 'react';
 
 /**
- * Mounts Vercel Analytics and Speed Insights only after the main thread is idle
- * or after a short delay. Keeps their script execution off the critical path
- * to reduce Total Blocking Time (TBT) and long main-thread tasks.
+ * Loads and mounts Vercel Analytics and Speed Insights only after the main thread
+ * is idle. Uses dynamic import() so their SDK code is NOT in the initial bundle —
+ * the chunk is requested and executed only after idle, keeping TBT low.
  */
 export function DeferredAnalytics() {
-  const [ready, setReady] = useState(false);
+  const [Widgets, setWidgets] = useState<ComponentType | null>(null);
 
   useEffect(() => {
-    const schedule = () => {
+    const load = () => {
       if ('requestIdleCallback' in window) {
         (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void })
-          .requestIdleCallback(() => setReady(true), { timeout: 2000 });
+          .requestIdleCallback(
+            () => {
+              Promise.all([
+                import('@vercel/analytics/react'),
+                import('@vercel/speed-insights/react'),
+              ]).then(([analytics, speedInsights]) => {
+                setWidgets(() => function VercelWidgets() {
+                  return (
+                    <>
+                      <analytics.Analytics />
+                      <speedInsights.SpeedInsights />
+                    </>
+                  );
+                });
+              });
+            },
+            { timeout: 2500 }
+          );
       } else {
-        setTimeout(() => setReady(true), 1500);
+        const t = setTimeout(() => {
+          Promise.all([
+            import('@vercel/analytics/react'),
+            import('@vercel/speed-insights/react'),
+          ]).then(([analytics, speedInsights]) => {
+            setWidgets(() => function VercelWidgets() {
+              return (
+                <>
+                  <analytics.Analytics />
+                  <speedInsights.SpeedInsights />
+                </>
+              );
+            });
+          });
+        }, 1200);
+        return () => clearTimeout(t);
       }
     };
     if (document.readyState === 'complete') {
-      schedule();
+      load();
     } else {
-      window.addEventListener('load', schedule, { once: true });
+      window.addEventListener('load', load, { once: true });
     }
   }, []);
 
-  if (!ready) return null;
-  return (
-    <>
-      <Analytics />
-      <SpeedInsights />
-    </>
-  );
+  if (!Widgets) return null;
+  return <Widgets />;
 }
