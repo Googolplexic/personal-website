@@ -1,15 +1,13 @@
 import './App.css'
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense } from 'react'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
-import { Analytics } from '@vercel/analytics/react';
 import { HelmetProvider } from 'react-helmet-async';
-import { SpeedInsights } from "@vercel/speed-insights/react"
+import { DeferredAnalytics } from './components/layout/DeferredAnalytics'
 import { RootRoute } from './components/layout/RootRoute'
 import { Footer } from './components/layout/Footer'
 import { PageTransition } from './components/layout/PageTransition'
 import { BackToTop } from './components/ui/BackToTop'
-import { SpotlightDust } from './components/ui/SpotlightDust'
 import { useSmoothScroll } from './utils/useSmoothScroll'
 import { useCustomCursor } from './utils/useCustomCursor'
 
@@ -17,30 +15,7 @@ const Portfolio = lazy(() => import('./pages/Portfolio').then(m => ({ default: m
 const Origami = lazy(() => import('./pages/Origami').then(m => ({ default: m.Origami })))
 const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
 const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })))
-
-/** Mount Vercel scripts after main thread is idle to avoid adding to TBT during FCP→TTI. */
-function DeferredVercelScripts() {
-    const [ready, setReady] = useState(false);
-    useEffect(() => {
-        const cb = () => setReady(true);
-        let cleanup: () => void;
-        if (typeof requestIdleCallback !== 'undefined') {
-            const id = requestIdleCallback(cb, { timeout: 4000 });
-            cleanup = () => cancelIdleCallback(id);
-        } else {
-            const id = setTimeout(cb, 1500);
-            cleanup = () => clearTimeout(id);
-        }
-        return cleanup;
-    }, []);
-    if (!ready) return null;
-    return (
-        <>
-            <Analytics />
-            <SpeedInsights />
-        </>
-    );
-}
+const SpotlightDust = lazy(() => import('./components/ui/SpotlightDust').then(m => ({ default: m.SpotlightDust })))
 
 function AppContent() {
     useSmoothScroll();
@@ -53,8 +28,10 @@ function AppContent() {
             <div id="global-spotlight" />
             {/* Page-wide dim overlay — darkens everything outside cursor area */}
             <div id="page-dim" />
-            {/* Floating dust motes — visible when spotlight is active */}
-            <SpotlightDust />
+            {/* Floating dust motes — visible when spotlight is active; lazy to reduce initial TBT */}
+            <Suspense fallback={null}>
+                <SpotlightDust />
+            </Suspense>
             <Navbar />
             <main className="min-h-screen">
                 <PageTransition>
@@ -71,7 +48,7 @@ function AppContent() {
             </main>
             <Footer />
             <BackToTop />
-            <DeferredVercelScripts />
+            <DeferredAnalytics />
         </div>
     );
 }
