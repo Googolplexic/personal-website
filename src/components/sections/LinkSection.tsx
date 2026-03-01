@@ -19,7 +19,7 @@ export function LinkSection({ id, title, links, align = 'left' }: LinkSectionPro
     const isRight = align === 'right';
     return (
         <div id={id} className={isRight ? 'lg:text-right' : ''}>
-            <h3 className="gallery-overline mb-6">{title}</h3>
+            <h2 className="gallery-overline mb-6">{title}</h2>
             <div className="space-y-4">
                 {links.map((link) => (
                     <a
