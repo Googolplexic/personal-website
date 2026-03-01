@@ -161,8 +161,8 @@ export function Home() {
     return (
         <>
             <SEO
-                title="Coleman Lai | Software Developer & Origami Artist | Vancouver"
-                description="Explore innovative software projects and intricate origami designs by Coleman Lai. Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026)."
+                title="Coleman Lai | Developer & Origami Artist | Vancouver"
+                description="Explore software projects and origami portfolio by Coleman Lai, Gen AI Developer at IFS Copperleaf. Computing Science student at SFU, Vancouver, BC."
                 keywords={[
                     "Coleman Lai",
                     "software developer",
@@ -283,7 +283,7 @@ export function Home() {
                         </h2>
                         <p className="text-sm font-heading italic"
                             style={{ color: 'var(--color-text-secondary)' }}>
-                            A curated selection of my proudest works.
+                            A curated selection of my proudest works. Updated from time to time.
                         </p>
                     </div>
                     <ProjectGrid
