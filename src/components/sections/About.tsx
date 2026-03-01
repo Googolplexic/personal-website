@@ -15,10 +15,10 @@ export function About() {
                     <Link href="https://github.com/Googolplexic" target="_blank" rel="noopener">
                         GitHub
                     </Link>
-                    {' '}or in my{' '}
+                    {' '}or browse my{' '}
                     <Link to="/portfolio" onClick={() => window.scrollTo(0, 0)}>
-                        portfolio
-                    </Link>.  The site's still a work in progress, so any feedback is welcome!
+                        software portfolio
+                    </Link>. The site's still a work in progress, so any feedback is welcome!
                 </p>
                 <p className="text-base md:text-lg leading-relaxed font-body"
                     style={{ color: 'var(--color-text-secondary)' }}>
@@ -26,7 +26,7 @@ export function About() {
                     <Link to="/origami" onClick={() => window.scrollTo(0, 0)}>
                         origami models
                     </Link>
-                    {' '}in my free time, a hobby that I've been doing for over 12 years now! Thank you for taking the time to look at my site, and I hope you enjoy my work!
+                    {' '}in my free time, a hobby that I've been doing for over 12 years. Mostly I fold models from other great origami artists around the internet, but I've also been designing my own models for the past few years. Thank you for taking the time to visit, and I hope you enjoy the work!
                 </p>
             </div>
         </div>
