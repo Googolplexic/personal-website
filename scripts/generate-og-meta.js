@@ -55,13 +55,6 @@ function parseFrontmatter(mdPath) {
   return out;
 }
 
-function withRoleSuffix(description) {
-  if (!description || !description.trim()) return ROLE_SEO;
-  const t = description.trim();
-  const hasPunct = /[.!?]$/.test(t);
-  return t + (hasPunct ? '' : '.') + ' ' + ROLE_SEO;
-}
-
 /** Get first image basename (no ext) from project src, e.g. "01-demo" from "01-demo.webp" */
 function getFirstImageBasename(slug) {
   const projectPath = path.join(SRC_PROJECTS, slug);
@@ -88,6 +81,34 @@ function findBuiltImageUrl(basename, distImagesDir) {
   return BASE_URL + '/' + relativePath;
 }
 
+/** Get first model image basename (no ext) for an origami slug from source (e.g. "01-tonberry") */
+function getFirstOrigamiImageBasename(slug) {
+  for (const group of ['my-designs', 'other-designs']) {
+    const dir = path.join(ROOT, 'src', 'assets', 'origami', group, slug);
+    if (!fs.existsSync(dir)) continue;
+    for (const subdir of ['web', '.']) {
+      const dirPath = subdir === '.' ? dir : path.join(dir, subdir);
+      if (!fs.existsSync(dirPath)) continue;
+      const files = fs.readdirSync(dirPath)
+        .filter((f) => /\.(png|jpg|jpeg|webp)$/i.test(f) && !f.toLowerCase().includes('pattern'))
+        .sort();
+      if (files.length > 0) return path.basename(files[0], path.extname(files[0]));
+    }
+  }
+  return null;
+}
+
+/** Find origami image in flat dist/assets/images/ (built names like "01-tonberry.png-[hash].jpg") */
+function findOrigamiImageInDist(stem, distImagesDir) {
+  if (!fs.existsSync(distImagesDir) || !stem) return null;
+  const files = fs.readdirSync(distImagesDir)
+    .filter((f) => /\.(png|jpg|jpeg|webp)$/i.test(f) && !f.includes('pattern') && f.startsWith(stem));
+  if (files.length === 0) return null;
+  const chosen = files.sort()[0];
+  const relativePath = path.relative(DIST, path.join(distImagesDir, chosen)).replace(/\\/g, '/');
+  return BASE_URL + '/' + relativePath;
+}
+
 function main() {
   const meta = { ...DEFAULT_META };
   const distImagesDir = path.join(DIST, 'assets', 'images');
@@ -105,7 +126,8 @@ function main() {
     const fm = parseFrontmatter(mdPath);
     const rawTitle = fm.title || slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
     const title = typeof rawTitle === 'string' ? rawTitle : slug;
-    const description = withRoleSuffix(fm.SEOdescription || fm.summary || '');
+    const rawDesc = (fm.SEOdescription || fm.summary || '').trim();
+    const description = rawDesc || `${title} — portfolio project.`;
 
     let image = null;
     const projectImageDir = path.join(distProjectsDir, slug);
@@ -141,15 +163,9 @@ function main() {
     });
     dirs.forEach((d) => origamiSlugs.add(d));
   }
-  const origamiImagesDir = path.join(DIST, 'assets', 'images', 'origami');
-  const origamiImageFiles = fs.existsSync(origamiImagesDir)
-    ? fs.readdirSync(origamiImagesDir).filter((f) => /\.(png|jpg|jpeg|webp)$/i.test(f))
-    : [];
-  // We don't have a reliable slug->first image mapping from dist (origami assets are flat).
-  // Use first origami image as fallback for all origami detail pages, or leave image null.
-  const firstOrigamiImage = origamiImageFiles.length
-    ? BASE_URL + '/assets/images/origami/' + origamiImageFiles.sort()[0]
-    : null;
+
+  const flatImagesDir = path.join(DIST, 'assets', 'images');
+  const origamiBaseImagesDir = path.join(flatImagesDir, 'origami');
 
   for (const slug of origamiSlugs) {
     const infoPath = path.join(ROOT, 'src', 'assets', 'origami', 'my-designs', slug, 'info.md');
@@ -164,10 +180,29 @@ function main() {
     } else {
       description = `${title} — origami.`;
     }
+
+    // Prefer per-slug folder (same as projects): dist/assets/images/origami/<slug>/
+    let image = null;
+    const slugImageDir = path.join(origamiBaseImagesDir, slug);
+    if (fs.existsSync(slugImageDir)) {
+      const files = fs.readdirSync(slugImageDir)
+        .filter((f) => /\.(png|jpg|jpeg|webp)$/i.test(f) && !f.includes('pattern'))
+        .sort();
+      if (files.length > 0) {
+        const relativePath = path.relative(DIST, path.join(slugImageDir, files[0])).replace(/\\/g, '/');
+        image = BASE_URL + '/' + relativePath;
+      }
+    }
+    // Fallback: flat dist (e.g. before next build)
+    if (!image) {
+      const stem = getFirstOrigamiImageBasename(slug);
+      if (stem) image = findOrigamiImageInDist(stem, flatImagesDir);
+    }
+
     meta['/origami/' + slug] = {
       title: title + ' | Coleman Lai',
       description,
-      image: firstOrigamiImage,
+      image,
     };
   }
 

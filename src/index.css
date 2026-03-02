@@ -603,7 +603,7 @@
   .masonry-col > .spotlight-item {
     break-inside: avoid;
     margin-bottom: 3.5rem;
-    padding-bottom: 3rem;
+    padding-bottom: 1rem;
     border-bottom: 1px solid var(--color-border);
   }
 }

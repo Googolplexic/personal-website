@@ -517,23 +517,35 @@ export default defineConfig(({ mode }) => ({
       output: {
         hoistTransitiveImports: false,
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name?.split('.') || [];
-          const ext = info[info.length - 1];
+          // Prefer Rollup 4+ 'names' (array); 'name' is deprecated
+          const assetName = (assetInfo as { names?: string[] }).names?.[0] ?? (assetInfo as { name?: string }).name ?? '';
+          const info = assetName.split('.');
+          const ext = info[info.length - 1] ?? '';
+          // Prefer original path (Rollup 4+) so we can group by folder
+          const rawPath =
+            (typeof (assetInfo as { originalFileNames?: string[] }).originalFileNames !== 'undefined' &&
+             (assetInfo as { originalFileNames: string[] }).originalFileNames?.[0]) ||
+            (typeof (assetInfo as { originalFileName?: string }).originalFileName !== 'undefined' &&
+             (assetInfo as { originalFileName: string }).originalFileName) ||
+            assetName;
+          const pathNorm = rawPath.replace(/\\/g, '/');
 
           // Group images by project
           if (['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'].includes(ext)) {
-            const name = assetInfo.name || '';
-
             // Extract project name from path if available
-            if (name.includes('projects/')) {
-              const projectMatch = name.match(/projects\/([^/]+)\//);
+            if (pathNorm.includes('projects/')) {
+              const projectMatch = pathNorm.match(/projects\/([^/]+)\//);
               if (projectMatch) {
                 return `assets/images/projects/${projectMatch[1]}/[name]-[hash][extname]`;
               }
             }
 
-            // Other images (origami, etc.)
-            if (name.includes('origami/')) {
+            // Group origami images by slug (path contains .../origami/.../my-designs/<slug>/ or other-designs/<slug>/)
+            if (pathNorm.includes('origami')) {
+              const origamiMatch = pathNorm.match(/origami\/[^/]+\/([^/]+)\//);
+              if (origamiMatch) {
+                return `assets/images/origami/${origamiMatch[1]}/[name]-[hash][extname]`;
+              }
               return `assets/images/origami/[name]-[hash][extname]`;
             }
 
