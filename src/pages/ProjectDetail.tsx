@@ -4,7 +4,10 @@ import Markdown from 'react-markdown';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
 import { NotFound } from './NotFound';
 import { HighlightedText } from '../components/ui/HighlightedText';
+import { ShareButton } from '../components/ui/ShareButton';
 import React from 'react';
+
+const BASE_URL = 'https://www.colemanlai.com';
 
 export function ProjectDetail() {
     const { projectSlug } = useParams();
@@ -17,9 +20,10 @@ export function ProjectDetail() {
         return <NotFound />;
     }
 
-    const exhibitNumber = String(projects.length - projects.indexOf(project)).padStart(2, '0');
     const currentIndex = projects.indexOf(project);
+    const exhibitNumber = String(projects.length - currentIndex).padStart(2, '0');
     const nextProject = projects[(currentIndex + 1) % projects.length];
+    const shareUrl = `${BASE_URL}/portfolio/${project.slug}`;
 
     const components = {
         p: ({ children, ...props }: React.HTMLProps<HTMLParagraphElement>) => (
@@ -157,6 +161,7 @@ export function ProjectDetail() {
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="inline ml-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                                     </a>
                                 )}
+                                <ShareButton url={shareUrl} title={project.title} description={project.summary} />
                             </div>
 
                             <div className="gallery-divider !mx-0" />

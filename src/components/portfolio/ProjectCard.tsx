@@ -6,6 +6,9 @@ import { CategoryLabel } from '../ui/CategoryLabel';
 import { LazyImage } from '../ui/LazyImage';
 import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage } from '../../utils/lazyImages';
+import { ShareButton } from '../ui/ShareButton';
+
+const BASE_URL = 'https://www.colemanlai.com';
 
 function resolveFirstImageSync(images: ProjectProps['images']): string {
     if (!images) return '';
@@ -31,6 +34,7 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
     const [firstImage, setFirstImage] = useState<string>(() => resolveFirstImageSync(props.images));
 
     const projectPath = `${basePath}/${props.slug}${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
+    const shareUrl = `${BASE_URL}/portfolio/${props.slug}`;
 
     useEffect(() => {
         if (firstImage) return;
@@ -42,17 +46,18 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
         }
     }, [props.images, firstImage]);
 
-    const handleClick = (e: React.MouseEvent) => {
-        if (!(e.target as HTMLElement).closest('a')) {
-            navigate(projectPath);
-            window.scrollTo(0, 0);
-        }
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        navigate(projectPath);
+        window.scrollTo(0, 0);
     };
 
     return (
-        <div
+        <a
+            href={projectPath}
             onClick={handleClick}
             className="spotlight-item flex flex-col cursor-pointer group break-inside-avoid"
+            style={{ textDecoration: 'none', color: 'inherit' }}
         >
             {/* Image — no rounding, raw edge */}
             {firstImage && (
@@ -95,8 +100,9 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
                             </span>
                         ))}
                     </div>
+                    <ShareButton url={shareUrl} title={props.title} description={props.summary} />
                 </div>
             </div>
-        </div>
+        </a>
     );
 }

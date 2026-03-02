@@ -59,7 +59,7 @@ function AppContent() {
                         <Routes>
                             <Route path="/" element={<RootRoute />} />
                             <Route path="/portfolio/*" element={<Portfolio />} />
-                            <Route path="/origami" element={<Origami />} />
+                            <Route path="/origami/*" element={<Origami />} />
                             <Route path="/admin" element={<AdminPage />} />
                             <Route path="*" element={<NotFound />} />
                         </Routes>

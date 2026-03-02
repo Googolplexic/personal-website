@@ -192,12 +192,10 @@ export function GroupedItemGrid({
             return (
                 <OrigamiCard
                     key={item.slug}
+                    slug={item.slug}
                     title={origami.title}
                     description={origami.description}
                     modelImages={origami.modelImages}
-                    modelImagesFull={origami.modelImagesFull}
-                    creasePattern={origami.creasePattern}
-                    creasePatternFull={origami.creasePatternFull}
                     date={origami.date}
                     designer={origami.designer}
                     searchTerm={searchTerm}
