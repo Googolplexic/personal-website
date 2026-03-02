@@ -1,4 +1,4 @@
-import projects from "../assets/projects";
+import allProjects from "../assets/projects";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { ProjectDetail } from "./ProjectDetail";
 import { SEO } from "../components/layout/SEO";
@@ -14,7 +14,7 @@ function withCurrentRoleSeo(description: string): string {
     return `${trimmed}${needsTerminalPunctuation ? '.' : ''} ${ROLE_SEO_SENTENCE}`;
 }
 
-function getProjectImage(project: typeof projects[number]): string | undefined {
+function getProjectImage(project: typeof allProjects[number]): string | undefined {
     const imgs = project.images;
     if (!imgs) return undefined;
     if (Array.isArray(imgs) && imgs.length > 0) return imgs[0];
@@ -43,7 +43,7 @@ function PortfolioGrid() {
 export function Portfolio() {
     const location = useLocation();
     const projectSlug = location.pathname.split('/portfolio/')[1];
-    const currentProject = projectSlug ? projects.find(p => p.slug === projectSlug) : null;
+    const currentProject = projectSlug ? allProjects.find(p => p.slug === projectSlug) : null;
 
     const projectImage = currentProject ? getProjectImage(currentProject) : undefined;
     const projectOgImage = projectImage
@@ -59,8 +59,8 @@ export function Portfolio() {
         "isPartOf": { "@type": "WebSite", "name": "Coleman Lai", "url": BASE_URL },
         "mainEntity": {
             "@type": "ItemList",
-            "numberOfItems": projects.length,
-            "itemListElement": projects.map((p, i) => ({
+            "numberOfItems": allProjects.length,
+            "itemListElement": allProjects.map((p, i) => ({
                 "@type": "ListItem",
                 "position": i + 1,
                 "name": p.title,

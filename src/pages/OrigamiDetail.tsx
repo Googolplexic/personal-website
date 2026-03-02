@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import allOrigami from '../assets/origami';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
 import { Lightbox } from '../components/ui/Lightbox';
@@ -12,14 +12,23 @@ const BASE_URL = 'https://www.colemanlai.com';
 export function OrigamiDetail() {
     const { origamiSlug } = useParams();
     const navigate = useNavigate();
+    const { state } = useLocation();
     const [cpLightboxOpen, setCpLightboxOpen] = useState(false);
     const origami = allOrigami.find(o => o.slug === origamiSlug);
 
     if (!origami) return <NotFound />;
 
     const currentIndex = allOrigami.indexOf(origami);
-    const nextOrigami = allOrigami[(currentIndex + 1) % allOrigami.length];
-    const exhibitNumber = String(allOrigami.length - currentIndex).padStart(2, '0');
+    // Next = higher exhibit number (newer) = previous in array order
+    const nextIndex = (currentIndex - 1 + allOrigami.length) % allOrigami.length;
+    const nextOrigami = allOrigami[nextIndex];
+    const exhibitNumber = 'O·' + String(allOrigami.length - currentIndex).padStart(2, '0');
+    const nextExhibitNumber = 'O·' + String(allOrigami.length - nextIndex).padStart(2, '0');
+
+    // Back destination: use state.from if it's a known gallery, else canonical /origami
+    const from = (state as { from?: string } | null)?.from;
+    const backTarget = (from === '/origami' || from === '/portfolio') ? from : '/origami';
+    const backLabel = from === '/' ? 'To Gallery' : 'Back to Gallery';
 
     const shareUrl = `${BASE_URL}/origami/${origami.slug}`;
     const categoryLabel = origami.category === 'my-designs' ? 'My Designs' : 'Other Designs';
@@ -32,7 +41,7 @@ export function OrigamiDetail() {
             <div className="max-w-4xl mx-auto px-6 pt-28 pb-20">
                 {/* Back navigation */}
                 <button
-                    onClick={() => navigate('/origami')}
+                    onClick={() => navigate(backTarget)}
                     className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300"
                     style={{ color: 'var(--color-text-tertiary)', background: 'none', border: 'none' }}
                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
@@ -41,7 +50,7 @@ export function OrigamiDetail() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                         <path d="M19 12H5M12 19l-7-7 7-7" />
                     </svg>
-                    Back to Gallery
+                    {backLabel}
                 </button>
 
                 {/* Title */}
@@ -120,20 +129,41 @@ export function OrigamiDetail() {
                 {/* Next origami */}
                 {nextOrigami && (
                     <div className="pt-10" style={{ borderTop: '1px solid var(--divider)' }}>
-                        <div className="flex items-center justify-between">
-                            <p className="gallery-overline">Next</p>
-                            <button
-                                onClick={() => { navigate(`/origami/${nextOrigami.slug}`); window.scrollTo(0, 0); }}
-                                className="inline-flex items-center gap-2 font-heading italic text-lg group p-0"
-                                style={{ color: 'var(--color-text-primary)', background: 'none', border: 'none' }}
-                            >
-                                {nextOrigami.title}
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
-                                    className="transition-transform duration-300 group-hover:translate-x-1">
-                                    <path d="M5 12h14M12 5l7 7-7 7" />
-                                </svg>
-                            </button>
-                        </div>
+                        <p className="gallery-overline mb-5">Next Exhibit</p>
+                        <button
+                            onClick={() => { navigate(`/origami/${nextOrigami.slug}`, { state: { from: backTarget } }); window.scrollTo(0, 0); }}
+                            className="group flex items-center gap-5 w-full text-left p-0 bg-transparent border-none cursor-pointer"
+                        >
+                            {/* Thumbnail */}
+                            {nextOrigami.modelImages.length > 0 && (
+                                <div className="w-16 h-16 flex-shrink-0 overflow-hidden"
+                                    style={{ border: '1px solid var(--color-border)' }}>
+                                    <img
+                                        src={nextOrigami.modelImages[0]}
+                                        alt={nextOrigami.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        loading="lazy"
+                                    />
+                                </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                                <span className="exhibit-label text-xs mb-1 block">{nextExhibitNumber}</span>
+                                <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300"
+                                    style={{ color: 'var(--color-text-primary)' }}
+                                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
+                                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-primary)')}>
+                                    {nextOrigami.title}
+                                </span>
+                                <span className="text-xs font-body tracking-[0.1em]"
+                                    style={{ color: 'var(--color-text-tertiary)' }}>
+                                    {nextOrigami.date}
+                                </span>
+                            </div>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
+                                className="flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </button>
                     </div>
                 )}
             </div>

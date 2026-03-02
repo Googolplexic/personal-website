@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
 import { ShareButton } from '../ui/ShareButton';
@@ -21,13 +21,14 @@ interface OrigamiCardProps {
 
 export function OrigamiCard({ slug, title, description, modelImages, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false }: OrigamiCardProps) {
     const navigate = useNavigate();
+    const location = useLocation();
     const heroImage = modelImages[0];
     const shareUrl = `${BASE_URL}/origami/${slug}`;
     const path = `/origami/${slug}`;
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        navigate(path);
+        navigate(path, { state: { from: location.pathname } });
         window.scrollTo(0, 0);
     };
 

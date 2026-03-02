@@ -33,8 +33,10 @@ export function GroupedItemGrid({
     software = []
 }: GroupedItemGridProps) {
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedTech, setSelectedTech] = useState<string>('');
-    const [selectedTag, setSelectedTag] = useState<string>('');
+    const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [techFilterMode, setTechFilterMode] = useState<'and' | 'or'>('or');
+    const [tagFilterMode, setTagFilterMode] = useState<'and' | 'or'>('or');
     const [sortBy, setSortBy] = useState<SortOption>('date-desc');
     const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
     const [showGrouping, setShowGrouping] = useState(initialShowGrouping);
@@ -51,17 +53,24 @@ export function GroupedItemGrid({
     };
 
     const { allTechnologies, allTags } = useMemo(() => {
-        const techSet = new Set<string>();
-        const tagSet = new Set<string>();
+        // Deduplicate case-insensitively: first occurrence wins
+        const techMap = new Map<string, string>();
+        const tagMap = new Map<string, string>();
         items.forEach(item => {
             if (item.type === 'project') {
-                (item as ProjectProps).technologies?.forEach(tech => techSet.add(tech));
+                (item as ProjectProps).technologies?.forEach(tech => {
+                    const key = tech.toLowerCase();
+                    if (!techMap.has(key)) techMap.set(key, tech);
+                });
             }
-            item.tags?.forEach(tag => tagSet.add(tag));
+            item.tags?.forEach(tag => {
+                const key = tag.toLowerCase();
+                if (!tagMap.has(key)) tagMap.set(key, tag);
+            });
         });
         return {
-            allTechnologies: Array.from(techSet).sort(),
-            allTags: Array.from(tagSet).sort()
+            allTechnologies: Array.from(techMap.values()).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())),
+            allTags: Array.from(tagMap.values()).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
         };
     }, [items]);
 
@@ -105,9 +114,20 @@ export function GroupedItemGrid({
         const searchLower = searchTerm.toLowerCase();
 
         const filtered = baseItems.filter(item => {
-            const matchesTech = selectedTech === '' ||
-                (item.type === 'project' && (item as ProjectProps).technologies?.includes(selectedTech));
-            const matchesTag = selectedTag === '' || item.tags?.includes(selectedTag);
+            const techs = (item.type === 'project' ? ((item as ProjectProps).technologies ?? []) : []).map(t => t.toLowerCase());
+            const selectedTechsLower = selectedTechs.map(t => t.toLowerCase());
+            const matchesTech = selectedTechsLower.length === 0 || (
+                techFilterMode === 'or'
+                    ? selectedTechsLower.some(t => techs.includes(t))
+                    : selectedTechsLower.every(t => techs.includes(t))
+            );
+            const tags = (item.tags ?? []).map(t => t.toLowerCase());
+            const selectedTagsLower = selectedTags.map(t => t.toLowerCase());
+            const matchesTag = selectedTagsLower.length === 0 || (
+                tagFilterMode === 'or'
+                    ? selectedTagsLower.some(t => tags.includes(t))
+                    : selectedTagsLower.every(t => tags.includes(t))
+            );
             const matchesTitle = norm(item.title).includes(searchLower);
 
             let matchesContent = false;
@@ -127,7 +147,7 @@ export function GroupedItemGrid({
             return matchesTech && matchesTag && (searchTerm === '' || matchesTitle || matchesContent);
         });
 
-        return filtered.sort((a, b) => {
+        return [...filtered].sort((a, b) => {
             if (searchTerm) {
                 // First priority: title matches
                 const aTitle = norm(a.title).includes(searchLower);
@@ -162,7 +182,7 @@ export function GroupedItemGrid({
                     return 0;
             }
         });
-    }, [items, featuredSlugs, searchTerm, selectedTech, selectedTag, sortBy, categoryFilter]);
+    }, [items, featuredSlugs, searchTerm, selectedTechs, selectedTags, techFilterMode, tagFilterMode, sortBy, categoryFilter]);
 
     const itemCounts = {
         myDesigns: myDesigns.length,
@@ -235,10 +255,14 @@ export function GroupedItemGrid({
                 <GroupedSearch
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
-                    selectedTech={selectedTech}
-                    setSelectedTech={setSelectedTech}
-                    selectedTag={selectedTag}
-                    setSelectedTag={setSelectedTag}
+                    selectedTechs={selectedTechs}
+                    setSelectedTechs={setSelectedTechs}
+                    selectedTags={selectedTags}
+                    setSelectedTags={setSelectedTags}
+                    techFilterMode={techFilterMode}
+                    setTechFilterMode={setTechFilterMode}
+                    tagFilterMode={tagFilterMode}
+                    setTagFilterMode={setTagFilterMode}
                     sortBy={sortBy}
                     setSortBy={setSortBy}
                     categoryFilter={categoryFilter}
@@ -250,6 +274,15 @@ export function GroupedItemGrid({
                     showGrouping={showGrouping}
                     setShowGrouping={allowGroupingToggle ? setShowGrouping : undefined}
                     itemCounts={itemCounts}
+                    onReset={() => {
+                        setSearchTerm('');
+                        setSelectedTechs([]);
+                        setSelectedTags([]);
+                        setTechFilterMode('or');
+                        setTagFilterMode('or');
+                        setSortBy('date-desc');
+                        setCategoryFilter('all');
+                    }}
                 />
             )}
 
@@ -283,9 +316,8 @@ export function GroupedItemGrid({
                                         </svg>
                                     </button>
                                     <div
-                                        className={`grid transition-[grid-template-rows] duration-500 ease-in-out ${
-                                            isCollapsed ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'
-                                        }`}
+                                        className={`grid transition-[grid-template-rows] duration-500 ease-in-out ${isCollapsed ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]'
+                                            }`}
                                     >
                                         <div className="overflow-hidden">
                                             <MasonrySpotlightGrid skipCount={1}>

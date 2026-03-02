@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ProjectProps } from '../../types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
 import { LazyImage } from '../ui/LazyImage';
@@ -31,6 +31,7 @@ interface ProjectWithBasePath extends ProjectProps {
 
 export function ProjectCard({ basePath = '/portfolio', searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false, ...props }: ProjectWithBasePath) {
     const navigate = useNavigate();
+    const location = useLocation();
     const [firstImage, setFirstImage] = useState<string>(() => resolveFirstImageSync(props.images));
 
     const projectPath = `${basePath}/${props.slug}${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
@@ -48,7 +49,7 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        navigate(projectPath);
+        navigate(projectPath, { state: { from: location.pathname } });
         window.scrollTo(0, 0);
     };
 

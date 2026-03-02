@@ -16,7 +16,7 @@ technologies:
 - TypeScript
 - VS Code Extension API
 - Canvas API
-- FOLD Format
+- FOLD format
 githubUrl: https://github.com/Googolplexic/vscode-fold-preview
 liveUrl: https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview
 startDate: 2024-11

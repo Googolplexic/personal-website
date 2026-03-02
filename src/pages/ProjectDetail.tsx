@@ -1,5 +1,5 @@
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import projects from '../assets/projects';
+import { useParams, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import allProjects from '../assets/projects';
 import Markdown from 'react-markdown';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
 import { NotFound } from './NotFound';
@@ -13,16 +13,25 @@ export function ProjectDetail() {
     const { projectSlug } = useParams();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const { state } = useLocation();
     const searchTerm = searchParams.get('search') || '';
-    const project = projects.find(p => p.slug === projectSlug);
+    const project = allProjects.find(p => p.slug === projectSlug);
 
     if (!project) {
         return <NotFound />;
     }
 
-    const currentIndex = projects.indexOf(project);
-    const exhibitNumber = String(projects.length - currentIndex).padStart(2, '0');
-    const nextProject = projects[(currentIndex + 1) % projects.length];
+    const currentIndex = allProjects.indexOf(project);
+    const exhibitNumber = 'P·' + String(allProjects.length - currentIndex).padStart(2, '0');
+    // Next = higher exhibit number (newer) = previous in array order
+    const nextIndex = (currentIndex - 1 + allProjects.length) % allProjects.length;
+    const nextProject = allProjects[nextIndex];
+    const nextExhibitNumber = 'P·' + String(allProjects.length - nextIndex).padStart(2, '0');
+
+    // Back destination: use state.from if it's a known gallery, else canonical /portfolio
+    const from = (state as { from?: string } | null)?.from;
+    const backTarget = (from === '/portfolio' || from === '/origami') ? from : '/portfolio';
+    const backLabel = from === '/' ? 'To Gallery' : 'Back to Gallery';
     const shareUrl = `${BASE_URL}/portfolio/${project.slug}`;
 
     const components = {
@@ -78,7 +87,7 @@ export function ProjectDetail() {
             <div className="max-w-5xl mx-auto px-6 pt-28 pb-20">
                 {/* Back navigation — in page flow, below navbar */}
                 <button
-                    onClick={() => navigate('/portfolio')}
+                    onClick={() => navigate(backTarget)}
                     className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300"
                     style={{ color: 'var(--color-text-tertiary)', background: 'none', border: 'none' }}
                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
@@ -87,7 +96,7 @@ export function ProjectDetail() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                         <path d="M19 12H5M12 19l-7-7 7-7" />
                     </svg>
-                    Back to Gallery
+                    {backLabel}
                 </button>
 
                 {/* Exhibit label + title */}
@@ -172,20 +181,41 @@ export function ProjectDetail() {
                 {/* Next project */}
                 {nextProject && (
                     <div className="mt-24 pt-10" style={{ borderTop: '1px solid var(--divider)' }}>
-                        <div className="flex items-center justify-between">
-                            <p className="gallery-overline">Next</p>
-                            <button
-                                onClick={() => { navigate(`/portfolio/${nextProject.slug}`); window.scrollTo(0, 0); }}
-                                className="inline-flex items-center gap-2 font-heading italic text-lg group p-0"
-                                style={{ color: 'var(--color-text-primary)', background: 'none', border: 'none' }}
-                            >
-                                {nextProject.title}
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
-                                    className="transition-transform duration-300 group-hover:translate-x-1">
-                                    <path d="M5 12h14M12 5l7 7-7 7" />
-                                </svg>
-                            </button>
-                        </div>
+                        <p className="gallery-overline mb-5">Next Exhibit</p>
+                        <button
+                            onClick={() => { navigate(`/portfolio/${nextProject.slug}`, { state: { from: backTarget } }); window.scrollTo(0, 0); }}
+                            className="group flex items-center gap-5 w-full text-left p-0 bg-transparent border-none cursor-pointer"
+                        >
+                            {/* Thumbnail */}
+                            {Array.isArray(nextProject.images) && nextProject.images.length > 0 && (
+                                <div className="w-16 h-16 flex-shrink-0 overflow-hidden"
+                                    style={{ border: '1px solid var(--color-border)' }}>
+                                    <img
+                                        src={nextProject.images[0] as string}
+                                        alt={nextProject.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        loading="lazy"
+                                    />
+                                </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                                <span className="exhibit-label text-xs mb-1 block">{nextExhibitNumber}</span>
+                                <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300"
+                                    style={{ color: 'var(--color-text-primary)' }}
+                                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
+                                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-primary)')}>
+                                    {nextProject.title}
+                                </span>
+                                <span className="text-xs font-body tracking-[0.1em]"
+                                    style={{ color: 'var(--color-text-tertiary)' }}>
+                                    {nextProject.startDate}
+                                </span>
+                            </div>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
+                                className="flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </button>
                     </div>
                 )}
             </div>

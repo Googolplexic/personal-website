@@ -1,50 +1,65 @@
 import { Dispatch, SetStateAction } from 'react';
 import { ItemProps } from '../../types';
 import { Button } from '../ui/base';
-import { formInput, formSelect } from '../../utils/styles';
+import { formInput } from '../../utils/styles';
+import { MultiSelect } from '../ui/MultiSelect';
 
 export type SortOption = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'tech-count';
+
+const SORT_LABELS: Record<string, string> = {
+    'date-desc': 'Newest First',
+    'date-asc': 'Oldest First',
+    'title-asc': 'Title A–Z',
+    'title-desc': 'Title Z–A',
+    'tech-count': 'Most Technologies',
+};
 
 interface UniversalSearchProps {
     searchTerm: string;
     setSearchTerm: Dispatch<SetStateAction<string>>;
-    selectedTech: string;
-    setSelectedTech: Dispatch<SetStateAction<string>>;
-    selectedTag: string;
-    setSelectedTag: Dispatch<SetStateAction<string>>;
+    selectedTechs: string[];
+    setSelectedTechs: Dispatch<SetStateAction<string[]>>;
+    selectedTags: string[];
+    setSelectedTags: Dispatch<SetStateAction<string[]>>;
+    techFilterMode: 'and' | 'or';
+    setTechFilterMode: Dispatch<SetStateAction<'and' | 'or'>>;
+    tagFilterMode: 'and' | 'or';
+    setTagFilterMode: Dispatch<SetStateAction<'and' | 'or'>>;
     sortBy: SortOption;
     setSortBy: Dispatch<SetStateAction<SortOption>>;
     allTechnologies: string[];
     allTags: string[];
     items: ItemProps[];
     contentType: 'projects' | 'origami' | 'mixed';
+    onReset: () => void;
 }
 
 export function UniversalSearch({
     searchTerm,
     setSearchTerm,
-    selectedTech,
-    setSelectedTech,
-    selectedTag,
-    setSelectedTag,
+    selectedTechs,
+    setSelectedTechs,
+    selectedTags,
+    setSelectedTags,
+    techFilterMode,
+    setTechFilterMode,
+    tagFilterMode,
+    setTagFilterMode,
     sortBy,
     setSortBy,
     allTechnologies,
     allTags,
     items,
     contentType,
+    onReset,
 }: UniversalSearchProps) {
 
     const getPlaceholderText = () => {
         switch (contentType) {
-            case 'projects':
-                return 'Search projects...';
-            case 'origami':
-                return 'Search origami...';
-            case 'mixed':
-                return 'Search origami...';
-            default:
-                return 'Search...';
+            case 'projects': return 'Search projects...';
+            case 'origami': return 'Search origami...';
+            case 'mixed': return 'Search...';
+            default: return 'Search...';
         }
     };
 
@@ -52,20 +67,13 @@ export function UniversalSearch({
     const showTechFilter = hasProjects && allTechnologies.length > 0;
     const showTagFilter = allTags.length > 0;
 
-    const getSortOptions = () => {
-        const baseOptions = [
-            { value: 'date-desc', label: 'Newest First' },
-            { value: 'date-asc', label: 'Oldest First' },
-            { value: 'title-asc', label: 'Title A-Z' },
-            { value: 'title-desc', label: 'Title Z-A' },
-        ];
-
-        if (hasProjects) {
-            baseOptions.push({ value: 'tech-count', label: 'Most Technologies' });
-        }
-
-        return baseOptions;
-    };
+    const sortOptions = [
+        'date-desc',
+        'date-asc',
+        'title-asc',
+        'title-desc',
+        ...(hasProjects ? ['tech-count'] : []),
+    ];
 
     return (
         <div className="mb-6">
@@ -80,56 +88,44 @@ export function UniversalSearch({
 
                 <div className="flex flex-col sm:flex-row gap-3">
                     {showTechFilter && (
-                        <select
+                        <MultiSelect
                             aria-label="Filter by technology"
-                            value={selectedTech}
-                            onChange={(e) => setSelectedTech(e.target.value)}
-                            className={formSelect()}
-                        >
-                            <option value="">All Technologies</option>
-                            {allTechnologies.map(tech => (
-                                <option key={tech} value={tech}>{tech}</option>
-                            ))}
-                        </select>
+                            options={allTechnologies}
+                            selected={selectedTechs}
+                            onChange={setSelectedTechs}
+                            filterMode={techFilterMode}
+                            onFilterModeChange={setTechFilterMode}
+                            placeholder="All Technologies"
+                        />
                     )}
 
                     {showTagFilter && (
-                        <select
+                        <MultiSelect
                             aria-label="Filter by tag"
-                            value={selectedTag}
-                            onChange={(e) => setSelectedTag(e.target.value)}
-                            className={formSelect()}
-                        >
-                            <option value="">All Tags</option>
-                            {allTags.map(tag => (
-                                <option key={tag} value={tag}>{tag}</option>
-                            ))}
-                        </select>
+                            options={allTags}
+                            selected={selectedTags}
+                            onChange={setSelectedTags}
+                            filterMode={tagFilterMode}
+                            onFilterModeChange={setTagFilterMode}
+                            placeholder="All Tags"
+                        />
                     )}
 
-                    <select
+                    <MultiSelect
                         aria-label="Sort items"
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value as SortOption)}
-                        className={formSelect()}
-                    >
-                        {getSortOptions().map(option => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
+                        options={sortOptions}
+                        optionLabels={SORT_LABELS}
+                        selected={[sortBy]}
+                        onChange={([v]) => setSortBy((v ?? 'date-desc') as SortOption)}
+                        placeholder="Sort"
+                        singleSelect
+                    />
 
                     <Button
                         variant="secondary"
                         className="px-4 py-2 whitespace-nowrap"
-                        onClick={() => {
-                            setSearchTerm('');
-                            setSelectedTech('');
-                            setSelectedTag('');
-                            setSortBy('date-desc');
-                        }
-                        }>
+                        onClick={onReset}
+                    >
                         Reset
                     </Button>
                 </div>

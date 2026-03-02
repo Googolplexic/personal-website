@@ -3,7 +3,7 @@ import { ProjectProps } from '../../types';
 const getMostRecentDate = (project: ProjectProps) => new Date(project.endDate || Date.now());
 
 const modules = import.meta.glob('./**/index.ts', { eager: true });
-const projects: ProjectProps[] = Object.entries(modules)
+const allProjects: ProjectProps[] = Object.entries(modules)
     .filter(([path]) => !path.includes('/template/'))
     .map(([path, module]) => ({
         ...(module as { default: ProjectProps }).default,
@@ -17,5 +17,5 @@ const projects: ProjectProps[] = Object.entries(modules)
         return dateB.getTime() - dateA.getTime();
     });
 
-export default projects;
+export default allProjects;
 
