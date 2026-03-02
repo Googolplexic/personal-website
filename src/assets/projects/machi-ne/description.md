@@ -63,7 +63,7 @@ The project features:
 - **Incident Management**
   - Password-protected operations
     - MD5 hashed passwords
-    - Operators can edit incidents and change status
+    - Operators can edit incidents and change statuses
   - Password changing functionality
     - Passwords are hashed and stored in local storage
     - Password change requires old password verification
