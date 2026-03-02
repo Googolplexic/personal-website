@@ -15,8 +15,10 @@ export function ShareButton({ url, title, description, className = '' }: ShareBu
         e.preventDefault(); // prevent parent <a> from following its href
         try {
             if (navigator.share) {
-                await navigator.share({ url, title, text: description });
+                const shareText = [title, description].filter(Boolean).join('\n\n');
+                await navigator.share({ url, title, text: shareText || undefined });
             } else {
+                // Just the URL — most paste targets (Slack, Discord, email) unfurl and show OG preview
                 await navigator.clipboard.writeText(url);
                 setState('copied');
                 setTimeout(() => setState('idle'), 2000);
