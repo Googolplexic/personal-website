@@ -301,6 +301,32 @@ const scanProjects = () => {
 // Get current projects
 const currentProjects = scanProjects()
 
+// Auto-detect origami slugs from my-designs + other-designs
+const origamiBaseDir = resolve(__dirname, 'src/assets/origami')
+const scanOrigami = (): { slug: string; path: string }[] => {
+  const out: { slug: string; path: string }[] = []
+  for (const group of ['my-designs', 'other-designs']) {
+    const groupPath = resolve(origamiBaseDir, group)
+    if (!existsSync(groupPath)) continue
+    const entries = readdirSync(groupPath, { withFileTypes: true })
+    entries
+      .filter(
+        (entry) =>
+          entry.isDirectory() &&
+          entry.name !== 'template' &&
+          existsSync(resolve(groupPath, entry.name, 'index.ts'))
+      )
+      .forEach((entry) => {
+        out.push({
+          slug: entry.name,
+          path: `assets/origami/${group}/${entry.name}`,
+        })
+      })
+  }
+  return out
+}
+const currentOrigami = scanOrigami()
+
 // Auto-generate portfolioProjects configuration
 const generateProjectConfig = (projectName: string) => {
   // Default configuration
@@ -343,9 +369,11 @@ const portfolioProjects = Object.fromEntries(
 )
 
 console.log(`🚀 Auto-detected ${currentProjects.length} projects:`, currentProjects.join(', '))
+console.log(`🎌 Auto-detected ${currentOrigami.length} origami:`, currentOrigami.map((o) => o.slug).join(', '))
 
 const names = [
   'origami',
+  ...currentOrigami.map((o) => `origami/${o.slug}`),
   'portfolio',
   ...Object.keys(portfolioProjects).map(name => `portfolio/${name}`)
 ]
@@ -355,6 +383,9 @@ const routePriorities = {
   '/': 1.0,
   '/origami': 0.8,
   '/portfolio': 0.9,
+  ...Object.fromEntries(
+    currentOrigami.map((o) => [`/origami/${o.slug}`, 0.7])
+  ),
   ...Object.fromEntries(
     Object.entries(portfolioProjects).map(([name, data]) =>
       [`/portfolio/${name}`, data.priority]
@@ -366,6 +397,9 @@ const routeChangeFreq = {
   '/': 'weekly',
   '/origami': 'weekly',
   '/portfolio': 'monthly',
+  ...Object.fromEntries(
+    currentOrigami.map((o) => [`/origami/${o.slug}`, 'monthly'])
+  ),
   ...Object.fromEntries(
     Object.entries(portfolioProjects).map(([name, data]) =>
       [`/portfolio/${name}`, data.changefreq]
@@ -422,11 +456,14 @@ const getUpdatedLastModTime = (path: string) => {
   return finalMtime
 }
 
-// Auto-generate route lastmod for all current projects
+// Auto-generate route lastmod for all current projects and origami
 const routeLastMod = {
   '/': getUpdatedLastModTime('pages/Home.tsx'),
   '/origami': getUpdatedLastModTime('pages/Origami.tsx'),
   '/portfolio': getUpdatedLastModTime('pages/Portfolio.tsx'),
+  ...Object.fromEntries(
+    currentOrigami.map((o) => [`/origami/${o.slug}`, getUpdatedLastModTime(o.path)])
+  ),
   ...Object.fromEntries(
     currentProjects.map(name => {
       const path = `assets/projects/${name}`
@@ -441,6 +478,14 @@ for (const project of currentProjects) {
   if (!cache[cacheKey]) {
     cache[cacheKey] = getLastModTime(`assets/projects/${project}`)
     console.log(`📝 Added cache entry for new project: ${project}`)
+  }
+}
+
+// Update cache for any missing origami
+for (const o of currentOrigami) {
+  if (!cache[o.path]) {
+    cache[o.path] = getLastModTime(o.path)
+    console.log(`📝 Added cache entry for origami: ${o.slug}`)
   }
 }
 
