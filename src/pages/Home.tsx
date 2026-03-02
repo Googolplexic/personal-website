@@ -1,8 +1,10 @@
 import { About } from '../components/sections/About';
 import { LinkSection, type LinkSectionItem } from '../components/sections/LinkSection';
 import { SEO } from '../components/layout/SEO';
-import { ProjectGrid } from '../components/portfolio/ProjectGrid';
+import { ItemGrid } from '../components/ui/ItemGrid';
 import { Link } from '../components/ui/base';
+import allProjects from '../assets/projects';
+import allOrigami from '../assets/origami';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
 import { useCallback, useEffect, useRef } from 'react';
 import { HeroParticles } from '../components/ui/HeroParticles';
@@ -30,6 +32,8 @@ function ScrollSection({ children, className = '' }: { children: React.ReactNode
         </section>
     );
 }
+
+const allItems = [...allProjects, ...allOrigami];
 
 export function Home() {
     const featuredSlugs = ['hermes', 'personal-website', 'be-square', 'origami-fractions'];
@@ -279,16 +283,18 @@ export function Home() {
                         <p className="gallery-overline mb-4">The Gallery</p>
                         <h2 className="gallery-heading text-3xl md:text-4xl mb-2"
                             style={{ color: 'var(--color-text-primary)' }}>
-                            Featured Projects
+                            Featured Works
                         </h2>
                         <p className="text-sm font-heading italic"
                             style={{ color: 'var(--color-text-secondary)' }}>
                             A curated selection of my proudest works. Updated from time to time.
                         </p>
                     </div>
-                    <ProjectGrid
+                    <ItemGrid
+                        items={allItems}
                         featuredSlugs={featuredSlugs}
                         hideControls
+                        itemType="mixed"
                     />
                 </div>
             </ScrollSection>

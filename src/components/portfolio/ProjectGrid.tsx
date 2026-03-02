@@ -1,8 +1,8 @@
-import projects from "../../assets/projects";
+import allProjects from "../../assets/projects";
 import { ItemGrid } from "../ui/ItemGrid";
 
 interface ProjectGridProps {
-    projectList?: typeof projects;
+    projectList?: typeof allProjects;
     title?: string;
     className?: string;
     featuredSlugs?: string[];
@@ -16,7 +16,7 @@ export function ProjectGrid({
     className = "",
     hideControls = false
 }: ProjectGridProps) {
-    const items = projectList || projects;
+    const items = projectList || allProjects;
 
     return (
         <ItemGrid
