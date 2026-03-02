@@ -1,14 +1,15 @@
-import { Carousel } from '../ui/Carousel';
+import { useNavigate } from 'react-router-dom';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
+import { ShareButton } from '../ui/ShareButton';
+
+const BASE_URL = 'https://www.colemanlai.com';
 
 interface OrigamiCardProps {
+    slug: string;
     title: string;
     description?: string;
     modelImages: string[];
-    modelImagesFull?: string[];
-    creasePattern?: string;
-    creasePatternFull?: string;
     date?: string;
     designer?: string;
     searchTerm?: string;
@@ -18,22 +19,37 @@ interface OrigamiCardProps {
     priority?: boolean;
 }
 
-export function OrigamiCard({ title, description, modelImages, modelImagesFull, creasePattern, creasePatternFull, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false }: OrigamiCardProps) {
-    return (
-        <div className="spotlight-item flex flex-col break-inside-avoid group">
-            {/* Image first — like project cards */}
-            <div className="mb-3">
-                <Carousel
-                    modelImages={modelImages}
-                    modelImagesFull={modelImagesFull}
-                    creasePattern={creasePattern}
-                    creasePatternFull={creasePatternFull}
-                    priority={priority}
-                />
-            </div>
+export function OrigamiCard({ slug, title, description, modelImages, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false }: OrigamiCardProps) {
+    const navigate = useNavigate();
+    const heroImage = modelImages[0];
+    const shareUrl = `${BASE_URL}/origami/${slug}`;
+    const path = `/origami/${slug}`;
 
-            {/* Content below image */}
-            <div className="pt-2 pb-4 flex-1 flex flex-col">
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        navigate(path);
+        window.scrollTo(0, 0);
+    };
+
+    return (
+        <a
+            href={path}
+            onClick={handleClick}
+            className="spotlight-item flex flex-col cursor-pointer group break-inside-avoid"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+            {heroImage && (
+                <div className="w-full h-64 flex items-center justify-center overflow-hidden">
+                    <img
+                        src={heroImage}
+                        alt={title}
+                        className="max-h-full max-w-full object-contain"
+                        loading={priority ? 'eager' : 'lazy'}
+                    />
+                </div>
+            )}
+
+            <div className="pt-4 pb-6 flex-1 flex flex-col">
                 {showCategory && categoryLabel && categoryColor && (
                     <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-2" />
                 )}
@@ -44,23 +60,31 @@ export function OrigamiCard({ title, description, modelImages, modelImagesFull, 
                 </h3>
                 {designer && (
                     <p className="text-xs tracking-wide mb-1 font-body"
-                       style={{ color: 'var(--color-text-secondary)' }}>
+                        style={{ color: 'var(--color-text-secondary)' }}>
                         <HighlightedText text={designer} searchTerm={searchTerm} />
                     </p>
                 )}
                 {date && (
                     <p className="text-xs tracking-[0.2em] uppercase mb-2 font-body"
-                       style={{ color: 'var(--color-text-secondary)' }}>
+                        style={{ color: 'var(--color-text-secondary)' }}>
                         {date}
                     </p>
                 )}
                 {description && (
-                    <p className="text-sm leading-relaxed font-body"
-                       style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="text-sm leading-relaxed mb-4 font-body"
+                        style={{ color: 'var(--color-text-secondary)' }}>
                         <HighlightedText text={description} searchTerm={searchTerm} />
                     </p>
                 )}
+
+                <div className="mt-auto">
+                    <ShareButton
+                        url={shareUrl}
+                        title={title}
+                        description={description}
+                    />
+                </div>
             </div>
-        </div>
+        </a>
     );
 }
