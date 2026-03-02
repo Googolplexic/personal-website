@@ -1,0 +1,197 @@
+{
+  "/": {
+    "title": "Coleman Lai | Developer & Origami Artist | Vancouver",
+    "description": "Explore software projects and origami portfolio by Coleman Lai, Gen AI Developer at IFS Copperleaf. Computing Science student at SFU, Vancouver, BC.",
+    "image": null
+  },
+  "/portfolio": {
+    "title": "Software Portfolio | Coleman Lai",
+    "description": "Browse software development projects by Coleman Lai, including web applications, AI implementations, and technical solutions. Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": null
+  },
+  "/origami": {
+    "title": "Origami Gallery | Coleman Lai",
+    "description": "Discover intricate origami creations by Coleman Lai. View complex paper art designs, original patterns, and folding software.",
+    "image": null
+  },
+  "/portfolio/be-square": {
+    "title": "Be Square | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/01-doug-DzfpBryG.png"
+  },
+  "/portfolio/box-pleating": {
+    "title": "Box Pleating | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/01-examples-CeAqYJTl.png"
+  },
+  "/portfolio/data-dave": {
+    "title": "Data Dave | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/01-initial-BrEMB6fq.png"
+  },
+  "/portfolio/fold-preview": {
+    "title": "Fold Preview | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/01-no-labels-bYK7kF3D.png"
+  },
+  "/portfolio/grid-detection": {
+    "title": "Grid Detection | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": null
+  },
+  "/portfolio/hermes": {
+    "title": "Hermes | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": null
+  },
+  "/portfolio/lol-bot": {
+    "title": "Lol Bot | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": null
+  },
+  "/portfolio/machi-ne": {
+    "title": "Machi Ne | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/01-main-CgDMwWfq.webp"
+  },
+  "/portfolio/origami-fractions": {
+    "title": "Origami Fractions | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/01-in-progress-DBxds8DQ.png"
+  },
+  "/portfolio/pdf-merge": {
+    "title": "Pdf Merge | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/image-BkY1TNmO.webp"
+  },
+  "/portfolio/personal-website": {
+    "title": "Personal Website | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/01-homepage-Bcw8WodX.webp"
+  },
+  "/portfolio/sfu-scheduler": {
+    "title": "Sfu Scheduler | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/01-schedule-1-Cf7HaNEF.png"
+  },
+  "/portfolio/sphene": {
+    "title": "Sphene | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/01-demo-C5gZdRdE.webp"
+  },
+  "/portfolio/spirit-of-salmon": {
+    "title": "Spirit Of Salmon | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": null
+  },
+  "/portfolio/template": {
+    "title": "Template | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": null
+  },
+  "/portfolio/territory-ascent": {
+    "title": "Territory Ascent | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": null
+  },
+  "/portfolio/youtube-speed": {
+    "title": "Youtube Speed | Coleman Lai",
+    "description": "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+    "image": "https://www.colemanlai.com/assets/images/image-BkY1TNmO.webp"
+  },
+  "/origami/bladed-tactician": {
+    "title": "bladed-tactician | Coleman Lai",
+    "description": "bladed-tactician — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/dagger": {
+    "title": "dagger | Coleman Lai",
+    "description": "dagger — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/distinguished-figure": {
+    "title": "distinguished-figure | Coleman Lai",
+    "description": "distinguished-figure — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/first-flight": {
+    "title": "first-flight | Coleman Lai",
+    "description": "first-flight — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/hollow-knight": {
+    "title": "hollow-knight | Coleman Lai",
+    "description": "hollow-knight — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/lest-we-forget": {
+    "title": "lest-we-forget | Coleman Lai",
+    "description": "lest-we-forget — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/pi-2023": {
+    "title": "pi-2023 | Coleman Lai",
+    "description": "pi-2023 — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/pi-2024": {
+    "title": "pi-2024 | Coleman Lai",
+    "description": "pi-2024 — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/pi-2025": {
+    "title": "pi-2025 | Coleman Lai",
+    "description": "pi-2025 — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/tonberry": {
+    "title": "tonberry | Coleman Lai",
+    "description": "tonberry — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/assassin-0h": {
+    "title": "assassin-0h | Coleman Lai",
+    "description": "assassin-0h — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/assassin-2h": {
+    "title": "assassin-2h | Coleman Lai",
+    "description": "assassin-2h — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/fennec-fox": {
+    "title": "fennec-fox | Coleman Lai",
+    "description": "fennec-fox — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/fish-owl": {
+    "title": "fish-owl | Coleman Lai",
+    "description": "fish-owl — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/griffin": {
+    "title": "griffin | Coleman Lai",
+    "description": "griffin — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/hatsune-miku": {
+    "title": "hatsune-miku | Coleman Lai",
+    "description": "hatsune-miku — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/invention-of-the-crane": {
+    "title": "invention-of-the-crane | Coleman Lai",
+    "description": "invention-of-the-crane — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/ryujin-3-5": {
+    "title": "ryujin-3-5 | Coleman Lai",
+    "description": "ryujin-3-5 — origami by Coleman Lai.",
+    "image": null
+  },
+  "/origami/walking-in-the-rain": {
+    "title": "walking-in-the-rain | Coleman Lai",
+    "description": "walking-in-the-rain — origami by Coleman Lai.",
+    "image": null
+  }
+}
