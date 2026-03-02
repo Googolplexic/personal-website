@@ -2,6 +2,7 @@
  * Generates api/og-meta.json for crawler OG injection.
  * Run after `vite build` so dist/assets/images/projects/<slug>/ has built image paths.
  * Reads project frontmatter from src/assets/projects/<slug>/description.md.
+ * Uses original image URLs (no cropping); og:image dimensions are omitted so previews show images in their natural aspect ratio.
  */
 
 import fs from 'fs';
@@ -114,7 +115,12 @@ function main() {
   const distImagesDir = path.join(DIST, 'assets', 'images');
   const distProjectsDir = path.join(distImagesDir, 'projects');
 
-  if (!fs.existsSync(SRC_PROJECTS)) return;
+  if (!fs.existsSync(SRC_PROJECTS)) {
+    if (!fs.existsSync(API_DIR)) fs.mkdirSync(API_DIR, { recursive: true });
+    fs.writeFileSync(path.join(API_DIR, 'og-meta.json'), JSON.stringify(meta, null, 2), 'utf-8');
+    console.log('Generated api/og-meta.json (no projects)');
+    return;
+  }
 
   const slugs = fs.readdirSync(SRC_PROJECTS).filter((name) => {
     const p = path.join(SRC_PROJECTS, name);
@@ -181,7 +187,6 @@ function main() {
       description = `${title} — origami.`;
     }
 
-    // Prefer per-slug folder (same as projects): dist/assets/images/origami/<slug>/
     let image = null;
     const slugImageDir = path.join(origamiBaseImagesDir, slug);
     if (fs.existsSync(slugImageDir)) {
@@ -193,7 +198,6 @@ function main() {
         image = BASE_URL + '/' + relativePath;
       }
     }
-    // Fallback: flat dist (e.g. before next build)
     if (!image) {
       const stem = getFirstOrigamiImageBasename(slug);
       if (stem) image = findOrigamiImageInDist(stem, flatImagesDir);

@@ -40,11 +40,13 @@ function buildHtml(meta) {
   const image = meta.image ? escapeHtml(meta.image) : '';
   const url = BASE_URL + (meta.path || '/');
 
+  // Only declare dimensions for the default 1200x630 OG image; custom images keep natural aspect ratio
+  const imageIsOgDimensions = image && image.endsWith('/og-image.png');
   const ogImageTags = image
     ? `
-  <meta property="og:image" content="${image}" />
+  <meta property="og:image" content="${image}" />${imageIsOgDimensions ? `
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
+  <meta property="og:image:height" content="630" />` : ''}
   <meta property="og:image:alt" content="${title}" />
   <meta name="twitter:image" content="${image}" />
   <meta name="twitter:image:alt" content="${title}" />`

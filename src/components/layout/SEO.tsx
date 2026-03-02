@@ -43,6 +43,8 @@ export function SEO({
     const keywordsString = Array.isArray(keywords) ? keywords.join(', ') : keywords;
     const ogImage = image || DEFAULT_OG_IMAGE;
     const ogImageAlt = imageAlt || title;
+    // Only declare dimensions for the default OG image; custom images keep their natural shape
+    const imageIsOgDimensions = ogImage === DEFAULT_OG_IMAGE;
 
     const allStructuredData: Record<string, unknown>[] = [];
 
@@ -84,8 +86,12 @@ export function SEO({
             <meta property="og:site_name" content={SITE_NAME} />
             <meta property="og:locale" content="en_US" />
             <meta property="og:image" content={ogImage} />
-            <meta property="og:image:width" content="1200" />
-            <meta property="og:image:height" content="630" />
+            {imageIsOgDimensions && (
+              <>
+                <meta property="og:image:width" content="1200" />
+                <meta property="og:image:height" content="630" />
+              </>
+            )}
             <meta property="og:image:alt" content={ogImageAlt} />
 
             {/* Article-specific OG tags */}
