@@ -22,7 +22,7 @@ export function useSmoothScroll() {
             if (destroyed) return;
 
             const lenis = new Lenis({
-                duration: 0.8,
+                duration: 0.7,
                 easing: (t: number) => 1 - Math.pow(1 - t, 3),
                 touchMultiplier: 1.2,
             });
