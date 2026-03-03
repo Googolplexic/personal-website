@@ -2,6 +2,7 @@
   "name": "personal-website",
   "private": true,
   "version": "0.0.0",
+  "packageManager": "pnpm@10.17.1",
   "type": "module",
   "homepage": "https://www.colemanlai.com",
   "scripts": {
@@ -15,7 +16,7 @@
     "deploy:preview": "vercel",
     "sync-projects": "node scripts/project-auto-config.js",
     "watch-projects": "node scripts/project-watcher.js",
-    "dev:watch": "concurrently \"npm run dev\" \"npm run watch-projects\""
+    "dev:watch": "concurrently \"pnpm run dev\" \"pnpm run watch-projects\""
   },
   "dependencies": {
     "@octokit/rest": "^20.0.2",
