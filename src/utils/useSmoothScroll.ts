@@ -29,9 +29,21 @@ export function useSmoothScroll() {
 
             lenisInstance = lenis;
 
+            // Track scrollHeight so we can auto-resize when content changes
+            // (lazy images, Suspense, masonry reflow, collapsed sections, etc.).
+            // One number comparison per frame is negligible overhead.
+            let lastScrollHeight = document.documentElement.scrollHeight;
+
             function raf(time: number) {
                 if (destroyed) return;
                 lenis.raf(time);
+
+                const curHeight = document.documentElement.scrollHeight;
+                if (curHeight !== lastScrollHeight) {
+                    lastScrollHeight = curHeight;
+                    lenis.resize();
+                }
+
                 rafId = requestAnimationFrame(raf);
             }
 

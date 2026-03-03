@@ -37,12 +37,13 @@ const DEFAULT_META = {
 
 function parseFrontmatter(mdPath) {
   const raw = fs.readFileSync(mdPath, 'utf-8');
-  const match = raw.match(/^---\n([\s\S]*?)\n---/);
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return {};
   const yaml = match[1];
   const out = {};
   let currentKey = null;
-  for (const line of yaml.split('\n')) {
+  for (const rawLine of yaml.split('\n')) {
+    const line = rawLine.replace(/\r$/, '');
     const kv = line.match(/^(\w+):\s*(.*)$/);
     if (kv) {
       currentKey = kv[1];
@@ -209,7 +210,7 @@ function main() {
     let description = '';
     if (fs.existsSync(mdPath)) {
       const fm = parseFrontmatter(mdPath);
-      title = fm.title || slug;
+      title = fm.title || slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
       description = (fm.description || '').trim() || `${title} — origami by Coleman Lai.`;
     } else {
       description = `${title} — origami.`;
