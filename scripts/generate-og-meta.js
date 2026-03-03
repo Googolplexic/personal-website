@@ -110,6 +110,34 @@ function findOrigamiImageInDist(stem, distImagesDir) {
   return BASE_URL + '/' + relativePath;
 }
 
+/**
+ * Pick the best OG image from a list of built filenames.
+ * Groups by leading numeric prefix (e.g. "01-"), picks the first group,
+ * then prefers non-WebP formats (PNG/JPG/JPEG) because:
+ *  - Originals are always well above Vite's assetsInlineLimit → guaranteed
+ *    standalone files in dist (WebP thumbnails can be inlined & disappear).
+ *  - Universal crawler support (some older crawlers don't handle WebP).
+ *  - Higher quality than the 600px / q65 web/ thumbnails.
+ */
+function pickBestOgImage(files) {
+  if (files.length === 0) return null;
+
+  const sorted = [...files].sort();
+
+  // Extract leading numeric prefix (e.g. "01" from "01-doug-hash.png")
+  const getNumPrefix = (f) => {
+    const m = f.match(/^(\d+)/);
+    return m ? m[1] : '';
+  };
+
+  const firstNum = getNumPrefix(sorted[0]);
+  const firstGroup = sorted.filter((f) => getNumPrefix(f) === firstNum);
+
+  // Prefer original formats over WebP
+  const nonWebp = firstGroup.find((f) => /\.(png|jpg|jpeg)$/i.test(f));
+  return nonWebp || firstGroup[0];
+}
+
 function main() {
   const meta = { ...DEFAULT_META };
   const distImagesDir = path.join(DIST, 'assets', 'images');
@@ -139,10 +167,10 @@ function main() {
     const projectImageDir = path.join(distProjectsDir, slug);
     if (fs.existsSync(projectImageDir)) {
       const files = fs.readdirSync(projectImageDir)
-        .filter((f) => /\.(png|jpg|jpeg|webp)$/i.test(f))
-        .sort();
-      if (files.length > 0) {
-        const relativePath = path.relative(DIST, path.join(projectImageDir, files[0])).replace(/\\/g, '/');
+        .filter((f) => /\.(png|jpg|jpeg|webp)$/i.test(f));
+      const bestFile = pickBestOgImage(files);
+      if (bestFile) {
+        const relativePath = path.relative(DIST, path.join(projectImageDir, bestFile)).replace(/\\/g, '/');
         image = BASE_URL + '/' + relativePath;
       }
     }
@@ -191,10 +219,10 @@ function main() {
     const slugImageDir = path.join(origamiBaseImagesDir, slug);
     if (fs.existsSync(slugImageDir)) {
       const files = fs.readdirSync(slugImageDir)
-        .filter((f) => /\.(png|jpg|jpeg|webp)$/i.test(f) && !f.includes('pattern'))
-        .sort();
-      if (files.length > 0) {
-        const relativePath = path.relative(DIST, path.join(slugImageDir, files[0])).replace(/\\/g, '/');
+        .filter((f) => /\.(png|jpg|jpeg|webp)$/i.test(f) && !f.includes('pattern'));
+      const bestFile = pickBestOgImage(files);
+      if (bestFile) {
+        const relativePath = path.relative(DIST, path.join(slugImageDir, bestFile)).replace(/\\/g, '/');
         image = BASE_URL + '/' + relativePath;
       }
     }
