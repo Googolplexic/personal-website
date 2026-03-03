@@ -68,10 +68,10 @@ echo.
 echo Environment setup complete!
 echo.
 echo Next steps:
-echo   1. Install server dependencies: cd server ^&^& npm install
-echo   2. Install frontend dependencies: npm install
-echo   3. Start the server: cd server ^&^& npm start
-echo   4. Start the frontend: npm run dev
+echo   1. Install server dependencies: cd server ^&^& pnpm install
+echo   2. Install frontend dependencies: pnpm install
+echo   3. Start the server: cd server ^&^& pnpm start
+echo   4. Start the frontend: pnpm run dev
 goto :end
 
 :usage
