@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, ReactNode } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getLenis } from '../../utils/useSmoothScroll';
 
@@ -16,7 +16,6 @@ export function PageTransition({ children }: PageTransitionProps) {
     const prevPathRef = useRef(location.pathname);
     const isFirstRender = useRef(true);
     const isInitialLoad = useRef(true);
-    const containerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -46,32 +45,9 @@ export function PageTransition({ children }: PageTransitionProps) {
         }
     }, [location.pathname]);
 
-    // Keep Lenis scroll dimensions in sync as page content grows/shrinks
-    // (e.g. lazy images loading, Suspense boundaries resolving).
-    const resizeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const notifyLenisResize = useCallback(() => {
-        // Debounce rapid size changes (image batch loads, etc.)
-        if (resizeTimerRef.current) clearTimeout(resizeTimerRef.current);
-        resizeTimerRef.current = setTimeout(() => {
-            getLenis()?.resize();
-        }, 100);
-    }, []);
-
-    useEffect(() => {
-        const el = containerRef.current;
-        if (!el) return;
-
-        const ro = new ResizeObserver(notifyLenisResize);
-        ro.observe(el);
-        return () => {
-            ro.disconnect();
-            if (resizeTimerRef.current) clearTimeout(resizeTimerRef.current);
-        };
-    }, [location.pathname, notifyLenisResize]);
-
     // Skip page-enter animation on initial load to avoid delaying LCP
     return (
-        <div ref={containerRef} key={location.pathname} className={isInitialLoad.current ? '' : 'page-enter'}>
+        <div key={location.pathname} className={isInitialLoad.current ? '' : 'page-enter'}>
             {children}
         </div>
     );
