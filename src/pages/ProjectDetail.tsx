@@ -120,7 +120,7 @@ export function ProjectDetail() {
                 {/* Two-column: description + sidebar metadata */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
                     <div className="lg:col-span-8">
-                        <div className="prose prose-lg max-w-none" style={{ color: 'var(--color-text-primary)' }}>
+                        <div className="markdown-content" style={{ color: 'var(--color-text-primary)' }}>
                             <Markdown components={components}>{project.description}</Markdown>
                         </div>
                     </div>

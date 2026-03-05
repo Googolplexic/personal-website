@@ -197,18 +197,13 @@ function breakVendorCyclePlugin(): Plugin {
  * AND the LCP image. Eliminates the waterfall where route chunks + images can
  * only start downloading after the entry JS executes.
  */
-function routePreloadsPlugin(): Plugin {
+function routePreloadsPlugin(routeFirstImage: Record<string, string>): Plugin {
   const keepChunks = ['vendor-react', 'vendor-router', 'vendor-ui', 'vendor-misc', 'utils', 'ui-base', 'index']
 
   const routeChunkPatterns: Record<string, string[]> = {
     '/': ['page-home', 'shared-components', 'project-grid'],
     '/origami': ['page-origami', 'shared-components', 'origami-assets'],
     '/portfolio': ['page-portfolio', 'shared-components', 'project-grid'],
-  }
-
-  // First image filename prefixes per route (matched against emitted assets)
-  const routeFirstImage: Record<string, string> = {
-    '/origami': '01-tonberry',
   }
 
   return {
@@ -266,7 +261,7 @@ function routePreloadsPlugin(): Plugin {
           )
 
           // Inject route preload script right before </head>
-          const preloadScript = `<script>(function(){var m=${JSON.stringify(routeMap)};var p=location.pathname;var r=m[p];if(!r)return;var h=document.head;r.js.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.href=u;h.appendChild(l)});if(r.img){var l=document.createElement('link');l.rel='preload';l.as='image';l.href=r.img;h.appendChild(l)}})()</script>`
+          const preloadScript = `<script>(function(){var m=${JSON.stringify(routeMap)};var p=location.pathname||"/";if(p.length>1&&p.endsWith("/"))p=p.slice(0,-1);var r=m[p];if(!r)return;var h=document.head;r.js.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.href=u;h.appendChild(l)});if(r.img){var l=document.createElement('link');l.rel='preload';l.as='image';l.href=r.img;l.fetchPriority='high';h.appendChild(l)}})()</script>`
           html = html.replace('</head>', preloadScript + '</head>')
 
           asset.source = html
@@ -326,6 +321,111 @@ const scanOrigami = (): { slug: string; path: string }[] => {
   return out
 }
 const currentOrigami = scanOrigami()
+
+const FRONTMATTER_BLOCK_RE = /^---\r?\n([\s\S]*?)\r?\n---/
+const FRONTMATTER_KV_RE = /^(\w+):\s*(.*)$/
+
+const parseFrontmatter = (filePath: string): Record<string, string> => {
+  if (!existsSync(filePath)) return {}
+  const raw = readFileSync(filePath, 'utf-8')
+  const match = raw.match(FRONTMATTER_BLOCK_RE)
+  if (!match) return {}
+
+  const out: Record<string, string> = {}
+  for (const rawLine of match[1].split('\n')) {
+    const line = rawLine.replace(/\r$/, '')
+    const kv = line.match(FRONTMATTER_KV_RE)
+    if (!kv) continue
+    out[kv[1]] = kv[2].trim()
+  }
+  return out
+}
+
+const parseLooseDate = (value?: string): Date => {
+  if (!value) return new Date(0)
+  const normalized = /^\d{4}-\d{2}$/.test(value) ? `${value}-01` : value
+  const date = new Date(normalized)
+  return Number.isNaN(date.getTime()) ? new Date(0) : date
+}
+
+const getFirstProjectImagePrefix = (slug: string): string | undefined => {
+  const projectPath = resolve(projectsDir, slug)
+  for (const subdir of ['images/web', 'images']) {
+    const dirPath = resolve(projectPath, subdir)
+    if (!existsSync(dirPath)) continue
+    const files = readdirSync(dirPath)
+      .filter((name) => /\.(png|jpg|jpeg|webp)$/i.test(name))
+      .sort()
+    if (files.length > 0) return files[0].replace(/\.[^.]+$/, '')
+  }
+  return undefined
+}
+
+const getFirstOrigamiImagePrefix = (slug: string, group: 'my-designs' | 'other-designs'): string | undefined => {
+  const basePath = resolve(origamiBaseDir, group, slug)
+  for (const subdir of ['web', '.']) {
+    const dirPath = subdir === '.' ? basePath : resolve(basePath, subdir)
+    if (!existsSync(dirPath)) continue
+    const files = readdirSync(dirPath)
+      .filter((name) => /\.(png|jpg|jpeg|webp)$/i.test(name) && !name.toLowerCase().includes('pattern'))
+      .sort()
+    if (files.length > 0) return files[0].replace(/\.[^.]+$/, '')
+  }
+  return undefined
+}
+
+const getPortfolioGalleryFirstImagePrefix = (): string | undefined => {
+  const rankedProjects = currentProjects
+    .map((slug) => {
+      const fm = parseFrontmatter(resolve(projectsDir, slug, 'description.md'))
+      return {
+        slug,
+        date: parseLooseDate(fm.endDate || fm.startDate),
+      }
+    })
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+
+  for (const { slug } of rankedProjects) {
+    const prefix = getFirstProjectImagePrefix(slug)
+    if (prefix) return prefix
+  }
+
+  return undefined
+}
+
+const getOrigamiGalleryFirstImagePrefix = (): string | undefined => {
+  const candidates = (currentOrigami.length > 0 ? currentOrigami : [])
+    .map((item) => {
+      const group: 'my-designs' | 'other-designs' = item.path.includes('/other-designs/') ? 'other-designs' : 'my-designs'
+      const fm = parseFrontmatter(resolve(origamiBaseDir, group, item.slug, 'info.md'))
+      return {
+        slug: item.slug,
+        group,
+        date: parseLooseDate(fm.date),
+      }
+    })
+
+  const sorted = candidates
+    .filter((item) => item.group === 'my-designs')
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+
+  const fallback = candidates
+    .filter((item) => item.group === 'other-designs')
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+
+  for (const item of [...sorted, ...fallback]) {
+    const prefix = getFirstOrigamiImagePrefix(item.slug, item.group)
+    if (prefix) return prefix
+  }
+
+  return undefined
+}
+
+const routeFirstImage: Record<string, string> = {}
+const origamiRouteImagePrefix = getOrigamiGalleryFirstImagePrefix()
+if (origamiRouteImagePrefix) routeFirstImage['/origami'] = origamiRouteImagePrefix
+const portfolioRouteImagePrefix = getPortfolioGalleryFirstImagePrefix()
+if (portfolioRouteImagePrefix) routeFirstImage['/portfolio'] = portfolioRouteImagePrefix
 
 // Auto-generate portfolioProjects configuration
 const generateProjectConfig = (projectName: string) => {
@@ -556,7 +656,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     inlineCssPlugin(),
     breakVendorCyclePlugin(),
-    routePreloadsPlugin(),
+    routePreloadsPlugin(routeFirstImage),
     Sitemap({
       hostname: "https://www.colemanlai.com",
       readable: true,

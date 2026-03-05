@@ -22,6 +22,7 @@ export function ItemGrid({
     hideControls = false,
     itemType = 'mixed'
 }: ItemGridProps) {
+    const PRIORITY_IMAGE_COUNT = 3;
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -29,6 +30,13 @@ export function ItemGrid({
     const [tagFilterMode, setTagFilterMode] = useState<'and' | 'or'>('or');
     const [sortBy, setSortBy] = useState<SortOption>('date-desc');
     const norm = (value?: string) => (value ?? '').toLowerCase();
+    const sectionHeadingText = title ?? (
+        itemType === 'project'
+            ? 'Projects'
+            : itemType === 'origami'
+                ? 'Origami'
+                : 'Gallery'
+    );
 
     const { allTechnologies, allTags } = useMemo(() => {
         // Deduplicate case-insensitively: first occurrence wins
@@ -128,7 +136,12 @@ export function ItemGrid({
 
     return (
         <section className={`mb-12 ${className}`}>
-            {title && <h2 className="gallery-heading text-2xl md:text-3xl mb-6" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>}
+            <h2
+                className={title ? "gallery-heading text-2xl md:text-3xl mb-6" : "sr-only"}
+                style={title ? { color: 'var(--color-text-primary)' } : undefined}
+            >
+                {sectionHeadingText}
+            </h2>
 
             {!hideControls && (
                 <UniversalSearch
@@ -159,9 +172,9 @@ export function ItemGrid({
                 />
             )}
 
-            <MasonrySpotlightGrid skipCount={1}>
+            <MasonrySpotlightGrid skipCount={PRIORITY_IMAGE_COUNT}>
                 {sortedAndFilteredItems.map((item, index) => {
-                    const isPriority = index < 1;
+                    const isPriority = index < PRIORITY_IMAGE_COUNT;
                     if (item.type === 'project') {
                         return (
                             <ProjectCard

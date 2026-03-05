@@ -5,8 +5,7 @@ export default {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   safelist: [
-    { pattern: /^(m|p)(t|r|b|l|x|y)?-(0|1|2|3|4|5|6|8|10|12|16|20|24)$/ },
-    { pattern: /^gap-(0|1|2|3|4|5|6|8|10|12|16)$/ },
+    { pattern: /^gap-(1|2|3|4|6|8|12)$/ },
   ],
   theme: {
     extend: {
@@ -32,7 +31,5 @@ export default {
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [],
 };

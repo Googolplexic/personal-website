@@ -46,6 +46,8 @@ export function OrigamiCard({ slug, title, description, modelImages, date, desig
                         alt={title}
                         className="max-h-full max-w-full object-contain"
                         loading={priority ? 'eager' : 'lazy'}
+                        decoding={priority ? 'sync' : 'async'}
+                        fetchPriority={priority ? 'high' : 'auto'}
                     />
                 </div>
             )}
