@@ -1,7 +1,7 @@
 {
-    "name": "Coleman Lai Portfolio",
+    "name": "Coleman Lai: Code & Paper",
     "short_name": "Coleman Lai",
-    "description": "Portfolio of software projects and origami art by Coleman Lai.",
+    "description": "Gallery of software projects and origami art by Coleman Lai.",
     "start_url": "/",
     "scope": "/",
     "icons": [
@@ -30,5 +30,46 @@
         "portfolio",
         "art",
         "technology"
+    ],
+    "shortcuts": [
+        {
+            "name": "Home",
+            "short_name": "Home",
+            "description": "Return to the homepage.",
+            "url": "/",
+            "icons": [
+                {
+                    "src": "/android-chrome-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Portfolio",
+            "short_name": "Portfolio",
+            "description": "Browse software projects.",
+            "url": "/portfolio",
+            "icons": [
+                {
+                    "src": "/android-chrome-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Origami",
+            "short_name": "Origami",
+            "description": "View origami creations.",
+            "url": "/origami",
+            "icons": [
+                {
+                    "src": "/android-chrome-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        }
     ]
 }
