@@ -66,7 +66,7 @@ export function LazyImage({
                     className={`w-full h-full object-contain ${onClick ? 'cursor-pointer' : ''}`}
                     loading={priority ? 'eager' : 'lazy'}
                     decoding={priority ? 'sync' : 'async'}
-                    fetchPriority={priority ? 'high' : undefined}
+                    {...(priority ? { fetchpriority: 'high' } : {})}
                     onError={() => setHasError(true)}
                     width={width}
                     height={height}
