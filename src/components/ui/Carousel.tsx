@@ -74,7 +74,7 @@ export function Carousel({ modelImages, modelImagesFull, creasePattern, creasePa
                                             onClick={() => setLightboxIndex(i)}
                                             loading={priority && i === 0 ? 'eager' : 'lazy'}
                                             decoding={priority && i === 0 ? 'sync' : 'async'}
-                                            fetchPriority={priority && i === 0 ? 'high' : undefined}
+                                            {...(priority && i === 0 ? { fetchpriority: 'high' } : {})}
                                         />
                                     ) : (
                                         <div className="h-full w-full" />

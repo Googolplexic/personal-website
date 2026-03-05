@@ -15,7 +15,8 @@ Hosting: Vercel
 Package Manager: pnpm
 
 /* THANKS */
-Design inspiration: Art galleries & museum lighting
-Particles: Canvas API
-Smooth scrolling: Lenis
+ASCII art in page source: https://www.asciiart.eu/art/59a16e2a8fa4b240
 Icons: react-icons (Feather, Font Awesome)
+Site feedback: Liev Mamauag, Alexander Charnetski
+Design inspiration: Art galleries & museum lighting
+Writing too much of my site: Claude
