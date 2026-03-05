@@ -32,6 +32,7 @@ export function GroupedItemGrid({
     otherDesigns = [],
     software = []
 }: GroupedItemGridProps) {
+    const PRIORITY_IMAGE_COUNT = 3;
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -42,6 +43,13 @@ export function GroupedItemGrid({
     const [showGrouping, setShowGrouping] = useState(initialShowGrouping);
     const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
     const norm = (value?: string) => (value ?? '').toLowerCase();
+    const sectionHeadingText = title ?? (
+        itemType === 'project'
+            ? 'Projects'
+            : itemType === 'origami'
+                ? 'Origami'
+                : 'Gallery'
+    );
 
     const toggleGroup = (key: string) => {
         setCollapsedGroups(prev => {
@@ -249,7 +257,12 @@ export function GroupedItemGrid({
 
     return (
         <section className={`mb-12 ${className}`}>
-            {title && <h2 className="gallery-heading text-2xl md:text-3xl mb-4" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>}
+            <h2
+                className={title ? "gallery-heading text-2xl md:text-3xl mb-4" : "sr-only"}
+                style={title ? { color: 'var(--color-text-primary)' } : undefined}
+            >
+                {sectionHeadingText}
+            </h2>
 
             {!hideControls && (
                 <GroupedSearch
@@ -290,7 +303,7 @@ export function GroupedItemGrid({
                 /* Grouped view: separate sections per category */
                 groupedItems.length > 0 ? (
                     <div className="space-y-10">
-                        {groupedItems.map(group => {
+                        {groupedItems.map((group, groupIndex) => {
                             const isCollapsed = collapsedGroups.has(group.key);
                             return (
                                 <div key={group.key}>
@@ -320,8 +333,8 @@ export function GroupedItemGrid({
                                             }`}
                                     >
                                         <div className="overflow-hidden">
-                                            <MasonrySpotlightGrid skipCount={1}>
-                                                {group.items.map((item, i) => renderCard(item, false, i < 1))}
+                                            <MasonrySpotlightGrid skipCount={groupIndex === 0 ? PRIORITY_IMAGE_COUNT : 0}>
+                                                {group.items.map((item, i) => renderCard(item, false, groupIndex === 0 && i < PRIORITY_IMAGE_COUNT))}
                                             </MasonrySpotlightGrid>
                                         </div>
                                     </div>
@@ -337,8 +350,8 @@ export function GroupedItemGrid({
             ) : (
                 /* List view: flat masonry with category badges */
                 <>
-                    <MasonrySpotlightGrid skipCount={1}>
-                        {sortedAndFilteredItems.map((item, i) => renderCard(item, true, i < 1))}
+                    <MasonrySpotlightGrid skipCount={PRIORITY_IMAGE_COUNT}>
+                        {sortedAndFilteredItems.map((item, i) => renderCard(item, true, i < PRIORITY_IMAGE_COUNT))}
                     </MasonrySpotlightGrid>
 
                     {sortedAndFilteredItems.length === 0 && (

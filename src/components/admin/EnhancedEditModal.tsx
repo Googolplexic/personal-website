@@ -557,7 +557,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                 Preview (without frontmatter)
                                             </Heading>
                                             <div className="flex-1 p-4 border border-[var(--color-border)] rounded bg-[var(--color-bg-primary)] overflow-y-auto">
-                                                <div className="prose dark:prose-invert max-w-none text-sm markdown-preview text-left">
+                                                <div className="max-w-none text-sm markdown-preview text-left">
                                                     {content ? (
                                                         <div
                                                             className="rendered-markdown"

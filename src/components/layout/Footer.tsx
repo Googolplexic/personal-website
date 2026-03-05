@@ -17,7 +17,7 @@ const SOCIAL_LINKS = [
     { label: 'Instagram', href: 'https://www.instagram.com/12googolplex', icon: <FaInstagram size={15} /> },
 ];
 
-const linkClass = 'text-xs tracking-[0.15em] uppercase font-body transition-opacity duration-200 hover:opacity-80';
+const linkClass = 'text-xs tracking-[0.15em] uppercase font-body transition-opacity duration-200 hover:opacity-90';
 
 export function Footer() {
     return (
@@ -61,7 +61,7 @@ export function Footer() {
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={link.label}
-                            className="transition-opacity duration-200 hover:opacity-80 opacity-50"
+                            className="transition-opacity duration-200 opacity-85 hover:opacity-100"
                             style={{ color: 'var(--color-text-secondary)' }}
                         >
                             {link.icon}
@@ -70,11 +70,11 @@ export function Footer() {
                 </div>
 
                 <div className="text-[10px] font-body uppercase tracking-[0.15em]"
-                    style={{ color: 'var(--color-text-tertiary)' }}>
+                    style={{ color: 'var(--color-text-secondary)' }}>
                     <p>
                         © {new Date().getFullYear()} Coleman Lai
                     </p>
-                    <p className="mt-1 opacity-50">
+                    <p className="mt-1">
                         <BuildMeta />
                     </p>
                 </div>
@@ -93,7 +93,7 @@ function BuildMeta() {
             href={`https://github.com/Googolplexic/personal-website/commit/${hash}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-opacity duration-200 hover:opacity-100"
+            className="transition-colors duration-200 hover:text-[var(--color-text-primary)]"
             style={{ color: 'inherit', textDecoration: 'none' }}
         >
             v{version} · {date} · {hash}

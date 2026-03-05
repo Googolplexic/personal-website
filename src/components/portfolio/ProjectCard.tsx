@@ -3,7 +3,6 @@ import { ProjectProps } from '../../types';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
-import { LazyImage } from '../ui/LazyImage';
 import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage } from '../../utils/lazyImages';
 import { ShareButton } from '../ui/ShareButton';
@@ -63,11 +62,13 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
             {/* Image — no rounding, raw edge */}
             {firstImage && (
                 <div className="relative overflow-hidden aspect-[16/10]">
-                    <LazyImage
+                    <img
                         src={firstImage}
                         alt={props.title}
                         className="w-full h-full object-cover"
-                        priority={priority}
+                        loading={priority ? 'eager' : 'lazy'}
+                        decoding={priority ? 'sync' : 'async'}
+                        fetchPriority={priority ? 'high' : 'auto'}
                     />
                 </div>
             )}
