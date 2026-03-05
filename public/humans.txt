@@ -1,0 +1,21 @@
+/* TEAM */
+Developer: Coleman Lai
+Site: https://www.colemanlai.com
+GitHub: https://github.com/Googolplexic
+Location: Vancouver, BC, Canada
+
+/* SITE */
+Standards: HTML5, CSS3, ES2022
+Language: TypeScript
+Framework: React 18
+Build: Vite 6
+Styling: Tailwind CSS 3
+Fonts: EB Garamond, PT Sans, Grape Nuts
+Hosting: Vercel
+Package Manager: pnpm
+
+/* THANKS */
+Design inspiration: Art galleries & museum lighting
+Particles: Canvas API
+Smooth scrolling: Lenis
+Icons: react-icons (Feather, Font Awesome)

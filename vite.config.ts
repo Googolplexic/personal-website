@@ -491,7 +491,38 @@ for (const o of currentOrigami) {
 
 saveCache(cache)
 
+// Build metadata — inject git info + auto-version for footer display
+//
+// Versioning uses git tags. To start a new version:
+//   1. Commit your changes
+//   2. git tag v2.4   (or v3.0, etc.)
+//   3. git push --tags
+// The patch number auto-increments with each commit after the tag.
+// e.g. 3 commits after tag v2.4 → v2.4.3
+
+let gitHash = 'dev'
+let gitDate = new Date().toISOString().slice(0, 10)
+let siteVersion = 'dev'
+try {
+  const { execSync } = await import('node:child_process')
+  gitHash = execSync('git rev-parse --short HEAD', { encoding: 'utf-8' }).trim()
+  gitDate = execSync('git log -1 --format=%cd --date=short', { encoding: 'utf-8' }).trim()
+
+  // git describe finds the nearest ancestor tag matching v*
+  // Output format: v2.3 (exactly on tag) or v2.3-10-gabcdef (10 commits after tag)
+  const describe = execSync('git describe --tags --match "v*" --long', { encoding: 'utf-8' }).trim()
+  const match = describe.match(/^v(\d+\.\d+)-(\d+)-g[0-9a-f]+$/)
+  if (match) {
+    siteVersion = `${match[1]}.${match[2]}`
+  }
+} catch { /* fallback to defaults in dev/CI without git */ }
+
 export default defineConfig(({ mode }) => ({
+  define: {
+    __GIT_HASH__: JSON.stringify(gitHash),
+    __GIT_DATE__: JSON.stringify(gitDate),
+    __SITE_VERSION__: JSON.stringify(siteVersion),
+  },
   plugins: [
     markdownFrontmatterPlugin(),
     faviconAssetsPlugin(),
@@ -524,9 +555,9 @@ export default defineConfig(({ mode }) => ({
           // Prefer original path (Rollup 4+) so we can group by folder
           const rawPath =
             (typeof (assetInfo as { originalFileNames?: string[] }).originalFileNames !== 'undefined' &&
-             (assetInfo as { originalFileNames: string[] }).originalFileNames?.[0]) ||
+              (assetInfo as { originalFileNames: string[] }).originalFileNames?.[0]) ||
             (typeof (assetInfo as { originalFileName?: string }).originalFileName !== 'undefined' &&
-             (assetInfo as { originalFileName: string }).originalFileName) ||
+              (assetInfo as { originalFileName: string }).originalFileName) ||
             assetName;
           const pathNorm = rawPath.replace(/\\/g, '/');
 
