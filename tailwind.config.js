@@ -4,9 +4,9 @@ export default {
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
-  safelist: [
-    { pattern: /^gap-(1|2|3|4|6|8|12)$/ },
-  ],
+  corePlugins: {
+    container: false,
+  },
   theme: {
     extend: {
       fontFamily: {
