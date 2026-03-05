@@ -508,6 +508,10 @@ try {
   gitHash = execSync('git rev-parse --short HEAD', { encoding: 'utf-8' }).trim()
   gitDate = execSync('git log -1 --format=%cd --date=short', { encoding: 'utf-8' }).trim()
 
+  // Ensure tags are available (Vercel uses shallow clones without tags)
+  try { execSync('git fetch --unshallow 2>/dev/null', { stdio: 'ignore' }) } catch { /* ignore */ }
+  try { execSync('git fetch --tags --force 2>/dev/null', { stdio: 'ignore' }) } catch { /* ignore */ }
+
   // git describe finds the nearest ancestor tag matching v*
   // Output format: v2.3 (exactly on tag) or v2.3-10-gabcdef (10 commits after tag)
   const describe = execSync('git describe --tags --match "v*" --long', { encoding: 'utf-8' }).trim()
