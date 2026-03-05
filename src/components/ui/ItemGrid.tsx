@@ -23,6 +23,7 @@ export function ItemGrid({
     itemType = 'mixed'
 }: ItemGridProps) {
     const PRIORITY_IMAGE_COUNT = 3;
+    const STAGGER_SKIP_COUNT = 1;
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -172,7 +173,7 @@ export function ItemGrid({
                 />
             )}
 
-            <MasonrySpotlightGrid skipCount={PRIORITY_IMAGE_COUNT}>
+            <MasonrySpotlightGrid skipCount={STAGGER_SKIP_COUNT}>
                 {sortedAndFilteredItems.map((item, index) => {
                     const isPriority = index < PRIORITY_IMAGE_COUNT;
                     if (item.type === 'project') {

@@ -33,6 +33,7 @@ export function GroupedItemGrid({
     software = []
 }: GroupedItemGridProps) {
     const PRIORITY_IMAGE_COUNT = 3;
+    const STAGGER_SKIP_COUNT = 1;
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -333,7 +334,7 @@ export function GroupedItemGrid({
                                             }`}
                                     >
                                         <div className="overflow-hidden">
-                                            <MasonrySpotlightGrid skipCount={groupIndex === 0 ? PRIORITY_IMAGE_COUNT : 0}>
+                                            <MasonrySpotlightGrid skipCount={groupIndex === 0 ? STAGGER_SKIP_COUNT : 0}>
                                                 {group.items.map((item, i) => renderCard(item, false, groupIndex === 0 && i < PRIORITY_IMAGE_COUNT))}
                                             </MasonrySpotlightGrid>
                                         </div>
@@ -350,7 +351,7 @@ export function GroupedItemGrid({
             ) : (
                 /* List view: flat masonry with category badges */
                 <>
-                    <MasonrySpotlightGrid skipCount={PRIORITY_IMAGE_COUNT}>
+                    <MasonrySpotlightGrid skipCount={STAGGER_SKIP_COUNT}>
                         {sortedAndFilteredItems.map((item, i) => renderCard(item, true, i < PRIORITY_IMAGE_COUNT))}
                     </MasonrySpotlightGrid>
 
