@@ -72,7 +72,14 @@ export function Footer() {
                 <div className="text-[10px] font-body uppercase tracking-[0.15em]"
                     style={{ color: 'var(--color-text-secondary)' }}>
                     <p>
-                        © {new Date().getFullYear()} Coleman Lai
+                        <a
+                            href="https://github.com/Googolplexic/personal-website/blob/main/LICENSE"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-inherit underline transition-colors duration-200 hover:text-[var(--color-text-primary)]"
+                        >
+                            © {new Date().getFullYear()} Coleman Lai
+                        </a>
                     </p>
                     <p className="mt-1">
                         <BuildMeta />
