@@ -76,7 +76,7 @@ export function Footer() {
                             href="https://github.com/Googolplexic/personal-website/blob/main/LICENSE"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-inherit underline transition-colors duration-200 hover:text-[var(--color-text-primary)]"
+                            className="text-inherit transition-colors duration-200 hover:text-[var(--color-text-primary)]"
                         >
                             © {new Date().getFullYear()} Coleman Lai
                         </a>
