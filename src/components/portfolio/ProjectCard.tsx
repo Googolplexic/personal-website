@@ -33,7 +33,8 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
     const location = useLocation();
     const [firstImage, setFirstImage] = useState<string>(() => resolveFirstImageSync(props.images));
 
-    const projectPath = `${basePath}/${props.slug}${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
+    const queryString = location.search || (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : '');
+    const projectPath = `${basePath}/${props.slug}${queryString}`;
     const shareUrl = `${BASE_URL}/portfolio/${props.slug}`;
 
     useEffect(() => {
