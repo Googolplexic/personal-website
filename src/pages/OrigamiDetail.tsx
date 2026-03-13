@@ -81,7 +81,7 @@ export function OrigamiDetail() {
                     style={{ borderBottom: '1px solid var(--divider)' }}>
                     <p className="text-xs tracking-[0.2em] uppercase font-body"
                         style={{ color: 'var(--color-text-secondary)' }}>
-                        {origami.date}
+                        <HighlightedText text={origami.date} searchTerm={searchTerm} />
                     </p>
                     {origami.designer && (
                         <>
