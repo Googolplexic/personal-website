@@ -13,7 +13,8 @@ export function ProjectDetail() {
     const { projectSlug } = useParams();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { state } = useLocation();
+    const location = useLocation();
+    const { state } = location;
     const searchTerm = searchParams.get('search') || '';
     const project = allProjects.find(p => p.slug === projectSlug);
 
@@ -33,6 +34,10 @@ export function ProjectDetail() {
     const backTarget = (from === '/portfolio' || from === '/origami') ? from : '/portfolio';
     const backLabel = from === '/' ? 'To Gallery' : 'Back to Gallery';
     const shareUrl = `${BASE_URL}/portfolio/${project.slug}`;
+    const backDestination = location.search ? `${backTarget}${location.search}` : backTarget;
+    const timelineLabel = project.startDate === project.endDate
+        ? project.startDate
+        : `${project.startDate} – ${project.endDate || 'Present'}`;
 
     const components = {
         p: ({ children, ...props }: React.HTMLProps<HTMLParagraphElement>) => (
@@ -87,7 +92,7 @@ export function ProjectDetail() {
             <div className="max-w-5xl mx-auto px-6 pt-28 pb-20">
                 {/* Back navigation — in page flow, below navbar */}
                 <button
-                    onClick={() => navigate(backTarget)}
+                    onClick={() => navigate(backDestination)}
                     className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300"
                     style={{ color: 'var(--color-text-tertiary)', background: 'none', border: 'none' }}
                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
@@ -108,7 +113,7 @@ export function ProjectDetail() {
                     </h1>
                     <p className="text-sm font-body italic max-w-xl"
                         style={{ color: 'var(--color-text-secondary)' }}>
-                        {project.summary}
+                        <HighlightedText text={project.summary} searchTerm={searchTerm} />
                     </p>
                 </div>
 
@@ -131,9 +136,7 @@ export function ProjectDetail() {
                                 <p className="gallery-overline mb-2">Timeline</p>
                                 <p className="text-sm font-heading italic"
                                     style={{ color: 'var(--color-text-primary)' }}>
-                                    {project.startDate === project.endDate
-                                        ? project.startDate
-                                        : `${project.startDate} – ${project.endDate || 'Present'}`}
+                                    {timelineLabel}
                                 </p>
                             </div>
 

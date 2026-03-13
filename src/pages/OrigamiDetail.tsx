@@ -1,18 +1,22 @@
 import { useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import allOrigami from '../assets/origami';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
 import { Lightbox } from '../components/ui/Lightbox';
 import { NotFound } from './NotFound';
 import { ShareButton } from '../components/ui/ShareButton';
 import { CategoryLabel } from '../components/ui/CategoryLabel';
+import { HighlightedText } from '../components/ui/HighlightedText';
 
 const BASE_URL = 'https://www.colemanlai.com';
 
 export function OrigamiDetail() {
     const { origamiSlug } = useParams();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { state } = useLocation();
+    const location = useLocation();
+    const { state } = location;
+    const searchTerm = searchParams.get('search') || '';
     const [cpLightboxOpen, setCpLightboxOpen] = useState(false);
     const origami = allOrigami.find(o => o.slug === origamiSlug);
 
@@ -29,6 +33,7 @@ export function OrigamiDetail() {
     const from = (state as { from?: string } | null)?.from;
     const backTarget = (from === '/origami' || from === '/portfolio') ? from : '/origami';
     const backLabel = from === '/' ? 'To Gallery' : 'Back to Gallery';
+    const backDestination = location.search ? `${backTarget}${location.search}` : backTarget;
 
     const shareUrl = `${BASE_URL}/origami/${origami.slug}`;
     const categoryLabel = origami.category === 'my-designs' ? 'My Designs' : 'Other Designs';
@@ -41,7 +46,7 @@ export function OrigamiDetail() {
             <div className="max-w-4xl mx-auto px-6 pt-28 pb-20">
                 {/* Back navigation */}
                 <button
-                    onClick={() => navigate(backTarget)}
+                    onClick={() => navigate(backDestination)}
                     className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300"
                     style={{ color: 'var(--color-text-tertiary)', background: 'none', border: 'none' }}
                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
@@ -58,7 +63,7 @@ export function OrigamiDetail() {
                     <span className="exhibit-label mb-4 inline-flex">Exhibit {exhibitNumber}</span>
                     <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4 mt-3"
                         style={{ color: 'var(--color-text-primary)' }}>
-                        {origami.title}
+                        <HighlightedText text={origami.title} searchTerm={searchTerm} />
                     </h1>
                 </div>
 
@@ -83,7 +88,7 @@ export function OrigamiDetail() {
                             <span className="text-xs font-body" style={{ color: 'var(--color-text-tertiary)' }}>·</span>
                             <p className="text-xs tracking-wide font-body"
                                 style={{ color: 'var(--color-text-secondary)' }}>
-                                {origami.designer}
+                                <HighlightedText text={origami.designer} searchTerm={searchTerm} />
                             </p>
                         </>
                     )}
@@ -97,7 +102,7 @@ export function OrigamiDetail() {
                 {origami.description && (
                     <p className="text-base leading-relaxed font-body mb-12"
                         style={{ color: 'var(--color-text-primary)' }}>
-                        {origami.description}
+                        <HighlightedText text={origami.description} searchTerm={searchTerm} />
                     </p>
                 )}
 
