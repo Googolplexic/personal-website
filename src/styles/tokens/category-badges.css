@@ -1,0 +1,16 @@
+/* Category labels for grouped content chips */
+.gallery-cat-green {
+  color: #6ee7a0;
+}
+
+.gallery-cat-blue {
+  color: #7ab8f5;
+}
+
+.gallery-cat-purple {
+  color: #c4a1f0;
+}
+
+.gallery-cat-default {
+  color: var(--color-text-secondary);
+}

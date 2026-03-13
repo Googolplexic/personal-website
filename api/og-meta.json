@@ -94,15 +94,15 @@
     "description": "Portfolio showcase of Territory Ascent - a multiplayer platformer game inspired by Jump King, developed using Pygame and socket programming. Explore the project details, features, and implementation of this engaging gaming experience.",
     "image": null
   },
+  "/portfolio/torgal": {
+    "title": "Torgal | Coleman Lai",
+    "description": "Portfolio showcase of Torgal - a local-first AI presentation assistant built for nwHacks 2026. It uses on-device transcription and semantic slide matching to automate slide transitions in real time.",
+    "image": "https://www.colemanlai.com/assets/images/projects/torgal/01-open-CDlVkx_1.png"
+  },
   "/portfolio/youtube-speed": {
     "title": "Speed-Based YouTube Quality Adjuster | Coleman Lai",
     "description": "Portfolio showcase of a browser extension that adjusts YouTube video quality based on video speed. Can help save data and improve video playback.",
     "image": "https://www.colemanlai.com/assets/images/projects/youtube-speed/image-CTyXrXUT.png"
-  },
-  "/origami/-2024": {
-    "title": "π (2026) | Coleman Lai",
-    "description": "Made for Pi Day 2026",
-    "image": null
   },
   "/origami/bladed-tactician": {
     "title": "The Bladed Tactician | Coleman Lai",
@@ -148,6 +148,11 @@
     "title": "π (2025) | Coleman Lai",
     "description": "Made for Pi Day 2025.",
     "image": "https://www.colemanlai.com/assets/images/origami/pi-2025/01-pi-2025-BaJGBJC4.jpg"
+  },
+  "/origami/pi-2026": {
+    "title": "π (2026) | Coleman Lai",
+    "description": "Made for Pi Day 2026",
+    "image": "https://www.colemanlai.com/assets/images/origami/pi-2026/01-pi-2026-CiSUtRVS.jpg"
   },
   "/origami/tonberry": {
     "title": "Tonberry | Coleman Lai",

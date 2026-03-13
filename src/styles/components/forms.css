@@ -1,0 +1,104 @@
+/* Shared form controls for public and admin UIs */
+@layer components {
+  .gallery-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+    padding: 0.5rem 0;
+    color: var(--color-text-primary);
+    transition: border-color 0.3s ease;
+    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .gallery-input::placeholder {
+    color: var(--color-text-tertiary);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .gallery-input:focus {
+    outline: none;
+    border-bottom-color: var(--color-accent);
+  }
+
+  .gallery-select {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+    padding: 0.5rem 0;
+    color: var(--color-text-secondary);
+    transition: border-color 0.3s ease;
+    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .gallery-select:focus {
+    outline: none;
+    border-bottom-color: var(--color-accent);
+  }
+
+  .gallery-select option {
+    background-color: #141414;
+    color: var(--color-text-primary);
+  }
+
+  .admin-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    color: var(--color-text-primary);
+    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
+    font-size: 0.875rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .admin-input::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  .admin-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .admin-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .admin-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    color: var(--color-text-primary);
+    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
+    font-size: 0.875rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .admin-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+
+  .admin-select option {
+    background-color: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+  }
+}

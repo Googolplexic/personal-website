@@ -61,11 +61,11 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
         >
             {/* Image — no rounding, raw edge */}
             {firstImage && (
-                <div className="relative overflow-hidden aspect-[16/10]">
+                <div className="w-full overflow-hidden flex justify-center">
                     <img
                         src={firstImage}
                         alt={props.title}
-                        className="w-full h-full object-cover"
+                        className="block w-auto h-auto max-w-full"
                         loading={priority ? 'eager' : 'lazy'}
                         decoding={priority ? 'sync' : 'async'}
                         fetchPriority={priority ? 'high' : 'auto'}

@@ -40,11 +40,11 @@ export function OrigamiCard({ slug, title, description, modelImages, date, desig
             style={{ textDecoration: 'none', color: 'inherit' }}
         >
             {heroImage && (
-                <div className="w-full h-64 flex items-center justify-center overflow-hidden">
+                <div className="w-full overflow-hidden">
                     <img
                         src={heroImage}
                         alt={title}
-                        className="max-h-full max-w-full object-contain"
+                        className="block w-full h-auto"
                         loading={priority ? 'eager' : 'lazy'}
                         decoding={priority ? 'sync' : 'async'}
                         fetchPriority={priority ? 'high' : 'auto'}

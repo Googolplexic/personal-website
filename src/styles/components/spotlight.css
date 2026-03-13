@@ -1,0 +1,85 @@
+/* Spotlight overlays and interactive dimming */
+@layer components {
+  #global-spotlight {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    --spot-x: 50%;
+    --spot-y: 50%;
+    --spot-size: 320px;
+    background: radial-gradient(
+      circle at var(--spot-x) var(--spot-y),
+      rgba(255, 248, 230, 0.09) 0%,
+      rgba(255, 248, 230, 0.09) calc(var(--spot-size) * 0.5),
+      rgba(255, 248, 230, 0.07) calc(var(--spot-size) * 0.625),
+      rgba(255, 248, 230, 0.02) calc(var(--spot-size) * 0.8125),
+      transparent var(--spot-size)
+    );
+    opacity: 0;
+    transition: opacity 0.6s ease, --spot-size 0.6s ease;
+  }
+  #global-spotlight.visible {
+    opacity: 1;
+    --spot-size: 320px;
+  }
+  #global-spotlight.expanding {
+    opacity: 0;
+    --spot-size: 2000px;
+  }
+
+  #page-dim {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    --spot-x: 50%;
+    --spot-y: 50%;
+    --spot-size: 320px;
+    background: radial-gradient(
+      circle at var(--spot-x) var(--spot-y),
+      transparent 0%,
+      transparent calc(var(--spot-size) * 0.8),
+      rgba(0, 0, 0, 0.35) var(--spot-size),
+      rgba(0, 0, 0, 0.45) calc(var(--spot-size) * 1.1),
+      rgba(0, 0, 0, 0.45) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  #page-dim.visible {
+    opacity: 1;
+  }
+  #page-dim.expanding {
+    opacity: 0;
+  }
+
+  .spotlight-group {
+    position: relative;
+    overflow: visible;
+  }
+
+  .spotlight-item {
+    position: relative;
+    transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+                filter 0.6s cubic-bezier(.4,0,.2,1);
+    z-index: 1;
+  }
+
+  .spotlight-group:hover .spotlight-item:not(:hover) {
+    opacity: 0.5;
+    filter: brightness(0.7) saturate(0.6);
+  }
+
+  .spotlight-group:hover .spotlight-item:hover {
+    opacity: 1;
+    filter: brightness(1.08);
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .spotlight-group:hover .spotlight-item:not(:hover) {
+      opacity: 1;
+      filter: none;
+    }
+  }
+}

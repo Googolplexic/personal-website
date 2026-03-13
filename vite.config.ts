@@ -198,7 +198,7 @@ function breakVendorCyclePlugin(): Plugin {
  * only start downloading after the entry JS executes.
  */
 function routePreloadsPlugin(routeFirstImage: Record<string, string>): Plugin {
-  const keepChunks = ['vendor-react', 'vendor-router', 'vendor-ui', 'vendor-misc', 'utils', 'ui-base', 'index']
+  const keepChunks = ['vendor-react', 'vendor-router', 'vendor-ui', 'vendor-misc', 'ui-base', 'index']
 
   const routeChunkPatterns: Record<string, string[]> = {
     '/': ['page-home', 'shared-components', 'project-grid'],
@@ -842,9 +842,10 @@ export default defineConfig(({ mode }) => ({
             }
           }
 
-          // Utils and config
+          // Utils/config are merged into ui-base to avoid ui-base <-> utils
+          // cross-chunk cycles and reduce early route waterfalls.
           if (id.includes('src/utils/') || id.includes('src/config/')) {
-            return 'utils';
+            return 'ui-base';
           }
         }
       }
