@@ -24,7 +24,8 @@ export function OrigamiCard({ slug, title, description, modelImages, date, desig
     const location = useLocation();
     const heroImage = modelImages[0];
     const shareUrl = `${BASE_URL}/origami/${slug}`;
-    const path = `/origami/${slug}`;
+    const queryString = location.search || (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : '');
+    const path = `/origami/${slug}${queryString}`;
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
