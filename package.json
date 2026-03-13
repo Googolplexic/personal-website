@@ -61,6 +61,7 @@
     "globals": "^15.13.0",
     "husky": "^8.0.3",
     "lighthouse": "^13.0.3",
+    "postcss-import": "^16.1.1",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.1",
     "vercel": "^50.25.4",

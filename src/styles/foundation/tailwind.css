@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Register --spot-size so it can be animated */
+@property --spot-size {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 320px;
+}

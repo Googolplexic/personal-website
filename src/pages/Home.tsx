@@ -36,7 +36,7 @@ function ScrollSection({ children, className = '' }: { children: React.ReactNode
 const allItems = [...allProjects, ...allOrigami];
 
 export function Home() {
-    const featuredSlugs = ['hermes', 'personal-website', 'be-square', 'origami-fractions'];
+    const featuredSlugs = ['pi-2026', 'personal-website', 'ryujin-3-5', 'torgal', 'tonberry', 'origami-fractions'];
     const nameRef = useRef<HTMLHeadingElement>(null);
     const heroRef = useRef<HTMLElement>(null);
 
