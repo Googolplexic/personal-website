@@ -16,11 +16,11 @@ export default async function handler(req, res) {
     // Validate authentication using cookies
     const cookies = parseCookies(req.headers.cookie);
     const token = cookies.adminToken;
-    
+
     if (!token) {
         return res.status(401).json({ error: 'Authentication required' });
     }
-    
+
     const decoded = verifyJWT(token);
     if (!decoded || !decoded.admin) {
         return res.status(401).json({ error: 'Invalid authentication' });
@@ -77,7 +77,13 @@ export default async function handler(req, res) {
 
             // Convert base64 to buffer
             const base64Data = imageData.includes(',') ? imageData.split(',')[1] : imageData;
+            if (!base64Data || !base64Data.trim()) {
+                return res.status(400).json({ error: 'Image data is empty' });
+            }
             const imageBuffer = Buffer.from(base64Data, 'base64');
+            if (!imageBuffer.length) {
+                return res.status(400).json({ error: 'Image file is empty or invalid' });
+            }
 
             // For projects, images go into images/ subdirectory
             // For origami, images go directly in the folder

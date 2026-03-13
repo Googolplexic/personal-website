@@ -2,6 +2,14 @@
 import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, getFileFromGitHub } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
+function normalizeSlug(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/(^-|-$)/g, '');
+}
+
 export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -34,20 +42,14 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Type is required' });
             }
 
+            let slug;
             if (type === 'origami') {
-                await createOrigami(data);
+                slug = await createOrigami(data);
             } else if (type === 'project') {
-                await createProject(data);
+                slug = await createProject(data);
             } else {
                 return res.status(400).json({ error: 'Invalid type. Must be "origami" or "project"' });
             }
-
-            // Generate slug from title
-            const slug = data.title.toLowerCase()
-                .replace(/[^a-z0-9\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-')
-                .trim();
 
             // Update the lastmod cache for the new content
             if (type === 'project') {
@@ -73,18 +75,17 @@ export default async function handler(req, res) {
 }
 
 async function createOrigami(data) {
-    const { title, description, date, designer, category } = data;
+    const { title, description, date, designer, category, slug: customSlug } = data;
 
     if (!title || !category) {
         throw new Error('Title and category are required for origami');
     }
 
-    // Generate slug from title
-    const slug = title.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim();
+    // Use provided slug when available, otherwise generate from title
+    const slug = normalizeSlug(customSlug || title);
+    if (!slug) {
+        throw new Error('Could not generate a valid slug from the provided title/slug');
+    }
 
     // Generate origami structure
     const structure = generateOrigamiStructure(
@@ -111,6 +112,7 @@ async function createOrigami(data) {
     );
 
     // Images are uploaded separately via /api/upload-image to avoid payload size limits
+    return slug;
 }
 
 async function createProject(data) {
@@ -125,19 +127,19 @@ async function createProject(data) {
         endDate,
         tags,
         keywords,
-        SEOdescription
+        SEOdescription,
+        slug: customSlug
     } = data;
 
     if (!title || !description || !summary) {
         throw new Error('Title, description, and summary are required for projects');
     }
 
-    // Generate slug from title
-    const slug = title.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim();
+    // Use provided slug when available, otherwise generate from title
+    const slug = normalizeSlug(customSlug || title);
+    if (!slug) {
+        throw new Error('Could not generate a valid slug from the provided title/slug');
+    }
 
     // Generate project structure with all fields
     const structure = generateProjectStructure(
@@ -170,6 +172,7 @@ async function createProject(data) {
     );
 
     // Images are uploaded separately via /api/upload-image to avoid payload size limits
+    return slug;
 }
 
 /**

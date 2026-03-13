@@ -16,11 +16,11 @@ export default async function handler(req, res) {
     // Validate authentication using cookies
     const cookies = parseCookies(req.headers.cookie);
     const token = cookies.adminToken;
-    
+
     if (!token) {
         return res.status(401).json({ error: 'Authentication required' });
     }
-    
+
     const decoded = verifyJWT(token);
     if (!decoded || !decoded.admin) {
         return res.status(401).json({ error: 'Invalid authentication' });
@@ -35,14 +35,20 @@ export default async function handler(req, res) {
             }
 
             // Determine file extension from data URL
-            const matches = imageData.match(/^data:image\/([a-zA-Z]+);base64,/);
+            const matches = imageData.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,/);
             if (!matches) {
                 return res.status(400).json({ error: 'Invalid image data format' });
             }
 
             const extension = matches[1];
             const base64Data = imageData.split(',')[1];
+            if (!base64Data || !base64Data.trim()) {
+                return res.status(400).json({ error: 'Image data is empty' });
+            }
             const imageBuffer = Buffer.from(base64Data, 'base64');
+            if (!imageBuffer.length) {
+                return res.status(400).json({ error: 'Image file is empty or invalid' });
+            }
 
             // Generate image path based on content type
             let imagePath;

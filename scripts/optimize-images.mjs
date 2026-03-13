@@ -38,6 +38,7 @@ let optimized = 0;
 let skipped = 0;
 let removedOrphans = 0;
 let errors = 0;
+let warnings = 0;
 
 async function walk(dir) {
   const results = [];
@@ -65,9 +66,16 @@ async function optimizeImage(srcPath) {
   const name = basename(srcPath, extname(srcPath));
   const outPath = join(webDir, `${name}.webp`);
 
+  const srcStat = await stat(srcPath);
+  if (srcStat.size === 0) {
+    warnings++;
+    console.warn(`  ⚠ ${basename(srcPath)}: file is empty, skipping optimization`);
+    return;
+  }
+
   // Skip if output exists and is newer than source (unless --force)
   if (!FORCE && existsSync(outPath)) {
-    const [srcStat, outStat] = await Promise.all([stat(srcPath), stat(outPath)]);
+    const outStat = await stat(outPath);
     if (outStat.mtimeMs >= srcStat.mtimeMs) {
       skipped++;
       return;
@@ -90,6 +98,12 @@ async function optimizeImage(srcPath) {
       `  ✓ ${basename(srcPath)} → web/${name}.webp  (${fmt(srcSize)} → ${fmt(outSize)}, -${pct}%)`
     );
   } catch (err) {
+    if (/unsupported image format/i.test(err.message)) {
+      warnings++;
+      console.warn(`  ⚠ ${basename(srcPath)}: ${err.message} (skipped)`);
+      return;
+    }
+
     errors++;
     console.error(`  ✗ ${basename(srcPath)}: ${err.message}`);
   }
@@ -188,7 +202,7 @@ async function main() {
     console.log();
   }
 
-  console.log(`Done! ${optimized} optimized, ${skipped} skipped, ${removedOrphans} removed, ${errors} errors`);
+  console.log(`Done! ${optimized} optimized, ${skipped} skipped, ${removedOrphans} removed, ${warnings} warnings, ${errors} errors`);
   if (errors > 0) process.exit(1);
 }
 
