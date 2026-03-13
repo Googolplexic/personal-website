@@ -1,5 +1,6 @@
 import { ItemProps, ProjectProps, OrigamiProps } from "../../types";
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type Dispatch, type SetStateAction } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { UniversalSearch, SortOption } from "../search/UniversalSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
@@ -24,12 +25,120 @@ export function ItemGrid({
 }: ItemGridProps) {
     const PRIORITY_IMAGE_COUNT = 3;
     const STAGGER_SKIP_COUNT = 1;
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
-    const [techFilterMode, setTechFilterMode] = useState<'and' | 'or'>('or');
-    const [tagFilterMode, setTagFilterMode] = useState<'and' | 'or'>('or');
-    const [sortBy, setSortBy] = useState<SortOption>('date-desc');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [localSearchTerm, setLocalSearchTerm] = useState('');
+    const [localSelectedTechs, setLocalSelectedTechs] = useState<string[]>([]);
+    const [localSelectedTags, setLocalSelectedTags] = useState<string[]>([]);
+    const [localTechFilterMode, setLocalTechFilterMode] = useState<'and' | 'or'>('or');
+    const [localTagFilterMode, setLocalTagFilterMode] = useState<'and' | 'or'>('or');
+    const [localSortBy, setLocalSortBy] = useState<SortOption>('date-desc');
+
+    const parseMode = (value: string | null): 'and' | 'or' => value === 'and' ? 'and' : 'or';
+    const parseSort = (value: string | null): SortOption => {
+        switch (value) {
+            case 'date-asc':
+            case 'title-asc':
+            case 'title-desc':
+            case 'tech-count':
+                return value;
+            case 'date-desc':
+            default:
+                return 'date-desc';
+        }
+    };
+
+    const urlSearchTerm = searchParams.get('search') || '';
+    const urlSelectedTechs = searchParams.getAll('tech');
+    const urlSelectedTags = searchParams.getAll('tag');
+    const urlTechFilterMode = parseMode(searchParams.get('techMode'));
+    const urlTagFilterMode = parseMode(searchParams.get('tagMode'));
+    const urlSortBy = parseSort(searchParams.get('sort'));
+
+    const searchTerm = hideControls ? localSearchTerm : urlSearchTerm;
+    const selectedTechs = hideControls ? localSelectedTechs : urlSelectedTechs;
+    const selectedTags = hideControls ? localSelectedTags : urlSelectedTags;
+    const techFilterMode = hideControls ? localTechFilterMode : urlTechFilterMode;
+    const tagFilterMode = hideControls ? localTagFilterMode : urlTagFilterMode;
+    const sortBy = hideControls ? localSortBy : urlSortBy;
+
+    const updateSearchParams = (updater: (params: URLSearchParams) => void) => {
+        const next = new URLSearchParams(searchParams);
+        updater(next);
+        if (next.toString() === searchParams.toString()) return;
+        setSearchParams(next, { replace: true });
+    };
+
+    const setSearchTerm: Dispatch<SetStateAction<string>> = hideControls
+        ? setLocalSearchTerm
+        : (value) => {
+            const nextValue = typeof value === 'function'
+                ? (value as (prevState: string) => string)(urlSearchTerm)
+                : value;
+            updateSearchParams(params => {
+                if (nextValue) params.set('search', nextValue);
+                else params.delete('search');
+            });
+        };
+
+    const setSelectedTechs: Dispatch<SetStateAction<string[]>> = hideControls
+        ? setLocalSelectedTechs
+        : (value) => {
+            const nextValues = typeof value === 'function'
+                ? (value as (prevState: string[]) => string[])(urlSelectedTechs)
+                : value;
+            updateSearchParams(params => {
+                params.delete('tech');
+                nextValues.forEach(tech => params.append('tech', tech));
+            });
+        };
+
+    const setSelectedTags: Dispatch<SetStateAction<string[]>> = hideControls
+        ? setLocalSelectedTags
+        : (value) => {
+            const nextValues = typeof value === 'function'
+                ? (value as (prevState: string[]) => string[])(urlSelectedTags)
+                : value;
+            updateSearchParams(params => {
+                params.delete('tag');
+                nextValues.forEach(tag => params.append('tag', tag));
+            });
+        };
+
+    const setTechFilterMode: Dispatch<SetStateAction<'and' | 'or'>> = hideControls
+        ? setLocalTechFilterMode
+        : (value) => {
+            const nextValue = typeof value === 'function'
+                ? (value as (prevState: 'and' | 'or') => 'and' | 'or')(urlTechFilterMode)
+                : value;
+            updateSearchParams(params => {
+                if (nextValue === 'and') params.set('techMode', 'and');
+                else params.delete('techMode');
+            });
+        };
+
+    const setTagFilterMode: Dispatch<SetStateAction<'and' | 'or'>> = hideControls
+        ? setLocalTagFilterMode
+        : (value) => {
+            const nextValue = typeof value === 'function'
+                ? (value as (prevState: 'and' | 'or') => 'and' | 'or')(urlTagFilterMode)
+                : value;
+            updateSearchParams(params => {
+                if (nextValue === 'and') params.set('tagMode', 'and');
+                else params.delete('tagMode');
+            });
+        };
+
+    const setSortBy: Dispatch<SetStateAction<SortOption>> = hideControls
+        ? setLocalSortBy
+        : (value) => {
+            const nextValue = typeof value === 'function'
+                ? (value as (prevState: SortOption) => SortOption)(urlSortBy)
+                : value;
+            updateSearchParams(params => {
+                if (nextValue === 'date-desc') params.delete('sort');
+                else params.set('sort', nextValue);
+            });
+        };
     const norm = (value?: string) => (value ?? '').toLowerCase();
     const sectionHeadingText = title ?? (
         itemType === 'project'
@@ -163,12 +272,23 @@ export function ItemGrid({
                     items={items}
                     contentType={itemType === 'mixed' ? 'mixed' : itemType === 'project' ? 'projects' : 'origami'}
                     onReset={() => {
-                        setSearchTerm('');
-                        setSelectedTechs([]);
-                        setSelectedTags([]);
-                        setTechFilterMode('or');
-                        setTagFilterMode('or');
-                        setSortBy('date-desc');
+                        if (hideControls) {
+                            setLocalSearchTerm('');
+                            setLocalSelectedTechs([]);
+                            setLocalSelectedTags([]);
+                            setLocalTechFilterMode('or');
+                            setLocalTagFilterMode('or');
+                            setLocalSortBy('date-desc');
+                            return;
+                        }
+                        updateSearchParams(params => {
+                            params.delete('search');
+                            params.delete('tech');
+                            params.delete('tag');
+                            params.delete('techMode');
+                            params.delete('tagMode');
+                            params.delete('sort');
+                        });
                     }}
                 />
             )}
