@@ -99,6 +99,11 @@
     "description": "Portfolio showcase of a browser extension that adjusts YouTube video quality based on video speed. Can help save data and improve video playback.",
     "image": "https://www.colemanlai.com/assets/images/projects/youtube-speed/image-CTyXrXUT.png"
   },
+  "/origami/-2024": {
+    "title": "π (2026) | Coleman Lai",
+    "description": "Made for Pi Day 2026",
+    "image": null
+  },
   "/origami/bladed-tactician": {
     "title": "The Bladed Tactician | Coleman Lai",
     "description": "My first complex design, made for my high school capstone project. 3 were folded, shown in reverse chronological order.",

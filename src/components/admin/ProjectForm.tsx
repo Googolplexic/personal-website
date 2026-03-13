@@ -34,6 +34,7 @@ const initialFormData: ProjectFormData = {
 
 export function ProjectForm() {
     const [formData, setFormData] = useState<ProjectFormData>(initialFormData);
+    const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
     const [images, setImages] = useState<FileList | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -49,15 +50,27 @@ export function ProjectForm() {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => {
-            const updated = { ...prev, [name]: value };
-
-            // Auto-generate slug when title changes
             if (name === 'title') {
-                updated.slug = generateSlug(value);
+                return {
+                    ...prev,
+                    title: value,
+                    slug: isSlugManuallyEdited ? prev.slug : generateSlug(value),
+                };
             }
 
-            return updated;
+            if (name === 'slug') {
+                return {
+                    ...prev,
+                    slug: generateSlug(value),
+                };
+            }
+
+            return { ...prev, [name]: value };
         });
+
+        if (name === 'slug') {
+            setIsSlugManuallyEdited(generateSlug(value).length > 0);
+        }
     };
 
     const handleArrayInputChange = (name: keyof ProjectFormData, value: string) => {
@@ -98,6 +111,7 @@ export function ProjectForm() {
                 body: JSON.stringify({
                     type: 'project',
                     title: formData.title,
+                    slug: formData.slug,
                     description: formData.description,
                     summary: formData.summary,
                     technologies: formData.technologies,
@@ -159,6 +173,7 @@ export function ProjectForm() {
 
             setMessage({ type: 'success', text: 'Project created successfully!' });
             setFormData(initialFormData);
+            setIsSlugManuallyEdited(false);
             setImages(null);
             const fileInput = document.getElementById('images') as HTMLInputElement;
             if (fileInput) fileInput.value = '';
@@ -203,7 +218,7 @@ export function ProjectForm() {
 
                     <div>
                         <label htmlFor="slug" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-                            Slug * (auto-generated)
+                            Slug * (auto-generated, editable)
                         </label>
                         <input
                             type="text"
