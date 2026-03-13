@@ -34,7 +34,7 @@ if (typeof window !== 'undefined') {
       'color:#a9a29b;font-size:11px;font-family:system-ui,sans-serif;line-height:2.2',
       'color:#a9a29b;font-size:11px;font-family:system-ui,sans-serif'
     )
-  }, 2000)
+  }, 4000)
 }
 
 createRoot(document.getElementById('root')!).render(
