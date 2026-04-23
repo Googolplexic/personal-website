@@ -36,9 +36,10 @@ export function useSpotlight() {
     }, []);
 
     const isHoverDevice = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const isSpotlightDisabled = () => document.documentElement.classList.contains('spotlight-disabled');
 
     const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-        if (!isHoverDevice()) return;
+        if (!isHoverDevice() || isSpotlightDisabled()) return;
         const overlay = document.getElementById('global-spotlight');
         const dim = document.getElementById('page-dim');
         if (overlay) {
@@ -52,7 +53,7 @@ export function useSpotlight() {
     }, []);
 
     const onMouseEnter = useCallback(() => {
-        if (!isHoverDevice()) return;
+        if (!isHoverDevice() || isSpotlightDisabled()) return;
         const overlay = document.getElementById('global-spotlight');
         const dim = document.getElementById('page-dim');
         if (overlay) {

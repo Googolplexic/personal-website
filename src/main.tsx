@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'  // Remove .tsx extension
 import { ThemeProvider } from './components/layout/ThemeProvider'
+import { SpotlightProvider } from './components/layout/SpotlightProvider'
 
 // Console greeting for the curious — delayed so it appears after framework logs
 if (typeof window !== 'undefined') {
@@ -40,7 +41,9 @@ if (typeof window !== 'undefined') {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      <App />
+      <SpotlightProvider>
+        <App />
+      </SpotlightProvider>
     </ThemeProvider>
   </StrictMode>,
 )

@@ -82,4 +82,20 @@
       filter: none;
     }
   }
+
+  /* Site-wide opt-out: when the user disables spotlight effects,
+     hide overlays and neutralize hover/scroll-proximity dimming.
+     `!important` is required to override inline styles written by
+     `useScrollProximity` on touch devices. */
+  html.spotlight-disabled #global-spotlight,
+  html.spotlight-disabled #page-dim {
+    opacity: 0 !important;
+    display: none !important;
+  }
+  html.spotlight-disabled .spotlight-group:hover .spotlight-item:not(:hover),
+  html.spotlight-disabled .spotlight-group:hover .spotlight-item:hover,
+  html.spotlight-disabled .spotlight-item {
+    opacity: 1 !important;
+    filter: none !important;
+  }
 }
