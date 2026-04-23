@@ -10,6 +10,7 @@ import { PageTransition } from './components/layout/PageTransition'
 import { BackToTop } from './components/ui/BackToTop'
 import { useSmoothScroll } from './utils/useSmoothScroll'
 import { useCustomCursor } from './utils/useCustomCursor'
+import { useSpotlightPreference } from './useSpotlightPreference'
 
 const Portfolio = lazy(() => import('./pages/Portfolio').then(m => ({ default: m.Portfolio })))
 const Origami = lazy(() => import('./pages/Origami').then(m => ({ default: m.Origami })))
@@ -20,6 +21,7 @@ const SpotlightDust = lazy(() => import('./components/ui/SpotlightDust').then(m 
 function AppContent() {
     useSmoothScroll();
     useCustomCursor();
+    const { enabled: spotlightEnabled } = useSpotlightPreference();
     // Don’t mount SpotlightDust until after main content can paint (preserves LCP).
     // Otherwise we pull in the shared-components chunk for dust before Home uses it for LCP.
     const [mountSpotlightDust, setMountSpotlightDust] = useState(false);
@@ -46,8 +48,9 @@ function AppContent() {
             <div id="global-spotlight" />
             {/* Page-wide dim overlay — darkens everything outside cursor area */}
             <div id="page-dim" />
-            {/* Mount only after idle so shared-components isn’t fetched for dust before LCP (Home) */}
-            {mountSpotlightDust && (
+            {/* Mount only after idle so shared-components isn’t fetched for dust before LCP (Home).
+                Also gated on the user preference so it can be turned off entirely. */}
+            {mountSpotlightDust && spotlightEnabled && (
                 <Suspense fallback={null}>
                     <SpotlightDust />
                 </Suspense>

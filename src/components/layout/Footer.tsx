@@ -1,5 +1,7 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
+import { SpotlightToggle } from './SpotlightToggle';
+import { FOOTER_HOVER, FOOTER_META_LINK } from './footerStyles';
 
 declare const __GIT_HASH__: string;
 declare const __GIT_DATE__: string;
@@ -17,7 +19,7 @@ const SOCIAL_LINKS = [
     { label: 'Instagram', href: 'https://www.instagram.com/12googolplex', icon: <FaInstagram size={15} /> },
 ];
 
-const linkClass = 'text-xs tracking-[0.15em] uppercase font-body transition-opacity duration-200 hover:opacity-90';
+const linkClass = `text-xs tracking-[0.15em] uppercase font-body ${FOOTER_HOVER}`;
 
 export function Footer() {
     return (
@@ -61,7 +63,7 @@ export function Footer() {
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={link.label}
-                            className="transition-opacity duration-200 opacity-85 hover:opacity-100"
+                            className={FOOTER_HOVER}
                             style={{ color: 'var(--color-text-secondary)' }}
                         >
                             {link.icon}
@@ -71,12 +73,15 @@ export function Footer() {
 
                 <div className="text-[10px] font-body uppercase tracking-[0.15em]"
                     style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="mb-1">
+                        <SpotlightToggle />
+                    </p>
                     <p>
                         <a
                             href="https://github.com/Googolplexic/personal-website/blob/main/LICENSE"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-inherit transition-colors duration-200 hover:text-[var(--color-text-primary)]"
+                            className={FOOTER_META_LINK}
                         >
                             © {new Date().getFullYear()} Coleman Lai
                         </a>
@@ -100,8 +105,8 @@ function BuildMeta() {
             href={`https://github.com/Googolplexic/personal-website/commit/${hash}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors duration-200 hover:text-[var(--color-text-primary)]"
-            style={{ color: 'inherit', textDecoration: 'none' }}
+            className={FOOTER_META_LINK}
+            style={{ textDecoration: 'none' }}
         >
             v{version} · {date} · {hash}
         </a>

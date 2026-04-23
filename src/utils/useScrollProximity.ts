@@ -21,6 +21,17 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
         let idleId: number | null = null;
 
         const update = () => {
+            // Respect the site-wide spotlight preference: if disabled, clear any
+            // inline dimming we may have applied and skip further work.
+            if (document.documentElement.classList.contains('spotlight-disabled')) {
+                const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
+                items.forEach(item => {
+                    item.style.opacity = '';
+                    item.style.filter = '';
+                });
+                ticking = false;
+                return;
+            }
             const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
             // Offset center slightly downward to account for navbar
             const viewportCenter = window.innerHeight * 0.53;
