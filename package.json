@@ -1,7 +1,7 @@
 {
   "name": "personal-website",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.5.0",
   "packageManager": "pnpm@10.17.1",
   "type": "module",
   "homepage": "https://www.colemanlai.com",
@@ -9,7 +9,7 @@
     "dev": "vite",
     "optimize-images": "node scripts/optimize-images.mjs",
     "prepare": "husky install",
-    "build": "node scripts/optimize-images.mjs && node scripts/build-hook.js && tsc -b && vite build && node scripts/generate-og-meta.js",
+    "build": "node scripts/optimize-images.mjs && node scripts/build-hook.js && tsc -b && vite build && node scripts/generate-og-meta.js && node scripts/generate-rss.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "vercel --prod",

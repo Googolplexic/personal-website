@@ -3,3 +3,8 @@ Allow: /
 Disallow: /admin
 
 Sitemap: https://www.colemanlai.com/sitemap.xml
+
+# RSS feeds (discoverability)
+# https://www.colemanlai.com/rss.xml
+# https://www.colemanlai.com/rss-portfolio.xml
+# https://www.colemanlai.com/rss-origami.xml
