@@ -4,6 +4,7 @@ import Sitemap from 'vite-plugin-sitemap'
 import { statSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
+import { getSiteVersionFromGit } from './scripts/site-version-from-git.mjs'
 
 /**
  * Process markdown frontmatter at build time so front-matter/js-yaml
@@ -593,12 +594,15 @@ saveCache(cache)
 
 // Build metadata — inject git info + auto-version for footer display
 //
+// Version string: shared with package.json via scripts/site-version-from-git.mjs
+// (pnpm prebuild / sync-version). Logic: git describe v* --long, else GitHub API.
+//
 // Versioning uses git tags. To start a new version:
 //   1. Commit your changes
 //   2. git tag v2.4   (or v3.0, etc.)
 //   3. git push --tags
-// The patch number auto-increments with each commit after the tag.
-// e.g. 3 commits after tag v2.4 → v2.4.3
+// The third segment auto-increments with each commit after the tag.
+// e.g. 3 commits after tag v2.4 → 2.4.3 in the footer + package.json after build
 
 let gitHash = 'dev'
 let gitDate = new Date().toISOString().slice(0, 10)
@@ -607,42 +611,12 @@ try {
   const { execSync } = await import('node:child_process')
   gitHash = execSync('git rev-parse --short HEAD', { encoding: 'utf-8' }).trim()
   gitDate = execSync('git log -1 --format=%cd --date=short', { encoding: 'utf-8' }).trim()
-
-  // git describe finds the nearest ancestor tag matching v*
-  // Output format: v2.3-0-gabcdef (on tag) or v2.3-10-gabcdef (10 commits after)
-  try {
-    const describe = execSync('git describe --tags --match "v*" --long', { encoding: 'utf-8' }).trim()
-    const match = describe.match(/^v(\d+\.\d+)-(\d+)-g[0-9a-f]+$/)
-    if (match) {
-      siteVersion = `${match[1]}.${match[2]}`
-    }
-  } catch {
-    // Fallback: GitHub API (works in Vercel shallow clones without tags)
-    try {
-      const commitSha = process.env.VERCEL_GIT_COMMIT_SHA
-        || execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim()
-      const tagsResp = await fetch(
-        'https://api.github.com/repos/Googolplexic/personal-website/tags?per_page=50'
-      )
-      const tags = (await tagsResp.json()) as { name: string; commit: { sha: string } }[]
-      const vTags = tags
-        .filter((t: { name: string }) => /^v\d+\.\d+$/.test(t.name))
-        .sort((a: { name: string }, b: { name: string }) => {
-          const [, aMaj, aMin] = a.name.match(/v(\d+)\.(\d+)/)!
-          const [, bMaj, bMin] = b.name.match(/v(\d+)\.(\d+)/)!
-          return (+bMaj * 1000 + +bMin) - (+aMaj * 1000 + +aMin)
-        })
-      if (vTags.length) {
-        const latestTag = vTags[0]
-        const compareResp = await fetch(
-          `https://api.github.com/repos/Googolplexic/personal-website/compare/${latestTag.name}...${commitSha}`
-        )
-        const compare = (await compareResp.json()) as { ahead_by?: number }
-        siteVersion = `${latestTag.name.slice(1)}.${compare.ahead_by ?? 0}`
-      }
-    } catch { /* version stays dev */ }
-  }
-} catch { /* fallback to defaults in dev/CI without git */ }
+} catch { /* keep hash/date defaults */ }
+try {
+  siteVersion = await getSiteVersionFromGit()
+} catch {
+  siteVersion = 'dev'
+}
 
 export default defineConfig(({ mode }) => ({
   define: {

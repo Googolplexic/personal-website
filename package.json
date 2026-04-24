@@ -9,6 +9,8 @@
     "dev": "vite",
     "optimize-images": "node scripts/optimize-images.mjs",
     "prepare": "husky install",
+    "prebuild": "node scripts/sync-package-version.mjs",
+    "sync-version": "node scripts/sync-package-version.mjs",
     "build": "node scripts/optimize-images.mjs && node scripts/build-hook.js && tsc -b && vite build && node scripts/generate-og-meta.js && node scripts/generate-rss.js",
     "lint": "eslint .",
     "preview": "vite preview",
