@@ -113,17 +113,17 @@
   animation: cursor-pulse 1.6s ease-in-out infinite;
 }
 
-.custom-cursor-dot.pressing:not(.text-input) {
+.custom-cursor-dot.pressing:not(.text-input):not(.scrollbar) {
   transform: translate(-50%, -50%) scale(0.58);
   background: #ecd082;
   box-shadow: 0 0 0 1px rgba(236, 208, 130, 0.2);
 }
 
-.custom-cursor-dot.hovering.pressing:not(.text-input) {
+.custom-cursor-dot.hovering.pressing:not(.text-input):not(.scrollbar) {
   transform: translate(-50%, -50%) scale(0.46);
 }
 
-.custom-cursor-glow.visible.pressing:not(.text-input) {
+.custom-cursor-glow.visible.pressing:not(.text-input):not(.scrollbar) {
   width: 30px;
   height: 30px;
   background: radial-gradient(
@@ -136,7 +136,7 @@
   animation: none;
 }
 
-.custom-cursor-glow.visible.hovering.pressing:not(.text-input) {
+.custom-cursor-glow.visible.hovering.pressing:not(.text-input):not(.scrollbar) {
   width: 42px;
   height: 42px;
 }
@@ -144,4 +144,81 @@
 @keyframes cursor-pulse {
   0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
   50% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.7; }
+}
+
+/* Real scrollbar — cursor docks into the thumb (one thumb at a time) */
+.custom-scrollbar-track {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 99997;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(201, 168, 76, 0.14) 18%,
+    rgba(201, 168, 76, 0.14) 82%,
+    transparent 100%
+  );
+  opacity: 0;
+}
+
+.custom-scrollbar-thumb {
+  position: fixed;
+  right: 1px;
+  width: 5px;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translateY(-50%);
+  background: rgba(201, 168, 76, 0.5);
+  box-shadow: 0 0 10px rgba(201, 168, 76, 0.15);
+  opacity: 0;
+}
+
+.custom-cursor-dot.scrollbar {
+  border-radius: 999px;
+  background: rgba(201, 168, 76, 0.78);
+  box-shadow:
+    0 0 0 1px rgba(201, 168, 76, 0.18),
+    0 0 14px rgba(201, 168, 76, 0.28);
+  /* width/height set inline during magnetic morph */
+  transition: opacity 0.2s ease,
+              background 0.2s ease,
+              box-shadow 0.2s ease,
+              border-radius 0.2s cubic-bezier(.4,0,.2,1);
+}
+
+.custom-cursor-dot.scrollbar.pressing {
+  background: rgba(236, 208, 130, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(236, 208, 130, 0.28),
+    0 0 18px rgba(236, 208, 130, 0.4);
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor-glow.visible.scrollbar {
+  border-radius: 999px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(201, 168, 76, 0.28) 0%,
+    rgba(201, 168, 76, 0.08) 45%,
+    transparent 72%
+  );
+  filter: blur(1px);
+  opacity: 0.85;
+  animation: none;
+  transition: opacity 0.2s ease, background 0.2s ease, filter 0.25s ease;
+}
+
+.custom-cursor-glow.visible.scrollbar.pressing {
+  opacity: 1;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(236, 208, 130, 0.36) 0%,
+    rgba(236, 208, 130, 0.1) 48%,
+    transparent 74%
+  );
 }
