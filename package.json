@@ -1,7 +1,7 @@
 {
   "name": "personal-website",
   "private": true,
-  "version": "2.5.0",
+  "version": "2.6.0",
   "packageManager": "pnpm@10.17.1",
   "type": "module",
   "homepage": "https://www.colemanlai.com",
