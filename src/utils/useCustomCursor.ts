@@ -147,9 +147,31 @@ export function useCustomCursor() {
             scrollActivity = 1;
         };
 
+        const isScrollLocked = () =>
+            document.documentElement.classList.contains('scroll-locked')
+            || document.body.style.overflow === 'hidden';
+
+        const releaseScrollbar = () => {
+            if (!scrollbarDragging && dockAmount === 0) return;
+            scrollbarDragging = false;
+            dragGrabOffset = 0;
+            dockAmount = 0;
+            docked = false;
+            document.body.style.userSelect = '';
+            dot.classList.remove('scrollbar', 'pressing');
+            glow.classList.remove('scrollbar', 'pressing');
+            dot.style.width = '';
+            dot.style.height = '';
+            glow.style.width = '';
+            glow.style.height = '';
+        };
+
         const tick = () => {
+            const scrollLocked = isScrollLocked();
+            if (scrollLocked) releaseScrollbar();
+
             const { viewH, maxScroll, thumbH, thumbCenterY } = getScrollMetrics();
-            const canScroll = maxScroll > 0;
+            const canScroll = maxScroll > 0 && !scrollLocked;
             const trackX = window.innerWidth - TRACK_X_INSET;
             const distFromRight = window.innerWidth - pointerX;
             const distFromThumbY = Math.abs(pointerY - thumbCenterY);
@@ -302,7 +324,7 @@ export function useCustomCursor() {
             const distFromRight = window.innerWidth - e.clientX;
             const nearRail = distFromRight <= RAIL_ZONE_PX;
 
-            if (nearRail && maxScroll > 0) {
+            if (nearRail && maxScroll > 0 && !isScrollLocked()) {
                 pointerX = e.clientX;
                 pointerY = e.clientY;
                 const onThumb = Math.abs(e.clientY - thumbCenterY) <= thumbH / 2 + 12;

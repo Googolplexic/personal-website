@@ -30,10 +30,14 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
         });
     }, []);
 
-    // Lock body scroll
+    // Lock body scroll (class also disables the custom scrollbar cursor)
     useEffect(() => {
         document.body.style.overflow = 'hidden';
-        return () => { document.body.style.overflow = ''; };
+        document.documentElement.classList.add('scroll-locked');
+        return () => {
+            document.body.style.overflow = '';
+            document.documentElement.classList.remove('scroll-locked');
+        };
     }, []);
 
     const goTo = useCallback((index: number) => {

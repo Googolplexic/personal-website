@@ -30,6 +30,7 @@ export function PageTransition({ children }: PageTransitionProps) {
             // Safety: ensure body overflow is never left hidden by a
             // lightbox (or similar) that was unmounted during navigation.
             document.body.style.overflow = '';
+            document.documentElement.classList.remove('scroll-locked');
 
             // Use Lenis for scroll-to-top when active, fall back to native.
             const lenis = getLenis();
