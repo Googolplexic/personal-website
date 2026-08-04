@@ -109,6 +109,14 @@
 
   html { scroll-behavior: smooth; }
 
+  /* Native scrollbar hidden — custom cursor becomes the thumb at the right edge */
+  html {
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after {
