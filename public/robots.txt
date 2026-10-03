@@ -4,6 +4,8 @@ Disallow: /admin
 
 Sitemap: https://www.colemanlai.com/sitemap.xml
 
+Agentmap: https://www.colemanlai.com/.well-known/ai-catalog.json
+
 # RSS feeds (discoverability)
 # https://www.colemanlai.com/rss.xml
 # https://www.colemanlai.com/rss-portfolio.xml

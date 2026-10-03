@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { useLocation, Link as RouterLink } from 'react-router-dom';
 import { cn } from '../../utils/styles';
 
@@ -6,6 +6,10 @@ export function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const location = useLocation();
+
+    useLayoutEffect(() => {
+        document.getElementById('boot-nav')?.remove();
+    }, []);
 
     // Close mobile menu on route change
     useEffect(() => {

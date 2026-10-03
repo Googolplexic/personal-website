@@ -11,6 +11,7 @@ import { BackToTop } from './components/ui/BackToTop'
 import { useSmoothScroll } from './utils/useSmoothScroll'
 import { useCustomCursor } from './utils/useCustomCursor'
 import { useSpotlightPreference } from './useSpotlightPreference'
+import { bindBootHero } from './utils/bootHero'
 
 const Portfolio = lazy(() => import('./pages/Portfolio').then(m => ({ default: m.Portfolio })))
 const Origami = lazy(() => import('./pages/Origami').then(m => ({ default: m.Origami })))
@@ -21,6 +22,16 @@ const SpotlightDust = lazy(() => import('./components/ui/SpotlightDust').then(m 
 function AppContent() {
     const location = useLocation();
     const isAdmin = location.pathname === '/admin';
+    useEffect(() => {
+        const bootHero = document.getElementById('boot-hero');
+        if (bootHero) {
+            const show = location.pathname === '/';
+            bootHero.hidden = !show;
+            document.documentElement.classList.toggle('no-boot-hero', !show);
+        }
+        document.getElementById('boot-nav')?.toggleAttribute('hidden', isAdmin);
+    }, [location.pathname, isAdmin]);
+    useEffect(() => bindBootHero(), []);
     useSmoothScroll(!isAdmin);
     useCustomCursor(!isAdmin);
     const { enabled: spotlightEnabled } = useSpotlightPreference();
@@ -28,20 +39,9 @@ function AppContent() {
     // Otherwise we pull in the shared-components chunk for dust before Home uses it for LCP.
     const [mountSpotlightDust, setMountSpotlightDust] = useState(false);
     useEffect(() => {
-        const schedule = () => {
-            if (typeof (window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback === 'function') {
-                (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback(() => setMountSpotlightDust(true), { timeout: 1500 });
-            } else {
-                const t = setTimeout(() => setMountSpotlightDust(true), 800);
-                return () => clearTimeout(t);
-            }
-        };
-        if (document.readyState === 'complete') {
-            schedule();
-        } else {
-            window.addEventListener('load', schedule, { once: true });
-        }
-    }, []);
+        if (isAdmin || !spotlightEnabled) return;
+        setMountSpotlightDust(true);
+    }, [isAdmin, spotlightEnabled]);
 
     return (
         <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-500 md:text-base text-sm"
@@ -50,8 +50,7 @@ function AppContent() {
             {!isAdmin && <div id="global-spotlight" />}
             {/* Page-wide dim overlay — darkens everything outside cursor area */}
             {!isAdmin && <div id="page-dim" />}
-            {/* Mount only after idle so shared-components isn’t fetched for dust before LCP (Home).
-                Also gated on the user preference so it can be turned off entirely. */}
+            {/* Dust starts with the shell. The hero text is already painted, so this no longer waits on idle. */}
             {!isAdmin && mountSpotlightDust && spotlightEnabled && (
                 <Suspense fallback={null}>
                     <SpotlightDust />

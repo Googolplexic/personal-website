@@ -28,8 +28,6 @@ export function useCustomCursor(enabled = true) {
         thumb.className = 'custom-scrollbar-thumb';
         document.body.appendChild(thumb);
 
-        document.documentElement.classList.add('custom-cursor-active');
-
         let isVisible = false;
         let idleFadeId: ReturnType<typeof setTimeout> | undefined;
         let rafId = 0;
@@ -136,6 +134,7 @@ export function useCustomCursor(enabled = true) {
             glow.classList.remove('visible');
             clearPressState();
             document.documentElement.classList.remove('custom-cursor-visible');
+            document.documentElement.classList.remove('custom-cursor-active');
         };
 
         const scheduleIdleFade = () => {
@@ -294,6 +293,7 @@ export function useCustomCursor(enabled = true) {
                 renderY = e.clientY;
                 dot.classList.add('visible');
                 glow.classList.add('visible');
+                document.documentElement.classList.add('custom-cursor-active');
                 document.documentElement.classList.add('custom-cursor-visible');
             }
 
@@ -314,6 +314,7 @@ export function useCustomCursor(enabled = true) {
             isVisible = true;
             dot.classList.add('visible');
             glow.classList.add('visible');
+            document.documentElement.classList.add('custom-cursor-active');
             document.documentElement.classList.add('custom-cursor-visible');
             scheduleIdleFade();
         };
