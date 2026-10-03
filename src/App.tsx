@@ -1,5 +1,5 @@
 import './App.css'
-import { lazy, Suspense, useState, useEffect } from 'react'
+import { lazy, Suspense, useState, useEffect, useLayoutEffect } from 'react'
 import { Routes, Route, BrowserRouter, useLocation } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
 import { HelmetProvider } from 'react-helmet-async';
@@ -22,7 +22,7 @@ const SpotlightDust = lazy(() => import('./components/ui/SpotlightDust').then(m 
 function AppContent() {
     const location = useLocation();
     const isAdmin = location.pathname === '/admin';
-    useEffect(() => {
+    useLayoutEffect(() => {
         const bootHero = document.getElementById('boot-hero');
         if (bootHero) {
             const show = location.pathname === '/';
@@ -30,6 +30,11 @@ function AppContent() {
             document.documentElement.classList.toggle('no-boot-hero', !show);
         }
         document.getElementById('boot-nav')?.toggleAttribute('hidden', isAdmin);
+        document.getElementById('boot-portfolio')?.toggleAttribute('hidden', location.pathname !== '/portfolio');
+        document.getElementById('boot-origami')?.toggleAttribute('hidden', location.pathname !== '/origami');
+        if (location.pathname !== '/portfolio') {
+            document.getElementById('boot-portfolio-lead')?.setAttribute('hidden', '');
+        }
     }, [location.pathname, isAdmin]);
     useEffect(() => bindBootHero(), []);
     useSmoothScroll(!isAdmin);

@@ -6,6 +6,7 @@ import { Lightbox } from '../components/ui/Lightbox';
 import { NotFound } from './NotFound';
 import { ShareButton } from '../components/ui/ShareButton';
 import { CategoryLabel } from '../components/ui/CategoryLabel';
+import { sizeForImage } from '../utils/imageSize';
 import { HighlightedText } from '../components/ui/HighlightedText';
 
 const BASE_URL = 'https://www.colemanlai.com';
@@ -114,10 +115,12 @@ export function OrigamiDetail() {
                             <img
                                 src={origami.creasePattern}
                                 alt={`${origami.title} crease pattern`}
-                                className="w-full object-contain cursor-zoom-in"
+                                className="w-full h-auto object-contain cursor-zoom-in"
                                 onClick={() => setCpLightboxOpen(true)}
                                 loading="lazy"
                                 title="Click to enlarge"
+                                width={sizeForImage(origami.creasePattern)?.width}
+                                height={sizeForImage(origami.creasePattern)?.height}
                             />
                         </div>
                         {cpLightboxOpen && cpFull && (

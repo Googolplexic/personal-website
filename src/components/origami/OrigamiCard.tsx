@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
 import { ShareButton } from '../ui/ShareButton';
+import { sizeForImage } from '../../utils/imageSize';
 
 const BASE_URL = 'https://www.colemanlai.com';
 
@@ -48,7 +49,8 @@ export function OrigamiCard({ slug, title, description, modelImages, date, desig
                         className="block w-full h-auto"
                         loading={priority ? 'eager' : 'lazy'}
                         decoding={priority ? 'sync' : 'async'}
-                        fetchPriority={priority ? 'high' : 'auto'}
+                        width={sizeForImage(heroImage)?.width}
+                        height={sizeForImage(heroImage)?.height}
                     />
                 </div>
             )}

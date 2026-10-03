@@ -6,6 +6,7 @@ import { CategoryLabel } from '../ui/CategoryLabel';
 import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage } from '../../utils/lazyImages';
 import { ShareButton } from '../ui/ShareButton';
+import { sizeForImage } from '../../utils/imageSize';
 
 const BASE_URL = 'https://www.colemanlai.com';
 
@@ -26,9 +27,10 @@ interface ProjectWithBasePath extends ProjectProps {
     categoryColor?: string;
     showCategory?: boolean;
     priority?: boolean;
+    imageAlreadyShown?: boolean;
 }
 
-export function ProjectCard({ basePath = '/portfolio', searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false, ...props }: ProjectWithBasePath) {
+export function ProjectCard({ basePath = '/portfolio', searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false, imageAlreadyShown = false, ...props }: ProjectWithBasePath) {
     const navigate = useNavigate();
     const location = useLocation();
     const [firstImage, setFirstImage] = useState<string>(() => resolveFirstImageSync(props.images));
@@ -47,29 +49,38 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
         }
     }, [props.images, firstImage]);
 
+    useEffect(() => {
+        if (!imageAlreadyShown) return;
+        const card = document.getElementById('boot-portfolio-card');
+        if (!card) return;
+        const onClick = (event: Event) => {
+            event.preventDefault();
+            navigate(projectPath, { state: { from: location.pathname } });
+            window.scrollTo(0, 0);
+        };
+        card.addEventListener('click', onClick);
+        return () => card.removeEventListener('click', onClick);
+    }, [imageAlreadyShown, navigate, projectPath, location.pathname]);
+
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         navigate(projectPath, { state: { from: location.pathname } });
         window.scrollTo(0, 0);
     };
 
-    return (
-        <a
-            href={projectPath}
-            onClick={handleClick}
-            className="spotlight-item flex flex-col cursor-pointer group break-inside-avoid"
-            style={{ textDecoration: 'none', color: 'inherit' }}
-        >
+    const cardBody = (
+            <>
             {/* Image — no rounding, raw edge */}
-            {firstImage && (
+            {!imageAlreadyShown && firstImage && (
                 <div className="w-full overflow-hidden flex justify-center">
                     <img
                         src={firstImage}
                         alt={props.title}
-                        className="block w-auto h-auto max-w-full"
+                        className="block w-full h-auto"
                         loading={priority ? 'eager' : 'lazy'}
                         decoding={priority ? 'sync' : 'async'}
-                        fetchPriority={priority ? 'high' : 'auto'}
+                        width={sizeForImage(firstImage)?.width}
+                        height={sizeForImage(firstImage)?.height}
                     />
                 </div>
             )}
@@ -106,6 +117,19 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
                     <ShareButton url={shareUrl} title={props.title} description={props.summary} />
                 </div>
             </div>
+            </>
+    );
+
+    if (imageAlreadyShown) return cardBody;
+
+    return (
+        <a
+            href={projectPath}
+            onClick={handleClick}
+            className="spotlight-item flex flex-col cursor-pointer group break-inside-avoid"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+            {cardBody}
         </a>
     );
 }
