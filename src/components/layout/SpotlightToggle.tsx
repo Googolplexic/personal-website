@@ -16,12 +16,11 @@ export function SpotlightToggle() {
         <button
             type="button"
             onClick={toggleEnabled}
-            aria-label={enabled ? 'Disable spotlight effects' : 'Enable spotlight effects'}
             className={FOOTER_META_LINK}
             style={{
                 background: 'none',
                 border: 'none',
-                padding: 0,
+                padding: '0.45rem 0.25rem',
                 font: 'inherit',
                 letterSpacing: 'inherit',
                 textTransform: 'inherit',

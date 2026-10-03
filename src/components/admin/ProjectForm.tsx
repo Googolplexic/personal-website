@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { apiUrl } from '../../config/api';
-import { Heading, Button } from '../ui/base';
 
 interface ProjectFormData {
     title: string;
@@ -135,6 +134,7 @@ export function ProjectForm() {
             const slug = result.slug;
 
             // Step 2: Upload images one-by-one via /api/upload-image
+            const failedImages: string[] = [];
             if (images && images.length > 0) {
                 for (let i = 0; i < images.length; i++) {
                     const file = Array.from(images)[i];
@@ -165,13 +165,20 @@ export function ProjectForm() {
                     });
 
                     if (!imgRes.ok) {
-                        const err = await imgRes.json();
-                        console.error(`Failed to upload image ${i + 1}:`, err);
+                        failedImages.push(file.name);
+                        console.error(`Failed to upload image ${i + 1}`);
                     }
                 }
             }
 
-            setMessage({ type: 'success', text: 'Project created successfully!' });
+            if (failedImages.length > 0) {
+                setMessage({
+                    type: 'error',
+                    text: `Project files were created, but these images did not upload: ${failedImages.join(', ')}. Add them from the editor.`,
+                });
+            } else {
+                setMessage({ type: 'success', text: 'Project created successfully!' });
+            }
             setFormData(initialFormData);
             setIsSlugManuallyEdited(false);
             setImages(null);
@@ -199,7 +206,7 @@ export function ProjectForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Basic Info */}
                 <div className="space-y-4">
-                    <Heading level={3}>Basic Information</Heading>
+                    <p className="gallery-overline">Details</p>
 
                     <div>
                         <label htmlFor="title" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
@@ -292,7 +299,7 @@ export function ProjectForm() {
 
                 {/* Additional Info */}
                 <div className="space-y-4">
-                    <Heading level={3}>Additional Information</Heading>
+                    <p className="gallery-overline">Metadata</p>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -404,15 +411,9 @@ export function ProjectForm() {
                 />
             </div>
 
-            <div className="flex justify-end">
-                <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-6 py-2.5 bg-[var(--color-accent)] text-[var(--color-bg-primary)] rounded-md hover:opacity-90 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-opacity text-sm font-medium tracking-wide"
-                >
-                    {isSubmitting ? 'Creating...' : 'Create Project'}
-                </Button>
-            </div>
+            <button type="submit" className="admin-link" disabled={isSubmitting}>
+                {isSubmitting ? 'Creating' : 'Create project'}
+            </button>
         </form>
     );
 }

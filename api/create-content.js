@@ -53,7 +53,9 @@ export default async function handler(req, res) {
 
             // Update the lastmod cache for the new content
             if (type === 'project') {
-                await updateLastModCache(slug);
+                await updateLastModCache(`assets/projects/${slug}`, slug);
+            } else {
+                await updateLastModCache(`assets/origami/${data.category}/${slug}`, slug);
             }
 
             return res.status(200).json({
@@ -64,9 +66,10 @@ export default async function handler(req, res) {
 
         } catch (error) {
             console.error('Error creating content:', error);
-            return res.status(500).json({
-                error: `Failed to create ${req.body.type || 'content'}`,
-                details: error.message,
+            const message = error instanceof Error ? error.message : 'Failed to create content';
+            const clientError = /required|Invalid|valid slug/.test(message);
+            return res.status(clientError ? 400 : 500).json({
+                error: clientError ? message : `Failed to create ${req.body?.type || 'content'}`,
             });
         }
     }
@@ -79,6 +82,9 @@ async function createOrigami(data) {
 
     if (!title || !category) {
         throw new Error('Title and category are required for origami');
+    }
+    if (category !== 'my-designs' && category !== 'other-designs') {
+        throw new Error('Invalid origami category');
     }
 
     // Use provided slug when available, otherwise generate from title
@@ -178,36 +184,26 @@ async function createProject(data) {
 /**
  * Updates the lastmod cache for a project
  */
-async function updateLastModCache(projectSlug) {
+async function updateLastModCache(cacheKey, slug) {
     try {
-        // Import the GitHub utilities
-        const { updateFileInGitHub, getFileFromGitHub } = await import('./github-utils.js');
-
-        // Get the current cache
+        const existing = await getFileFromGitHub('lastmod-cache.json');
         let currentCache = {};
-        try {
-            const cacheContent = await getFileFromGitHub('lastmod-cache.json');
-            currentCache = JSON.parse(cacheContent);
-        } catch (error) {
-            console.log('Cache file not found, creating new one');
+        if (existing?.content) {
+            const parsed = JSON.parse(existing.content);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                currentCache = parsed;
+            }
         }
 
-        // Update the cache with current timestamp
-        const cacheKey = `assets/projects/${projectSlug}`;
         currentCache[cacheKey] = new Date().toISOString();
-
-        // Save the updated cache
-        const newCacheContent = JSON.stringify(currentCache, null, 2);
         await updateFileInGitHub(
             'lastmod-cache.json',
-            newCacheContent,
-            `Update lastmod cache for new project: ${projectSlug}`
+            JSON.stringify(currentCache, null, 2),
+            `Update lastmod cache for ${slug}`,
+            existing?.sha || null
         );
-
-        console.log(`Updated lastmod cache for project: ${projectSlug}`);
     } catch (error) {
         console.error('Error updating lastmod cache:', error);
-        // Don't throw error as cache update failure shouldn't break project creation
     }
 }
 

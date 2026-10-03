@@ -35,7 +35,7 @@ function OrigamiGallery() {
                     style={{ color: 'var(--color-text-primary)' }}>
                     Origami
                 </h1>
-                <p className="text-base font-heading italic max-w-lg mx-auto mb-2"
+                <p className="text-base font-heading italic max-w-lg mx-auto mb-2 px-2 text-balance"
                     style={{ color: 'var(--color-text-secondary)' }}>
                     Where geometric precision meets artistic expression.
                 </p>

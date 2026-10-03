@@ -2,7 +2,7 @@ import { Link } from '../ui/base';
 
 export function About() {
     return (
-        <div id="about">
+        <div>
             <p className="gallery-overline mb-6">An Introduction</p>
             <div className="space-y-5">
                 <p className="text-base md:text-lg leading-relaxed font-body"

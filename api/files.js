@@ -1,6 +1,7 @@
 // Vercel serverless function to get file lists via GitHub API
 import { Octokit } from '@octokit/rest';
 import { verifyJWT, parseCookies } from './auth-utils.js';
+import { resolveContentDir } from './github-utils.js';
 
 const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
@@ -41,19 +42,11 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Path parameter is required' });
             }
 
-            // Determine the full path based on the request pattern
-            let fullPath;
-            if (requestPath.startsWith('project/')) {
-                const slug = requestPath.replace('project/', '');
-                fullPath = `src/assets/projects/${slug}`;
-            } else if (requestPath.startsWith('origami/')) {
-                const parts = requestPath.replace('origami/', '').split('/');
-                const category = parts[0];
-                const slug = parts[1];
-                fullPath = `src/assets/origami/${category}/${slug}`;
-            } else {
+            const resolved = resolveContentDir(requestPath);
+            if (!resolved) {
                 return res.status(400).json({ error: 'Invalid path format' });
             }
+            const fullPath = resolved.dir;
 
             // Get directory contents from GitHub
             const response = await octokit.rest.repos.getContent({
@@ -86,7 +79,7 @@ export default async function handler(req, res) {
 
             // For projects, also get files from the images subdirectory
             let imageFiles = [];
-            if (requestPath.startsWith('project/')) {
+            if (resolved.kind === 'project') {
                 try {
                     const imagesResponse = await octokit.rest.repos.getContent({
                         owner: REPO_OWNER,
@@ -115,10 +108,7 @@ export default async function handler(req, res) {
 
         } catch (error) {
             console.error('Error getting file list:', error);
-            return res.status(500).json({
-                error: 'Failed to get file list',
-                details: error.message,
-            });
+            return res.status(500).json({ error: 'Failed to get file list' });
         }
     }
 

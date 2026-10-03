@@ -8,8 +8,9 @@ let lenisInstance: Lenis | null = null;
  * Call once in the app root. Respects prefers-reduced-motion.
  * Lenis is loaded asynchronously to keep it off the critical rendering path.
  */
-export function useSmoothScroll() {
+export function useSmoothScroll(enabled = true) {
     useEffect(() => {
+        if (!enabled) return;
         // Smooth scrolling is a desktop enhancement; skip on touch/coarse pointers.
         if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -76,7 +77,7 @@ export function useSmoothScroll() {
                 lenisInstance = null;
             }
         };
-    }, []);
+    }, [enabled]);
 }
 
 /** Expose for scroll-to calls (e.g., back-to-top) */

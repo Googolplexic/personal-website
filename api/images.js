@@ -1,5 +1,5 @@
 // Vercel serverless function to manage images via GitHub API
-import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer } from './github-utils.js';
+import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveContentDir, resolveImageFile, imageUploadPath } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -33,17 +33,8 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Path parameter is required' });
         }
 
-        // Determine the full path based on the request pattern
-        let basePath;
-        if (requestPath.startsWith('project/')) {
-            const slug = requestPath.replace('project/', '');
-            basePath = `src/assets/projects/${slug}`;
-        } else if (requestPath.startsWith('origami/')) {
-            const parts = requestPath.replace('origami/', '').split('/');
-            const category = parts[0];
-            const slug = parts[1];
-            basePath = `src/assets/origami/${category}/${slug}`;
-        } else {
+        const resolved = resolveContentDir(requestPath);
+        if (!resolved) {
             return res.status(400).json({ error: 'Invalid path format' });
         }
 
@@ -53,7 +44,10 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'File parameter is required for GET' });
             }
 
-            const fullPath = `${basePath}/${file}`;
+            const fullPath = resolveImageFile(requestPath, file);
+            if (!fullPath) {
+                return res.status(400).json({ error: 'Invalid file name' });
+            }
             const fileData = await getImageFromGitHub(fullPath);
 
             if (!fileData) {
@@ -85,13 +79,9 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Image file is empty or invalid' });
             }
 
-            // For projects, images go into images/ subdirectory
-            // For origami, images go directly in the folder
-            let fullPath;
-            if (requestPath.startsWith('project/')) {
-                fullPath = `${basePath}/images/${fileName}`;
-            } else {
-                fullPath = `${basePath}/${fileName}`;
+            const fullPath = imageUploadPath(resolved.kind, resolved.slug, resolved.category, fileName);
+            if (!fullPath) {
+                return res.status(400).json({ error: 'Invalid file name' });
             }
 
             await uploadImageToGitHub(
@@ -127,7 +117,10 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'File parameter is required for DELETE' });
             }
 
-            const fullPath = `${basePath}/${file}`;
+            const fullPath = resolveImageFile(requestPath, file);
+            if (!fullPath) {
+                return res.status(400).json({ error: 'Invalid file name' });
+            }
 
             await deleteFileFromGitHub(
                 fullPath,
@@ -158,10 +151,7 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('Error handling image request:', error);
-        return res.status(500).json({
-            error: 'Failed to handle image request',
-            details: error.message,
-        });
+        return res.status(500).json({ error: 'Failed to handle image request' });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

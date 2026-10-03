@@ -35,7 +35,6 @@ export function AdminPanel() {
             // Now validate the session
             validateSession();
         } catch {
-            // Server is not running, redirect to the special route
             window.location.href = '/?to=screwyounoadminforyou';
         }
     }, [validateSession]); useEffect(() => {

@@ -22,6 +22,7 @@ export function Navbar() {
 
     return (
         <nav
+            aria-label="Primary"
             className={cn(
                 'fixed top-0 w-full z-[200] transition-all duration-500',
                 scrolled
@@ -55,9 +56,10 @@ export function Navbar() {
 
                 {/* Mobile hamburger */}
                 <button
-                    className="sm:hidden p-1"
+                    className="sm:hidden flex items-center justify-center min-h-11 min-w-11 -mr-2"
                     onClick={() => setMobileOpen(!mobileOpen)}
-                    aria-label="Toggle menu"
+                    aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+                    aria-expanded={mobileOpen}
                     style={{ background: 'none', border: 'none' }}
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">

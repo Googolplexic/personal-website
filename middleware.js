@@ -1,6 +1,6 @@
 /**
- * Rewrites crawler (Discord, Twitter, etc.) requests for /portfolio/:slug and /origami/:slug
- * to the og-page API so they receive HTML with correct og:title, og:description, og:image.
+ * Rewrites crawler requests to the og-page API so they receive HTML with
+ * og:title, og:description, and og:image. People still get the SPA.
  */
 
 import { next, rewrite } from '@vercel/functions';
@@ -9,7 +9,7 @@ const BOT_UA =
   /discord|twitterbot|slackbot|facebookexternalhit|linkedinbot|whatsapp|telegrambot|embed|googlebot|bingbot|baiduspider|yandexbot|duckduckbot|applebot|bot|crawler|spider|preview|embed/i;
 
 export const config = {
-  matcher: ['/portfolio/:path*', '/origami/:path*'],
+  matcher: ['/', '/portfolio', '/portfolio/:path*', '/origami', '/origami/:path*'],
 };
 
 export default function middleware(request) {
@@ -18,7 +18,6 @@ export default function middleware(request) {
 
   const url = new URL(request.url);
   const pathname = url.pathname;
-  if (pathname === '/portfolio' || pathname === '/origami') return next();
 
   const dest = new URL('/api/og-page', request.url);
   dest.searchParams.set('path', pathname);
