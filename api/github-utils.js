@@ -12,24 +12,64 @@ const REPO_OWNER = 'Googolplexic';
 const REPO_NAME = 'personal-website';
 const BRANCH = 'main';
 
-// Helper function to validate session token
-export function validateSessionToken(authHeader) {
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return false;
-    }
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const ORIGAMI_CATEGORIES = new Set(['my-designs', 'other-designs']);
+const TEXT_FILES = new Set(['description.md', 'info.md', 'index.ts']);
+const IMAGE_FILE_RE = /^(?:images\/)?[A-Za-z0-9][A-Za-z0-9._-]*\.(?:png|jpe?g|webp)$/i;
+const IMAGE_NAME_RE = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(?:png|jpe?g|webp)$/i;
 
-    try {
-        const token = authHeader.substring(7);
-        const decoded = Buffer.from(token, 'base64').toString();
-        const [timestamp] = decoded.split('-');
-        const tokenTime = parseInt(timestamp);
-        const now = Date.now();
-        const twentyFourHours = 24 * 60 * 60 * 1000;
+export function yamlScalar(value) {
+    if (value == null) return '""';
+    return JSON.stringify(String(value));
+}
 
-        return now - tokenTime < twentyFourHours;
-    } catch (error) {
-        return false;
+export function yamlList(items) {
+    return (items || []).map((item) => `- ${yamlScalar(item)}`).join('\n');
+}
+
+/** project/<slug> or origami/<category>/<slug> → content directory, or null. */
+export function resolveContentDir(requestPath) {
+    if (typeof requestPath !== 'string' || requestPath.length > 200) return null;
+    if (requestPath.startsWith('project/')) {
+        const slug = requestPath.slice('project/'.length);
+        if (!SLUG_RE.test(slug)) return null;
+        return { kind: 'project', slug, dir: `src/assets/projects/${slug}` };
     }
+    if (requestPath.startsWith('origami/')) {
+        const parts = requestPath.slice('origami/'.length).split('/');
+        if (parts.length !== 2) return null;
+        const [category, slug] = parts;
+        if (!ORIGAMI_CATEGORIES.has(category) || !SLUG_RE.test(slug)) return null;
+        return { kind: 'origami', category, slug, dir: `src/assets/origami/${category}/${slug}` };
+    }
+    return null;
+}
+
+export function resolveTextFile(requestPath, file) {
+    const base = resolveContentDir(requestPath);
+    if (!base || !TEXT_FILES.has(file)) return null;
+    return `${base.dir}/${file}`;
+}
+
+export function resolveImageFile(requestPath, file) {
+    const base = resolveContentDir(requestPath);
+    if (!base || typeof file !== 'string' || !IMAGE_FILE_RE.test(file)) return null;
+    if (base.kind === 'project' && !file.startsWith('images/')) return null;
+    if (base.kind === 'origami' && file.startsWith('images/')) return null;
+    return `${base.dir}/${file}`;
+}
+
+export function imageUploadPath(kind, slug, category, fileName) {
+    if (typeof fileName !== 'string' || !IMAGE_NAME_RE.test(fileName)) return null;
+    if (kind === 'project') {
+        if (!SLUG_RE.test(slug)) return null;
+        return `src/assets/projects/${slug}/images/${fileName}`;
+    }
+    if (kind === 'origami') {
+        if (!ORIGAMI_CATEGORIES.has(category) || !SLUG_RE.test(slug)) return null;
+        return `src/assets/origami/${category}/${slug}/${fileName}`;
+    }
+    return null;
 }
 
 // Helper function to get file content from GitHub
@@ -140,14 +180,17 @@ export async function optimizeImageBuffer(imageBuffer) {
 
 // Helper function to upload images to GitHub
 export async function uploadImageToGitHub(path, imageBuffer, message) {
-    return await octokit.rest.repos.createOrUpdateFileContents({
+    const existing = await getFileFromGitHub(path);
+    const params = {
         owner: REPO_OWNER,
         repo: REPO_NAME,
         path: path,
         message: message,
         content: imageBuffer.toString('base64'),
         branch: BRANCH,
-    });
+    };
+    if (existing?.sha) params.sha = existing.sha;
+    return await octokit.rest.repos.createOrUpdateFileContents(params);
 }
 
 // Helper function to delete file from GitHub
@@ -169,14 +212,16 @@ export async function deleteFileFromGitHub(path, message) {
 
 // Generate origami structure
 export function generateOrigamiStructure(category, slug, title, description, date, designer) {
+    if (!ORIGAMI_CATEGORIES.has(category) || !SLUG_RE.test(slug)) {
+        throw new Error('Invalid origami category or slug');
+    }
     const basePath = `src/assets/origami/${category}/${slug}`;
 
-    // Create info.md content with frontmatter
     const infoMd = `---
-title: ${title}
-date: ${date}${description ? `
-description: ${description}` : ''}${designer ? `
-designer: ${designer}` : ''}
+title: ${yamlScalar(title)}
+date: ${yamlScalar(date)}${description ? `
+description: ${yamlScalar(description)}` : ''}${designer ? `
+designer: ${yamlScalar(designer)}` : ''}
 ---
 `;
 
@@ -238,20 +283,24 @@ export function generateProjectStructure(slug, title, description, technologies,
     const allKeywords = [...(technologies || []), ...(keywords || []), title.toLowerCase(), 'project'];
 
     // Create description.md content with frontmatter (similar to be-square)
+    if (!SLUG_RE.test(slug)) {
+        throw new Error('Invalid project slug');
+    }
+
     const descriptionMd = `---
-title: ${title}
-summary: ${summary}
-SEOdescription: ${SEOdescription || summary}
+title: ${yamlScalar(title)}
+summary: ${yamlScalar(summary)}
+SEOdescription: ${yamlScalar(SEOdescription || summary)}
 keywords:
-${allKeywords.map(keyword => `- ${keyword}`).join('\n')}
+${yamlList(allKeywords)}
 technologies:
-${(technologies || []).map(tech => `- ${tech}`).join('\n')}${githubUrl ? `
-githubUrl: ${githubUrl}` : ''}${liveUrl ? `
-liveUrl: ${liveUrl}` : ''}
-startDate: ${projectStartDate}
-endDate: ${projectEndDate}
+${yamlList(technologies || [])}${githubUrl ? `
+githubUrl: ${yamlScalar(githubUrl)}` : ''}${liveUrl ? `
+liveUrl: ${yamlScalar(liveUrl)}` : ''}
+startDate: ${yamlScalar(projectStartDate)}
+endDate: ${yamlScalar(projectEndDate)}
 tags:
-${allTags.map(tag => `- ${tag.toLowerCase()}`).join('\n')}
+${yamlList(allTags.map(tag => String(tag).toLowerCase()))}
 ---
 
 ${description}

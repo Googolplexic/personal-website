@@ -1,8 +1,11 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Generate a JWT secret from environment or create a fallback
-const JWT_SECRET = process.env.JWT_SECRET || process.env.ADMIN_PASSWORD + '_jwt_secret_suffix';
+function getJwtSecret() {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) return null;
+    return secret;
+}
 
 /**
  * Hash a password using bcrypt
@@ -23,7 +26,11 @@ export async function verifyPassword(password, hash) {
  * Generate a JWT token
  */
 export function generateJWT(payload) {
-    return jwt.sign(payload, JWT_SECRET, {
+    const secret = getJwtSecret();
+    if (!secret) {
+        throw new Error('JWT_SECRET is not configured');
+    }
+    return jwt.sign(payload, secret, {
         expiresIn: '24h',
         issuer: 'personal-website-admin',
         audience: 'personal-website-admin'
@@ -34,8 +41,10 @@ export function generateJWT(payload) {
  * Verify and decode a JWT token
  */
 export function verifyJWT(token) {
+    const secret = getJwtSecret();
+    if (!secret) return null;
     try {
-        return jwt.verify(token, JWT_SECRET, {
+        return jwt.verify(token, secret, {
             issuer: 'personal-website-admin',
             audience: 'personal-website-admin'
         });
@@ -66,7 +75,11 @@ export function parseCookies(cookieHeader) {
     const cookies = {};
     if (cookieHeader) {
         cookieHeader.split(';').forEach(cookie => {
-            const [name, value] = cookie.trim().split('=');
+            const trimmed = cookie.trim();
+            const eq = trimmed.indexOf('=');
+            if (eq <= 0) return;
+            const name = trimmed.slice(0, eq);
+            const value = trimmed.slice(eq + 1);
             if (name && value) {
                 cookies[name] = decodeURIComponent(value);
             }

@@ -80,6 +80,7 @@ export function UniversalSearch({
             <div className="flex flex-col gap-4">
                 <input
                     type="text"
+                    aria-label="Search"
                     placeholder={getPlaceholderText()}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}

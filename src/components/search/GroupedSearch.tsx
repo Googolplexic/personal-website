@@ -91,7 +91,7 @@ export function GroupedSearch({
     ];
 
     const toggleBtnClass = (active: boolean) => cn(
-        'px-3 py-1 text-xs font-body tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer bg-transparent',
+        'shrink-0 px-3 py-2 text-xs font-body tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer bg-transparent',
         active
             ? 'opacity-100 border-b border-b-[var(--color-accent)] border-t-0 border-x-0'
             : 'opacity-75 hover:opacity-90 border-b border-b-transparent hover:border-b-[var(--color-accent-text)] border-t-0 border-x-0'
@@ -128,8 +128,8 @@ export function GroupedSearch({
 
             {/* Category filter buttons */}
             {setShowGrouping && (
-                <div className="mb-4">
-                    <div className="flex flex-wrap gap-2 justify-center">
+                <div className="mb-4 w-full min-w-0">
+                    <div className="flex flex-wrap gap-x-3 gap-y-2 justify-center w-full max-w-full">
                         {categoryButtons.map(button => (
                             <button
                                 key={button.value}
@@ -151,6 +151,7 @@ export function GroupedSearch({
             <div className="flex flex-col gap-4">
                 <input
                     type="text"
+                    aria-label="Search"
                     placeholder={getPlaceholderText()}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}

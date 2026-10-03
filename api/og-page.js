@@ -38,7 +38,8 @@ function buildHtml(meta) {
   const title = escapeHtml(meta.title);
   const description = escapeHtml(meta.description);
   const image = meta.image ? escapeHtml(meta.image) : '';
-  const url = BASE_URL + (meta.path || '/');
+  const rawUrl = BASE_URL + (meta.path || '/');
+  const url = escapeHtml(rawUrl);
 
   // Only declare dimensions for the default 1200x630 OG image; custom images keep natural aspect ratio
   const imageIsOgDimensions = image && image.endsWith('/og-image.png');
@@ -70,13 +71,16 @@ function buildHtml(meta) {
   <meta name="twitter:description" content="${description}" />
   <link rel="canonical" href="${url}" />
 </head>
-<body><p>Redirecting...</p><script>window.location.replace(${JSON.stringify(url)});</script></body>
+<body><p>Redirecting...</p><script>window.location.replace(${JSON.stringify(rawUrl)});</script></body>
 </html>`;
 }
 
 export default async function handler(req, res) {
-  const pathname = (req.query.path || req.url?.split('?')[0] || '/').replace(/#.*$/, '') || '/';
+  const raw = String(req.query.path || '/').split('?')[0].split('#')[0] || '/';
   const map = loadMeta();
+  const pathname = raw.startsWith('/') && !raw.includes('..') && !raw.includes('\\') && map[raw]
+    ? raw
+    : '/';
   const meta = map[pathname] || map['/'];
 
   const title = meta?.title || 'Coleman Lai | Developer & Origami Artist | Vancouver';

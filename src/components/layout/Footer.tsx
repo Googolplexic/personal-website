@@ -71,7 +71,7 @@ export function Footer() {
                     ))}
                 </div>
 
-                <div className="text-[10px] font-body uppercase tracking-[0.15em]"
+                <div className="text-xs font-body uppercase tracking-[0.15em]"
                     style={{ color: 'var(--color-text-secondary)' }}>
                     <p className="mb-1">
                         <SpotlightToggle />
@@ -81,7 +81,7 @@ export function Footer() {
                             href="https://github.com/Googolplexic/personal-website/blob/main/LICENSE"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={FOOTER_META_LINK}
+                            className={`${FOOTER_META_LINK} inline-block py-2`}
                         >
                             © {new Date().getFullYear()} Coleman Lai
                         </a>

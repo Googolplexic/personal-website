@@ -1,5 +1,5 @@
 // Vercel serverless function to rename images via GitHub API
-import { getFileFromGitHub, getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer } from './github-utils.js';
+import { getFileFromGitHub, getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveImageFile, imageUploadPath, resolveContentDir } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -34,22 +34,17 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'path, file, and newName are required' });
             }
 
-            // Determine the full path based on the request pattern
-            let basePath;
-            if (requestPath.startsWith('project/')) {
-                const slug = requestPath.replace('project/', '');
-                basePath = `src/assets/projects/${slug}`;
-            } else if (requestPath.startsWith('origami/')) {
-                const parts = requestPath.replace('origami/', '').split('/');
-                const category = parts[0];
-                const slug = parts[1];
-                basePath = `src/assets/origami/${category}/${slug}`;
-            } else {
+            const resolved = resolveContentDir(requestPath);
+            const oldFilePath = resolveImageFile(requestPath, file);
+            const bareNewName = resolved?.kind === 'project' && String(newName).startsWith('images/')
+                ? String(newName).slice('images/'.length)
+                : newName;
+            const newFilePath = resolved
+                ? imageUploadPath(resolved.kind, resolved.slug, resolved.category, bareNewName)
+                : null;
+            if (!oldFilePath || !newFilePath) {
                 return res.status(400).json({ error: 'Invalid path format' });
             }
-
-            const oldFilePath = `${basePath}/${file}`;
-            const newFilePath = `${basePath}/${newName}`;
 
             // Get the existing image as raw base64 so we can re-upload it
             const existingFileData = await getImageFromGitHub(oldFilePath);

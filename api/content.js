@@ -1,5 +1,5 @@
 // Vercel serverless function to read/update content files via GitHub API
-import { getFileFromGitHub, updateFileInGitHub } from './github-utils.js';
+import { getFileFromGitHub, updateFileInGitHub, resolveTextFile } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -33,17 +33,8 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Path and file parameters are required' });
         }
 
-        // Determine the full path based on the request pattern
-        let fullPath;
-        if (requestPath.startsWith('project/')) {
-            const slug = requestPath.replace('project/', '');
-            fullPath = `src/assets/projects/${slug}/${file}`;
-        } else if (requestPath.startsWith('origami/')) {
-            const parts = requestPath.replace('origami/', '').split('/');
-            const category = parts[0];
-            const slug = parts[1];
-            fullPath = `src/assets/origami/${category}/${slug}/${file}`;
-        } else {
+        const fullPath = resolveTextFile(requestPath, file);
+        if (!fullPath) {
             return res.status(400).json({ error: 'Invalid path format' });
         }
 
@@ -85,10 +76,7 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('Error handling content request:', error);
-        return res.status(500).json({
-            error: 'Failed to handle content request',
-            details: error.message,
-        });
+        return res.status(500).json({ error: 'Failed to handle content request' });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

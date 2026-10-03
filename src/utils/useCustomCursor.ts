@@ -6,8 +6,9 @@ import { useEffect } from 'react';
  * cursor into that thumb (one thumb, not a ghost + cursor). Drag to scroll.
  * Desktop only. Respects prefers-reduced-motion.
  */
-export function useCustomCursor() {
+export function useCustomCursor(enabled = true) {
     useEffect(() => {
+        if (!enabled) return;
         if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -405,5 +406,5 @@ export function useCustomCursor() {
             track.remove();
             thumb.remove();
         };
-    }, []);
+    }, [enabled]);
 }

@@ -19,10 +19,3 @@ export function formInput(fullWidth: boolean = true): string {
     return fullWidth ? `w-full ${base}` : base;
 }
 
-/**
- * Gallery Form Select
- */
-export function formSelect(): string {
-    return 'gallery-select flex-1 min-w-0';
-}
-

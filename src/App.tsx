@@ -1,6 +1,6 @@
 import './App.css'
 import { lazy, Suspense, useState, useEffect } from 'react'
-import { Routes, Route, BrowserRouter } from 'react-router-dom'
+import { Routes, Route, BrowserRouter, useLocation } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
 import { HelmetProvider } from 'react-helmet-async';
 import { DeferredAnalytics } from './components/layout/DeferredAnalytics'
@@ -19,8 +19,10 @@ const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m
 const SpotlightDust = lazy(() => import('./components/ui/SpotlightDust').then(m => ({ default: m.SpotlightDust })))
 
 function AppContent() {
-    useSmoothScroll();
-    useCustomCursor();
+    const location = useLocation();
+    const isAdmin = location.pathname === '/admin';
+    useSmoothScroll(!isAdmin);
+    useCustomCursor(!isAdmin);
     const { enabled: spotlightEnabled } = useSpotlightPreference();
     // Don’t mount SpotlightDust until after main content can paint (preserves LCP).
     // Otherwise we pull in the shared-components chunk for dust before Home uses it for LCP.
@@ -45,17 +47,17 @@ function AppContent() {
         <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-500 md:text-base text-sm"
             style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
             {/* Global spotlight overlay — at root level so no ancestor transform can clip it */}
-            <div id="global-spotlight" />
+            {!isAdmin && <div id="global-spotlight" />}
             {/* Page-wide dim overlay — darkens everything outside cursor area */}
-            <div id="page-dim" />
+            {!isAdmin && <div id="page-dim" />}
             {/* Mount only after idle so shared-components isn’t fetched for dust before LCP (Home).
                 Also gated on the user preference so it can be turned off entirely. */}
-            {mountSpotlightDust && spotlightEnabled && (
+            {!isAdmin && mountSpotlightDust && spotlightEnabled && (
                 <Suspense fallback={null}>
                     <SpotlightDust />
                 </Suspense>
             )}
-            <Navbar />
+            {!isAdmin && <Navbar />}
             <main className="min-h-screen">
                 <PageTransition>
                     <Suspense fallback={null}>
@@ -69,8 +71,8 @@ function AppContent() {
                     </Suspense>
                 </PageTransition>
             </main>
-            <Footer />
-            <BackToTop />
+            {!isAdmin && <Footer />}
+            {!isAdmin && <BackToTop />}
             <DeferredAnalytics />
         </div>
     );

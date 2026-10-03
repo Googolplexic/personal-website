@@ -1,5 +1,5 @@
 // Vercel serverless function to upload images via GitHub API
-import { uploadImageToGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer } from './github-utils.js';
+import { uploadImageToGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, imageUploadPath } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
         try {
-            const { type, slug, category, imageData, imageIndex, fileName } = req.body;
+            const { type, slug, category, imageData, fileName } = req.body;
 
             if (!type || !slug || !imageData) {
                 return res.status(400).json({ error: 'Missing required fields' });
@@ -40,7 +40,6 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Invalid image data format' });
             }
 
-            const extension = matches[1];
             const base64Data = imageData.split(',')[1];
             if (!base64Data || !base64Data.trim()) {
                 return res.status(400).json({ error: 'Image data is empty' });
@@ -50,18 +49,9 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Image file is empty or invalid' });
             }
 
-            // Generate image path based on content type
-            let imagePath;
-            if (fileName) {
-                // Explicit filename provided (used during creation)
-                if (type === 'origami') {
-                    imagePath = `src/assets/origami/${category || 'my-designs'}/${slug}/${fileName}`;
-                } else {
-                    imagePath = `src/assets/projects/${slug}/images/${fileName}`;
-                }
-            } else {
-                // Legacy path: auto-generate from type/slug/index
-                imagePath = `src/assets/${type}/${slug}/images/${imageIndex || 1}.${extension}`;
+            const imagePath = imageUploadPath(type === 'origami' ? 'origami' : type, slug, category, fileName);
+            if (!imagePath) {
+                return res.status(400).json({ error: 'Invalid image path' });
             }
 
             // Upload image to GitHub
@@ -94,10 +84,7 @@ export default async function handler(req, res) {
 
         } catch (error) {
             console.error('Error uploading image:', error);
-            return res.status(500).json({
-                error: 'Failed to upload image',
-                details: error.message,
-            });
+            return res.status(500).json({ error: 'Failed to upload image' });
         }
     }
 

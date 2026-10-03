@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { apiUrl } from '../../config/api';
-import { Heading, Button } from '../ui/base';
 
 interface OrigamiFormData {
     title: string;
@@ -112,6 +111,7 @@ export function OrigamiForm() {
             const slug = result.slug;
 
             // Step 2: Upload images one-by-one via /api/upload-image
+            const failedImages: string[] = [];
             if (images && images.length > 0) {
                 let regularIndex = 0;
                 for (let i = 0; i < images.length; i++) {
@@ -146,13 +146,20 @@ export function OrigamiForm() {
                     });
 
                     if (!imgRes.ok) {
-                        const err = await imgRes.json();
-                        console.error(`Failed to upload image ${i + 1}:`, err);
+                        failedImages.push(file.name);
+                        console.error(`Failed to upload image ${i + 1}`);
                     }
                 }
             }
 
-            setMessage({ type: 'success', text: 'Origami created successfully!' });
+            if (failedImages.length > 0) {
+                setMessage({
+                    type: 'error',
+                    text: `Origami files were created, but these images did not upload: ${failedImages.join(', ')}. Add them from the editor.`,
+                });
+            } else {
+                setMessage({ type: 'success', text: 'Origami created successfully!' });
+            }
             setFormData(initialFormData);
             setIsSlugManuallyEdited(false);
             setImages(null);
@@ -186,7 +193,7 @@ export function OrigamiForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Basic Info */}
                 <div className="space-y-4">
-                    <Heading level={3}>Basic Information</Heading>
+                    <p className="gallery-overline">Details</p>
 
                     <div>
                         <label htmlFor="origami-title" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
@@ -273,7 +280,7 @@ export function OrigamiForm() {
 
                 {/* Additional Info */}
                 <div className="space-y-4">
-                    <Heading level={3}>Additional Information</Heading>
+                    <p className="gallery-overline">Notes</p>
 
                     <div>
                         <label htmlFor="origami-description" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
@@ -309,7 +316,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div className="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] p-4 rounded-lg">
-                        <Heading level={4} className="font-medium text-[var(--color-text-primary)] mb-2">Image Tips</Heading>
+                        <p className="gallery-overline mb-2">Image tips</p>
                         <ul className="text-sm text-[var(--color-text-secondary)] space-y-1">
                             <li>• Upload multiple angles of your finished model</li>
                             <li>• Include crease patterns if available (name with "pattern")</li>
@@ -320,15 +327,9 @@ export function OrigamiForm() {
                 </div>
             </div>
 
-            <div className="flex justify-end">
-                <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-6 py-2.5 bg-[var(--color-accent)] text-[var(--color-bg-primary)] rounded-md hover:opacity-90 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-opacity text-sm font-medium tracking-wide"
-                >
-                    {isSubmitting ? 'Creating...' : 'Add Origami'}
-                </Button>
-            </div>
+            <button type="submit" className="admin-link" disabled={isSubmitting}>
+                {isSubmitting ? 'Creating' : 'Add origami'}
+            </button>
         </form>
     );
 }

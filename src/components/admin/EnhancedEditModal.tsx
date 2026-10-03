@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiUrl } from '../../config/api';
 import { marked } from 'marked';
-import { Heading } from '../ui/base';
 
 interface EnhancedEditModalProps {
     isOpen: boolean;
@@ -181,8 +180,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
             const response = await fetch(url, {
                 method: 'PUT',
+                credentials: 'include',
                 headers: {
-                    'credentials': 'include',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -219,7 +218,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             // Find the highest existing numbered index across current images
             let maxIndex = 0;
             for (const img of images) {
-                const match = img.name.match(/^(\d+)-/);
+                const baseName = img.name.split('/').pop() || '';
+                const match = baseName.match(/^(\d+)-/);
                 if (match) maxIndex = Math.max(maxIndex, parseInt(match[1], 10));
             }
 
@@ -266,8 +266,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
                 const response = await fetch(uploadUrl, {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
-                        'credentials': 'include',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
@@ -367,9 +367,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
             const response = await fetch(url, {
                 method: 'DELETE',
-                headers: {
-                    'credentials': 'include'
-                }
+                credentials: 'include',
             });
 
             if (response.ok) {
@@ -420,8 +418,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
             const uploadResponse = await fetch(uploadUrl, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
-                    'credentials': 'include',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -472,13 +470,13 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
     return (
         <>
-            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-                <div className="bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-lg w-full max-w-6xl h-[90vh] flex flex-col">
-                    <div className="flex justify-between items-center p-6 border-b border-[var(--color-border)] flex-shrink-0">
-                        <div>
-                            <Heading level={3}>
-                                Edit {title}
-                            </Heading>
+            <div className="admin-modal">
+                <div className="admin-modal-panel">
+                    <div className="flex justify-between items-start gap-4 px-5 py-4 md:px-6 border-b border-[var(--color-border)] flex-shrink-0">
+                        <div className="min-w-0">
+                            <h2 className="admin-title text-[clamp(1.5rem,4vw,2rem)] truncate">
+                                {title}
+                            </h2>
                             {activeTab === 'edit' && (
                                 <div className="flex items-center gap-4 mt-2">
                                     <label className="text-sm text-[var(--color-text-tertiary)]">File:</label>
@@ -496,10 +494,12 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                             )}
                         </div>
                         <button
+                            type="button"
                             onClick={onClose}
-                            className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
+                            className="admin-link shrink-0"
+                            aria-label="Close editor"
                         >
-                            ✕
+                            Close
                         </button>
                     </div>
 
@@ -507,21 +507,21 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     <div className="flex border-b border-[var(--color-border)] flex-shrink-0">
                         <button
                             onClick={() => setActiveTab('edit')}
-                            className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'edit'
-                                ? 'border-b-2 border-[var(--color-accent)] text-[var(--color-accent)]'
+                            className={`px-1 py-3 text-[0.68rem] tracking-[0.14em] uppercase transition-colors ${activeTab === 'edit'
+                                ? 'border-b border-[var(--color-accent)] text-[var(--color-accent)]'
                                 : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
                                 }`}
                         >
-                            📝 Edit Markdown
+                            Edit
                         </button>
                         <button
                             onClick={() => setActiveTab('images')}
-                            className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'images'
-                                ? 'border-b-2 border-[var(--color-accent)] text-[var(--color-accent)]'
+                            className={`px-1 py-3 text-[0.68rem] tracking-[0.14em] uppercase transition-colors ${activeTab === 'images'
+                                ? 'border-b border-[var(--color-accent)] text-[var(--color-accent)]'
                                 : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
                                 }`}
                         >
-                            🖼️ Manage Images ({images.length})
+                            Images ({images.length})
                         </button>
                     </div>
 
@@ -537,12 +537,11 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                         <div className="text-[var(--color-text-tertiary)]">Loading markdown content...</div>
                                     </div>
                                 ) : (
-                                    <div className="grid grid-cols-2 gap-6 h-full">
-                                        {/* Editor */}
-                                        <div className="flex flex-col h-full">
-                                            <Heading level={4} className="text-sm mb-2">
-                                                Markdown Editor
-                                            </Heading>
+                                    <div className="admin-split">
+                                        <div className="flex flex-col min-h-[16rem] md:min-h-0 md:h-full">
+                                            <p className="gallery-overline mb-2">
+                                                Markdown
+                                            </p>
                                             <textarea
                                                 value={content}
                                                 onChange={(e) => setContent(e.target.value)}
@@ -552,10 +551,10 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                         </div>
 
                                         {/* Preview */}
-                                        <div className="flex flex-col h-full">
-                                            <Heading level={4} className="text-sm mb-2">
-                                                Preview (without frontmatter)
-                                            </Heading>
+                                        <div className="flex flex-col min-h-[16rem] md:min-h-0 md:h-full">
+                                            <p className="gallery-overline mb-2">
+                                                Preview
+                                            </p>
                                             <div className="flex-1 p-4 border border-[var(--color-border)] rounded bg-[var(--color-bg-primary)] overflow-y-auto">
                                                 <div className="max-w-none text-sm markdown-preview text-left">
                                                     {content ? (
@@ -623,10 +622,10 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                 {/* Image Management */}
                                 <div className="mb-6">
                                     <div className="flex items-center gap-4 mb-4">
-                                        <Heading level={4} className="text-sm">
-                                            Upload New Images
-                                        </Heading>
-                                        <label className="cursor-pointer bg-[var(--color-accent)] hover:opacity-90 text-[var(--color-bg-primary)] px-4 py-2 rounded text-sm font-medium transition-opacity">
+                                        <p className="gallery-overline">
+                                            Upload
+                                        </p>
+                                        <label className="admin-link cursor-pointer">
                                             {uploading ? 'Uploading...' : 'Choose Files'}
                                             <input
                                                 type="file"
@@ -644,7 +643,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                 </div>
 
                                 {/* Image Grid */}
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {images.map((image) => (
                                         <div key={image.name} className="border border-[var(--color-border)] rounded-lg p-3">
                                             <div className="bg-[var(--color-bg-elevated)] rounded mb-2 overflow-hidden">
@@ -698,23 +697,24 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                     {image.name}
                                                 </p>
                                             )}
-                                            <div className="flex gap-1">
+                                            <div className="flex gap-4">
                                                 <button
+                                                    type="button"
                                                     onClick={() => {
                                                         setRenamingImage(image.name);
-                                                        // For projects, remove the images/ prefix for editing
                                                         const editName = type === 'project' && image.name.startsWith('images/')
                                                             ? image.name.substring(7)
                                                             : image.name;
                                                         setNewImageName(editName);
                                                     }}
-                                                    className="flex-1 text-xs border border-[var(--color-accent)]/30 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 px-2 py-1 rounded transition-colors"
+                                                    className="admin-link"
                                                 >
                                                     Rename
                                                 </button>
                                                 <button
+                                                    type="button"
                                                     onClick={() => handleImageDelete(image.name)}
-                                                    className="flex-1 text-xs border border-red-500/30 text-red-400 hover:bg-red-500/10 px-2 py-1 rounded transition-colors"
+                                                    className="admin-link"
                                                 >
                                                     Delete
                                                 </button>

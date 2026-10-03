@@ -31,7 +31,10 @@ export default async function handler(req, res) {
             // Note: This would need to be adapted for Vercel's environment
             // For now, we'll implement a simpler version that works with the GitHub API
 
-            const { projectName, action = 'update' } = req.body;
+            const { projectName } = req.body;
+            if (projectName && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(projectName)) {
+                return res.status(400).json({ error: 'Invalid project name' });
+            }
 
             // Create a commit to update the lastmod cache
             // This will trigger a rebuild which will update the cache
@@ -100,7 +103,7 @@ export default async function handler(req, res) {
                     sha: existingFile.sha,
                 });
             } catch (error) {
-                // Create new file if it doesn't exist
+                if (error.status !== 404) throw error;
                 await octokit.rest.repos.createOrUpdateFileContents({
                     owner,
                     repo,

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { apiUrl } from '../../config/api';
-import { Heading, Text, Button } from '../ui/base';
 
 interface AdminLoginProps {
     onLogin: () => void;
@@ -23,13 +22,13 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ password }),
-                credentials: 'include', // Important for cookies
+                credentials: 'include',
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                onLogin(); // No need to pass sessionId anymore
+                onLogin();
             } else {
                 setError(data.error || 'Login failed');
             }
@@ -42,51 +41,35 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-primary)]">
-            <div className="max-w-md w-full space-y-8">
-                <div>
-                    <Heading level={2} className="mt-6 text-center">
-                        Admin Login
-                    </Heading>
-                    <Text className="mt-2 text-center text-sm text-[var(--color-text-tertiary)]">
-                        Enter your admin password to manage content
-                    </Text>
+        <div className="admin-page flex min-h-screen items-center">
+            <form className="w-full max-w-sm mx-auto" onSubmit={handleSubmit}>
+                <p className="gallery-overline mb-3">Site</p>
+                <h1 className="admin-title mb-8">Admin</h1>
+                <label htmlFor="password" className="gallery-overline block mb-2">
+                    Password
+                </label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    autoComplete="current-password"
+                    className="admin-input"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                />
+                {error && (
+                    <p className="mt-4 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                        {error}
+                    </p>
+                )}
+                <div className="mt-8">
+                    <button type="submit" className="admin-link" disabled={isLoading}>
+                        {isLoading ? 'Signing in' : 'Sign in'}
+                    </button>
                 </div>
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="password" className="sr-only">
-                            Password
-                        </label>
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            required
-                            className="admin-input"
-                            placeholder="Admin password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLoading}
-                        />
-                    </div>
-
-                    {error && (
-                        <Text className="text-red-400 text-sm text-center">
-                            {error}
-                        </Text>
-                    )}
-
-                    <div>
-                        <Button
-                            type="submit"
-                            disabled={isLoading}
-                            className="group relative w-full flex justify-center py-2.5 px-4 text-sm font-medium tracking-wide rounded-md bg-[var(--color-accent)] text-[var(--color-bg-primary)] hover:opacity-90 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
-                        >
-                            {isLoading ? 'Logging in...' : 'Sign in'}
-                        </Button>
-                    </div>
-                </form>
-            </div>
+            </form>
         </div>
     );
 }
