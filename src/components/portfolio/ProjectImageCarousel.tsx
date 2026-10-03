@@ -4,6 +4,7 @@ import type { LazyImageCollection } from '../../utils/lazyImages';
 import { loadImage, getResolvedImages } from '../../utils/lazyImages';
 import { cn } from '../../utils/styles';
 import { Lightbox } from '../ui/Lightbox';
+import { sizeForImage } from '../../utils/imageSize';
 
 interface ProjectImageCarouselProps {
     images: string[] | LazyImageCollection;
@@ -89,8 +90,8 @@ export function ProjectImageCarousel({ images, imagesFull, title }: ProjectImage
                                 className="max-h-[24rem] w-auto object-contain cursor-pointer"
                                 onClick={() => setLightboxIndex(i)}
                                 loading={i <= 1 ? 'eager' : 'lazy'}
-                                width="640"
-                                height="384"
+                                width={sizeForImage(img)?.width}
+                                height={sizeForImage(img)?.height}
                             />
                         </div>
                     ))}

@@ -62,7 +62,7 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
                 }
 
                 // Keep to opacity only; filter-based brightness is expensive on mobile.
-                const opacity = 0.2 + t * 0.8;
+                const opacity = 0.75 + t * 0.25;
 
                 item.style.opacity = String(opacity);
                 item.style.filter = '';

@@ -27,8 +27,10 @@ function OrigamiGallery() {
         ...featuredProjects
     ];
 
+    const staticTitle = typeof document !== 'undefined' && document.getElementById('boot-origami');
     return (
-        <div className="max-w-6xl mx-auto px-6 pt-32 pb-20">
+        <div className={`max-w-6xl mx-auto px-6 pb-20 ${staticTitle ? 'pt-10' : 'pt-32'}`}>
+            {!staticTitle && (
             <div className="text-center mb-14">
                 <p className="gallery-overline mb-4">The Gallery</p>
                 <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4"
@@ -39,19 +41,20 @@ function OrigamiGallery() {
                     style={{ color: 'var(--color-text-secondary)' }}>
                     Where geometric precision meets artistic expression.
                 </p>
-                <p className="text-sm font-body"
-                    style={{ color: 'var(--color-text-tertiary)' }}>
-                    More on{' '}
-                    <a
-                        href="https://www.instagram.com/12googolplex"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: 'var(--color-accent-text)' }}
-                    >
-                        @12googolplex
-                    </a>
-                </p>
             </div>
+            )}
+            <p className="text-sm font-body text-center mb-14"
+                style={{ color: 'var(--color-text-tertiary)' }}>
+                More on{' '}
+                <a
+                    href="https://www.instagram.com/12googolplex"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'var(--color-accent-text)' }}
+                >
+                    @12googolplex
+                </a>
+            </p>
 
             <GroupedItemGrid
                 items={allItems}

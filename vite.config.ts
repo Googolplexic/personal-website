@@ -198,7 +198,11 @@ function breakVendorCyclePlugin(): Plugin {
  * AND the LCP image. Eliminates the waterfall where route chunks + images can
  * only start downloading after the entry JS executes.
  */
-function routePreloadsPlugin(routeFirstImage: Record<string, string>): Plugin {
+function routePreloadsPlugin(
+  routeFirstImage: Record<string, string>,
+  detailFirstImage: Record<string, string> = {},
+  portfolioBoot?: { slug: string; title: string; prefix: string },
+): Plugin {
   const keepChunks = ['vendor-react', 'vendor-router', 'vendor-ui', 'vendor-misc', 'ui-base', 'index']
 
   const routeChunkPatterns: Record<string, string[]> = {
@@ -230,7 +234,7 @@ function routePreloadsPlugin(routeFirstImage: Record<string, string>): Plugin {
           }
         }
         if (asset.type === 'asset' && /\.(webp|jpg|jpeg|png)$/.test(fileName)) {
-          for (const prefix of Object.values(routeFirstImage)) {
+          for (const prefix of [...Object.values(routeFirstImage), ...Object.values(detailFirstImage)]) {
             if (fileName.includes(prefix) && fileName.includes('.webp') && !imagesByPrefix[prefix]) {
               imagesByPrefix[prefix] = '/' + fileName
             }
@@ -248,6 +252,29 @@ function routePreloadsPlugin(routeFirstImage: Record<string, string>): Plugin {
       for (const [route, prefix] of Object.entries(routeFirstImage)) {
         if (routeMap[route] && imagesByPrefix[prefix]) {
           routeMap[route].img = imagesByPrefix[prefix]
+        }
+      }
+      let projectDetailChunk: string | undefined
+      let origamiDetailChunk: string | undefined
+      let origamiAssetsChunk: string | undefined
+      const projectChunks: Record<string, string> = {}
+      for (const fileName of Object.keys(bundle)) {
+        if (bundle[fileName].type !== 'chunk') continue
+        const base = fileName.split('/').pop() || ''
+        if (base.startsWith('page-projectdetail-')) projectDetailChunk = '/' + fileName
+        if (base.startsWith('page-origamidetail-')) origamiDetailChunk = '/' + fileName
+        if (base.startsWith('origami-assets-')) origamiAssetsChunk = '/' + fileName
+        const projectFile = base.match(/^project-(.+)-[A-Za-z0-9_-]{8}\.js$/)
+        if (projectFile && projectFile[1] !== 'grid') projectChunks[projectFile[1]] = '/' + fileName
+      }
+      for (const [route, prefix] of Object.entries(detailFirstImage)) {
+        const isOrigami = route.startsWith('/origami/')
+        const slug = route.split('/').pop() || ''
+        const page = isOrigami ? origamiDetailChunk : projectDetailChunk
+        const item = isOrigami ? origamiAssetsChunk : projectChunks[slug]
+        routeMap[route] = {
+          js: [page, chunksByPattern['shared-components'], item].filter((value): value is string => Boolean(value)),
+          img: imagesByPrefix[prefix],
         }
       }
 
@@ -268,6 +295,31 @@ function routePreloadsPlugin(routeFirstImage: Record<string, string>): Plugin {
           // Inject route preload script right before </head>
           const preloadScript = `<script>(function(){var m=${JSON.stringify(routeMap)};var p=location.pathname||"/";if(p.length>1&&p.endsWith("/"))p=p.slice(0,-1);var r=m[p];if(!r)return;var h=document.head;r.js.forEach(function(u){var l=document.createElement('link');l.rel='modulepreload';l.href=u;h.appendChild(l)});if(r.img){var l=document.createElement('link');l.rel='preload';l.as='image';l.href=r.img;l.fetchPriority='high';h.appendChild(l)}})()</script>`
           html = html.replace('</head>', preloadScript + '</head>')
+
+          if (portfolioBoot) {
+            let bootSrc = ''
+            for (const name of Object.keys(bundle)) {
+              if (
+                bundle[name].type === 'asset' &&
+                name.includes(`/projects/${portfolioBoot.slug}/`) &&
+                name.includes(portfolioBoot.prefix) &&
+                name.endsWith('.webp')
+              ) {
+                bootSrc = '/' + name
+                break
+              }
+            }
+            const sizeTable = JSON.parse(readFileSync(resolve(__dirname, 'src/utils/imageSizes.json'), 'utf8')) as Record<string, { width: number; height: number }>
+            const dim = sizeTable[`${portfolioBoot.slug}/${portfolioBoot.prefix}`]
+            if (bootSrc && dim) {
+              const alt = portfolioBoot.title.replace(/[&"]/g, (ch) => (ch === '&' ? '&amp;' : '&quot;'))
+              html = html.replace(
+                '<!--BOOT_PORTFOLIO_IMG-->',
+                `<img src="${bootSrc}" alt="${alt}" width="${dim.width}" height="${dim.height}" fetchpriority="high" decoding="sync">`,
+              )
+              html = html.replace('href="/portfolio/__BOOT_SLUG__"', `href="/portfolio/${portfolioBoot.slug}"`)
+            }
+          }
 
           asset.source = html
         }
@@ -379,20 +431,21 @@ const getFirstOrigamiImagePrefix = (slug: string, group: 'my-designs' | 'other-d
   return undefined
 }
 
-const getPortfolioGalleryFirstImagePrefix = (): string | undefined => {
+const getPortfolioBoot = (): { slug: string; title: string; prefix: string } | undefined => {
   const rankedProjects = currentProjects
     .map((slug) => {
       const fm = parseFrontmatter(resolve(projectsDir, slug, 'description.md'))
       return {
         slug,
-        date: parseLooseDate(fm.endDate || fm.startDate),
+        title: fm.title || slug,
+        date: parseLooseDate(fm.startDate),
       }
     })
     .sort((a, b) => b.date.getTime() - a.date.getTime())
 
-  for (const { slug } of rankedProjects) {
-    const prefix = getFirstProjectImagePrefix(slug)
-    if (prefix) return prefix
+  for (const project of rankedProjects) {
+    const prefix = getFirstProjectImagePrefix(project.slug)
+    if (prefix) return { slug: project.slug, title: project.title, prefix }
   }
 
   return undefined
@@ -429,8 +482,19 @@ const getOrigamiGalleryFirstImagePrefix = (): string | undefined => {
 const routeFirstImage: Record<string, string> = {}
 const origamiRouteImagePrefix = getOrigamiGalleryFirstImagePrefix()
 if (origamiRouteImagePrefix) routeFirstImage['/origami'] = origamiRouteImagePrefix
-const portfolioRouteImagePrefix = getPortfolioGalleryFirstImagePrefix()
-if (portfolioRouteImagePrefix) routeFirstImage['/portfolio'] = portfolioRouteImagePrefix
+const portfolioBoot = getPortfolioBoot()
+if (portfolioBoot) routeFirstImage['/portfolio'] = portfolioBoot.prefix
+
+const detailFirstImage: Record<string, string> = {}
+for (const slug of currentProjects) {
+  const prefix = getFirstProjectImagePrefix(slug)
+  if (prefix) detailFirstImage[`/portfolio/${slug}`] = prefix
+}
+for (const item of currentOrigami) {
+  const group: 'my-designs' | 'other-designs' = item.path.includes('/other-designs/') ? 'other-designs' : 'my-designs'
+  const prefix = getFirstOrigamiImagePrefix(item.slug, group)
+  if (prefix) detailFirstImage[`/origami/${item.slug}`] = prefix
+}
 
 // Auto-generate portfolioProjects configuration
 const generateProjectConfig = (projectName: string) => {
@@ -634,7 +698,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     inlineCssPlugin(),
     breakVendorCyclePlugin(),
-    routePreloadsPlugin(routeFirstImage),
+    routePreloadsPlugin(routeFirstImage, detailFirstImage, portfolioBoot),
     Sitemap({
       hostname: "https://www.colemanlai.com",
       readable: true,
@@ -842,7 +906,7 @@ export default defineConfig(({ mode }) => ({
         });
       }
     },
-    assetsInlineLimit: 2048,
+    assetsInlineLimit: 0,
     chunkSizeWarningLimit: 500,
   },
   assetsInclude: ['**/*.md'],

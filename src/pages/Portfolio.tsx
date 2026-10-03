@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { ProjectDetail } from "./ProjectDetail";
 import { SEO } from "../components/layout/SEO";
 import { ProjectGrid } from "../components/portfolio/ProjectGrid";
+import { usePortfolioLeadActive } from "../utils/portfolioBootLead";
 
 const BASE_URL = "https://www.colemanlai.com";
 const ROLE_SEO_SENTENCE = "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).";
@@ -22,19 +23,23 @@ function getProjectImage(project: typeof allProjects[number]): string | undefine
 }
 
 function PortfolioGrid() {
+    const staticTitle = typeof document !== 'undefined' && document.getElementById('boot-portfolio');
+    const leadActive = usePortfolioLeadActive();
     return (
-        <div className="max-w-6xl mx-auto px-6 pt-32 pb-20">
-            <div className="text-center mb-14">
-                <p className="gallery-overline mb-4">The Gallery</p>
-                <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4"
-                    style={{ color: 'var(--color-text-primary)' }}>
-                    Portfolio
-                </h1>
-                <p className="text-base font-heading italic max-w-lg mx-auto"
-                    style={{ color: 'var(--color-text-secondary)' }}>
-                    Software crafted with care.
-                </p>
-            </div>
+        <div className={`max-w-6xl mx-auto px-6 pb-20 ${leadActive ? 'pt-0' : staticTitle ? 'pt-10' : 'pt-32'}`}>
+            {!staticTitle && (
+                <div className="text-center mb-14">
+                    <p className="gallery-overline mb-4">The Gallery</p>
+                    <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4"
+                        style={{ color: 'var(--color-text-primary)' }}>
+                        Portfolio
+                    </h1>
+                    <p className="text-base font-heading italic max-w-lg mx-auto"
+                        style={{ color: 'var(--color-text-secondary)' }}>
+                        Software crafted with care.
+                    </p>
+                </div>
+            )}
             <ProjectGrid />
         </div>
     );

@@ -84,7 +84,7 @@ export function MultiSelect({
             {/* Trigger — matches gallery-select appearance */}
             <button
                 type="button"
-                aria-label={ariaLabel ?? placeholder}
+                aria-label={ariaLabel ? `${triggerLabel}, ${ariaLabel}` : triggerLabel}
                 onClick={() => setOpen(v => !v)}
                 className="gallery-select w-full text-left flex items-center justify-between gap-2 cursor-pointer"
                 style={{ color: hasActiveFilter ? 'var(--color-accent-text)' : undefined }}
