@@ -75,9 +75,12 @@ export function Origami() {
     const currentOrigami = origamiSlug ? allOrigami.find(o => o.slug === origamiSlug) : null;
 
     const origamiImage = currentOrigami ? getOrigamiImage(currentOrigami) : undefined;
-    const origamiOgImage = origamiImage
-        ? (origamiImage.startsWith('http') ? origamiImage : `${BASE_URL}${origamiImage}`)
-        : undefined;
+    const absoluteImage = (src: string | undefined) =>
+        src ? (src.startsWith('http') ? src : `${BASE_URL}${src}`) : undefined;
+    const origamiOgImage = absoluteImage(origamiImage);
+    const galleryLead = [...myDesigns, ...otherDesigns].find(piece => piece.slug === 'ryujin-3-5')
+        ?? [...myDesigns, ...otherDesigns].find(piece => piece.modelImages?.[0]);
+    const galleryOgImage = absoluteImage(galleryLead?.modelImages?.[0]);
 
     const galleryStructuredData = !currentOrigami ? {
         "@context": "https://schema.org",
@@ -100,7 +103,7 @@ export function Origami() {
         "mainEntity": {
             "@type": "ItemList",
             "numberOfItems": myDesigns.length + otherDesigns.length,
-            "itemListElement": myDesigns.map((d, i) => ({
+            "itemListElement": [...myDesigns, ...otherDesigns].map((d, i) => ({
                 "@type": "ListItem",
                 "position": i + 1,
                 "item": {
@@ -144,12 +147,12 @@ export function Origami() {
                 }
                 keywords={currentOrigami
                     ? ['origami', 'paper art', 'Coleman Lai', currentOrigami.title, ...(currentOrigami.keywords || []), ...(currentOrigami.tags || [])]
-                    : ["origami", "paper art", "Coleman Lai", "IFS Copperleaf", "Gen AI software developer", "complex origami", "paper folding", "origami artist", "Vancouver origami", "origami gallery", "paper sculpture", "geometric origami", "origami designs"]
+                    : ["origami", "paper art", "Coleman Lai", "complex origami", "paper folding", "origami artist", "Vancouver origami", "origami gallery", "paper sculpture", "geometric origami", "origami designs"]
                 }
                 pathname={currentOrigami ? `/origami/${origamiSlug}` : "/origami"}
                 type={currentOrigami ? "article" : "website"}
-                image={origamiOgImage}
-                imageAlt={currentOrigami ? `Photo of ${currentOrigami.title} origami` : undefined}
+                image={currentOrigami ? origamiOgImage : galleryOgImage}
+                imageAlt={currentOrigami ? `Photo of ${currentOrigami.title} origami` : galleryLead ? `Photo of ${galleryLead.title}` : undefined}
                 breadcrumbs={currentOrigami ? [
                     { name: "Home", url: BASE_URL },
                     { name: "Origami", url: `${BASE_URL}/origami` },

@@ -230,6 +230,9 @@ export function ItemGrid({
 
             switch (sortBy) {
                 case 'date-desc':
+                    if (featuredSlugs) {
+                        return featuredSlugs.indexOf(a.slug) - featuredSlugs.indexOf(b.slug);
+                    }
                     return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
                 case 'date-asc':
                     return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();

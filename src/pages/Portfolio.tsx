@@ -6,13 +6,10 @@ import { ProjectGrid } from "../components/portfolio/ProjectGrid";
 import { usePortfolioLeadActive } from "../utils/portfolioBootLead";
 
 const BASE_URL = "https://www.colemanlai.com";
-const ROLE_SEO_SENTENCE = "Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).";
 
-function withCurrentRoleSeo(description: string): string {
-    const trimmed = description.trim();
-    if (!trimmed) return ROLE_SEO_SENTENCE;
-    const needsTerminalPunctuation = !/[.!?]$/.test(trimmed);
-    return `${trimmed}${needsTerminalPunctuation ? '.' : ''} ${ROLE_SEO_SENTENCE}`;
+function absoluteImage(src: string | undefined): string | undefined {
+    if (!src) return undefined;
+    return src.startsWith('http') ? src : `${BASE_URL}${src}`;
 }
 
 function getProjectImage(project: typeof allProjects[number]): string | undefined {
@@ -51,9 +48,13 @@ export function Portfolio() {
     const currentProject = projectSlug ? allProjects.find(p => p.slug === projectSlug) : null;
 
     const projectImage = currentProject ? getProjectImage(currentProject) : undefined;
-    const projectOgImage = projectImage
-        ? (projectImage.startsWith('http') ? projectImage : `${BASE_URL}${projectImage}`)
+    const projectOgImage = absoluteImage(projectImage);
+    const portfolioLead = !currentProject
+        ? [...allProjects]
+            .filter(project => getProjectImage(project))
+            .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())[0]
         : undefined;
+    const portfolioOgImage = absoluteImage(portfolioLead ? getProjectImage(portfolioLead) : undefined);
 
     const portfolioListingSchema = !currentProject ? {
         "@context": "https://schema.org",
@@ -99,27 +100,24 @@ export function Portfolio() {
                     : "Software Portfolio | Coleman Lai"
                 }
                 description={currentProject
-                    ? withCurrentRoleSeo(currentProject.SEOdescription || currentProject.summary)
-                    : withCurrentRoleSeo("Browse my software development projects, including web applications, AI implementations, and technical solutions.")
+                    ? (currentProject.SEOdescription || currentProject.summary)
+                    : "Browse my software development projects, including web applications, AI implementations, and technical solutions."
                 }
                 keywords={currentProject
-                    ? [...(currentProject.keywords || []), "IFS Copperleaf", "Gen AI software developer", "co-op"]
+                    ? (currentProject.keywords || [])
                     : [
                         "software portfolio",
                         "full-stack development",
                         "web applications",
                         "React",
                         "TypeScript",
-                        "Node.js",
-                        "IFS Copperleaf",
-                        "Gen AI software developer",
-                        "co-op"
+                        "Node.js"
                     ]
                 }
                 pathname={currentProject ? `/portfolio/${projectSlug}` : "/portfolio"}
                 type={currentProject ? "article" : "website"}
-                image={projectOgImage}
-                imageAlt={currentProject ? `Screenshot of ${currentProject.title}` : undefined}
+                image={currentProject ? projectOgImage : portfolioOgImage}
+                imageAlt={currentProject ? `Screenshot of ${currentProject.title}` : "Screenshot from the newest portfolio project"}
                 article={currentProject ? {
                     publishedTime: currentProject.startDate,
                     modifiedTime: currentProject.endDate,

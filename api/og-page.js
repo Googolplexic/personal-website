@@ -84,7 +84,7 @@ export default async function handler(req, res) {
   const meta = map[pathname] || map['/'];
 
   const title = meta?.title || 'Coleman Lai | Developer & Origami Artist | Vancouver';
-  const description = meta?.description || 'Explore software projects and origami portfolio by Coleman Lai, Gen AI Developer at IFS Copperleaf. Computing Science student at SFU, Vancouver, BC.';
+  const description = meta?.description || 'Software projects and origami by Coleman Lai, a Computing Science student at Simon Fraser University in Vancouver.';
   const image = meta?.image || null;
 
   const html = buildHtml({

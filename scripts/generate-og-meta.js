@@ -15,17 +15,15 @@ const ROOT = path.resolve(__dirname, '..');
 const DIST = path.join(ROOT, 'dist');
 const SRC_PROJECTS = path.join(ROOT, 'src', 'assets', 'projects');
 const API_DIR = path.join(ROOT, 'api');
-const ROLE_SEO = 'Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).';
-
 const DEFAULT_META = {
   '/': {
     title: 'Coleman Lai | Developer & Origami Artist | Vancouver',
-    description: 'Explore software projects and origami portfolio by Coleman Lai, Gen AI Developer at IFS Copperleaf. Computing Science student at SFU, Vancouver, BC.',
+    description: 'Software projects and origami by Coleman Lai, a Computing Science student at Simon Fraser University in Vancouver.',
     image: null,
   },
   '/portfolio': {
     title: 'Software Portfolio | Coleman Lai',
-    description: 'Browse software development projects by Coleman Lai, including web applications, AI implementations, and technical solutions. ' + ROLE_SEO,
+    description: 'Browse software development projects by Coleman Lai, including web applications, AI implementations, and technical solutions.',
     image: null,
   },
   '/origami': {
@@ -55,6 +53,13 @@ function parseFrontmatter(mdPath) {
     }
   }
   return out;
+}
+
+function parseLooseDate(value) {
+  const text = String(value || '').trim();
+  if (!text || text === 'YYYY-MM') return NaN;
+  const normalized = /^\d{4}-\d{2}$/.test(text) ? `${text}-01` : text;
+  return Date.parse(normalized);
 }
 
 /** Get first image basename (no ext) from project src, e.g. "01-demo" from "01-demo.webp" */
@@ -237,6 +242,51 @@ function main() {
       description,
       image,
     };
+  }
+
+  // Homepage and origami listing previews use Ryujin 3.5.
+  // Portfolio's first card is the newest project by start date.
+  const ryujinImage = meta['/origami/ryujin-3-5']?.image || null;
+  meta['/'].image = ryujinImage;
+
+  let newestProject = null;
+  for (const slug of slugs) {
+    if (slug === 'template') continue;
+    const image = meta['/portfolio/' + slug]?.image;
+    if (!image) continue;
+    const fm = parseFrontmatter(path.join(SRC_PROJECTS, slug, 'description.md'));
+    const start = parseLooseDate(fm.startDate);
+    if (!newestProject || (Number.isFinite(start) && start > newestProject.start)) {
+      newestProject = { start: Number.isFinite(start) ? start : 0, image };
+    }
+  }
+  if (newestProject) meta['/portfolio'].image = newestProject.image;
+
+  meta['/origami'].image = ryujinImage;
+
+  const distIndex = path.join(DIST, 'index.html');
+  if (meta['/'].image && fs.existsSync(distIndex)) {
+    let html = fs.readFileSync(distIndex, 'utf-8');
+    const imageTag = `<meta property="og:image" content="${meta['/'].image}" />`;
+    const twitterTag = `<meta name="twitter:image" content="${meta['/'].image}" />`;
+    if (html.includes('property="og:image"')) {
+      html = html.replace(/<meta property="og:image" content="[^"]*"\s*\/>/, imageTag);
+    } else {
+      html = html.replace(
+        '<meta property="og:url" content="https://www.colemanlai.com" />',
+        `<meta property="og:url" content="https://www.colemanlai.com" />\n  ${imageTag}`
+      );
+    }
+    if (html.includes('name="twitter:image"')) {
+      html = html.replace(/<meta name="twitter:image" content="[^"]*"\s*\/>/, twitterTag);
+    } else {
+      html = html.replace(
+        '<meta name="twitter:description"',
+        `${twitterTag}\n  <meta name="twitter:description"`
+      );
+    }
+    html = html.replace('<meta name="twitter:card" content="summary" />', '<meta name="twitter:card" content="summary_large_image" />');
+    fs.writeFileSync(distIndex, html, 'utf-8');
   }
 
   if (!fs.existsSync(API_DIR)) fs.mkdirSync(API_DIR, { recursive: true });

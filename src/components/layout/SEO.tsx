@@ -2,7 +2,6 @@ import { Helmet } from 'react-helmet-async'
 
 const BASE_URL = "https://www.colemanlai.com";
 const SITE_NAME = "Coleman Lai";
-const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`;
 const AUTHOR = "Coleman Lai";
 
 interface SEOProps {
@@ -41,10 +40,8 @@ export function SEO({
 }: SEOProps) {
     const url = pathname ? `${BASE_URL}${pathname}` : BASE_URL;
     const keywordsString = Array.isArray(keywords) ? keywords.join(', ') : keywords;
-    const ogImage = image || DEFAULT_OG_IMAGE;
+    const ogImage = image;
     const ogImageAlt = imageAlt || title;
-    // Only declare dimensions for the default OG image; custom images keep their natural shape
-    const imageIsOgDimensions = ogImage === DEFAULT_OG_IMAGE;
 
     const allStructuredData: Record<string, unknown>[] = [];
 
@@ -85,14 +82,8 @@ export function SEO({
             <meta property="og:url" content={url} />
             <meta property="og:site_name" content={SITE_NAME} />
             <meta property="og:locale" content="en_US" />
-            <meta property="og:image" content={ogImage} />
-            {imageIsOgDimensions && (
-              <>
-                <meta property="og:image:width" content="1200" />
-                <meta property="og:image:height" content="630" />
-              </>
-            )}
-            <meta property="og:image:alt" content={ogImageAlt} />
+            {ogImage && <meta property="og:image" content={ogImage} />}
+            {ogImage && <meta property="og:image:alt" content={ogImageAlt} />}
 
             {/* Article-specific OG tags */}
             {article?.publishedTime && <meta property="article:published_time" content={article.publishedTime} />}
@@ -102,11 +93,11 @@ export function SEO({
 
 
             {/* Twitter */}
-            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />
-            <meta name="twitter:image" content={ogImage} />
-            <meta name="twitter:image:alt" content={ogImageAlt} />
+            {ogImage && <meta name="twitter:image" content={ogImage} />}
+            {ogImage && <meta name="twitter:image:alt" content={ogImageAlt} />}
 
             {/* Canonical */}
             <link rel="canonical" href={url} />
