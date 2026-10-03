@@ -23,6 +23,7 @@ server/.env.development
 server/.env.production
 
 # Editor directories and files
+.cursor/
 .vscode/*
 !.vscode/extensions.json
 .idea
