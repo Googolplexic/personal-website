@@ -217,9 +217,13 @@ function routePreloadsPlugin(routeFirstImage: Record<string, string>): Plugin {
 
       for (const [fileName, asset] of Object.entries(bundle)) {
         if (asset.type === 'chunk') {
+          const base = fileName.split('/').pop() || ''
           for (const patterns of Object.values(routeChunkPatterns)) {
             for (const pat of patterns) {
-              if (fileName.includes(pat) && !chunksByPattern[pat]) {
+              if (chunksByPattern[pat]) continue
+              const isPageOrigami = pat === 'page-origami' && base.startsWith('page-origamidetail')
+              const isProjectGrid = pat === 'project-grid' && base.startsWith('project-grid-detection')
+              if (!isPageOrigami && !isProjectGrid && base.startsWith(`${pat}-`)) {
                 chunksByPattern[pat] = '/' + fileName
               }
             }

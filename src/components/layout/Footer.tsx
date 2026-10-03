@@ -71,24 +71,18 @@ export function Footer() {
                     ))}
                 </div>
 
-                <div className="text-xs font-body uppercase tracking-[0.15em]"
+                <div className="text-xs font-body uppercase tracking-[0.15em] flex flex-col items-center gap-2"
                     style={{ color: 'var(--color-text-secondary)' }}>
-                    <p className="mb-1">
-                        <SpotlightToggle />
-                    </p>
-                    <p>
-                        <a
-                            href="https://github.com/Googolplexic/personal-website/blob/main/LICENSE"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`${FOOTER_META_LINK} inline-block py-2`}
-                        >
-                            © {new Date().getFullYear()} Coleman Lai
-                        </a>
-                    </p>
-                    <p className="mt-1">
-                        <BuildMeta />
-                    </p>
+                    <SpotlightToggle />
+                    <a
+                        href="https://github.com/Googolplexic/personal-website/blob/main/LICENSE"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`${FOOTER_META_LINK} inline-flex items-center min-h-8 px-3`}
+                    >
+                        © {new Date().getFullYear()} Coleman Lai
+                    </a>
+                    <BuildMeta />
                 </div>
             </div>
         </footer>
@@ -105,7 +99,7 @@ function BuildMeta() {
             href={`https://github.com/Googolplexic/personal-website/commit/${hash}`}
             target="_blank"
             rel="noopener noreferrer"
-            className={FOOTER_META_LINK}
+            className={`${FOOTER_META_LINK} inline-flex items-center min-h-8 px-3`}
             style={{ textDecoration: 'none' }}
         >
             v{version} · {date} · {hash}

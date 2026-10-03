@@ -7,6 +7,7 @@ import allProjects from '../assets/projects';
 import allOrigami from '../assets/origami';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
 import { useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { HeroParticles } from '../components/ui/HeroParticles';
 import { FiDownload, FiMail } from 'react-icons/fi';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
@@ -40,29 +41,7 @@ export function Home() {
     const nameRef = useRef<HTMLHeadingElement>(null);
     const heroRef = useRef<HTMLElement>(null);
 
-    // Reset hero text illumination and hide hero spotlight when hero scrolls out of view
-    useEffect(() => {
-        const el = heroRef.current;
-        if (!el) return;
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (!entry.isIntersecting) {
-                    const name = nameRef.current;
-                    if (name) {
-                        name.style.backgroundImage = 'none';
-                        name.style.color = '#e8e4de';
-                        name.style.webkitTextFillColor = 'unset';
-                        name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0))';
-                    }
-                    const spotlight = el.querySelector('.hero-spotlight');
-                    if (spotlight) spotlight.classList.remove('visible');
-                }
-            },
-            { threshold: 0 }
-        );
-        observer.observe(el);
-        return () => observer.disconnect();
-    }, []);
+    const bootHero = typeof document !== 'undefined' ? document.getElementById('boot-hero') : null;
 
     const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
         if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
@@ -112,6 +91,54 @@ export function Home() {
             name.style.transition = 'none';
         }
     }, []);
+
+    useEffect(() => {
+        if (document.getElementById('boot-hero')) return;
+        const el = heroRef.current;
+        if (!el) return;
+        (heroRef as React.MutableRefObject<HTMLElement | null>).current = el;
+        const bootName = el.querySelector('h1');
+        if (bootName instanceof HTMLHeadingElement) {
+            (nameRef as React.MutableRefObject<HTMLHeadingElement | null>).current = bootName;
+        }
+        const onMove = (event: Event) => handleHeroMouseMove(event as unknown as React.MouseEvent<HTMLElement>);
+        const onLeave = () => {
+            const spotlight = el.querySelector('.hero-spotlight');
+            if (spotlight) spotlight.classList.remove('visible');
+            const name = nameRef.current;
+            if (name) {
+                name.style.transition = 'filter 0.5s ease-out';
+                name.style.backgroundImage = 'linear-gradient(90deg, #e8e4de 0%, #e8e4de 100%)';
+                name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0)) drop-shadow(0 0 0px rgba(255, 255, 248, 0))';
+            }
+        };
+        if (el.id === 'boot-hero') {
+            el.addEventListener('mousemove', onMove);
+            el.addEventListener('mouseleave', onLeave);
+        }
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting) {
+                    const name = nameRef.current;
+                    if (name) {
+                        name.style.backgroundImage = 'none';
+                        name.style.color = '#e8e4de';
+                        name.style.webkitTextFillColor = 'unset';
+                        name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0))';
+                    }
+                    const spotlight = el.querySelector('.hero-spotlight');
+                    if (spotlight) spotlight.classList.remove('visible');
+                }
+            },
+            { threshold: 0 }
+        );
+        observer.observe(el);
+        return () => {
+            observer.disconnect();
+            el.removeEventListener('mousemove', onMove);
+            el.removeEventListener('mouseleave', onLeave);
+        };
+    }, [handleHeroMouseMove]);
 
     const structuredData = [
         {
@@ -192,8 +219,10 @@ export function Home() {
                 ]}
             />
 
+            {bootHero && createPortal(<HeroParticles />, bootHero)}
+
             {/* ===== HERO ===== */}
-            <section
+            {!bootHero && <section
                 ref={heroRef}
                 className="hero-black-fade min-h-screen flex flex-col items-center justify-center relative px-6"
                 onMouseMove={handleHeroMouseMove}
@@ -247,7 +276,7 @@ export function Home() {
                         <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
                     </svg>
                 </button>
-            </section>
+            </section>}
 
             {/* ===== ABOUT ===== */}
             <ScrollSection className="py-24 md:py-36">

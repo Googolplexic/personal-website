@@ -1,0 +1,10 @@
+# Coleman Lai
+
+Personal site of Coleman Lai, a high-achieving computing science student at Simon Fraser University and an origami artist in Vancouver. The site is a gallery of software projects and folded paper models.
+
+## Pages
+    
+- [Home](https://www.colemanlai.com/): introduction, contact, and featured work
+- [Portfolio](https://www.colemanlai.com/portfolio): software projects
+- [Origami](https://www.colemanlai.com/origami): original designs and models folded from other designers
+- [Sitemap](https://www.colemanlai.com/sitemap.xml): every public page

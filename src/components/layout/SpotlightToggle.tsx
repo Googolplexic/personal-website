@@ -16,11 +16,10 @@ export function SpotlightToggle() {
         <button
             type="button"
             onClick={toggleEnabled}
-            className={FOOTER_META_LINK}
+            className={`${FOOTER_META_LINK} inline-flex items-center min-h-8 px-3`}
             style={{
                 background: 'none',
                 border: 'none',
-                padding: '0.45rem 0.25rem',
                 font: 'inherit',
                 letterSpacing: 'inherit',
                 textTransform: 'inherit',
