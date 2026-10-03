@@ -5,6 +5,7 @@ import { ItemGrid } from '../components/ui/ItemGrid';
 import { Link } from '../components/ui/base';
 import allProjects from '../assets/projects';
 import allOrigami from '../assets/origami';
+import { ItemProps } from '../types';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
 import { useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
@@ -34,7 +35,20 @@ function ScrollSection({ children, className = '' }: { children: React.ReactNode
     );
 }
 
-const allItems = [...allProjects, ...allOrigami];
+const BASE_URL = 'https://www.colemanlai.com';
+const allItems: ItemProps[] = [...allProjects, ...allOrigami];
+
+function itemLeadImage(item: ItemProps): string | undefined {
+    if (item.type === 'project') {
+        return Array.isArray(item.images) ? item.images[0] : undefined;
+    }
+    return item.modelImages?.[0];
+}
+
+function absoluteImage(src: string | undefined): string | undefined {
+    if (!src) return undefined;
+    return src.startsWith('http') ? src : `${BASE_URL}${src}`;
+}
 
 export function Home() {
     const featuredSlugs = ['pi-2026', 'personal-website', 'ryujin-3-5', 'torgal', 'tonberry', 'origami-fractions'];
@@ -147,7 +161,7 @@ export function Home() {
             "name": "Coleman Lai",
             "alternateName": "Coleman Lai Portfolio",
             "url": "https://www.colemanlai.com",
-            "description": "Portfolio of software projects and origami art by Coleman Lai, currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
+            "description": "Software projects and origami by Coleman Lai, a Computing Science student at Simon Fraser University in Vancouver.",
             "author": { "@type": "Person", "name": "Coleman Lai" },
             "potentialAction": {
                 "@type": "SearchAction",
@@ -160,11 +174,7 @@ export function Home() {
             "@type": "Person",
             "name": "Coleman Lai",
             "url": "https://www.colemanlai.com",
-            "jobTitle": "Gen AI Software Developer (Co-op)",
-            "worksFor": {
-                "@type": "Organization",
-                "name": "IFS Copperleaf"
-            },
+            "jobTitle": "Computing Science Student",
             "alumniOf": {
                 "@type": "CollegeOrUniversity",
                 "name": "Simon Fraser University",
@@ -189,17 +199,16 @@ export function Home() {
         }
     ];
 
+    const sharePiece = allItems.find(item => item.slug === 'ryujin-3-5');
+
     return (
         <>
             <SEO
                 title="Coleman Lai | Developer & Origami Artist | Vancouver"
-                description="Explore software projects and origami portfolio by Coleman Lai, Gen AI Developer at IFS Copperleaf. Computing Science student at SFU, Vancouver, BC."
+                description="Software projects and origami by Coleman Lai, a Computing Science student at Simon Fraser University in Vancouver."
                 keywords={[
                     "Coleman Lai",
                     "software developer",
-                    "Gen AI software developer",
-                    "IFS Copperleaf",
-                    "co-op",
                     "computing science",
                     "origami artist",
                     "SFU",
@@ -213,6 +222,8 @@ export function Home() {
                     "data science"
                 ]}
                 pathname="/"
+                image={absoluteImage(sharePiece && itemLeadImage(sharePiece))}
+                imageAlt="Ryujin 3.5"
                 structuredData={structuredData}
                 breadcrumbs={[
                     { name: "Home", url: "https://www.colemanlai.com" }

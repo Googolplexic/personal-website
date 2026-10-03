@@ -6,7 +6,7 @@ export function NotFound() {
         <>
             <SEO
                 title="Page Not Found | 404 Error | Coleman Lai"
-                description="Sorry, the page you're looking for doesn't exist. Return to Coleman Lai's homepage to explore software projects and origami creations. Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026)."
+                description="Sorry, the page you're looking for doesn't exist. Return to Coleman Lai's homepage to explore software projects and origami."
                 noindex
             />
 

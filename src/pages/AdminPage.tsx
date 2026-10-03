@@ -6,7 +6,7 @@ export function AdminPage() {
         <>
             <SEO
                 title="Admin | Coleman Lai"
-                description="Admin area. Not indexed. Site owner: Coleman Lai, currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026)."
+                description="Admin area. Not indexed."
                 noindex
             />
             <AdminPanel />

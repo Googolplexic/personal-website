@@ -1,18 +1,18 @@
 {
   "/": {
     "title": "Coleman Lai | Developer & Origami Artist | Vancouver",
-    "description": "Explore software projects and origami portfolio by Coleman Lai, Gen AI Developer at IFS Copperleaf. Computing Science student at SFU, Vancouver, BC.",
-    "image": null
+    "description": "Software projects and origami by Coleman Lai, a Computing Science student at Simon Fraser University in Vancouver.",
+    "image": "https://www.colemanlai.com/assets/images/origami/ryujin-3-5/01-ryujin-3-5-Hvqtkdh0.jpeg"
   },
   "/portfolio": {
     "title": "Software Portfolio | Coleman Lai",
-    "description": "Browse software development projects by Coleman Lai, including web applications, AI implementations, and technical solutions. Currently a Gen AI Software Developer (Co-op) at IFS Copperleaf (Sept 2025-Apr 2026).",
-    "image": null
+    "description": "Browse software development projects by Coleman Lai, including web applications, AI implementations, and technical solutions.",
+    "image": "https://www.colemanlai.com/assets/images/projects/torgal/01-open-CDlVkx_1.png"
   },
   "/origami": {
     "title": "Origami Gallery | Coleman Lai",
     "description": "Discover intricate origami creations by Coleman Lai. View complex paper art designs, original patterns, and folding software.",
-    "image": null
+    "image": "https://www.colemanlai.com/assets/images/origami/ryujin-3-5/01-ryujin-3-5-Hvqtkdh0.jpeg"
   },
   "/portfolio/be-square": {
     "title": "Be Square | Coleman Lai",
