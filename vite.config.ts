@@ -169,31 +169,6 @@ function inlineCssPlugin(): Plugin {
 }
 
 /**
- * Break circular vendor-react <-> vendor-content dependency by inlining the
- * getDefaultExportFromCjs helper. Without this, loading vendor-react forces
- * vendor-content (53 KB gzip of react-markdown) to load on every page.
- */
-function breakVendorCyclePlugin(): Plugin {
-  const HELPER = 'function(e){return e&&e.__esModule&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}';
-  return {
-    name: 'vite-plugin-break-vendor-cycle',
-    enforce: 'post',
-    apply: 'build',
-    generateBundle(_opts, bundle) {
-      for (const [fileName, chunk] of Object.entries(bundle)) {
-        if (chunk.type !== 'chunk' || !fileName.includes('vendor-react')) continue
-        const importRe = /import\{(\w+) as (\w+)\}from"\.\/vendor-content[^"]*\.js";?/
-        const m = chunk.code.match(importRe)
-        if (!m) continue
-        const alias = m[2]
-        chunk.code = chunk.code
-          .replace(importRe, `var ${alias}=${HELPER};`)
-      }
-    }
-  }
-}
-
-/**
  * Prune modulepreload hints then inject route-specific preloads for JS chunks
  * AND the LCP image. Eliminates the waterfall where route chunks + images can
  * only start downloading after the entry JS executes.
@@ -203,7 +178,7 @@ function routePreloadsPlugin(
   detailFirstImage: Record<string, string> = {},
   portfolioBoot?: { slug: string; title: string; prefix: string },
 ): Plugin {
-  const keepChunks = ['vendor-react', 'vendor-router', 'vendor-ui', 'vendor-misc', 'ui-base', 'index']
+  const keepChunks = ['rolldown-runtime', 'vendor-react', 'vendor-router', 'vendor-ui', 'vendor-misc', 'ui-base', 'index']
 
   const routeChunkPatterns: Record<string, string[]> = {
     '/': ['page-home', 'shared-components', 'project-grid'],
@@ -697,7 +672,6 @@ export default defineConfig(({ mode }) => ({
     faviconAssetsPlugin(),
     react(),
     inlineCssPlugin(),
-    breakVendorCyclePlugin(),
     routePreloadsPlugin(routeFirstImage, detailFirstImage, portfolioBoot),
     Sitemap({
       hostname: "https://www.colemanlai.com",
@@ -713,7 +687,7 @@ export default defineConfig(({ mode }) => ({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: mode === 'development',
-    rollupOptions: {
+    rolldownOptions: {
       output: {
         hoistTransitiveImports: false,
         assetFileNames: (assetInfo) => {
@@ -772,124 +746,47 @@ export default defineConfig(({ mode }) => ({
           }
           return 'assets/js/[name]-[hash].js';
         },
-        manualChunks: (id) => {
-          // Vendor libraries — ordering matters! More specific checks first
-          // to prevent broad patterns (e.g. 'react') from swallowing
-          // react-markdown, react-icons, react-helmet-async, etc.
-          if (id.includes('node_modules')) {
-            // Markdown rendering (react-markdown + remark/rehype/unified ecosystem)
-            // Only needed on project detail pages that render markdown
-            if (
-              id.includes('marked') || id.includes('react-markdown') ||
-              id.includes('hast') || id.includes('mdast') || id.includes('unist') ||
-              id.includes('micromark') || id.includes('remark') || id.includes('rehype') ||
-              id.includes('unified') ||
-              id.includes('vfile') || id.includes('property-information') ||
-              id.includes('space-separated') || id.includes('comma-separated') ||
-              id.includes('estree') || id.includes('bail') || id.includes('trough') ||
-              id.includes('longest-streak') || id.includes('devlop') || id.includes('ccount') ||
-              id.includes('character-entities') || id.includes('character-reference-invalid') ||
-              id.includes('parse-entities') || id.includes('trim-lines') ||
-              id.includes('is-alphabetical') || id.includes('is-alphanumerical') ||
-              id.includes('is-decimal') || id.includes('is-hexadecimal') ||
-              id.includes('style-to-object') || id.includes('style-to-js') ||
-              id.includes('inline-style-parser') ||
-              id.includes('decode-named') || id.includes('stringify-entities') ||
-              id.includes('html-url-attributes') || id.includes('zwitch') ||
-              id.includes('is-plain-obj')
-            ) {
-              return 'vendor-content';
-            }
-
-            // UI and styling libraries (check BEFORE 'react' to catch react-icons, react-helmet)
-            if (id.includes('react-icons') || id.includes('react-helmet') || id.includes('@vercel')) {
-              return 'vendor-ui';
-            }
-
-            // React Router (separate chunk to shorten main-thread tasks; one big chunk = one long task)
-            if (id.includes('/react-router/')) {
-              return 'vendor-router';
-            }
-
-            // React core (react, react-dom, scheduler, invariant, shallowequal)
-            if (
-              id.includes('react') || id.includes('scheduler') ||
-              id.includes('invariant') || id.includes('shallowequal')
-            ) {
-              return 'vendor-react';
-            }
-
-            // Smooth scrolling (loaded on demand)
-            if (id.includes('lenis')) {
-              return 'vendor-lenis';
-            }
-
-            // Other vendor code
-            return 'vendor-misc';
-          }
-
-          // Project-specific chunks
-          if (id.includes('src/assets/projects/')) {
-            const projectMatch = id.match(/projects\/([^/]+)\//);
-            if (projectMatch) {
-              return `project-${projectMatch[1]}`;
-            }
-            // Projects barrel (index.ts) — keep with ProjectGrid
-            return 'project-grid';
-          }
-
-          // Origami chunks
-          if (id.includes('src/assets/origami/')) {
-            return 'origami-assets';
-          }
-
-          // Component chunks
-          if (id.includes('src/components/ui/base/')) {
-            return 'ui-base';
-          }
-
-          // Layout components (Navbar, Footer, SEO, etc.) are used on every
-          // page — keep them with the always-loaded base UI chunk
-          if (id.includes('src/components/layout/')) {
-            return 'ui-base';
-          }
-
-          if (id.includes('src/components/admin/')) {
-            return 'admin-components';
-          }
-
-          // ProjectGrid + projects barrel: heavy chunk that eagerly imports all
-          // project data via import.meta.glob — isolate from lighter card/UI code
-          if (id.includes('components/portfolio/ProjectGrid')) {
-            return 'project-grid';
-          }
-
-          // Merge all visual display components (cards, grids, carousels,
-          // search, lightbox) into one chunk to prevent circular cross-chunk
-          // dependencies between portfolio-card ↔ origami-card ↔ shared-grid
-          if (
-            id.includes('src/components/portfolio/') ||
-            id.includes('src/components/origami/') ||
-            (id.includes('src/components/ui/') && !id.includes('src/components/ui/base/')) ||
-            id.includes('src/components/search/')
-          ) {
-            return 'shared-components';
-          }
-
-          // Page chunks
-          if (id.includes('src/pages/')) {
-            const pageMatch = id.match(/pages\/([^/]+)\.tsx?$/);
-            if (pageMatch) {
-              return `page-${pageMatch[1].toLowerCase()}`;
-            }
-          }
-
-          // Utils/config are merged into ui-base to avoid ui-base <-> utils
-          // cross-chunk cycles and reduce early route waterfalls.
-          if (id.includes('src/utils/') || id.includes('src/config/')) {
-            return 'ui-base';
-          }
-        }
+        // Groups capture their modules' dependencies recursively, so a group
+        // must outrank every group whose modules import it. React outranks the
+        // markdown stack (which imports react/jsx-runtime), and shared code
+        // outranks the page chunks that import it.
+        codeSplitting: {
+          groups: [
+            { name: 'vendor-react', test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/, priority: 100 },
+            { name: 'vendor-router', test: /[\\/]node_modules[\\/](react-router|cookie|set-cookie-parser)[\\/]/, priority: 90 },
+            // Only needed on project detail pages and admin
+            { name: 'vendor-content', test: /[\\/]node_modules[\\/](marked|react-markdown|remark-[^\\/]+|micromark[^\\/]*|mdast-[^\\/]+|hast-[^\\/]+|unist-[^\\/]+|unified|vfile[^\\/]*|devlop|bail|trough|is-plain-obj|property-information|space-separated-tokens|comma-separated-tokens|estree-[^\\/]+|longest-streak|ccount|character-[^\\/]+|decode-named-character-reference|parse-entities|trim-lines|is-alphabetical|is-alphanumerical|is-decimal|is-hexadecimal|style-to-[^\\/]+|inline-style-parser|stringify-entities|html-url-attributes|zwitch)[\\/]/, priority: 80 },
+            { name: 'vendor-ui', test: /[\\/]node_modules[\\/](react-icons|react-helmet-async|@vercel[\\/][^\\/]+)[\\/]/, priority: 70 },
+            { name: 'vendor-lenis', test: /[\\/]node_modules[\\/]lenis[\\/]/, priority: 60 },
+            { name: 'vendor-misc', test: /[\\/]node_modules[\\/]/, priority: 50 },
+            // Layout, base UI, utils and config load on every page
+            { name: 'ui-base', test: /src[\\/](components[\\/](ui[\\/]base|layout)|utils|config)[\\/]/, priority: 40 },
+            { name: 'origami-assets', test: /src[\\/]assets[\\/]origami[\\/]/, priority: 30 },
+            {
+              name: (id) => {
+                const match = id.match(/src[\\/]assets[\\/]projects[\\/]([^\\/]+)[\\/]/);
+                return match ? `project-${match[1]}` : null;
+              },
+              priority: 30,
+            },
+            // Projects barrel + ProjectGrid eagerly import all project data via import.meta.glob
+            { name: 'project-grid', test: /src[\\/](assets[\\/]projects[\\/]index\.ts|components[\\/]portfolio[\\/]ProjectGrid)/, priority: 30 },
+            { name: 'admin-components', test: /src[\\/]components[\\/]admin[\\/]/, priority: 30 },
+            // One chunk for cards, grids, carousels, search and lightbox avoids
+            // circular cross-chunk imports between them
+            { name: 'shared-components', test: /src[\\/]components[\\/](portfolio|origami|ui|search)[\\/]/, priority: 20 },
+            // Listing pages import the detail pages, so detail pages go first
+            { name: 'page-projectdetail', test: /src[\\/]pages[\\/]ProjectDetail\.tsx$/, priority: 15 },
+            { name: 'page-origamidetail', test: /src[\\/]pages[\\/]OrigamiDetail\.tsx$/, priority: 15 },
+            {
+              name: (id) => {
+                const match = id.match(/src[\\/]pages[\\/]([^\\/]+)\.tsx?$/);
+                return match ? `page-${match[1].toLowerCase()}` : null;
+              },
+              priority: 10,
+            },
+          ],
+        },
       }
     },
     modulePreload: {
