@@ -1,6 +1,6 @@
 import './App.css'
 import { lazy, Suspense, useState, useEffect, useLayoutEffect } from 'react'
-import { Routes, Route, BrowserRouter, useLocation } from 'react-router-dom'
+import { Routes, Route, BrowserRouter, useLocation } from 'react-router'
 import { Navbar } from './components/layout/Navbar'
 import { HelmetProvider } from 'react-helmet-async';
 import { DeferredAnalytics } from './components/layout/DeferredAnalytics'

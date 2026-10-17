@@ -1,5 +1,5 @@
 import allProjects from "../assets/projects";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router";
 import { ProjectDetail } from "./ProjectDetail";
 import { SEO } from "../components/layout/SEO";
 import { ProjectGrid } from "../components/portfolio/ProjectGrid";

@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
 import { ShareButton } from '../ui/ShareButton';

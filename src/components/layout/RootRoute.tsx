@@ -1,5 +1,5 @@
 import { useEffect, lazy, Suspense } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 const Home = lazy(() => import('../../pages/Home').then(m => ({ default: m.Home })));
 

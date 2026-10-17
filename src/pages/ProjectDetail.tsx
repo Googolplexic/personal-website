@@ -1,4 +1,4 @@
-import { useParams, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate, useLocation } from 'react-router';
 import allProjects from '../assets/projects';
 import Markdown from 'react-markdown';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';

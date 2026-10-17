@@ -1,5 +1,5 @@
 import { SEO } from '../components/layout/SEO';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 
 export function NotFound() {
     return (

@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { SpotlightToggle } from './SpotlightToggle';
 import { FOOTER_HOVER, FOOTER_META_LINK } from './footerStyles';
