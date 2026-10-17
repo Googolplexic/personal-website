@@ -1,6 +1,6 @@
 import { ItemProps, ProjectProps, OrigamiProps } from "../../types";
 import { useState, useMemo, type Dispatch, type SetStateAction } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { GroupedSearch, SortOption, CategoryFilter } from "../search/GroupedSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";

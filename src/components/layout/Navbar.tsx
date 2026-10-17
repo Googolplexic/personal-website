@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect } from 'react';
-import { useLocation, Link as RouterLink } from 'react-router-dom';
+import { useLocation, Link as RouterLink } from 'react-router';
 import { cn } from '../../utils/styles';
 
 export function Navbar() {

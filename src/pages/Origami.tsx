@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router';
 import { SEO } from '../components/layout/SEO';
 import { GroupedItemGrid } from '../components/ui/GroupedItemGrid';
 import allOrigami, { myDesigns, otherDesigns } from '../assets/origami';

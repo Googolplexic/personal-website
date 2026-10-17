@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router';
 import allOrigami from '../assets/origami';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
 import { Lightbox } from '../components/ui/Lightbox';

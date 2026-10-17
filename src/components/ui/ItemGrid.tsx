@@ -1,7 +1,7 @@
 import { ItemProps, ProjectProps, OrigamiProps } from "../../types";
 import { useState, useMemo, useLayoutEffect, type Dispatch, type SetStateAction } from 'react';
 import { createPortal } from 'react-dom';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router';
 import { usePortfolioLeadActive } from '../../utils/portfolioBootLead';
 import { UniversalSearch, SortOption } from "../search/UniversalSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";

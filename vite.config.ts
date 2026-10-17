@@ -807,7 +807,7 @@ export default defineConfig(({ mode }) => ({
             }
 
             // React Router (separate chunk to shorten main-thread tasks; one big chunk = one long task)
-            if (id.includes('@remix-run')) {
+            if (id.includes('/react-router/')) {
               return 'vendor-router';
             }
 
@@ -911,6 +911,6 @@ export default defineConfig(({ mode }) => ({
   },
   assetsInclude: ['**/*.md'],
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'], // Ensure React is pre-bundled
+    include: ['react', 'react-dom', 'react-router'], // Ensure React is pre-bundled
   }
 }))

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ProjectProps } from '../../types';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
 import type { LazyImageCollection } from '../../utils/lazyImages';
