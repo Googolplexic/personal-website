@@ -14,4 +14,4 @@ export const FOOTER_HOVER = 'transition duration-200 hover:opacity-50';
  * inherit the surrounding secondary-text color, dim on hover via
  * FOOTER_HOVER, and tint up to primary text color on hover.
  */
-export const FOOTER_META_LINK = `text-inherit ${FOOTER_HOVER} hover:text-[var(--color-text-primary)]`;
+export const FOOTER_META_LINK = `text-inherit ${FOOTER_HOVER} hover:text-(--color-text-primary)`;

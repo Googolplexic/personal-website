@@ -176,7 +176,7 @@ export function ProjectDetail() {
                                 <ShareButton url={shareUrl} title={project.title} description={project.summary} />
                             </div>
 
-                            <div className="gallery-divider !mx-0" />
+                            <div className="gallery-divider mx-0!" />
                         </div>
                     </aside>
                 </div>
@@ -191,7 +191,7 @@ export function ProjectDetail() {
                         >
                             {/* Thumbnail */}
                             {Array.isArray(nextProject.images) && nextProject.images.length > 0 && (
-                                <div className="w-16 h-16 flex-shrink-0 overflow-hidden"
+                                <div className="w-16 h-16 shrink-0 overflow-hidden"
                                     style={{ border: '1px solid var(--color-border)' }}>
                                     <img
                                         src={nextProject.images[0] as string}
@@ -209,13 +209,13 @@ export function ProjectDetail() {
                                     onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-primary)')}>
                                     {nextProject.title}
                                 </span>
-                                <span className="text-xs font-body tracking-[0.1em]"
+                                <span className="text-xs font-body tracking-widest"
                                     style={{ color: 'var(--color-text-tertiary)' }}>
                                     {nextProject.startDate}
                                 </span>
                             </div>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
-                                className="flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1">
+                                className="shrink-0 transition-transform duration-300 group-hover:translate-x-1">
                                 <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
                         </button>

@@ -93,8 +93,8 @@ export function GroupedSearch({
     const toggleBtnClass = (active: boolean) => cn(
         'shrink-0 px-3 py-2 text-xs font-body tracking-[0.12em] uppercase transition-all duration-300 cursor-pointer bg-transparent',
         active
-            ? 'opacity-100 border-b border-b-[var(--color-accent)] border-t-0 border-x-0'
-            : 'opacity-75 hover:opacity-90 border-b border-b-transparent hover:border-b-[var(--color-accent-text)] border-t-0 border-x-0'
+            ? 'opacity-100 border-b border-b-(--color-accent) border-t-0 border-x-0'
+            : 'opacity-75 hover:opacity-90 border-b border-b-transparent hover:border-b-(--color-accent-text) border-t-0 border-x-0'
     );
 
     const categoryButtons = [

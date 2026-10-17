@@ -39,7 +39,7 @@ export function BackToTop() {
             ref={btnRef}
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="fixed bottom-8 right-8 z-[150] p-3 rounded-full transition-all duration-500"
+            className="fixed bottom-8 right-8 z-150 p-3 rounded-full transition-all duration-500"
             style={{
                 opacity: visible ? 0.7 : 0,
                 pointerEvents: visible ? 'auto' : 'none',

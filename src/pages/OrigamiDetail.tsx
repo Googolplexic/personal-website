@@ -144,7 +144,7 @@ export function OrigamiDetail() {
                         >
                             {/* Thumbnail */}
                             {nextOrigami.modelImages.length > 0 && (
-                                <div className="w-16 h-16 flex-shrink-0 overflow-hidden"
+                                <div className="w-16 h-16 shrink-0 overflow-hidden"
                                     style={{ border: '1px solid var(--color-border)' }}>
                                     <img
                                         src={nextOrigami.modelImages[0]}
@@ -162,13 +162,13 @@ export function OrigamiDetail() {
                                     onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-primary)')}>
                                     {nextOrigami.title}
                                 </span>
-                                <span className="text-xs font-body tracking-[0.1em]"
+                                <span className="text-xs font-body tracking-widest"
                                     style={{ color: 'var(--color-text-tertiary)' }}>
                                     {nextOrigami.date}
                                 </span>
                             </div>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
-                                className="flex-shrink-0 transition-transform duration-300 group-hover:translate-x-1">
+                                className="shrink-0 transition-transform duration-300 group-hover:translate-x-1">
                                 <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
                         </button>

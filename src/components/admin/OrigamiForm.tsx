@@ -196,7 +196,7 @@ export function OrigamiForm() {
                     <p className="gallery-overline">Details</p>
 
                     <div>
-                        <label htmlFor="origami-title" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                        <label htmlFor="origami-title" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
                             Title *
                         </label>
                         <input
@@ -211,7 +211,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-slug" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                        <label htmlFor="origami-slug" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
                             Slug * (auto-generated, editable)
                         </label>
                         <input
@@ -226,7 +226,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-category" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                        <label htmlFor="origami-category" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
                             Category *
                         </label>
                         <select
@@ -243,7 +243,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-date" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                        <label htmlFor="origami-date" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
                             Date (YYYY-MM) *
                         </label>
                         <input
@@ -256,13 +256,13 @@ export function OrigamiForm() {
                             placeholder={getCurrentDate()}
                             className="admin-input"
                         />
-                        <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
+                        <p className="text-xs text-(--color-text-tertiary) mt-1">
                             When you completed/folded this model
                         </p>
                     </div>
 
                     <div>
-                        <label htmlFor="origami-designer" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                        <label htmlFor="origami-designer" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
                             Designer {formData.category === 'other-designs' && '*'}
                         </label>
                         <input
@@ -283,7 +283,7 @@ export function OrigamiForm() {
                     <p className="gallery-overline">Notes</p>
 
                     <div>
-                        <label htmlFor="origami-description" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                        <label htmlFor="origami-description" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
                             Description
                         </label>
                         <textarea
@@ -298,7 +298,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-images" className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                        <label htmlFor="origami-images" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
                             Images *
                         </label>
                         <input
@@ -308,16 +308,16 @@ export function OrigamiForm() {
                             accept="image/*"
                             required
                             onChange={handleImageChange}
-                            className="admin-input file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-[var(--color-bg-surface)] file:text-[var(--color-text-secondary)] hover:file:text-[var(--color-text-primary)]"
+                            className="admin-input file:mr-4 file:py-1 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-(--color-bg-surface) file:text-(--color-text-secondary) hover:file:text-(--color-text-primary)"
                         />
-                        <p className="text-xs text-[var(--color-text-tertiary)] mt-1">
+                        <p className="text-xs text-(--color-text-tertiary) mt-1">
                             Upload model photos. Name crease pattern files with "pattern" in the filename (e.g., "pattern.jpg")
                         </p>
                     </div>
 
-                    <div className="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] p-4 rounded-lg">
+                    <div className="bg-(--color-bg-elevated) border border-(--color-border) p-4 rounded-lg">
                         <p className="gallery-overline mb-2">Image tips</p>
-                        <ul className="text-sm text-[var(--color-text-secondary)] space-y-1">
+                        <ul className="text-sm text-(--color-text-secondary) space-y-1">
                             <li>• Upload multiple angles of your finished model</li>
                             <li>• Include crease patterns if available (name with "pattern")</li>
                             <li>• Use good lighting for clear photos</li>

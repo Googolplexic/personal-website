@@ -4,7 +4,7 @@ This project uses layered, domain-focused CSS modules with explicit import order
 
 ## Order of precedence
 
-1. `foundation/` — Tailwind directives + base theme (`@layer base`)
+1. `foundation/` — Tailwind import + `@theme`, base theme (`@layer base`)
 2. `components/` — reusable component styles (`@layer components`)
 3. `utilities/` — utility classes (`@layer utilities`)
 4. `tokens/` — unlayered token-like helpers (e.g. category badges)
