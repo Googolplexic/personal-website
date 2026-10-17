@@ -82,12 +82,12 @@ export function ProjectImageCarousel({ images, imagesFull, title }: ProjectImage
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
                 >
                     {resolvedImages.map((img, i) => (
-                        <div key={i} className="w-full flex-shrink-0 flex justify-center items-center">
+                        <div key={i} className="w-full shrink-0 flex justify-center items-center">
                             <img
                                 src={img}
                                 alt={`${title} - Image ${i + 1}`}
                                 title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
-                                className="max-h-[24rem] w-auto object-contain cursor-pointer"
+                                className="max-h-96 w-auto object-contain cursor-pointer"
                                 onClick={() => setLightboxIndex(i)}
                                 loading={i <= 1 ? 'eager' : 'lazy'}
                                 width={sizeForImage(img)?.width}
@@ -137,7 +137,7 @@ export function ProjectImageCarousel({ images, imagesFull, title }: ProjectImage
                                 aria-label={`View image ${index + 1}`}
                                 onClick={() => changeImage(index)}
                                 className={cn(
-                                    'w-10 h-0.5 transition-all duration-300 border-none focus:outline-none p-0 cursor-pointer',
+                                    'w-10 h-0.5 transition-all duration-300 border-none focus:outline-hidden p-0 cursor-pointer',
                                     index === currentImageIndex
                                         ? 'opacity-100'
                                         : 'opacity-30 hover:opacity-60'

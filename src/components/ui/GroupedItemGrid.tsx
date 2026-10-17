@@ -478,7 +478,7 @@ export function GroupedItemGrid({
                                         className="flex items-center gap-3 mb-5 w-full text-left cursor-pointer bg-transparent border-none p-0 group/header"
                                     >
                                         <h2
-                                            className="text-sm font-body tracking-[0.15em] uppercase transition-colors group-hover/header:!text-[var(--color-accent-text)]"
+                                            className="text-sm font-body tracking-[0.15em] uppercase transition-colors group-hover/header:text-(--color-accent-text)!"
                                             style={{ color: 'var(--color-text-secondary)' }}
                                         >
                                             {group.label}
@@ -488,7 +488,7 @@ export function GroupedItemGrid({
                                         <svg
                                             width="14" height="14" viewBox="0 0 24 24"
                                             fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                                            className={`transition-all duration-300 group-hover/header:!text-[var(--color-accent-text)] ${isCollapsed ? '-rotate-90' : ''}`}
+                                            className={`transition-all duration-300 group-hover/header:text-(--color-accent-text)! ${isCollapsed ? '-rotate-90' : ''}`}
                                             style={{ color: 'var(--color-text-tertiary)' }}
                                         >
                                             <path d="M6 9l6 6 6-6" />

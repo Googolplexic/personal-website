@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import Sitemap from 'vite-plugin-sitemap'
 import { statSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
@@ -670,6 +671,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     markdownFrontmatterPlugin(),
     faviconAssetsPlugin(),
+    tailwindcss(),
     react(),
     inlineCssPlugin(),
     routePreloadsPlugin(routeFirstImage, detailFirstImage, portfolioBoot),

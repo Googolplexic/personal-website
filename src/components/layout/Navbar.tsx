@@ -28,9 +28,9 @@ export function Navbar() {
         <nav
             aria-label="Primary"
             className={cn(
-                'fixed top-0 w-full z-[200] transition-all duration-500',
+                'fixed top-0 w-full z-200 transition-all duration-500',
                 scrolled
-                    ? 'shadow-sm'
+                    ? 'shadow-xs'
                     : 'bg-transparent'
             )}
             style={{
@@ -45,7 +45,7 @@ export function Navbar() {
                 <RouterLink
                     to="/"
                     onClick={() => window.scrollTo(0, 0)}
-                    className="font-signature text-2xl tracking-wide no-underline select-none transition-colors duration-300 hover:!text-[var(--color-accent)]"
+                    className="font-signature text-2xl tracking-wide no-underline select-none transition-colors duration-300 hover:text-(--color-accent)!"
                     style={{ color: 'var(--color-text-primary)', opacity: 1 }}
                 >
                     CL

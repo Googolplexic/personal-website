@@ -60,7 +60,7 @@ export function OrigamiCard({ slug, title, description, modelImages, date, desig
                     <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-2" />
                 )}
 
-                <h3 className="gallery-heading text-lg md:text-xl mb-1 transition-colors duration-300 group-hover:!text-[var(--color-accent-text)]"
+                <h3 className="gallery-heading text-lg md:text-xl mb-1 transition-colors duration-300 group-hover:text-(--color-accent-text)!"
                     style={{ color: 'var(--color-text-primary)' }}>
                     <HighlightedText text={title} searchTerm={searchTerm} />
                 </h3>

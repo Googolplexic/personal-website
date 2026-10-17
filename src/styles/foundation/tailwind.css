@@ -1,6 +1,41 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss' source(none);
+@source '../../**/*.{ts,tsx}';
+@source '../../../index.html';
+
+@theme {
+  --font-heading: 'EB Garamond', 'EB Garamond Fallback', Garamond, Georgia, serif;
+  --font-body: 'PT Sans', 'PT Sans Fallback', system-ui, -apple-system, sans-serif;
+  --font-signature: 'Grape Nuts', cursive;
+
+  /* Absolute line heights, as in Tailwind 3. Children inherit the computed
+     length rather than a ratio of their own font size. */
+  --text-xs--line-height: 1rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+
+  --animate-fade-in: fade-in 0.6s ease-out forwards;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+/* Tailwind 4 defaults borders to currentColor; v3 used gray-200 */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 /* Register --spot-size so it can be animated */
 @property --spot-size {

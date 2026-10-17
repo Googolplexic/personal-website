@@ -472,14 +472,14 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         <>
             <div className="admin-modal">
                 <div className="admin-modal-panel">
-                    <div className="flex justify-between items-start gap-4 px-5 py-4 md:px-6 border-b border-[var(--color-border)] flex-shrink-0">
+                    <div className="flex justify-between items-start gap-4 px-5 py-4 md:px-6 border-b border-(--color-border) shrink-0">
                         <div className="min-w-0">
                             <h2 className="admin-title text-[clamp(1.5rem,4vw,2rem)] truncate">
                                 {title}
                             </h2>
                             {activeTab === 'edit' && (
                                 <div className="flex items-center gap-4 mt-2">
-                                    <label className="text-sm text-[var(--color-text-tertiary)]">File:</label>
+                                    <label className="text-sm text-(--color-text-tertiary)">File:</label>
                                     <select
                                         value={selectedFile}
                                         onChange={(e) => setSelectedFile(e.target.value)}
@@ -504,12 +504,12 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex border-b border-[var(--color-border)] flex-shrink-0">
+                    <div className="flex border-b border-(--color-border) shrink-0">
                         <button
                             onClick={() => setActiveTab('edit')}
                             className={`px-1 py-3 text-[0.68rem] tracking-[0.14em] uppercase transition-colors ${activeTab === 'edit'
-                                ? 'border-b border-[var(--color-accent)] text-[var(--color-accent)]'
-                                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
+                                ? 'border-b border-(--color-accent) text-(--color-accent)'
+                                : 'text-(--color-text-tertiary) hover:text-(--color-text-secondary)'
                                 }`}
                         >
                             Edit
@@ -517,8 +517,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         <button
                             onClick={() => setActiveTab('images')}
                             className={`px-1 py-3 text-[0.68rem] tracking-[0.14em] uppercase transition-colors ${activeTab === 'images'
-                                ? 'border-b border-[var(--color-accent)] text-[var(--color-accent)]'
-                                : 'text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]'
+                                ? 'border-b border-(--color-accent) text-(--color-accent)'
+                                : 'text-(--color-text-tertiary) hover:text-(--color-text-secondary)'
                                 }`}
                         >
                             Images ({images.length})
@@ -527,35 +527,35 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
 
                     <div className="flex-1 overflow-y-auto">
                         {error && (
-                            <div className="border border-red-500/20 bg-red-500/10 rounded p-3 m-4">
+                            <div className="border border-red-500/20 bg-red-500/10 rounded-sm p-3 m-4">
                                 <p className="text-red-400 text-sm">{error}</p>
                             </div>
                         )}                        {activeTab === 'edit' ? (
                             <div className="h-full p-6">
                                 {loading ? (
                                     <div className="flex items-center justify-center h-full">
-                                        <div className="text-[var(--color-text-tertiary)]">Loading markdown content...</div>
+                                        <div className="text-(--color-text-tertiary)">Loading markdown content...</div>
                                     </div>
                                 ) : (
                                     <div className="admin-split">
-                                        <div className="flex flex-col min-h-[16rem] md:min-h-0 md:h-full">
+                                        <div className="flex flex-col min-h-64 md:min-h-0 md:h-full">
                                             <p className="gallery-overline mb-2">
                                                 Markdown
                                             </p>
                                             <textarea
                                                 value={content}
                                                 onChange={(e) => setContent(e.target.value)}
-                                                className="flex-1 p-4 border border-[var(--color-border)] rounded bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] font-mono text-sm resize-none focus:border-[var(--color-accent)] focus:outline-none"
+                                                className="flex-1 p-4 border border-(--color-border) rounded-sm bg-(--color-bg-primary) text-(--color-text-primary) font-mono text-sm resize-none focus:border-(--color-accent) focus:outline-hidden"
                                                 placeholder="Enter your markdown content here..."
                                             />
                                         </div>
 
                                         {/* Preview */}
-                                        <div className="flex flex-col min-h-[16rem] md:min-h-0 md:h-full">
+                                        <div className="flex flex-col min-h-64 md:min-h-0 md:h-full">
                                             <p className="gallery-overline mb-2">
                                                 Preview
                                             </p>
-                                            <div className="flex-1 p-4 border border-[var(--color-border)] rounded bg-[var(--color-bg-primary)] overflow-y-auto">
+                                            <div className="flex-1 p-4 border border-(--color-border) rounded-sm bg-(--color-bg-primary) overflow-y-auto">
                                                 <div className="max-w-none text-sm markdown-preview text-left">
                                                     {content ? (
                                                         <div
@@ -568,7 +568,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                             }}
                                                         />
                                                     ) : (
-                                                        <p className="text-[var(--color-text-tertiary)] italic">
+                                                        <p className="text-(--color-text-tertiary) italic">
                                                             Markdown preview will appear here...
                                                         </p>
                                                     )}
@@ -637,7 +637,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                             />
                                         </label>
                                     </div>
-                                    <p className="text-xs text-[var(--color-text-tertiary)]">
+                                    <p className="text-xs text-(--color-text-tertiary)">
                                         Supported formats: JPG, PNG, GIF, WebP, SVG
                                     </p>
                                 </div>
@@ -645,8 +645,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                 {/* Image Grid */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {images.map((image) => (
-                                        <div key={image.name} className="border border-[var(--color-border)] rounded-lg p-3">
-                                            <div className="bg-[var(--color-bg-elevated)] rounded mb-2 overflow-hidden">
+                                        <div key={image.name} className="border border-(--color-border) rounded-lg p-3">
+                                            <div className="bg-(--color-bg-elevated) rounded-sm mb-2 overflow-hidden">
                                                 <img
                                                     src={image.url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiA5QzEwLjMzIDkgOSAxMC4zMyA5IDEyUzEwLjMzIDE1IDEyIDE1IDE1IDEzLjY3IDE1IDEyUzEzLjY3IDkgMTIgOVpNMTIgMTNDMTEuNDUgMTMgMTEgMTIuNTUgMTEgMTJTMTEuNDUgMTEgMTIgMTFTMTMgMTEuNDUgMTMgMTJTMTIuNTUgMTMgMTIgMTNaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo='}
                                                     alt={image.name}
@@ -677,7 +677,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                     <div className="flex gap-1">
                                                         <button
                                                             onClick={() => handleImageRename(image.name, newImageName)}
-                                                            className="flex-1 text-xs border border-green-500/30 text-green-400 hover:bg-green-500/10 px-2 py-1 rounded transition-colors"
+                                                            className="flex-1 text-xs border border-green-500/30 text-green-400 hover:bg-green-500/10 px-2 py-1 rounded-sm transition-colors"
                                                         >
                                                             Save
                                                         </button>
@@ -686,14 +686,14 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                                 setRenamingImage(null);
                                                                 setNewImageName('');
                                                             }}
-                                                            className="flex-1 text-xs border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] px-2 py-1 rounded transition-colors"
+                                                            className="flex-1 text-xs border border-(--color-border) text-(--color-text-secondary) hover:text-(--color-text-primary) px-2 py-1 rounded-sm transition-colors"
                                                         >
                                                             Cancel
                                                         </button>
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <p className="text-xs text-[var(--color-text-tertiary)] truncate mb-2" title={image.name}>
+                                                <p className="text-xs text-(--color-text-tertiary) truncate mb-2" title={image.name}>
                                                     {image.name}
                                                 </p>
                                             )}
@@ -722,7 +722,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                         </div>
                                     ))}
                                 </div>                                {images.length === 0 && (
-                                    <div className="text-center py-12 text-[var(--color-text-tertiary)]">
+                                    <div className="text-center py-12 text-(--color-text-tertiary)">
                                         <div className="text-4xl mb-4">🖼️</div>
                                         <p>No images found. Upload some images to get started!</p>
                                     </div>
@@ -731,8 +731,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         )}
                     </div>
 
-                    <div className="flex justify-between items-center p-6 border-t border-[var(--color-border)] flex-shrink-0">
-                        <div className="text-sm text-[var(--color-text-tertiary)]">
+                    <div className="flex justify-between items-center p-6 border-t border-(--color-border) shrink-0">
+                        <div className="text-sm text-(--color-text-tertiary)">
                             {activeTab === 'edit' && selectedFile && (
                                 <>
                                     Editing: <span className="font-mono">{selectedFile}</span>
@@ -742,7 +742,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                         <div className="flex gap-3">
                             <button
                                 onClick={onClose}
-                                className="px-4 py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border)] rounded transition-colors"
+                                className="px-4 py-2 text-(--color-text-secondary) hover:text-(--color-text-primary) border border-(--color-border) rounded-sm transition-colors"
                             >
                                 Close
                             </button>
@@ -750,7 +750,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                 <button
                                     onClick={handleSave}
                                     disabled={saving || loading}
-                                    className="px-4 py-2 bg-[var(--color-accent)] hover:opacity-90 disabled:opacity-40 text-[var(--color-bg-primary)] rounded font-medium transition-opacity"
+                                    className="px-4 py-2 bg-(--color-accent) hover:opacity-90 disabled:opacity-40 text-(--color-bg-primary) rounded-sm font-medium transition-opacity"
                                 >
                                     {saving ? 'Saving...' : 'Save Changes'}
                                 </button>

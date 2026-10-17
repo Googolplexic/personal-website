@@ -104,6 +104,9 @@
     transition: all 0.35s ease;
     background: transparent;
     color: var(--color-text-primary);
+    /* Tailwind 4 border utilities set border-style through this variable;
+       keep button borders hidden unless a style utility is applied. */
+    --tw-border-style: none;
   }
   button:focus, button:focus-visible { outline: none; }
 

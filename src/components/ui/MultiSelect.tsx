@@ -75,8 +75,8 @@ export function MultiSelect({
     const modeBtn = (mode: 'and' | 'or') => cn(
         'px-2 py-0.5 text-xs font-body tracking-[0.12em] uppercase transition-all duration-200 cursor-pointer bg-transparent border-t-0 border-x-0',
         filterMode === mode
-            ? 'border-b border-b-[var(--color-accent)] opacity-100'
-            : 'border-b border-b-transparent opacity-60 hover:opacity-85 hover:border-b-[var(--color-accent-text)]'
+            ? 'border-b border-b-(--color-accent) opacity-100'
+            : 'border-b border-b-transparent opacity-60 hover:opacity-85 hover:border-b-(--color-accent-text)'
     );
 
     return (
@@ -93,7 +93,7 @@ export function MultiSelect({
                 <svg
                     width="10" height="10" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                    className={`flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+                    className={`shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
                     style={{ color: 'var(--color-text-tertiary)' }}
                 >
                     <path d="M6 9l6 6 6-6" />
@@ -116,7 +116,7 @@ export function MultiSelect({
                     {!singleSelect && onFilterModeChange && (
                         <div className="flex items-center justify-between px-3 pb-2 mb-1"
                             style={{ borderBottom: '1px solid var(--color-border)' }}>
-                            <span className="text-xs font-body tracking-[0.1em] uppercase"
+                            <span className="text-xs font-body tracking-widest uppercase"
                                 style={{ color: 'var(--color-text-tertiary)' }}>
                                 Match
                             </span>
@@ -151,10 +151,10 @@ export function MultiSelect({
                                     type="button"
                                     onClick={() => toggle(option)}
                                     className={cn(
-                                        'w-full text-left px-2 py-1.5 text-xs font-body tracking-[0.1em] uppercase transition-all duration-200 cursor-pointer bg-transparent border-t-0 border-x-0',
+                                        'w-full text-left px-2 py-1.5 text-xs font-body tracking-widest uppercase transition-all duration-200 cursor-pointer bg-transparent border-t-0 border-x-0',
                                         active
-                                            ? 'border-b border-b-[var(--color-accent)] opacity-100'
-                                            : 'border-b border-b-transparent opacity-70 hover:opacity-90 hover:border-b-[var(--color-accent-text)]'
+                                            ? 'border-b border-b-(--color-accent) opacity-100'
+                                            : 'border-b border-b-transparent opacity-70 hover:opacity-90 hover:border-b-(--color-accent-text)'
                                     )}
                                     style={{ color: active ? 'var(--color-accent-text)' : 'var(--color-text-secondary)' }}
                                 >
@@ -171,7 +171,7 @@ export function MultiSelect({
                             <button
                                 type="button"
                                 onClick={() => onChange([])}
-                                className="text-xs font-body tracking-[0.1em] uppercase transition-colors cursor-pointer bg-transparent border-none p-0"
+                                className="text-xs font-body tracking-widest uppercase transition-colors cursor-pointer bg-transparent border-none p-0"
                                 style={{ color: 'var(--color-text-tertiary)' }}
                                 onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
                                 onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
