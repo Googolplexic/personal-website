@@ -14,7 +14,7 @@ foreach ($projectDir in $projectDirs) {
         # Check if it uses the old eager loading pattern
         if ($content -match "import\.meta\.glob.*eager: true") {
             # Replace the old pattern with the new lazy loading pattern
-            $newContent = $content -replace "const sortedImages = Object\.values\(import\.meta\.glob\('\.\/images\/\*\.\(png\|jpg\|jpeg\)', \{ eager: true, import: 'default' \}\)\)\s+\.sort\(\(a, b\) => \(a as string\)\.localeCompare\(b as string\)\) as string\[\];", "// Use lazy loading to avoid bundling all images into main chunk`nconst imageModules = import.meta.glob('./images/*.(png|jpg|jpeg)', { import: 'default' });`nconst lazyImages = createLazyImageCollection(imageModules);"
+            $newContent = $content -replace "const sortedImages = Object\.values\(import\.meta\.glob\('\.\/images\/\*\.\(png\|jpg\|jpeg\)', \{ eager: true, import: 'default' \}\)\)\s+\.sort\(\(a, b\) => \(a as string\)\.localeCompare\(b as string\)\) as string\[\];", "// Use lazy loading to avoid bundling all images into main chunk`nconst imageModules = import.meta.glob('./images/*.{png,jpg,jpeg}', { import: 'default' });`nconst lazyImages = createLazyImageCollection(imageModules);"
             
             # Add the import for createLazyImageCollection
             $newContent = $newContent -replace "(import matter from 'front-matter';)", "`$1`nimport { createLazyImageCollection } from '../../../utils/lazyImages';"
