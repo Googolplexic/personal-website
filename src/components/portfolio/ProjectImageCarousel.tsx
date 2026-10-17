@@ -1,71 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useImagePreloader } from '../../utils/useImagePreloader';
-import type { LazyImageCollection } from '../../utils/lazyImages';
-import { loadImage, getResolvedImages } from '../../utils/lazyImages';
 import { cn } from '../../utils/styles';
 import { Lightbox } from '../ui/Lightbox';
 import { sizeForImage } from '../../utils/imageSize';
 
 interface ProjectImageCarouselProps {
-    images: string[] | LazyImageCollection;
+    images: string[];
     imagesFull?: string[];
     title: string;
 }
 
-export function ProjectImageCarousel({ images, imagesFull, title }: ProjectImageCarouselProps) {
+export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title }: ProjectImageCarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [resolvedImages, setResolvedImages] = useState<string[]>([]);
-    const [isLazyCollection, setIsLazyCollection] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-    // Check if images is a lazy collection
-    useEffect(() => {
-        if (images && typeof images === 'object' && 'loaders' in images) {
-            setIsLazyCollection(true);
-            setResolvedImages(getResolvedImages(images as LazyImageCollection));
-        } else {
-            setIsLazyCollection(false);
-            setResolvedImages(images as string[] || []);
-        }
-    }, [images]);
+    useImagePreloader(resolvedImages);
 
-    // Load current image if it's lazy and not yet loaded
-    useEffect(() => {
-        if (isLazyCollection && images && 'loaders' in images) {
-            const collection = images as LazyImageCollection;
-            if (currentImageIndex < collection.loaders.length && !collection.resolved[currentImageIndex]) {
-                loadImage(collection, currentImageIndex).then(() => {
-                    setResolvedImages(getResolvedImages(collection));
-                });
-            }
-        }
-    }, [currentImageIndex, isLazyCollection, images]);
-
-    // Preload regular images
-    useImagePreloader(isLazyCollection ? [] : resolvedImages);
-
-    const changeImage = (newIndex: number) => {
-        setCurrentImageIndex(newIndex);
-
-        // Preload next and previous images if lazy
-        if (isLazyCollection && images && 'loaders' in images) {
-            const collection = images as LazyImageCollection;
-
-            const nextIndex = newIndex + 1;
-            if (nextIndex < collection.loaders.length && !collection.resolved[nextIndex]) {
-                loadImage(collection, nextIndex).then(() => {
-                    setResolvedImages(getResolvedImages(collection));
-                });
-            }
-
-            const prevIndex = newIndex - 1;
-            if (prevIndex >= 0 && !collection.resolved[prevIndex]) {
-                loadImage(collection, prevIndex).then(() => {
-                    setResolvedImages(getResolvedImages(collection));
-                });
-            }
-        }
-    };
+    const changeImage = (newIndex: number) => setCurrentImageIndex(newIndex);
 
     if (resolvedImages.length === 0) {
         return <div className="text-center py-8">

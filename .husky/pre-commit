@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # Optimize ALL images (idempotent — skips up-to-date ones)
 node scripts/optimize-images.mjs
 

@@ -60,8 +60,12 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             touchLikeQuery.addListener(onPointerCapabilityChange);
         }
 
+        // Captured once: ResizeObserver can fire after the canvas is detached
+        // but before this effect's cleanup runs.
+        const parent = canvas.parentElement!;
         const resize = () => {
-            const rect = canvas.parentElement!.getBoundingClientRect();
+            if (!canvas.isConnected) return;
+            const rect = parent.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
             if (particlesRef.current.length === 0) {
@@ -73,7 +77,7 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
 
         resize();
         const ro = new ResizeObserver(resize);
-        ro.observe(canvas.parentElement!);
+        ro.observe(parent);
 
         const syncPointerToCanvas = () => {
             const { x, y, active } = pointerClientRef.current;
@@ -113,7 +117,6 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             }, 400);
         };
 
-        const parent = canvas.parentElement!;
         window.addEventListener('mousemove', onMouseMove, { passive: true });
         window.addEventListener('mouseleave', onMouseLeaveWindow);
         window.addEventListener('scroll', onViewportChange, { passive: true });

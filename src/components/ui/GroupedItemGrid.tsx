@@ -290,19 +290,9 @@ export function GroupedItemGrid({
             );
             const matchesTitle = norm(item.title).includes(searchLower);
 
-            let matchesContent = false;
-            if (item.type === 'project') {
-                const project = item as ProjectProps;
-                matchesContent = norm(project.summary).includes(searchLower) ||
-                    norm(project.description).includes(searchLower);
-            } else {
-                const origami = item as OrigamiProps;
-                matchesContent = norm(origami.description).includes(searchLower);
-                // Also search designer name for other designs
-                if (origami.designer) {
-                    matchesContent = matchesContent || norm(origami.designer).includes(searchLower);
-                }
-            }
+            const matchesContent = item.type === 'project'
+                ? norm(item.summary).includes(searchLower) || norm(item.description).includes(searchLower)
+                : norm(item.description).includes(searchLower) || norm(item.designer).includes(searchLower);
 
             return matchesTech && matchesTag && (searchTerm === '' || matchesTitle || matchesContent);
         });

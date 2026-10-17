@@ -12,9 +12,11 @@ export function Navbar() {
     }, []);
 
     // Close mobile menu on route change
-    useEffect(() => {
+    const [menuPath, setMenuPath] = useState(location.pathname);
+    if (menuPath !== location.pathname) {
+        setMenuPath(location.pathname);
         setMobileOpen(false);
-    }, [location.pathname]);
+    }
 
     useEffect(() => {
         const handleScroll = () => {

@@ -9,7 +9,7 @@ interface ScrollRevealOptions {
 /**
  * Hook to reveal elements when they scroll into view.
  * Uses IntersectionObserver for performance.
- * Respects prefers-reduced-motion.
+ * Reduced motion is handled in CSS (`.scroll-reveal` in motion.css).
  */
 export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
     options: ScrollRevealOptions = {}
@@ -19,13 +19,6 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
     const [isRevealed, setIsRevealed] = useState(false);
 
     useEffect(() => {
-        // Respect reduced motion preference
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (prefersReducedMotion) {
-            setIsRevealed(true);
-            return;
-        }
-
         const element = ref.current;
         if (!element) return;
 

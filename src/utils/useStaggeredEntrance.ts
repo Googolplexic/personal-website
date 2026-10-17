@@ -88,7 +88,7 @@ export function useStaggeredEntrance(
                 item.classList.remove('stagger-visible');
             });
         };
-    }, [containerRef, staggerDelay]);
+    }, [containerRef, staggerDelay, skipCount]);
 
     return containerRef;
 }
