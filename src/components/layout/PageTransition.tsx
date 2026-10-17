@@ -1,4 +1,4 @@
-import { useEffect, useRef, ReactNode } from 'react';
+import { useEffect, useRef, useState, ReactNode } from 'react';
 import { useLocation } from 'react-router';
 import { getLenis } from '../../utils/useSmoothScroll';
 
@@ -15,7 +15,13 @@ export function PageTransition({ children }: PageTransitionProps) {
     const location = useLocation();
     const prevPathRef = useRef(location.pathname);
     const isFirstRender = useRef(true);
-    const isInitialLoad = useRef(true);
+    // Skip the page-enter animation on initial load to avoid delaying LCP
+    const [renderedPath, setRenderedPath] = useState(location.pathname);
+    const [hasNavigated, setHasNavigated] = useState(false);
+    if (location.pathname !== renderedPath) {
+        setRenderedPath(location.pathname);
+        setHasNavigated(true);
+    }
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -25,7 +31,6 @@ export function PageTransition({ children }: PageTransitionProps) {
 
         if (location.pathname !== prevPathRef.current) {
             prevPathRef.current = location.pathname;
-            isInitialLoad.current = false;
 
             // Safety: ensure body overflow is never left hidden by a
             // lightbox (or similar) that was unmounted during navigation.
@@ -46,9 +51,8 @@ export function PageTransition({ children }: PageTransitionProps) {
         }
     }, [location.pathname]);
 
-    // Skip page-enter animation on initial load to avoid delaying LCP
     return (
-        <div key={location.pathname} className={isInitialLoad.current ? '' : 'page-enter'}>
+        <div key={location.pathname} className={hasNavigated ? 'page-enter' : ''}>
             {children}
         </div>
     );

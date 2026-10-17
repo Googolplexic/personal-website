@@ -45,7 +45,8 @@ function AppContent() {
     const [mountSpotlightDust, setMountSpotlightDust] = useState(false);
     useEffect(() => {
         if (isAdmin || !spotlightEnabled) return;
-        setMountSpotlightDust(true);
+        const frame = requestAnimationFrame(() => setMountSpotlightDust(true));
+        return () => cancelAnimationFrame(frame);
     }, [isAdmin, spotlightEnabled]);
 
     return (

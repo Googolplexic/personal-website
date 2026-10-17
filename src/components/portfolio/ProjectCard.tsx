@@ -1,24 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ProjectProps } from '../../types';
 import { useNavigate, useLocation } from 'react-router';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
-import type { LazyImageCollection } from '../../utils/lazyImages';
-import { loadImage } from '../../utils/lazyImages';
 import { ShareButton } from '../ui/ShareButton';
 import { sizeForImage } from '../../utils/imageSize';
 
 const BASE_URL = 'https://www.colemanlai.com';
-
-function resolveFirstImageSync(images: ProjectProps['images']): string {
-    if (!images) return '';
-    if (Array.isArray(images) && images.length > 0) return images[0];
-    if (typeof images === 'object' && 'loaders' in images) {
-        const collection = images as LazyImageCollection;
-        if (collection.resolved[0]) return collection.resolved[0];
-    }
-    return '';
-}
 
 interface ProjectWithBasePath extends ProjectProps {
     basePath?: string;
@@ -33,21 +21,11 @@ interface ProjectWithBasePath extends ProjectProps {
 export function ProjectCard({ basePath = '/portfolio', searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false, imageAlreadyShown = false, ...props }: ProjectWithBasePath) {
     const navigate = useNavigate();
     const location = useLocation();
-    const [firstImage, setFirstImage] = useState<string>(() => resolveFirstImageSync(props.images));
+    const firstImage = props.images?.[0] ?? '';
 
     const queryString = location.search || (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : '');
     const projectPath = `${basePath}/${props.slug}${queryString}`;
     const shareUrl = `${BASE_URL}/portfolio/${props.slug}`;
-
-    useEffect(() => {
-        if (firstImage) return;
-        if (props.images && typeof props.images === 'object' && 'loaders' in props.images) {
-            const collection = props.images as LazyImageCollection;
-            if (collection.loaders.length > 0 && !collection.resolved[0]) {
-                loadImage(collection, 0).then(url => setFirstImage(url));
-            }
-        }
-    }, [props.images, firstImage]);
 
     useEffect(() => {
         if (!imageAlreadyShown) return;
