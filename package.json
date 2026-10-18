@@ -11,7 +11,7 @@
     "prepare": "husky",
     "prebuild": "node scripts/sync-package-version.mjs",
     "sync-version": "node scripts/sync-package-version.mjs",
-    "build": "node scripts/optimize-images.mjs && node scripts/build-hook.js && pnpm run typecheck && react-router build && node scripts/finalize-build.mjs && node scripts/generate-og-meta.js && node scripts/generate-rss.js",
+    "build": "node scripts/optimize-images.mjs && node scripts/build-hook.js && pnpm run typecheck && react-router build && node scripts/finalize-build.mjs && node scripts/generate-rss.js",
     "typecheck": "react-router typegen && tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -24,7 +24,6 @@
   "dependencies": {
     "@octokit/rest": "^20.0.2",
     "@vercel/analytics": "^1.4.1",
-    "@vercel/functions": "^3.4.0",
     "@vercel/speed-insights": "^1.1.0",
     "bcryptjs": "^3.0.2",
     "jsonwebtoken": "^9.0.2",
