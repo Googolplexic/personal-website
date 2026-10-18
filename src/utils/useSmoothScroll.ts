@@ -19,7 +19,7 @@ export function useSmoothScroll(enabled = true) {
         let rafId: number | null = null;
         let loadCleanup: (() => void) | null = null;
 
-        import('lenis').then(({ default: Lenis }) => {
+        void import('lenis').then(({ default: Lenis }) => {
             if (destroyed) return;
 
             const lenis = new Lenis({

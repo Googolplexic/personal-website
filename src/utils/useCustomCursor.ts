@@ -8,9 +8,11 @@ import { useEffect } from 'react';
  */
 export function useCustomCursor(enabled = true) {
     useEffect(() => {
-        if (!enabled) return;
-        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const root = document.documentElement;
+        const supported = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+            && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        root.classList.toggle('custom-scrollbar', enabled && supported);
+        if (!enabled || !supported) return;
 
         const dot = document.createElement('div');
         dot.className = 'custom-cursor-dot';
@@ -401,6 +403,7 @@ export function useCustomCursor(enabled = true) {
             document.documentElement.removeEventListener('mouseenter', onMouseEnter);
             document.documentElement.classList.remove('custom-cursor-active');
             document.documentElement.classList.remove('custom-cursor-visible');
+            root.classList.remove('custom-scrollbar');
             document.body.style.userSelect = '';
             dot.remove();
             glow.remove();

@@ -10,6 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { parseFrontmatter } from './frontmatter.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -26,26 +27,8 @@ const distImagesDir = () => path.join(DIST, 'assets', 'images');
 const distProjectsImagesDir = () => path.join(distImagesDir(), 'projects');
 const distOrigamiImagesDir = () => path.join(distImagesDir(), 'origami');
 
-function parseFrontmatter(mdPath) {
-  const raw = fs.readFileSync(mdPath, 'utf-8');
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!match) return {};
-  const yaml = match[1];
-  const out = {};
-  let currentKey = null;
-  for (const rawLine of yaml.split('\n')) {
-    const line = rawLine.replace(/\r$/, '');
-    const kv = line.match(/^(\w+):\s*(.*)$/);
-    if (kv) {
-      currentKey = kv[1];
-      const v = kv[2].trim();
-      out[currentKey] = v === '' ? [] : v;
-    } else if (currentKey && line.match(/^-\s+/)) {
-      if (!Array.isArray(out[currentKey])) out[currentKey] = [];
-      out[currentKey].push(line.replace(/^-\s+/, '').trim());
-    }
-  }
-  return out;
+function readFrontmatter(mdPath) {
+  return parseFrontmatter(fs.readFileSync(mdPath, 'utf-8')).attributes;
 }
 
 /** YYYY-MM -> first day of month UTC noon (stable ordering) */
@@ -352,7 +335,7 @@ function portfolioItems(cache) {
   for (const slug of scanProjects()) {
     const mdPath = path.join(SRC_PROJECTS, slug, 'description.md');
     if (!fs.existsSync(mdPath)) continue;
-    const fm = parseFrontmatter(mdPath);
+    const fm = readFrontmatter(mdPath);
     const rawTitle = fm.title || slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
     const title = typeof rawTitle === 'string' ? rawTitle : slug;
     const rawDesc = (fm.SEOdescription || fm.summary || '').trim();
@@ -387,7 +370,7 @@ function origamiItems(cache) {
     let description = `${title} — origami by Coleman Lai.`;
     let fm = {};
     if (fs.existsSync(mdPath)) {
-      fm = parseFrontmatter(mdPath);
+      fm = readFrontmatter(mdPath);
       if (fm.title) title = fm.title;
       description = (fm.description || '').trim() || description;
     }

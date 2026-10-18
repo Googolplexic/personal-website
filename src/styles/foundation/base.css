@@ -19,7 +19,7 @@
     --masonry-gap: 3.5rem;
 
     /* Page grid: content width, outer margin and column gutter */
-    --page-max: 72rem;
+    --page-max: 90rem;
     --page-margin: clamp(1.25rem, 4vw, 3rem);
     --grid-gutter: clamp(1rem, 2.5vw, 2rem);
 
@@ -73,15 +73,19 @@
        keep button borders hidden unless a style utility is applied. */
     --tw-border-style: none;
   }
-  button:focus, button:focus-visible { outline: none; }
+  :focus-visible {
+    outline: 1px solid var(--color-gold);
+    outline-offset: 3px;
+  }
 
   html { scroll-behavior: smooth; }
 
-  /* Native scrollbar hidden — custom cursor becomes the thumb at the right edge */
-  html {
+  /* Where the custom cursor runs, it becomes the scrollbar thumb at the right edge.
+     The class is set before paint (root.tsx), so the page doesn't shift sideways. */
+  html.custom-scrollbar {
     scrollbar-width: none;
   }
-  html::-webkit-scrollbar {
+  html.custom-scrollbar::-webkit-scrollbar {
     display: none;
   }
 

@@ -1,3 +1,1 @@
-export { UniversalSearch } from './UniversalSearch';
-export { GroupedSearch } from './GroupedSearch';
-export type { SortOption, CategoryFilter } from './GroupedSearch';
+export { FilterBar } from './FilterBar';

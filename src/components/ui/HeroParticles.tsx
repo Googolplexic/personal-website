@@ -54,11 +54,7 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
         const onPointerCapabilityChange = (e: MediaQueryListEvent) => {
             isTouchLikeDeviceRef.current = e.matches;
         };
-        if (typeof touchLikeQuery.addEventListener === 'function') {
-            touchLikeQuery.addEventListener('change', onPointerCapabilityChange);
-        } else {
-            touchLikeQuery.addListener(onPointerCapabilityChange);
-        }
+        touchLikeQuery.addEventListener('change', onPointerCapabilityChange);
 
         // Captured once: ResizeObserver can fire after the canvas is detached
         // but before this effect's cleanup runs.
@@ -75,8 +71,14 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             }
         };
 
+        // With reduced motion the dust is drawn once, as a still frame, and redrawn on resize
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
         resize();
-        const ro = new ResizeObserver(resize);
+        const ro = new ResizeObserver(() => {
+            resize();
+            if (reduceMotion) rafRef.current = requestAnimationFrame(draw);
+        });
         ro.observe(parent);
 
         const syncPointerToCanvas = () => {
@@ -199,7 +201,7 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
                 ctx.shadowBlur = 0;
             }
 
-            rafRef.current = requestAnimationFrame(draw);
+            if (!reduceMotion) rafRef.current = requestAnimationFrame(draw);
         };
 
         rafRef.current = requestAnimationFrame(draw);
@@ -214,11 +216,7 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             window.removeEventListener('resize', onViewportChange);
             parent.removeEventListener('touchmove', onTouchMove);
             parent.removeEventListener('touchend', onTouchEnd);
-            if (typeof touchLikeQuery.removeEventListener === 'function') {
-                touchLikeQuery.removeEventListener('change', onPointerCapabilityChange);
-            } else {
-                touchLikeQuery.removeListener(onPointerCapabilityChange);
-            }
+            touchLikeQuery.removeEventListener('change', onPointerCapabilityChange);
         };
     }, [count]);
 

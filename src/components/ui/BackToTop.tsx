@@ -32,7 +32,7 @@ export function BackToTop() {
             onClick={scrollToTop}
             aria-label="Back to top"
             data-visible={visible}
-            className="fixed bottom-8 right-8 z-150 p-3 rounded-full transition-all duration-500 border border-solid border-(--nav-border) bg-(--nav-bg) backdrop-blur-lg backdrop-saturate-120 opacity-0 pointer-events-none translate-y-3 data-[visible=true]:opacity-70 data-[visible=true]:pointer-events-auto data-[visible=true]:translate-y-0 data-[visible=true]:hover:opacity-100 hover:border-gold"
+            className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-150 w-11 h-11 p-0 flex items-center justify-center transition-all duration-500 border border-solid border-line-strong bg-(--nav-bg) backdrop-blur-lg backdrop-saturate-120 opacity-0 pointer-events-none translate-y-3 data-[visible=true]:opacity-70 data-[visible=true]:pointer-events-auto data-[visible=true]:translate-y-0 data-[visible=true]:hover:opacity-100 hover:border-gold"
         >
             <svg
                 width="18"

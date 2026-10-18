@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router';
+import { FrameButton } from '../components/ui/FrameButton';
 
 interface NotFoundProps {
     overline?: string;
@@ -12,20 +12,19 @@ export function NotFound({
     message = "The page you're looking for doesn't exist.",
 }: NotFoundProps) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center px-5 text-center">
-            <p className="gallery-overline mb-4">{overline}</p>
-            <h1 className="gallery-heading text-5xl md:text-6xl mb-4 text-ink">
-                {title}
-            </h1>
-            <p className="font-body text-lg mb-10 text-ink-muted">
-                {message}
-            </p>
-            <RouterLink
-                to="/"
-                className="inline-flex items-center gap-2 px-5 py-2.5 font-body text-xs tracking-[0.15em] uppercase no-underline transition-colors duration-300 text-ink border border-ink-faint hover:text-gold hover:border-gold"
-            >
-                Return to Gallery
-            </RouterLink>
+        <div className="min-h-svh flex items-center pt-28 pb-20">
+            <div className="page-grid">
+                <div className="col-span-full lg:col-span-8 border-l border-solid border-line-strong pl-5 md:pl-8">
+                    <p className="gallery-overline mt-0 mb-4">{overline}</p>
+                    <h1 className="gallery-heading text-title m-0 text-ink">
+                        {title}
+                    </h1>
+                    <p className="font-body text-lg mt-4 mb-10 text-ink-muted">
+                        {message}
+                    </p>
+                    <FrameButton to="/">Return to Gallery</FrameButton>
+                </div>
+            </div>
         </div>
     );
 }

@@ -101,6 +101,11 @@
     animation: hero-drift 20s ease-in-out infinite alternate;
   }
 
+  /* The name sits on the left on wide screens; keep the glow behind it */
+  @media (min-width: 1024px) {
+    .hero-spotlight::after { top: 60%; left: 30%; }
+  }
+
   @keyframes hero-drift {
     0%   { transform: translate(-60%, -55%); }
     25%  { transform: translate(-40%, -48%); }
@@ -117,48 +122,6 @@
       #000 35%,
       var(--color-canvas) 100%
     );
-  }
-
-  .gallery-divider {
-    width: 32px;
-    height: 1px;
-    background: var(--color-gold);
-    opacity: 0.35;
-    margin: 0 auto;
-  }
-
-  .contact-icon {
-    color: var(--color-ink-faint);
-  }
-
-  .contact-name {
-    color: var(--color-ink);
-  }
-
-  .contact-link:hover .contact-icon,
-  .contact-link:hover .contact-name {
-    color: var(--color-gold);
-  }
-
-  .exhibit-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-family: var(--font-body);
-    font-size: 0.6rem;
-    font-weight: 400;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--color-gold);
-  }
-
-  .exhibit-label::before,
-  .exhibit-label::after {
-    content: '';
-    width: 24px;
-    height: 1px;
-    background: var(--color-gold);
-    opacity: 0.4;
   }
 
   .search-highlight {

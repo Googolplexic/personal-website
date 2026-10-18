@@ -64,7 +64,7 @@ export function OrigamiForm() {
         setImages(e.target.files);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
         setMessage(null);

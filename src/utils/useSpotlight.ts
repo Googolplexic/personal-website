@@ -38,18 +38,23 @@ export function useSpotlight() {
     const isHoverDevice = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const isSpotlightDisabled = () => document.documentElement.classList.contains('spotlight-disabled');
 
+    const pointerRef = useRef({ x: 0, y: 0 });
+    const frameRef = useRef(0);
+    useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
+
     const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
         if (!isHoverDevice() || isSpotlightDisabled()) return;
-        const overlay = document.getElementById('global-spotlight');
-        const dim = document.getElementById('page-dim');
-        if (overlay) {
-            overlay.style.setProperty('--spot-x', `${e.clientX}px`);
-            overlay.style.setProperty('--spot-y', `${e.clientY}px`);
-        }
-        if (dim) {
-            dim.style.setProperty('--spot-x', `${e.clientX}px`);
-            dim.style.setProperty('--spot-y', `${e.clientY}px`);
-        }
+        pointerRef.current = { x: e.clientX, y: e.clientY };
+        if (frameRef.current) return;
+        frameRef.current = requestAnimationFrame(() => {
+            frameRef.current = 0;
+            const { x, y } = pointerRef.current;
+            for (const id of ['global-spotlight', 'page-dim']) {
+                const el = document.getElementById(id);
+                el?.style.setProperty('--spot-x', `${x}px`);
+                el?.style.setProperty('--spot-y', `${y}px`);
+            }
+        });
     }, []);
 
     const onMouseEnter = useCallback(() => {

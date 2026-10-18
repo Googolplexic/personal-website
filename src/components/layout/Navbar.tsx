@@ -22,27 +22,25 @@ export function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const solid = scrolled || mobileOpen;
+
     return (
         <nav
             aria-label="Primary"
             className={cn(
-                'fixed top-0 w-full z-200 transition-all duration-500',
-                scrolled
-                    ? 'shadow-xs'
-                    : 'bg-transparent'
+                'fixed top-0 w-full z-200 border-b border-solid transition-all duration-500',
+                solid
+                    ? 'bg-(--nav-bg) border-(--nav-border) backdrop-blur-lg backdrop-saturate-120'
+                    : 'bg-transparent border-transparent',
             )}
-            style={{
-                backgroundColor: (scrolled || mobileOpen) ? 'var(--nav-bg)' : 'transparent',
-                borderBottom: (scrolled || mobileOpen) ? '1px solid var(--nav-border)' : '1px solid transparent',
-                backdropFilter: (scrolled || mobileOpen) ? 'blur(16px) saturate(1.2)' : 'none',
-                WebkitBackdropFilter: (scrolled || mobileOpen) ? 'blur(16px) saturate(1.2)' : 'none',
-            }}
         >
-            <div className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+            {/* Same edges as the page grid, so the monogram lines up with the content below */}
+            <div className="max-w-(--page-max) mx-auto px-(--page-margin) py-4 flex justify-between items-center">
                 {/* CL Monogram */}
                 <RouterLink
                     to="/"
                     onClick={() => window.scrollTo(0, 0)}
+                    aria-label="CL, Coleman Lai, home"
                     className="font-signature text-2xl tracking-wide no-underline select-none transition-colors duration-300 text-ink hover:text-gold"
                 >
                     CL
@@ -55,15 +53,16 @@ export function Navbar() {
                     <NavLink to="/origami">Origami</NavLink>
                 </div>
 
-                {/* Mobile hamburger */}
+                {/* Mobile menu button */}
                 <button
-                    className="sm:hidden flex items-center justify-center min-h-11 min-w-11 -mr-2"
+                    type="button"
+                    className="sm:hidden flex items-center justify-center w-11 h-11 p-0 bg-transparent border border-solid border-line-strong text-ink transition-colors duration-300 hover:border-gold hover:text-gold"
                     onClick={() => setMobileOpen(!mobileOpen)}
                     aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
                     aria-expanded={mobileOpen}
-                    style={{ background: 'none', border: 'none' }}
+                    aria-controls="mobile-menu"
                 >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
                         {mobileOpen ? (
                             <path d="M18 6L6 18M6 6l12 12" />
                         ) : (
@@ -75,17 +74,17 @@ export function Navbar() {
 
             {/* Mobile dropdown */}
             {mobileOpen && (
-                <div className="sm:hidden px-6 pb-5 flex flex-col gap-4">
-                    <NavLink to="/">Home</NavLink>
-                    <NavLink to="/portfolio">Portfolio</NavLink>
-                    <NavLink to="/origami">Origami</NavLink>
+                <div id="mobile-menu" className="sm:hidden px-(--page-margin) pb-4 flex flex-col">
+                    <NavLink to="/" block>Home</NavLink>
+                    <NavLink to="/portfolio" block>Portfolio</NavLink>
+                    <NavLink to="/origami" block>Origami</NavLink>
                 </div>
             )}
         </nav>
     );
 }
 
-function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
+function NavLink({ to, block = false, children }: { to: string; block?: boolean; children: React.ReactNode }) {
     const location = useLocation();
     const isActive = location.pathname === to ||
         (to !== '/' && location.pathname.startsWith(to));
@@ -94,13 +93,15 @@ function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
         <RouterLink
             to={to}
             onClick={() => window.scrollTo(0, 0)}
+            aria-current={isActive ? 'page' : undefined}
             className={cn(
                 'nav-link-gallery',
-                isActive && 'active'
+                // Keep the active underline under the word, not at the foot of the 44px tap target
+                block && 'self-start flex items-center min-h-11 after:bottom-3',
+                isActive && 'active',
             )}
         >
             {children}
         </RouterLink>
     );
 }
-

@@ -14,12 +14,18 @@
     "build": "node scripts/optimize-images.mjs && node scripts/build-hook.js && pnpm run typecheck && react-router build && node scripts/finalize-build.mjs && node scripts/generate-rss.js",
     "typecheck": "react-router typegen && tsc -b",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "preview": "node scripts/preview.mjs",
     "deploy": "vercel --prod",
     "deploy:preview": "vercel",
     "sync-projects": "node scripts/project-auto-config.js",
     "watch-projects": "node scripts/project-watcher.js",
     "dev:watch": "concurrently \"pnpm run dev\" \"pnpm run watch-projects\""
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --max-warnings=0"
   },
   "dependencies": {
     "@octokit/rest": "^20.0.2",
@@ -31,13 +37,14 @@
     "marked": "^14.1.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-icons": "^5.4.0",
     "react-markdown": "^9.0.3",
     "react-router": "^7.18.4",
     "sharp": "^0.34.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
     "@react-router/dev": "^7.18.4",
     "@tailwindcss/vite": "^4.3.3",
     "@types/bcryptjs": "^2.4.6",
@@ -54,11 +61,13 @@
     "globals": "^17.13.0",
     "husky": "^9.1.7",
     "lighthouse": "^13.0.3",
+    "lint-staged": "^17.6.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.71.2",
     "vercel": "^50.25.4",
     "vite": "^8.3.4",
-    "vite-plugin-sitemap": "^0.7.1"
+    "vite-plugin-sitemap": "^0.7.1",
+    "vitest": "^5.0.5"
   }
 }

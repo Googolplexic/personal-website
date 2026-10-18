@@ -13,6 +13,8 @@ interface FrameButtonProps {
     /** Selected state for toggles and filters; announced through aria-pressed */
     active?: boolean;
     disabled?: boolean;
+    /** compact: tighter padding for rows of filters; the touch target stays 44px tall */
+    size?: 'regular' | 'compact';
     'aria-label'?: string;
     className?: string;
 }
@@ -20,10 +22,11 @@ interface FrameButtonProps {
 /**
  * FrameButton - square control with a hairline frame, the site's one button style.
  */
-export function FrameButton({ children, to, href, onClick, type = 'button', active, disabled, className, ...aria }: FrameButtonProps) {
+export function FrameButton({ children, to, href, onClick, type = 'button', active, disabled, size = 'regular', className, ...aria }: FrameButtonProps) {
     const classes = cn(
         // border-solid: base.css hides button borders unless a style is set
-        'inline-flex items-center justify-center gap-2 min-h-11 px-5 py-0 border border-solid',
+        'inline-flex items-center justify-center gap-2 min-h-11 py-0 border border-solid whitespace-nowrap',
+        size === 'compact' ? 'px-3.5' : 'px-5',
         'font-body text-xs uppercase tracking-[0.15em] no-underline transition-colors duration-300',
         'disabled:opacity-40 disabled:pointer-events-none',
         active ? 'border-gold text-gold' : 'border-line-strong text-ink-muted hover:border-gold hover:text-gold',

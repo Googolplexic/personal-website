@@ -1,8 +1,19 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { cn } from '../../utils/styles';
+
+const CONTROL_CLASS = 'absolute z-10 w-11 h-11 p-0 flex items-center justify-center cursor-pointer border border-solid border-line-strong bg-canvas/70 text-ink transition-colors duration-300 hover:border-gold hover:text-gold';
+
+export interface LightboxImage {
+    src: string;
+    width?: number;
+    height?: number;
+    /** The copy already shown on the page, drawn underneath until src arrives */
+    preview?: { src: string; srcSet?: string; sizes?: string };
+}
 
 interface LightboxProps {
-    images: string[];
+    images: LightboxImage[];
     initialIndex: number;
     alt?: string;
     onClose: () => void;
@@ -19,9 +30,32 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
     const [swipeOffset, setSwipeOffset] = useState(0);
     const [isEntering, setIsEntering] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
+    const closeRef = useRef<HTMLButtonElement>(null);
+
+    // Focus moves into the dialog, and back to whatever opened it on close
+    useEffect(() => {
+        const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        closeRef.current?.focus();
+        return () => opener?.focus();
+    }, []);
 
     const currentImage = images[currentIndex];
     const hasMultiple = images.length > 1;
+
+    // Start fetching the neighbours so the arrows don't wait on the network
+    useEffect(() => {
+        if (images.length < 2) return;
+        for (const offset of [1, -1]) {
+            new Image().src = images[(currentIndex + offset + images.length) % images.length].src;
+        }
+    }, [currentIndex, images]);
+
+    // A frame with the image's proportions lets the preview and the full copy sit exactly on top of each other
+    const { width, height, preview } = currentImage;
+    const frameStyle = width && height ? {
+        width: `min(90vw, calc(85vh * ${width / height}), ${width}px)`,
+        aspectRatio: `${width} / ${height}`,
+    } : undefined;
 
     // Animate in
     useEffect(() => {
@@ -59,6 +93,19 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                 case 'Escape': handleClose(); break;
                 case 'ArrowLeft': goTo(currentIndex - 1); break;
                 case 'ArrowRight': goTo(currentIndex + 1); break;
+                case 'Tab': {
+                    // Keep focus cycling through the dialog's own controls
+                    const controls = containerRef.current?.querySelectorAll<HTMLElement>('button');
+                    if (!controls?.length) break;
+                    const first = controls[0];
+                    const last = controls[controls.length - 1];
+                    const active = document.activeElement;
+                    if (!containerRef.current?.contains(active) || (e.shiftKey ? active === first : active === last)) {
+                        e.preventDefault();
+                        (e.shiftKey ? last : first).focus();
+                    }
+                    break;
+                }
             }
         };
         window.addEventListener('keydown', onKey);
@@ -120,6 +167,9 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
     return createPortal(
         <div
             ref={containerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={alt}
             className="lightbox-backdrop"
             onClick={handleBackdropClick}
             style={{
@@ -141,13 +191,10 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
         >
             {/* Close button */}
             <button
+                ref={closeRef}
+                type="button"
                 onClick={handleClose}
-                className="absolute top-5 right-5 z-10 w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer border-none p-0"
-                style={{
-                    color: 'var(--color-ink)',
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                }}
+                className={cn(CONTROL_CLASS, 'top-5 right-5')}
                 aria-label="Close lightbox"
             >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -168,25 +215,17 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
             {hasMultiple && (
                 <>
                     <button
+                        type="button"
                         onClick={(e) => { e.stopPropagation(); goTo(currentIndex - 1); }}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer border-none p-0 z-10"
-                        style={{
-                            color: 'var(--color-ink)',
-                            background: 'rgba(255, 255, 255, 0.06)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                        }}
+                        className={cn(CONTROL_CLASS, 'left-4 top-1/2 -translate-y-1/2')}
                         aria-label="Previous image"
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M15 18l-6-6 6-6" /></svg>
                     </button>
                     <button
+                        type="button"
                         onClick={(e) => { e.stopPropagation(); goTo(currentIndex + 1); }}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer border-none p-0 z-10"
-                        style={{
-                            color: 'var(--color-ink)',
-                            background: 'rgba(255, 255, 255, 0.06)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                        }}
+                        className={cn(CONTROL_CLASS, 'right-4 top-1/2 -translate-y-1/2')}
                         aria-label="Next image"
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 18l6-6-6-6" /></svg>
@@ -204,22 +243,38 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                     transition: swipeOffset ? 'none' : 'transform 0.3s ease',
                 }}
             >
-                <img
-                    src={currentImage}
-                    alt={`${alt} ${currentIndex + 1}`}
+                <div
+                    className="relative"
                     onClick={handleImageClick}
                     onMouseMove={handleMouseMove}
                     style={{
-                        maxWidth: '90vw',
-                        maxHeight: '85vh',
-                        objectFit: 'contain',
+                        ...frameStyle,
                         cursor: isZoomed ? 'zoom-out' : 'zoom-in',
                         transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
                         transform: isZoomed ? 'scale(2.5)' : 'scale(1)',
                         transition: 'transform 0.3s var(--ease-gallery)',
                     }}
-                    draggable={false}
-                />
+                >
+                    {frameStyle && preview && (
+                        <img
+                            key={`preview-${currentIndex}`}
+                            src={preview.src}
+                            srcSet={preview.srcSet}
+                            sizes={preview.sizes}
+                            alt=""
+                            className="absolute inset-0 w-full h-full object-contain"
+                            draggable={false}
+                        />
+                    )}
+                    <img
+                        key={currentIndex}
+                        src={currentImage.src}
+                        alt={`${alt} ${currentIndex + 1}`}
+                        data-fade
+                        className={frameStyle ? 'absolute inset-0 w-full h-full object-contain' : 'block max-w-[90vw] max-h-[85vh] object-contain'}
+                        draggable={false}
+                    />
+                </div>
             </div>
 
             {/* Dot indicators */}

@@ -22,12 +22,19 @@ export function SiteShell({ children }: { children: ReactNode }) {
     const [mountSpotlightDust, setMountSpotlightDust] = useState(false);
     useEffect(() => {
         if (isAdmin || !spotlightEnabled) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         const frame = requestAnimationFrame(() => setMountSpotlightDust(true));
         return () => cancelAnimationFrame(frame);
     }, [isAdmin, spotlightEnabled]);
 
     return (
-        <div className="min-h-screen w-full overflow-x-hidden bg-canvas text-ink transition-colors duration-500 md:text-base text-sm">
+        <div className="min-h-screen w-full overflow-x-clip bg-canvas text-ink transition-colors duration-500 md:text-base text-sm">
+            <a
+                href="#main"
+                className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-300 focus:px-4 focus:py-3 focus:bg-canvas focus:border focus:border-solid focus:border-gold font-body text-xs uppercase tracking-[0.15em] text-gold no-underline"
+            >
+                Skip to content
+            </a>
             {/* Global spotlight overlay — at root level so no ancestor transform can clip it */}
             {!isAdmin && <div id="global-spotlight" />}
             {/* Page-wide dim overlay — darkens everything outside cursor area */}
@@ -38,7 +45,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 </Suspense>
             )}
             {!isAdmin && <Navbar />}
-            <main className="min-h-screen">
+            <main id="main" tabIndex={-1} className="min-h-screen focus:outline-none">
                 <PageTransition>{children}</PageTransition>
             </main>
             {!isAdmin && <Footer />}

@@ -1,30 +1,9 @@
 // Vercel serverless function to manage images via GitHub API
-import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveContentDir, resolveImageFile, imageUploadPath } from './github-utils.js';
-import { verifyJWT, parseCookies } from './auth-utils.js';
+import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveContentDir, resolveImageFile, imageUploadPath, deleteLargerWebCopies, MAX_IMAGE_BYTES } from './github-utils.js';
+import { requireAdmin } from './auth-utils.js';
 
 export default async function handler(req, res) {
-    // Enable CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-
-    // Validate authentication using cookies
-    const cookies = parseCookies(req.headers.cookie);
-    const token = cookies.adminToken;
-
-    if (!token) {
-        return res.status(401).json({ error: 'Authentication required' });
-    }
-
-    const decoded = verifyJWT(token);
-    if (!decoded || !decoded.admin) {
-        return res.status(401).json({ error: 'Invalid authentication' });
-    }
+    if (!requireAdmin(req, res)) return;
 
     try {
         const { path: requestPath, file } = req.query;
@@ -78,6 +57,9 @@ export default async function handler(req, res) {
             if (!imageBuffer.length) {
                 return res.status(400).json({ error: 'Image file is empty or invalid' });
             }
+            if (imageBuffer.length > MAX_IMAGE_BYTES) {
+                return res.status(413).json({ error: 'Image is larger than 3 MB' });
+            }
 
             const fullPath = imageUploadPath(resolved.kind, resolved.slug, resolved.category, fileName);
             if (!fullPath) {
@@ -102,6 +84,11 @@ export default async function handler(req, res) {
                     );
                 } catch (webpErr) {
                     console.error('Warning: webp optimization failed (original still uploaded):', webpErr.message);
+                }
+                try {
+                    await deleteLargerWebCopies(fullPath, `Remove stale web copies for ${fileName}`);
+                } catch (webpErr) {
+                    console.error('Warning: failed to remove stale web copies:', webpErr.message);
                 }
             }
 
@@ -140,6 +127,11 @@ export default async function handler(req, res) {
                     }
                 } catch (webpErr) {
                     console.error('Warning: failed to delete webp (original still deleted):', webpErr.message);
+                }
+                try {
+                    await deleteLargerWebCopies(fullPath, `Delete web copies for ${file}`);
+                } catch (webpErr) {
+                    console.error('Warning: failed to delete web copies:', webpErr.message);
                 }
             }
 

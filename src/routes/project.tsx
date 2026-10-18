@@ -1,7 +1,7 @@
 import { data } from 'react-router';
 import type { Route } from './+types/project';
 import { ProjectDetail } from '../pages/ProjectDetail';
-import { allProjects, findExhibit } from '../content.server';
+import { allProjects, findExhibit, projectDetail } from '../content.server';
 import { BASE_URL, absoluteUrl, notFoundMeta, seoMeta } from '../utils/seo';
 
 export function loader({ params }: Route.LoaderArgs) {
@@ -9,7 +9,7 @@ export function loader({ params }: Route.LoaderArgs) {
     if (!found) throw data(null, { status: 404 });
     const { item: project, exhibit, next, nextExhibit } = found;
     return {
-        project,
+        project: projectDetail(project),
         exhibit,
         next: {
             slug: next.slug,

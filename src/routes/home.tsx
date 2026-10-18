@@ -2,10 +2,11 @@ import type { Route } from './+types/home';
 import { Home } from '../pages/Home';
 import { ExternalRedirect } from '../components/layout/ExternalRedirect';
 import { allOrigami, allProjects, origamiCard, projectCard } from '../content.server';
+import { keepDataOnQueryChange } from '../utils/routeData';
 import { BASE_URL, seoMeta } from '../utils/seo';
 import { useClientSearchParams } from '../utils/useHydrated';
 
-const FEATURED_SLUGS = ['pi-2026', 'personal-website', 'ryujin-3-5', 'torgal', 'tonberry', 'origami-fractions'];
+const FEATURED_SLUGS = ['ryujin-3-5', 'torgal', 'pi-2026', 'personal-website', 'tonberry', 'origami-fractions'];
 const DESCRIPTION = 'Software projects and origami by Coleman Lai, a Computing Science student at Simon Fraser University in Vancouver.';
 
 export function loader() {
@@ -16,6 +17,8 @@ export function loader() {
         builtOn: new Date().toISOString().slice(0, 10),
     };
 }
+
+export const shouldRevalidate = keepDataOnQueryChange;
 
 export const meta: Route.MetaFunction = ({ loaderData }) => seoMeta({
     title: 'Coleman Lai | Developer & Origami Artist | Vancouver',
@@ -86,5 +89,5 @@ export default function HomeRoute({ loaderData }: Route.ComponentProps) {
     const [searchParams] = useClientSearchParams();
     const redirectTo = searchParams.get('to');
     if (redirectTo) return <ExternalRedirect to={redirectTo} />;
-    return <Home featured={loaderData.featured} featuredSlugs={FEATURED_SLUGS} />;
+    return <Home featured={loaderData.featured} />;
 }

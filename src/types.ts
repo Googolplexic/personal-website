@@ -9,6 +9,20 @@ export interface BaseItem {
     keywords?: string[];   // SEO keywords as array
     tags?: string[];
     images?: string[];
+    exhibit?: string; // Wall-label code like "P·07", set by the content loader
+    /** Sizes of the item's images that the page shows, keyed by image URL; set by the content loader */
+    imageSets?: Record<string, ImageSet>;
+}
+
+/** The web copies of one image, from images.server.ts */
+export interface ImageSet {
+    /** Size of the largest copy */
+    width: number;
+    height: number;
+    /** Copies up to 1280px wide, for page display */
+    srcSet: string;
+    /** The largest copy, for the lightbox */
+    large: string;
 }
 
 // Project-specific properties
@@ -25,6 +39,7 @@ export interface ProjectProps extends BaseItem {
 // Origami-specific properties
 export interface OrigamiProps extends BaseItem {
     description?: string; // Plain text description
+    writeup?: string; // Markdown body of info.md, below the frontmatter
     modelImages: string[];
     modelImagesFull?: string[];
     creasePattern?: string;
