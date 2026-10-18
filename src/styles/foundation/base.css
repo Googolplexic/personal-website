@@ -50,24 +50,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* --- Font fallback metrics to reduce CLS during web font swap --- */
-  @font-face {
-    font-family: 'PT Sans Fallback';
-    src: local('Arial');
-    size-adjust: 98.6%;
-    ascent-override: 101%;
-    descent-override: 28%;
-    line-gap-override: 0%;
-  }
-  @font-face {
-    font-family: 'EB Garamond Fallback';
-    src: local('Georgia');
-    size-adjust: 96%;
-    ascent-override: 95%;
-    descent-override: 25%;
-    line-gap-override: 0%;
-  }
-
   /* --- Typography defaults --- */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'EB Garamond', 'EB Garamond Fallback', 'Garamond', Georgia, serif;

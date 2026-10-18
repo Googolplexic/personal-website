@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router';
 import { cn } from '../../../utils/styles';
 
 const variantStyles: Record<string, string> = {
-    primary: 'font-medium underline-offset-4 hover:underline transition-colors',
+    primary: 'underline-offset-4 hover:underline transition-colors',
     nav: 'nav-link-gallery',
     default: 'transition-colors hover:opacity-80',
 };

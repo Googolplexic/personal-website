@@ -209,7 +209,7 @@ export function ProjectForm() {
                     <p className="gallery-overline">Details</p>
 
                     <div>
-                        <label htmlFor="title" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="title" className="block text-sm text-(--color-text-secondary) mb-1">
                             Title *
                         </label>
                         <input
@@ -224,7 +224,7 @@ export function ProjectForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="slug" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="slug" className="block text-sm text-(--color-text-secondary) mb-1">
                             Slug * (auto-generated, editable)
                         </label>
                         <input
@@ -239,7 +239,7 @@ export function ProjectForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="summary" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="summary" className="block text-sm text-(--color-text-secondary) mb-1">
                             Summary *
                         </label>
                         <textarea
@@ -254,7 +254,7 @@ export function ProjectForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="technologies" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="technologies" className="block text-sm text-(--color-text-secondary) mb-1">
                             Technologies (comma-separated)
                         </label>
                         <input
@@ -268,7 +268,7 @@ export function ProjectForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="githubUrl" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="githubUrl" className="block text-sm text-(--color-text-secondary) mb-1">
                             GitHub URL *
                         </label>
                         <input
@@ -283,7 +283,7 @@ export function ProjectForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="liveUrl" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="liveUrl" className="block text-sm text-(--color-text-secondary) mb-1">
                             Live URL (optional)
                         </label>
                         <input
@@ -303,7 +303,7 @@ export function ProjectForm() {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="startDate" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                            <label htmlFor="startDate" className="block text-sm text-(--color-text-secondary) mb-1">
                                 Start Date (YYYY-MM)
                             </label>
                             <input
@@ -317,7 +317,7 @@ export function ProjectForm() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="endDate" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                            <label htmlFor="endDate" className="block text-sm text-(--color-text-secondary) mb-1">
                                 End Date (YYYY-MM)
                             </label>
                             <input
@@ -333,7 +333,7 @@ export function ProjectForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="tags" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="tags" className="block text-sm text-(--color-text-secondary) mb-1">
                             Tags (comma-separated)
                         </label>
                         <input
@@ -347,7 +347,7 @@ export function ProjectForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="keywords" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="keywords" className="block text-sm text-(--color-text-secondary) mb-1">
                             SEO Keywords (comma-separated)
                         </label>
                         <input
@@ -361,7 +361,7 @@ export function ProjectForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="SEOdescription" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="SEOdescription" className="block text-sm text-(--color-text-secondary) mb-1">
                             SEO Description
                         </label>
                         <textarea
@@ -376,7 +376,7 @@ export function ProjectForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="images" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="images" className="block text-sm text-(--color-text-secondary) mb-1">
                             Images
                         </label>
                         <input
@@ -396,7 +396,7 @@ export function ProjectForm() {
 
             {/* Description */}
             <div>
-                <label htmlFor="description" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                <label htmlFor="description" className="block text-sm text-(--color-text-secondary) mb-1">
                     Description (Markdown) *
                 </label>
                 <textarea
