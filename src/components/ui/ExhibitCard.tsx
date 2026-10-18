@@ -60,7 +60,8 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
 
     return (
         <article className={cn(
-            'spotlight-item group flex flex-col',
+            // The title link covers the card, so its focus ring goes round the whole card
+            'spotlight-item group flex flex-col outline-offset-8 has-[a:focus-visible]:outline-1 has-[a:focus-visible]:outline-solid has-[a:focus-visible]:outline-gold',
             lead && 'md:grid md:grid-cols-12 md:gap-x-(--grid-gutter) md:items-end',
             className,
         )}>
@@ -87,7 +88,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                         <Link
                             to={`${path}${queryString}`}
                             state={{ from: location.pathname }}
-                            className="text-inherit no-underline after:absolute after:inset-0 after:content-['']"
+                            className="text-inherit no-underline focus-visible:outline-none after:absolute after:inset-0 after:content-['']"
                         >
                             <HighlightedText text={item.title} searchTerm={searchTerm} />
                         </Link>

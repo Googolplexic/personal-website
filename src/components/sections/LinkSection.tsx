@@ -23,8 +23,8 @@ export function LinkSection({ id, title, links }: LinkSectionProps) {
             {/* Three equal tracks in every section, so tiles line up between Connect and Work */}
             <ul className="col-span-full lg:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-(--grid-gutter) list-none m-0 p-0">
                 {links.map((link) => {
-                    // Mail links hand off to the mail app; everything else opens beside the site
-                    const newTab = !link.href.startsWith('mailto:');
+                    // Other sites open beside this one; mail and same-site files open in place
+                    const newTab = /^https?:\/\//.test(link.href);
                     return (
                         <li key={link.name} className={cn('min-w-0', link.feature && 'md:col-span-2')}>
                             <a
@@ -48,7 +48,8 @@ export function LinkSection({ id, title, links }: LinkSectionProps) {
                                 </span>
                                 <span className={cn(
                                     'gallery-heading text-ink break-words transition-colors duration-300 group-hover:text-gold',
-                                    link.feature ? 'text-heading' : 'text-lg xl:text-xl',
+                                    // On one column the wider tile has nothing to stand out from
+                                    link.feature ? 'text-lg md:text-heading' : 'text-lg xl:text-xl',
                                 )}>
                                     {link.value}
                                 </span>

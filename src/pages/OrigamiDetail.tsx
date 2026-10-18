@@ -54,18 +54,22 @@ export function OrigamiDetail({ origami, exhibit, next }: OrigamiDetailProps) {
             {origami.creasePattern && (
                 <section>
                     <h2 className="gallery-overline mt-0 mb-6">Crease Pattern</h2>
-                    <div className="max-w-sm">
+                    <button
+                        type="button"
+                        aria-haspopup="dialog"
+                        onClick={() => setCpLightboxOpen(true)}
+                        className="block w-full max-w-sm p-0 bg-transparent cursor-zoom-in"
+                    >
                         <img
                             src={origami.creasePattern}
                             alt={`${origami.title} crease pattern`}
-                            className="w-full h-auto object-contain cursor-zoom-in"
-                            onClick={() => setCpLightboxOpen(true)}
+                            className="block w-full h-auto object-contain"
                             loading="lazy"
                             title="Click to enlarge"
                             width={sizeForImage(origami.creasePattern)?.width}
                             height={sizeForImage(origami.creasePattern)?.height}
                         />
-                    </div>
+                    </button>
                     {cpLightboxOpen && cpFull && (
                         <Lightbox
                             images={[cpFull]}

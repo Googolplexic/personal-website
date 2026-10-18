@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../utils/styles';
 
 interface MultiSelectProps {
@@ -16,6 +16,10 @@ interface MultiSelectProps {
     className?: string;
 }
 
+function optionElements(list: HTMLElement | null) {
+    return Array.from(list?.querySelectorAll<HTMLElement>('[role="option"]') ?? []);
+}
+
 export function MultiSelect({
     options,
     optionLabels,
@@ -30,6 +34,64 @@ export function MultiSelect({
 }: MultiSelectProps) {
     const [open, setOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const listRef = useRef<HTMLDivElement>(null);
+    // Set when the keyboard opens the panel, so focus can follow once the options render
+    const pendingFocus = useRef<'first' | 'last' | null>(null);
+    const listId = useId();
+
+    useEffect(() => {
+        if (!open || !pendingFocus.current) return;
+        const items = optionElements(listRef.current);
+        const target = pendingFocus.current === 'last'
+            ? items[items.length - 1]
+            : items.find(item => item.getAttribute('aria-selected') === 'true') ?? items[0];
+        pendingFocus.current = null;
+        target?.focus();
+    }, [open]);
+
+    // Tabbing out of the control closes it
+    useEffect(() => {
+        if (!open) return;
+        const onFocusIn = (e: FocusEvent) => {
+            if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
+        };
+        document.addEventListener('focusin', onFocusIn);
+        return () => document.removeEventListener('focusin', onFocusIn);
+    }, [open]);
+
+    const closeAndReturn = () => {
+        setOpen(false);
+        triggerRef.current?.focus();
+    };
+
+    const onTriggerKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        e.preventDefault();
+        pendingFocus.current = e.key === 'ArrowUp' ? 'last' : 'first';
+        if (open) {
+            const items = optionElements(listRef.current);
+            (e.key === 'ArrowUp' ? items[items.length - 1] : items[0])?.focus();
+            pendingFocus.current = null;
+        } else {
+            setOpen(true);
+        }
+    };
+
+    const onListKeyDown = (e: React.KeyboardEvent) => {
+        const items = optionElements(listRef.current);
+        const index = items.indexOf(document.activeElement as HTMLElement);
+        let next: HTMLElement | undefined;
+        switch (e.key) {
+            case 'ArrowDown': next = items[Math.min(index + 1, items.length - 1)]; break;
+            case 'ArrowUp': next = index <= 0 ? triggerRef.current ?? undefined : items[index - 1]; break;
+            case 'Home': next = items[0]; break;
+            case 'End': next = items[items.length - 1]; break;
+            default: return;
+        }
+        e.preventDefault();
+        next?.focus();
+    };
 
     // Use a capturing-phase click listener so outside clicks are swallowed
     // before they reach grid-item links — no backdrop overlay needed, which
@@ -52,7 +114,7 @@ export function MultiSelect({
     const toggle = (option: string) => {
         if (singleSelect) {
             onChange([option]);
-            setOpen(false);
+            closeAndReturn();
             return;
         }
         onChange(
@@ -80,12 +142,25 @@ export function MultiSelect({
     );
 
     return (
-        <div ref={containerRef} className={cn('relative min-w-0', className)}>
+        <div
+            ref={containerRef}
+            className={cn('relative min-w-0', className)}
+            onKeyDown={(e) => {
+                if (e.key === 'Escape' && open) {
+                    e.stopPropagation();
+                    closeAndReturn();
+                }
+            }}
+        >
             <button
+                ref={triggerRef}
                 type="button"
                 aria-label={ariaLabel ? `${triggerLabel}, ${ariaLabel}` : triggerLabel}
+                aria-haspopup="listbox"
                 aria-expanded={open}
+                aria-controls={open ? listId : undefined}
                 onClick={() => setOpen(v => !v)}
+                onKeyDown={onTriggerKeyDown}
                 className={cn(
                     'w-full min-h-11 px-3.5 flex items-center justify-between gap-2 text-left cursor-pointer bg-transparent',
                     'border border-solid font-body text-xs uppercase tracking-[0.15em] transition-colors duration-300',
@@ -126,16 +201,25 @@ export function MultiSelect({
 
                     {/* Scrollable option list — stop wheel propagation so dropdown scrolls instead of page */}
                     <div
+                        ref={listRef}
+                        id={listId}
+                        role="listbox"
+                        aria-label={ariaLabel ?? placeholder}
+                        aria-multiselectable={!singleSelect}
                         className="px-1 max-h-52 overflow-y-auto overscroll-contain touch-pan-y"
                         onWheel={e => e.stopPropagation()}
+                        onKeyDown={onListKeyDown}
                     >
-                        {options.map(option => {
+                        {options.map((option, i) => {
                             const active = selected.includes(option);
                             return (
                                 <button
                                     key={option}
                                     type="button"
-                                    aria-pressed={active}
+                                    role="option"
+                                    aria-selected={active}
+                                    // Arrow keys move between options; Tab moves past the list
+                                    tabIndex={i === 0 ? 0 : -1}
                                     onClick={() => toggle(option)}
                                     className={cn(
                                         'flex w-full items-center gap-2 text-left px-2 py-1.5 text-xs font-body tracking-widest uppercase transition-colors duration-200 cursor-pointer bg-transparent',

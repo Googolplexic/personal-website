@@ -75,8 +75,14 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             }
         };
 
+        // With reduced motion the dust is drawn once, as a still frame, and redrawn on resize
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
         resize();
-        const ro = new ResizeObserver(resize);
+        const ro = new ResizeObserver(() => {
+            resize();
+            if (reduceMotion) rafRef.current = requestAnimationFrame(draw);
+        });
         ro.observe(parent);
 
         const syncPointerToCanvas = () => {
@@ -199,7 +205,7 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
                 ctx.shadowBlur = 0;
             }
 
-            rafRef.current = requestAnimationFrame(draw);
+            if (!reduceMotion) rafRef.current = requestAnimationFrame(draw);
         };
 
         rafRef.current = requestAnimationFrame(draw);

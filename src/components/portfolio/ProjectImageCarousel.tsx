@@ -46,20 +46,26 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                     {resolvedImages.map((img, i) => {
                         const size = sizeForImage(img);
                         return (
-                            <div key={i} className={cn('w-full shrink-0 flex justify-center items-center', frameStyle && 'h-full')}>
+                            <button
+                                key={i}
+                                type="button"
+                                aria-haspopup="dialog"
+                                inert={i !== currentImageIndex}
+                                onClick={() => setLightboxIndex(i)}
+                                className={cn('w-full shrink-0 flex justify-center items-center p-0 bg-transparent cursor-zoom-in', frameStyle && 'h-full')}
+                            >
                                 {/* A definite width lets the browser reserve the image's height before it loads */}
                                 <img
                                     src={img}
                                     alt={`${title} - Image ${i + 1}`}
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
-                                    className={cn('w-full object-contain cursor-zoom-in', frameStyle ? 'max-h-full' : 'max-h-[min(70svh,44rem)]')}
+                                    className={cn('w-full object-contain', frameStyle ? 'max-h-full' : 'max-h-[min(70svh,44rem)]')}
                                     style={size && { maxWidth: size.width }}
-                                    onClick={() => setLightboxIndex(i)}
                                     loading={i <= 1 ? 'eager' : 'lazy'}
                                     width={size?.width}
                                     height={size?.height}
                                 />
-                            </div>
+                            </button>
                         );
                     })}
                 </div>

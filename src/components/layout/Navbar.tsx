@@ -40,6 +40,7 @@ export function Navbar() {
                 <RouterLink
                     to="/"
                     onClick={() => window.scrollTo(0, 0)}
+                    aria-label="Coleman Lai, home"
                     className="font-signature text-2xl tracking-wide no-underline select-none transition-colors duration-300 text-ink hover:text-gold"
                 >
                     CL
