@@ -5,7 +5,7 @@ export function About() {
     return (
         <div className="page-grid">
             <SectionHeader overline="An Introduction" title="About" />
-            <div className="col-span-full lg:col-span-8 xl:col-span-7 flex flex-col gap-5">
+            <div className="col-span-full lg:col-span-9 flex flex-col gap-5 *:max-w-prose">
                 <p className="m-0 text-base md:text-lg leading-relaxed font-body text-ink-muted">
                     Hi there! I'm Coleman, a Computing Science student at Simon Fraser University. I love solving problems, whether it's for coding, math, or just general life: always looking for ways to optimize, automate, or simplify things. The ultimate goal is to build intuitive user interfaces and efficient solutions that make life easier, for both me and you.
                 </p>

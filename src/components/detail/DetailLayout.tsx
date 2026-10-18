@@ -52,13 +52,13 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
                     {lead && <p className="mt-5 mb-0 max-w-2xl text-lead font-heading italic text-ink-muted">{lead}</p>}
                 </header>
 
-                <aside className="col-span-full lg:col-span-4 lg:sticky lg:top-28 self-start mb-12 lg:mb-0">
+                <aside className="col-span-full lg:col-span-3 lg:sticky lg:top-28 self-start mb-12 lg:mb-0">
                     <div className="border-l border-solid border-line-strong pl-5 flex flex-col gap-8">
                         {details}
                     </div>
                 </aside>
 
-                <div className="col-span-full lg:col-span-8 min-w-0 flex flex-col gap-16">
+                <div className="col-span-full lg:col-span-9 min-w-0 flex flex-col gap-16">
                     {children}
                 </div>
             </div>
