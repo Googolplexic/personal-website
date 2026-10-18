@@ -1,6 +1,7 @@
 import type { Route } from './+types/origami';
 import { Origami } from '../pages/Origami';
 import { allProjects, myDesigns, origamiCard, otherDesigns, projectCard } from '../content.server';
+import { keepDataOnQueryChange } from '../utils/routeData';
 import { BASE_URL, seoMeta } from '../utils/seo';
 
 const ORIGAMI_SOFTWARE_SLUGS = ['fold-preview', 'box-pleating', 'origami-fractions'];
@@ -16,6 +17,8 @@ export function loader() {
         shareImageAlt: lead ? `Photo of ${lead.title}` : undefined,
     };
 }
+
+export const shouldRevalidate = keepDataOnQueryChange;
 
 export const meta: Route.MetaFunction = ({ loaderData }) => {
     const pieces = loaderData ? [...loaderData.myDesigns, ...loaderData.otherDesigns] : [];

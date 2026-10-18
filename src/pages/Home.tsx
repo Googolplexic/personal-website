@@ -1,6 +1,6 @@
 import { About } from '../components/sections/About';
 import { LinkSection, type LinkSectionItem } from '../components/sections/LinkSection';
-import { ItemGrid } from '../components/ui/ItemGrid';
+import { ExhibitGrid } from '../components/ui/ExhibitGrid';
 import { Link } from 'react-router';
 import { ItemProps } from '../types';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
@@ -33,10 +33,9 @@ function ScrollSection({ children, className = '' }: { children: React.ReactNode
 
 interface HomeProps {
     featured: ItemProps[];
-    featuredSlugs: string[];
 }
 
-export function Home({ featured, featuredSlugs }: HomeProps) {
+export function Home({ featured }: HomeProps) {
     const nameRef = useRef<HTMLHeadingElement>(null);
     const heroRef = useRef<HTMLElement>(null);
 
@@ -208,12 +207,7 @@ export function Home({ featured, featuredSlugs }: HomeProps) {
                             A curated selection of my proudest works. Updated from time to time.
                         </p>
                     </div>
-                    <ItemGrid
-                        items={featured}
-                        featuredSlugs={featuredSlugs}
-                        hideControls
-                        itemType="mixed"
-                    />
+                    <ExhibitGrid items={featured} priority={false} />
                 </div>
             </ScrollSection>
         </>

@@ -1,6 +1,7 @@
 import type { Route } from './+types/portfolio';
 import { Portfolio } from '../pages/Portfolio';
 import { allProjects, projectCard } from '../content.server';
+import { keepDataOnQueryChange } from '../utils/routeData';
 import { BASE_URL, seoMeta } from '../utils/seo';
 
 const DESCRIPTION = 'Browse my software development projects, including web applications, AI implementations, and technical solutions.';
@@ -14,6 +15,8 @@ export function loader() {
         shareImage: lead?.images?.[0],
     };
 }
+
+export const shouldRevalidate = keepDataOnQueryChange;
 
 export const meta: Route.MetaFunction = ({ loaderData }) => seoMeta({
     title: 'Software Portfolio | Coleman Lai',
