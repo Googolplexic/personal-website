@@ -39,7 +39,7 @@
 
   /* Fluid steps for the redesign: a rem floor and ceiling with viewport scaling between,
      so text still grows with browser zoom */
-  --text-display: clamp(3rem, 1.6rem + 5.6vw, 6.5rem);
+  --text-display: clamp(3.5rem, 1.5rem + 8vw, 9rem);
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.02em;
   --text-title: clamp(2.25rem, 1.65rem + 2.4vw, 3.75rem);

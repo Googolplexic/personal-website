@@ -14,6 +14,8 @@ interface ExhibitCardProps {
     /** Collection name added to the exhibit line in mixed listings */
     categoryLabel?: string;
     priority?: boolean;
+    /** lead: the image and a larger placard side by side, for the first piece of an exhibition */
+    layout?: 'stacked' | 'lead';
     className?: string;
 }
 
@@ -47,16 +49,21 @@ function cardDetails(item: ItemProps) {
  * The title link stretches over the whole card, so the Share button can sit
  * inside it without nesting interactive elements.
  */
-export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = false, className }: ExhibitCardProps) {
+export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = false, layout = 'stacked', className }: ExhibitCardProps) {
     const location = useClientLocation();
     const { path, image, text, medium, date } = cardDetails(item);
     const queryString = location.search || (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : '');
     const size = image ? sizeForImage(image) : undefined;
+    const lead = layout === 'lead';
 
     return (
-        <article className={cn('spotlight-item group flex flex-col', className)}>
+        <article className={cn(
+            'spotlight-item group flex flex-col',
+            lead && 'md:grid md:grid-cols-12 md:gap-x-(--grid-gutter) md:items-end',
+            className,
+        )}>
             {image && (
-                <div className="overflow-hidden">
+                <div className={cn('overflow-hidden', lead && 'md:col-span-7')}>
                     <img
                         src={image}
                         alt={item.title}
@@ -69,8 +76,9 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                 </div>
             )}
 
-            <div className="pt-5 flex flex-1 flex-col gap-3">
+            <div className={cn('pt-5 flex flex-1 flex-col gap-3', lead && 'md:col-span-5 md:pt-0 md:gap-5')}>
                 <Placard
+                    size={lead ? 'page' : 'card'}
                     exhibit={[item.exhibit, categoryLabel].filter(Boolean).join(' · ') || undefined}
                     title={
                         <Link
@@ -90,7 +98,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                     date={date}
                 />
                 {text && (
-                    <p className="m-0 text-sm leading-relaxed font-body text-ink-muted">
+                    <p className={cn('m-0 leading-relaxed font-body text-ink-muted', lead ? 'text-base' : 'text-sm')}>
                         <HighlightedText text={text} searchTerm={searchTerm} />
                     </p>
                 )}
