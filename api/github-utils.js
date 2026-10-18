@@ -228,7 +228,7 @@ designer: ${yamlScalar(designer)}` : ''}
     // Create index.ts content matching existing structure
     const tagValue = category === 'my-designs' ? 'my-design' : 'other-design';
     const indexTs = `import { OrigamiProps } from '../../../../types';
-import { attributes } from './info.md?parsed';
+import { attributes, body } from './info.md?parsed';
 
 // Optimized web images (from scripts/optimize-images.mjs)
 const webImages = Object.values(import.meta.glob('./web/*.webp', { eager: true, import: 'default' }))
@@ -249,6 +249,7 @@ const creasePatternFull = fullCP[0] as string | undefined;
 export default {
     title: attributes.title,
     description: attributes.description,
+    writeup: body.trim() || undefined,
     date: attributes.date,
     startDate: attributes.date,
     designer: attributes.designer,

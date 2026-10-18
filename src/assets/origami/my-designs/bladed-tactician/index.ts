@@ -1,5 +1,5 @@
 import { OrigamiProps } from '../../../../types';
-import { attributes } from './info.md?parsed';
+import { attributes, body } from './info.md?parsed';
 
 
 
@@ -25,6 +25,7 @@ const creasePatternFull = fullCP[0] as string | undefined;
 export default {
     title: attributes.title,
     description: attributes.description,
+    writeup: body.trim() || undefined,
     date: attributes.date,
     startDate: attributes.date,
     designer: attributes.designer,
