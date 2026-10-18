@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 for `package.json`. Site footer versioning follows git tags `vMAJOR.MINOR` plus
 commit offset (see `vite.config.ts`).
 
-## [3.0.0] - Unreleased
+## [3.0.0] - 2026-10-18
 
 ### Added
 
