@@ -25,7 +25,7 @@ export default defineConfig([
       'react-refresh/only-export-components': [
         'warn',
         // React Router route module exports
-        { allowConstantExport: true, allowExportNames: ['meta', 'links', 'loader', 'clientLoader', 'Layout', 'HydrateFallback', 'ErrorBoundary'] },
+        { allowConstantExport: true, allowExportNames: ['meta', 'links', 'loader', 'clientLoader', 'shouldRevalidate', 'Layout', 'HydrateFallback', 'ErrorBoundary'] },
       ],
     },
   },

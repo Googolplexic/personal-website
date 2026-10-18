@@ -1,48 +1,41 @@
-import { ReactNode } from 'react';
+import { Placard } from '../ui/Placard';
+import { SectionHeader } from '../ui/SectionHeader';
 
 export interface LinkSectionItem {
     name: string;
     value: string;
     href: string;
-    icon: ReactNode;
 }
 
 interface LinkSectionProps {
     id: string;
     title: string;
     links: LinkSectionItem[];
-    /** Mirror layout on desktop: right-align title and links, icon on the right */
-    align?: 'left' | 'right';
 }
 
-export function LinkSection({ id, title, links, align = 'left' }: LinkSectionProps) {
-    const isRight = align === 'right';
+/** A side-labelled row of contact links, each set as a placard. */
+export function LinkSection({ id, title, links }: LinkSectionProps) {
     return (
-        <div id={id} className={isRight ? 'lg:text-right' : ''}>
-            <h2 className="gallery-overline mb-6">{title}</h2>
-            <div className="space-y-4">
-                {links.map((link) => (
-                    <a
-                        key={link.name}
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`contact-link no-underline flex items-center gap-4 py-3 transition-colors duration-300 ${isRight ? 'lg:flex-row-reverse' : ''} text-ink-muted`}
-                    >
-                        <span className="contact-icon transition-colors duration-300">
-                            {link.icon}
-                        </span>
-                        <div className={isRight ? 'text-left lg:text-right' : 'text-left'}>
-                            <p className="contact-name text-sm font-body transition-colors duration-300">
-                                {link.name}
-                            </p>
-                            <p className="text-xs font-body text-ink-faint">
-                                {link.value}
-                            </p>
-                        </div>
-                    </a>
-                ))}
-            </div>
+        <div id={id} className="page-grid scroll-mt-32">
+            <SectionHeader title={title} />
+            <ul className="col-span-full lg:col-span-9 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-(--grid-gutter) gap-y-8 list-none m-0 p-0">
+                {links.map((link) => {
+                    // Mail links hand off to the mail app; everything else opens beside the site
+                    const newTab = !link.href.startsWith('mailto:');
+                    return (
+                        <li key={link.name} className="min-w-0">
+                            <a
+                                href={link.href}
+                                target={newTab ? '_blank' : undefined}
+                                rel={newTab ? 'noopener noreferrer' : undefined}
+                                className="group block py-1 text-inherit no-underline"
+                            >
+                                <Placard titleAs="p" exhibit={link.name} title={<span className="break-words">{link.value}</span>} />
+                            </a>
+                        </li>
+                    );
+                })}
+            </ul>
         </div>
     );
 }

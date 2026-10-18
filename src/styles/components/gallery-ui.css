@@ -101,6 +101,11 @@
     animation: hero-drift 20s ease-in-out infinite alternate;
   }
 
+  /* The name sits on the left on wide screens; keep the glow behind it */
+  @media (min-width: 1024px) {
+    .hero-spotlight::after { top: 60%; left: 30%; }
+  }
+
   @keyframes hero-drift {
     0%   { transform: translate(-60%, -55%); }
     25%  { transform: translate(-40%, -48%); }
@@ -125,19 +130,6 @@
     background: var(--color-gold);
     opacity: 0.35;
     margin: 0 auto;
-  }
-
-  .contact-icon {
-    color: var(--color-ink-faint);
-  }
-
-  .contact-name {
-    color: var(--color-ink);
-  }
-
-  .contact-link:hover .contact-icon,
-  .contact-link:hover .contact-name {
-    color: var(--color-gold);
   }
 
   .exhibit-label {
