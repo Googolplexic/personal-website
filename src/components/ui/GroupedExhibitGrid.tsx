@@ -38,16 +38,18 @@ export function GroupedExhibitGrid({ items, searchTerm }: GroupedExhibitGridProp
                                 aria-expanded={!isCollapsed}
                                 aria-controls={panelId}
                                 onClick={() => toggle(group.category)}
-                                className="group/label flex w-full items-baseline gap-3 min-h-11 p-0 bg-transparent text-left cursor-pointer"
+                                className="group/label flex w-full items-start gap-2 min-h-11 p-0 bg-transparent text-left cursor-pointer"
                             >
-                                <span className="gallery-heading text-heading text-ink transition-colors duration-300 group-hover/label:text-gold">
+                                <span className="gallery-heading text-heading leading-none text-ink transition-colors duration-300 group-hover/label:text-gold">
                                     {CATEGORY_LABELS[group.category]}
                                 </span>
-                                <span className="font-body text-xs tracking-[0.15em] text-ink-faint">{group.items.length}</span>
+                                <span className="font-body text-label tabular-nums text-gold">
+                                    <span className="sr-only">, </span>{group.items.length}
+                                </span>
                                 <svg
-                                    width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"
+                                    width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"
                                     fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                                    className={cn('ml-auto lg:ml-0 self-center text-ink-faint transition-transform duration-300 group-hover/label:text-gold', isCollapsed && '-rotate-90')}
+                                    className={cn('ml-auto mt-1 shrink-0 text-ink-faint transition-transform duration-300 group-hover/label:text-gold', isCollapsed && '-rotate-90')}
                                 >
                                     <path d="M6 9l6 6 6-6" />
                                 </svg>
