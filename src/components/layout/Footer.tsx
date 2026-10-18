@@ -1,5 +1,4 @@
 import { Link as RouterLink } from 'react-router';
-import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { SpotlightToggle } from './SpotlightToggle';
 import { FOOTER_META_LINK } from './footerStyles';
 
@@ -14,67 +13,63 @@ const NAV_LINKS = [
 ];
 
 const SOCIAL_LINKS = [
-    { label: 'GitHub', href: 'https://github.com/Googolplexic', icon: <FaGithub size={15} /> },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/coleman-lai', icon: <FaLinkedin size={15} /> },
-    { label: 'Instagram', href: 'https://www.instagram.com/12googolplex', icon: <FaInstagram size={15} /> },
+    { label: 'GitHub', href: 'https://github.com/Googolplexic' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/coleman-lai' },
+    { label: 'Instagram', href: 'https://www.instagram.com/12googolplex' },
 ];
 
-const linkClass = 'text-xs tracking-[0.15em] uppercase font-body text-ink-muted link-underline';
+const linkClass = 'inline-flex items-center min-h-9 text-xs tracking-[0.15em] uppercase font-body text-ink-muted link-underline';
 
 export function Footer() {
     return (
-        <footer>
-            <div className="gallery-divider" />
-            <div className="max-w-4xl mx-auto px-6 py-6 text-center">
+        <footer className="border-t border-solid border-line">
+            <div className="page-grid pt-12 pb-8 gap-y-10">
+                <RouterLink
+                    to="/"
+                    onClick={() => window.scrollTo(0, 0)}
+                    className="col-span-full md:col-span-4 self-start font-signature text-2xl tracking-wide no-underline select-none text-ink transition-colors duration-300 hover:text-gold"
+                >
+                    CL
+                </RouterLink>
 
-                <nav aria-label="Footer navigation"
-                    className="flex justify-center flex-wrap gap-x-7 gap-y-2 mb-3">
-                    {NAV_LINKS.map(link =>
-                        link.to ? (
-                            <RouterLink
-                                key={link.label}
-                                to={link.to}
-                                onClick={() => window.scrollTo(0, 0)}
-                                className={linkClass}
-                            >
-                                {link.label}
-                            </RouterLink>
-                        ) : (
-                            <a
-                                key={link.label}
-                                href={link.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={linkClass}
-                            >
-                                {link.label}
-                            </a>
-                        )
-                    )}
+                <nav aria-label="Footer navigation" className="col-span-6 md:col-span-3">
+                    <ul className="m-0 p-0 list-none flex flex-col">
+                        {NAV_LINKS.map(link => (
+                            <li key={link.label}>
+                                {link.to ? (
+                                    <RouterLink to={link.to} onClick={() => window.scrollTo(0, 0)} className={linkClass}>
+                                        {link.label}
+                                    </RouterLink>
+                                ) : (
+                                    <a href={link.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                                        {link.label}
+                                    </a>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
                 </nav>
 
-                <div className="mb-4 flex items-center justify-center gap-3">
+                <ul className="col-span-6 md:col-span-3 m-0 p-0 list-none flex flex-col">
                     {SOCIAL_LINKS.map(link => (
-                        <a
-                            key={link.label}
-                            href={link.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={link.label}
-                            className="text-ink-muted transition-colors duration-300 hover:text-gold"
-                        >
-                            {link.icon}
-                        </a>
+                        <li key={link.label}>
+                            <a href={link.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                                {link.label}
+                            </a>
+                        </li>
                     ))}
+                </ul>
+
+                <div className="col-span-full md:col-span-2 md:justify-self-end self-start">
+                    <SpotlightToggle />
                 </div>
 
-                <div className="text-xs font-body uppercase tracking-[0.15em] flex flex-col items-center gap-2 text-ink-muted">
-                    <SpotlightToggle />
+                <div className="col-span-full border-t border-solid border-line pt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-xs font-body uppercase tracking-[0.15em] text-ink-faint">
                     <a
                         href="https://github.com/Googolplexic/personal-website/blob/main/LICENSE"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`${FOOTER_META_LINK} inline-flex items-center min-h-8 px-3`}
+                        className={`${FOOTER_META_LINK} inline-flex items-center min-h-8`}
                     >
                         © {new Date().getFullYear()} Coleman Lai
                     </a>
@@ -95,7 +90,7 @@ function BuildMeta() {
             href={`https://github.com/Googolplexic/personal-website/commit/${hash}`}
             target="_blank"
             rel="noopener noreferrer"
-            className={`${FOOTER_META_LINK} inline-flex items-center min-h-8 px-3`}
+            className={`${FOOTER_META_LINK} inline-flex items-center min-h-8`}
         >
             v{version} · {date} · {hash}
         </a>

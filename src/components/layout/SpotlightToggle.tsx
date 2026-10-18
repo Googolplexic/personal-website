@@ -1,28 +1,13 @@
 import { useSpotlightPreference } from '../../useSpotlightPreference';
-import { FOOTER_META_LINK } from './footerStyles';
+import { FrameButton } from '../ui/FrameButton';
 
-/**
- * Subtle text toggle that matches the Footer's other meta links
- * (copyright line, BuildMeta) through the shared FOOTER_META_LINK class.
- */
+/** Turns the gallery lighting on and off; the label states the current setting. */
 export function SpotlightToggle() {
     const { enabled, toggleEnabled } = useSpotlightPreference();
 
     return (
-        <button
-            type="button"
-            onClick={toggleEnabled}
-            className={`${FOOTER_META_LINK} inline-flex items-center min-h-8 px-3`}
-            style={{
-                background: 'none',
-                border: 'none',
-                font: 'inherit',
-                letterSpacing: 'inherit',
-                textTransform: 'inherit',
-                cursor: 'pointer',
-            }}
-        >
+        <FrameButton size="compact" onClick={toggleEnabled}>
             Spotlight · {enabled ? 'On' : 'Off'}
-        </button>
+        </FrameButton>
     );
 }
