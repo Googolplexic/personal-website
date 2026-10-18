@@ -50,7 +50,8 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
     return (
         <div className="relative group">
             {/* Main image display */}
-            <div className="relative overflow-hidden bg-canvas max-h-[min(70svh,44rem)] transition-[aspect-ratio] duration-500" style={frameStyle || undefined}>
+            {/* mx-auto: the height cap shrinks a tall photo's frame, which would otherwise sit on the left */}
+            <div className="relative mx-auto overflow-hidden bg-canvas max-h-[min(70svh,44rem)] transition-[aspect-ratio] duration-500" style={frameStyle || undefined}>
                 <div
                     className={cn('flex transition-transform duration-500 ease-in-out', frameStyle && 'h-full')}
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
