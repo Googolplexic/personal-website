@@ -1,57 +1,5 @@
-/* Shared form controls for public and admin UIs */
+/* Admin form controls; public filter controls are Tailwind classes in FilterBar and MultiSelect */
 @layer components {
-  .gallery-input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--color-line);
-    border-radius: 0;
-    padding: 0.5rem 0;
-    color: var(--color-ink);
-    transition: border-color 0.3s ease;
-    font-family: var(--font-body);
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-  }
-
-  .gallery-input::placeholder {
-    color: var(--color-ink-faint);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .gallery-input:focus {
-    outline: none;
-    border-bottom-color: var(--color-gold);
-  }
-
-  .gallery-select {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--color-line);
-    border-radius: 0;
-    padding: 0.5rem 0;
-    color: var(--color-ink-muted);
-    transition: border-color 0.3s ease;
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-  }
-
-  .gallery-select:focus {
-    outline: none;
-    border-bottom-color: var(--color-gold);
-  }
-
-  .gallery-select option {
-    background-color: #141414;
-    color: var(--color-ink);
-  }
-
   .admin-input,
   .admin-select,
   textarea.admin-input {

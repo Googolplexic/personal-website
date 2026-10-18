@@ -1,21 +1,8 @@
 /**
- * Style Utilities — Art Gallery Theme
- * Helper functions for working with styles and class names
- */
-
-/**
  * Class Name Utility
- * Conditionally joins class names together, filtering out falsy values
+ * Conditionally joins class names together, filtering out falsy values.
+ * No Tailwind merging: pass variants as props instead of overriding classes.
  */
 export function cn(...classes: (string | boolean | undefined | null)[]): string {
     return classes.filter(Boolean).join(' ');
 }
-
-/**
- * Gallery Form Input
- */
-export function formInput(fullWidth: boolean = true): string {
-    const base = 'gallery-input';
-    return fullWidth ? `w-full ${base}` : base;
-}
-

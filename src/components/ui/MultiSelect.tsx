@@ -13,6 +13,7 @@ interface MultiSelectProps {
     /** When true: single-select mode — no AND/OR header, selecting closes the panel */
     singleSelect?: boolean;
     'aria-label'?: string;
+    className?: string;
 }
 
 export function MultiSelect({
@@ -25,6 +26,7 @@ export function MultiSelect({
     placeholder,
     singleSelect = false,
     'aria-label': ariaLabel,
+    className,
 }: MultiSelectProps) {
     const [open, setOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -73,60 +75,48 @@ export function MultiSelect({
     const hasActiveFilter = !singleSelect && selected.length > 0;
 
     const modeBtn = (mode: 'and' | 'or') => cn(
-        'px-2 py-0.5 text-xs font-body tracking-[0.12em] uppercase transition-all duration-200 cursor-pointer bg-transparent border-t-0 border-x-0',
-        filterMode === mode
-            ? 'border-b border-b-gold opacity-100'
-            : 'border-b border-b-transparent opacity-60 hover:opacity-85 hover:border-b-gold'
+        'px-2 py-0.5 text-xs font-body tracking-[0.12em] uppercase transition-colors duration-200 cursor-pointer bg-transparent',
+        filterMode === mode ? 'text-gold' : 'text-ink-muted hover:text-gold'
     );
 
     return (
-        <div ref={containerRef} className="relative flex-1 min-w-0">
-            {/* Trigger — matches gallery-select appearance */}
+        <div ref={containerRef} className={cn('relative min-w-0', className)}>
             <button
                 type="button"
                 aria-label={ariaLabel ? `${triggerLabel}, ${ariaLabel}` : triggerLabel}
+                aria-expanded={open}
                 onClick={() => setOpen(v => !v)}
-                className="gallery-select w-full text-left flex items-center justify-between gap-2 cursor-pointer"
-                style={{ color: hasActiveFilter ? 'var(--color-gold)' : undefined }}
+                className={cn(
+                    'w-full min-h-11 px-3.5 flex items-center justify-between gap-2 text-left cursor-pointer bg-transparent',
+                    'border border-solid font-body text-xs uppercase tracking-[0.15em] transition-colors duration-300',
+                    hasActiveFilter || open ? 'border-gold text-gold' : 'border-line-strong text-ink-muted hover:border-gold hover:text-gold',
+                )}
             >
                 <span className="truncate">{triggerLabel}</span>
                 <svg
                     width="10" height="10" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                    className={`shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''} text-ink-faint`}
+                    className={`shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
                 >
                     <path d="M6 9l6 6 6-6" />
                 </svg>
             </button>
 
-            {/* Dropdown panel */}
             {open && (
-                <div
-                    className="absolute z-50 top-full left-0 mt-1 py-2"
-                    style={{
-                        background: 'var(--color-surface-raised)',
-                        border: '1px solid var(--color-line)',
-                        minWidth: '180px',
-                        width: 'max-content',
-                        maxWidth: '280px',
-                    }}
-                >
+                <div className="absolute z-50 top-full left-0 -mt-px py-2 min-w-full w-max max-w-[280px] bg-surface-raised border border-solid border-gold">
                     {/* AND / OR toggle row — only shown for multi-select */}
                     {!singleSelect && onFilterModeChange && (
-                        <div className="flex items-center justify-between px-3 pb-2 mb-1"
-                            style={{ borderBottom: '1px solid var(--color-line)' }}>
+                        <div className="flex items-center justify-between gap-4 px-3 pb-2 mb-1 border-b border-solid border-line">
                             <span className="text-xs font-body tracking-widest uppercase text-ink-faint">
                                 Match
                             </span>
                             <div className="flex gap-0.5">
-                                <button type="button" className={modeBtn('or')}
-                                    style={{ color: filterMode === 'or' ? 'var(--color-gold)' : 'var(--color-ink-muted)' }}
+                                <button type="button" className={modeBtn('or')} aria-pressed={filterMode === 'or'}
                                     onClick={() => onFilterModeChange('or')}>
                                     Any
                                 </button>
                                 <span className="text-xs font-body self-center px-0.5 text-ink-faint">·</span>
-                                <button type="button" className={modeBtn('and')}
-                                    style={{ color: filterMode === 'and' ? 'var(--color-gold)' : 'var(--color-ink-muted)' }}
+                                <button type="button" className={modeBtn('and')} aria-pressed={filterMode === 'and'}
                                     onClick={() => onFilterModeChange('and')}>
                                     All
                                 </button>
@@ -136,8 +126,7 @@ export function MultiSelect({
 
                     {/* Scrollable option list — stop wheel propagation so dropdown scrolls instead of page */}
                     <div
-                        className="px-1"
-                        style={{ maxHeight: '13rem', overflowY: 'auto', overscrollBehavior: 'contain', touchAction: 'pan-y' }}
+                        className="px-1 max-h-52 overflow-y-auto overscroll-contain touch-pan-y"
                         onWheel={e => e.stopPropagation()}
                     >
                         {options.map(option => {
@@ -146,15 +135,14 @@ export function MultiSelect({
                                 <button
                                     key={option}
                                     type="button"
+                                    aria-pressed={active}
                                     onClick={() => toggle(option)}
                                     className={cn(
-                                        'w-full text-left px-2 py-1.5 text-xs font-body tracking-widest uppercase transition-all duration-200 cursor-pointer bg-transparent border-t-0 border-x-0',
-                                        active
-                                            ? 'border-b border-b-gold opacity-100'
-                                            : 'border-b border-b-transparent opacity-70 hover:opacity-90 hover:border-b-gold'
+                                        'flex w-full items-center gap-2 text-left px-2 py-1.5 text-xs font-body tracking-widest uppercase transition-colors duration-200 cursor-pointer bg-transparent',
+                                        active ? 'text-gold' : 'text-ink-muted hover:text-gold'
                                     )}
-                                    style={{ color: active ? 'var(--color-gold)' : 'var(--color-ink-muted)' }}
                                 >
+                                    <span aria-hidden="true" className={cn('h-px w-2.5 shrink-0 transition-colors', active ? 'bg-gold' : 'bg-transparent')} />
                                     {getLabel(option)}
                                 </button>
                             );
@@ -163,8 +151,7 @@ export function MultiSelect({
 
                     {/* Clear footer — only shown for multi-select with active filters */}
                     {hasActiveFilter && (
-                        <div className="flex justify-end px-3 pt-2 mt-1"
-                            style={{ borderTop: '1px solid var(--color-line)' }}>
+                        <div className="flex justify-end px-3 pt-2 mt-1 border-t border-solid border-line">
                             <button
                                 type="button"
                                 onClick={() => onChange([])}

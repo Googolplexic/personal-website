@@ -8,6 +8,8 @@ interface MasonrySpotlightGridProps {
     className?: string;
     /** Number of items to show immediately (no stagger) for LCP */
     skipCount?: number;
+    /** Caps the column count, for grids that share the row with a side label */
+    maxColumns?: 2 | 3;
 }
 
 /* ── responsive column count; breakpoints match .masonry-static ── */
@@ -39,9 +41,10 @@ function useColumnCount(): number | null {
  * reads left-to-right, row-by-row instead of column-by-column.
  * On mobile/touch devices, uses scroll-proximity dimming instead.
  */
-export function MasonrySpotlightGrid({ children, className = '', skipCount = 0 }: MasonrySpotlightGridProps) {
+export function MasonrySpotlightGrid({ children, className = '', skipCount = 0, maxColumns = 3 }: MasonrySpotlightGridProps) {
     const { ref, onMouseMove, onMouseEnter, onMouseLeave } = useSpotlight();
-    const colCount = useColumnCount();
+    const viewportColumns = useColumnCount();
+    const colCount = viewportColumns === null ? null : Math.min(viewportColumns, maxColumns);
     useScrollProximity(ref);
     useStaggeredEntrance(ref, 80, skipCount, colCount);
 
@@ -66,7 +69,7 @@ export function MasonrySpotlightGrid({ children, className = '', skipCount = 0 }
         >
             {colCount === null ? (
                 // Same columns as the masonry layout, so the first row doesn't move once it takes over
-                <div className="masonry-static">
+                <div className={maxColumns === 2 ? 'masonry-static masonry-static-max-2' : 'masonry-static'}>
                     {items.map((child, i) => (
                         <div key={i} data-stagger-index={i}>{child}</div>
                     ))}

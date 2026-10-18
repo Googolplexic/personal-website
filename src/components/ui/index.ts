@@ -1,5 +1,6 @@
-export { ItemGrid } from './ItemGrid';
-export { GroupedItemGrid } from './GroupedItemGrid';
+export { ExhibitCard } from './ExhibitCard';
+export { ExhibitGrid } from './ExhibitGrid';
+export { GroupedExhibitGrid } from './GroupedExhibitGrid';
 export { CategoryLabel } from './CategoryLabel';
 export { HighlightedText } from './HighlightedText';
 export { Placard } from './Placard';

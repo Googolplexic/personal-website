@@ -2,6 +2,7 @@ import type { Route } from './+types/home';
 import { Home } from '../pages/Home';
 import { ExternalRedirect } from '../components/layout/ExternalRedirect';
 import { allOrigami, allProjects, origamiCard, projectCard } from '../content.server';
+import { keepDataOnQueryChange } from '../utils/routeData';
 import { BASE_URL, seoMeta } from '../utils/seo';
 import { useClientSearchParams } from '../utils/useHydrated';
 
@@ -16,6 +17,8 @@ export function loader() {
         builtOn: new Date().toISOString().slice(0, 10),
     };
 }
+
+export const shouldRevalidate = keepDataOnQueryChange;
 
 export const meta: Route.MetaFunction = ({ loaderData }) => seoMeta({
     title: 'Coleman Lai | Developer & Origami Artist | Vancouver',
@@ -86,5 +89,5 @@ export default function HomeRoute({ loaderData }: Route.ComponentProps) {
     const [searchParams] = useClientSearchParams();
     const redirectTo = searchParams.get('to');
     if (redirectTo) return <ExternalRedirect to={redirectTo} />;
-    return <Home featured={loaderData.featured} featuredSlugs={FEATURED_SLUGS} />;
+    return <Home featured={loaderData.featured} />;
 }
