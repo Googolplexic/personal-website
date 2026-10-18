@@ -249,15 +249,6 @@ export function GroupedItemGrid({
         }
     };
 
-    const getCategoryClass = (category: string): string => {
-        switch (category) {
-            case 'my-designs': return 'gallery-cat-green';
-            case 'other-designs': return 'gallery-cat-blue';
-            case 'software': return 'gallery-cat-purple';
-            default: return 'gallery-cat-default';
-        }
-    };
-
     const sortedAndFilteredItems = useMemo(() => {
         let baseItems = featuredSlugs
             ? items.filter(item => featuredSlugs.includes(item.slug))
@@ -343,7 +334,6 @@ export function GroupedItemGrid({
     const renderCard = (item: ItemProps, showCategoryBadge: boolean, isPriority = false) => {
         const category = getItemCategory(item);
         const categoryLabel = getCategoryLabel(category);
-        const categoryCls = getCategoryClass(category);
 
         if (item.type === 'project') {
             return (
@@ -352,7 +342,6 @@ export function GroupedItemGrid({
                     {...(item as ProjectProps)}
                     searchTerm={searchTerm}
                     categoryLabel={categoryLabel}
-                    categoryColor={categoryCls}
                     showCategory={showCategoryBadge}
                     priority={isPriority}
                 />
@@ -370,7 +359,6 @@ export function GroupedItemGrid({
                     designer={origami.designer}
                     searchTerm={searchTerm}
                     categoryLabel={categoryLabel}
-                    categoryColor={categoryCls}
                     showCategory={showCategoryBadge}
                     priority={isPriority}
                 />

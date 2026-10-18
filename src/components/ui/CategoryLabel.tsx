@@ -2,7 +2,6 @@ import { cn } from '../../utils/styles';
 
 interface CategoryLabelProps {
     label: string;
-    color?: string;
     className?: string;
 }
 
