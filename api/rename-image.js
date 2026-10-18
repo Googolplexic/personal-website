@@ -1,5 +1,5 @@
 // Vercel serverless function to rename images via GitHub API
-import { getFileFromGitHub, getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveImageFile, imageUploadPath, resolveContentDir } from './github-utils.js';
+import { getFileFromGitHub, getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveImageFile, imageUploadPath, resolveContentDir, deleteLargerWebCopies } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -81,6 +81,12 @@ export default async function handler(req, res) {
                     }
                 } catch (webpErr) {
                     console.error('Warning: failed to delete old webp:', webpErr.message);
+                }
+
+                try {
+                    await deleteLargerWebCopies(oldFilePath, `Remove old web copies after renaming ${file}`);
+                } catch (webpErr) {
+                    console.error('Warning: failed to delete old web copies:', webpErr.message);
                 }
             }
 

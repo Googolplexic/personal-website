@@ -1,12 +1,16 @@
 import { Link } from 'react-router';
 import type { ItemProps } from '../../types';
-import { sizeForImage } from '../../utils/imageSize';
 import { BASE_URL } from '../../utils/seo';
 import { cn } from '../../utils/styles';
 import { useClientLocation } from '../../utils/useHydrated';
 import { HighlightedText } from './HighlightedText';
 import { Placard } from './Placard';
 import { ShareButton } from './ShareButton';
+
+// Widest rendered image across the listings at each breakpoint (the page grid stops growing at 90rem),
+// so standard-density desktops get the 600px copy and high-density screens the 1280px one
+const CARD_IMAGE_SIZES = '(min-width: 1440px) 480px, (min-width: 1024px) 32vw, (min-width: 768px) 43vw, 100vw';
+const LEAD_IMAGE_SIZES = '(min-width: 1440px) 580px, (min-width: 768px) 40vw, 100vw';
 
 interface ExhibitCardProps {
     item: ItemProps;
@@ -55,7 +59,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
     const location = useClientLocation();
     const { path, image, text, medium, date } = cardDetails(item);
     const queryString = location.search || (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : '');
-    const size = image ? sizeForImage(image) : undefined;
+    const set = image ? item.imageSets?.[image] : undefined;
     const lead = layout === 'lead';
 
     return (
@@ -69,13 +73,16 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                 <div className={cn('overflow-hidden', lead && 'md:col-span-7')}>
                     <img
                         src={image}
+                        srcSet={set?.srcSet}
+                        sizes={set && (lead ? LEAD_IMAGE_SIZES : CARD_IMAGE_SIZES)}
                         alt={item.title}
                         data-fade
                         className="block w-full h-auto"
                         loading={priority ? 'eager' : 'lazy'}
+                        fetchPriority={priority ? 'high' : undefined}
                         decoding={priority ? 'sync' : 'async'}
-                        width={size?.width}
-                        height={size?.height}
+                        width={set?.width}
+                        height={set?.height}
                     />
                 </div>
             )}

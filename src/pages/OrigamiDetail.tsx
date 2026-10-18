@@ -6,9 +6,11 @@ import { Lightbox } from '../components/ui/Lightbox';
 import { ShareButton } from '../components/ui/ShareButton';
 import { NextExhibit, OrigamiProps } from '../types';
 import { CATEGORY_LABELS } from '../utils/galleryFilters';
-import { sizeForImage } from '../utils/imageSize';
 import { BASE_URL } from '../utils/seo';
 import { useClientSearchParams } from '../utils/useHydrated';
+
+// The crease pattern button is max-w-sm
+const CREASE_PATTERN_SIZES = '384px';
 
 // Most pieces have no writeup, so the markdown renderer loads only for the ones that do
 const MarkdownBody = lazy(() => import('../components/ui/MarkdownBody').then(module => ({ default: module.MarkdownBody })));
@@ -23,7 +25,8 @@ export function OrigamiDetail({ origami, exhibit, next }: OrigamiDetailProps) {
     const [searchParams] = useClientSearchParams();
     const searchTerm = searchParams.get('search') || '';
     const [cpLightboxOpen, setCpLightboxOpen] = useState(false);
-    const cpFull = origami.creasePatternFull || origami.creasePattern;
+    const cpSet = origami.creasePattern ? origami.imageSets?.[origami.creasePattern] : undefined;
+    const cpFull = cpSet?.large || origami.creasePatternFull || origami.creasePattern;
 
     return (
         <DetailLayout
@@ -43,7 +46,7 @@ export function OrigamiDetail({ origami, exhibit, next }: OrigamiDetailProps) {
                 </>
             }
         >
-            <ProjectImageCarousel images={origami.modelImages} imagesFull={origami.modelImagesFull} title={origami.title} />
+            <ProjectImageCarousel images={origami.modelImages} imagesFull={origami.modelImagesFull} imageSets={origami.imageSets} title={origami.title} />
 
             {origami.writeup && (
                 <Suspense fallback={null}>
@@ -62,18 +65,25 @@ export function OrigamiDetail({ origami, exhibit, next }: OrigamiDetailProps) {
                     >
                         <img
                             src={origami.creasePattern}
+                            srcSet={cpSet?.srcSet}
+                            sizes={cpSet && CREASE_PATTERN_SIZES}
                             alt={`${origami.title} crease pattern`}
                             data-fade
                             className="block w-full h-auto object-contain"
                             loading="lazy"
                             title="Click to enlarge"
-                            width={sizeForImage(origami.creasePattern)?.width}
-                            height={sizeForImage(origami.creasePattern)?.height}
+                            width={cpSet?.width}
+                            height={cpSet?.height}
                         />
                     </button>
                     {cpLightboxOpen && cpFull && (
                         <Lightbox
-                            images={[cpFull]}
+                            images={[{
+                                src: cpFull,
+                                width: cpSet?.width,
+                                height: cpSet?.height,
+                                preview: { src: origami.creasePattern, srcSet: cpSet?.srcSet, sizes: cpSet && CREASE_PATTERN_SIZES },
+                            }]}
                             initialIndex={0}
                             alt="Crease Pattern"
                             onClose={() => setCpLightboxOpen(false)}

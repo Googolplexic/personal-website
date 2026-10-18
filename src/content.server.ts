@@ -1,5 +1,6 @@
 import allProjects from './assets/projects';
 import allOrigami, { myDesigns, otherDesigns } from './assets/origami';
+import { imageSets } from './images.server';
 import type { OrigamiProps, ProjectProps } from './types';
 
 export { allProjects, allOrigami, myDesigns, otherDesigns };
@@ -25,7 +26,12 @@ export function projectCard(project: ProjectProps): ProjectProps {
         githubUrl: project.githubUrl,
         liveUrl: project.liveUrl,
         images: project.images?.slice(0, 1),
+        imageSets: imageSets([project.images?.[0]]),
     };
+}
+
+export function projectDetail(project: ProjectProps): ProjectProps {
+    return { ...project, imageSets: imageSets(project.images ?? []) };
 }
 
 export function origamiCard(piece: OrigamiProps): OrigamiProps {
@@ -41,7 +47,12 @@ export function origamiCard(piece: OrigamiProps): OrigamiProps {
         designer: piece.designer,
         tags: piece.tags,
         modelImages: piece.modelImages.slice(0, 1),
+        imageSets: imageSets([piece.modelImages[0]]),
     };
+}
+
+export function origamiDetail(piece: OrigamiProps): OrigamiProps {
+    return { ...piece, imageSets: imageSets([...piece.modelImages, piece.creasePattern]) };
 }
 
 /** Finds an item plus the one shown as "Next Exhibit". */
