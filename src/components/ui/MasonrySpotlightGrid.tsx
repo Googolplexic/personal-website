@@ -10,14 +10,13 @@ interface MasonrySpotlightGridProps {
     skipCount?: number;
 }
 
-/* ── responsive column count (SSR-safe) ── */
+/* ── responsive column count; breakpoints match .masonry-static ── */
 const BREAKPOINTS = [
     { minWidth: 1024, cols: 3 },
     { minWidth: 640, cols: 2 },
 ] as const;
 
-function getColumnCount() {
-    if (typeof window === 'undefined') return 1;
+function getColumnCount(): number {
     for (const bp of BREAKPOINTS) {
         if (window.innerWidth >= bp.minWidth) return bp.cols;
     }
@@ -29,8 +28,9 @@ function subscribeToResize(cb: () => void) {
     return () => window.removeEventListener('resize', cb);
 }
 
-function useColumnCount() {
-    return useSyncExternalStore(subscribeToResize, getColumnCount, () => 1);
+/** Null while prerendering and hydrating, since the viewport width is unknown there. */
+function useColumnCount(): number | null {
+    return useSyncExternalStore(subscribeToResize, getColumnCount, () => null);
 }
 
 /**
@@ -41,18 +41,19 @@ function useColumnCount() {
  */
 export function MasonrySpotlightGrid({ children, className = '', skipCount = 0 }: MasonrySpotlightGridProps) {
     const { ref, onMouseMove, onMouseEnter, onMouseLeave } = useSpotlight();
-    useScrollProximity(ref);
-    useStaggeredEntrance(ref, 80, skipCount);
-
     const colCount = useColumnCount();
+    useScrollProximity(ref);
+    useStaggeredEntrance(ref, 80, skipCount, colCount);
+
     const items = Children.toArray(children);
 
     // Distribute items round-robin so row order is preserved
-    const columns: ReactNode[][] = Array.from({ length: colCount }, () => []);
-    const indices: number[][] = Array.from({ length: colCount }, () => []);
+    const columnTotal = colCount ?? 1;
+    const columns: ReactNode[][] = Array.from({ length: columnTotal }, () => []);
+    const indices: number[][] = Array.from({ length: columnTotal }, () => []);
     items.forEach((child, i) => {
-        columns[i % colCount].push(child);
-        indices[i % colCount].push(i);
+        columns[i % columnTotal].push(child);
+        indices[i % columnTotal].push(i);
     });
 
     return (
@@ -63,17 +64,26 @@ export function MasonrySpotlightGrid({ children, className = '', skipCount = 0 }
             onMouseLeave={onMouseLeave}
             className={`spotlight-group ${className}`}
         >
-            <div className="masonry-grid">
-                {columns.map((col, colIdx) => (
-                    <div key={colIdx} className="masonry-col">
-                        {col.map((child, rowIdx) => (
-                            <div key={indices[colIdx][rowIdx]} data-stagger-index={indices[colIdx][rowIdx]}>
-                                {child}
-                            </div>
-                        ))}
-                    </div>
-                ))}
-            </div>
+            {colCount === null ? (
+                // Same columns as the masonry layout, so the first row doesn't move once it takes over
+                <div className="masonry-static">
+                    {items.map((child, i) => (
+                        <div key={i} data-stagger-index={i}>{child}</div>
+                    ))}
+                </div>
+            ) : (
+                <div className="masonry-grid">
+                    {columns.map((col, colIdx) => (
+                        <div key={colIdx} className="masonry-col">
+                            {col.map((child, rowIdx) => (
+                                <div key={indices[colIdx][rowIdx]} data-stagger-index={indices[colIdx][rowIdx]}>
+                                    {child}
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

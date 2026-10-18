@@ -32,20 +32,25 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                     className="flex transition-transform duration-500 ease-in-out"
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
                 >
-                    {resolvedImages.map((img, i) => (
-                        <div key={i} className="w-full shrink-0 flex justify-center items-center">
-                            <img
-                                src={img}
-                                alt={`${title} - Image ${i + 1}`}
-                                title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
-                                className="max-h-96 w-auto object-contain cursor-pointer"
-                                onClick={() => setLightboxIndex(i)}
-                                loading={i <= 1 ? 'eager' : 'lazy'}
-                                width={sizeForImage(img)?.width}
-                                height={sizeForImage(img)?.height}
-                            />
-                        </div>
-                    ))}
+                    {resolvedImages.map((img, i) => {
+                        const size = sizeForImage(img);
+                        return (
+                            <div key={i} className="w-full shrink-0 flex justify-center items-center">
+                                {/* A definite width lets the browser reserve the image's height before it loads */}
+                                <img
+                                    src={img}
+                                    alt={`${title} - Image ${i + 1}`}
+                                    title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
+                                    className="max-h-96 w-full object-contain cursor-pointer"
+                                    style={size && { maxWidth: size.width }}
+                                    onClick={() => setLightboxIndex(i)}
+                                    loading={i <= 1 ? 'eager' : 'lazy'}
+                                    width={size?.width}
+                                    height={size?.height}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
             {resolvedImages.length > 1 && (

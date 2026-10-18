@@ -1,6 +1,5 @@
 @import 'tailwindcss' source(none);
 @source '../../**/*.{ts,tsx}';
-@source '../../../index.html';
 
 @theme {
   --font-heading: 'EB Garamond', 'EB Garamond Fallback', Garamond, Georgia, serif;

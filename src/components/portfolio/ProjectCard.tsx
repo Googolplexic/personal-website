@@ -1,12 +1,11 @@
-import { useEffect } from 'react';
 import { ProjectProps } from '../../types';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate } from 'react-router';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
 import { ShareButton } from '../ui/ShareButton';
 import { sizeForImage } from '../../utils/imageSize';
-
-const BASE_URL = 'https://www.colemanlai.com';
+import { BASE_URL } from '../../utils/seo';
+import { useClientLocation } from '../../utils/useHydrated';
 
 interface ProjectWithBasePath extends ProjectProps {
     basePath?: string;
@@ -15,30 +14,16 @@ interface ProjectWithBasePath extends ProjectProps {
     categoryColor?: string;
     showCategory?: boolean;
     priority?: boolean;
-    imageAlreadyShown?: boolean;
 }
 
-export function ProjectCard({ basePath = '/portfolio', searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false, imageAlreadyShown = false, ...props }: ProjectWithBasePath) {
+export function ProjectCard({ basePath = '/portfolio', searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false, ...props }: ProjectWithBasePath) {
     const navigate = useNavigate();
-    const location = useLocation();
+    const location = useClientLocation();
     const firstImage = props.images?.[0] ?? '';
 
     const queryString = location.search || (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : '');
     const projectPath = `${basePath}/${props.slug}${queryString}`;
     const shareUrl = `${BASE_URL}/portfolio/${props.slug}`;
-
-    useEffect(() => {
-        if (!imageAlreadyShown) return;
-        const card = document.getElementById('boot-portfolio-card');
-        if (!card) return;
-        const onClick = (event: Event) => {
-            event.preventDefault();
-            navigate(projectPath, { state: { from: location.pathname } });
-            window.scrollTo(0, 0);
-        };
-        card.addEventListener('click', onClick);
-        return () => card.removeEventListener('click', onClick);
-    }, [imageAlreadyShown, navigate, projectPath, location.pathname]);
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
@@ -46,10 +31,15 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
         window.scrollTo(0, 0);
     };
 
-    const cardBody = (
-            <>
+    return (
+        <a
+            href={projectPath}
+            onClick={handleClick}
+            className="spotlight-item flex flex-col cursor-pointer group break-inside-avoid"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+        >
             {/* Image — no rounding, raw edge */}
-            {!imageAlreadyShown && firstImage && (
+            {firstImage && (
                 <div className="w-full overflow-hidden flex justify-center">
                     <img
                         src={firstImage}
@@ -95,19 +85,6 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
                     <ShareButton url={shareUrl} title={props.title} description={props.summary} />
                 </div>
             </div>
-            </>
-    );
-
-    if (imageAlreadyShown) return cardBody;
-
-    return (
-        <a
-            href={projectPath}
-            onClick={handleClick}
-            className="spotlight-item flex flex-col cursor-pointer group break-inside-avoid"
-            style={{ textDecoration: 'none', color: 'inherit' }}
-        >
-            {cardBody}
         </a>
     );
 }

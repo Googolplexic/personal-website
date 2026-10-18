@@ -1,8 +1,6 @@
 import { ItemProps, ProjectProps, OrigamiProps } from "../../types";
-import { useState, useMemo, useLayoutEffect, type Dispatch, type SetStateAction } from 'react';
-import { createPortal } from 'react-dom';
-import { useLocation, useSearchParams } from 'react-router';
-import { usePortfolioLeadActive } from '../../utils/portfolioBootLead';
+import { useState, useMemo, type Dispatch, type SetStateAction } from 'react';
+import { useClientSearchParams } from '../../utils/useHydrated';
 import { UniversalSearch, SortOption } from "../search/UniversalSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
@@ -27,9 +25,7 @@ export function ItemGrid({
 }: ItemGridProps) {
     const PRIORITY_IMAGE_COUNT = 3;
     const STAGGER_SKIP_COUNT = 1;
-    const location = useLocation();
-    const leadActive = usePortfolioLeadActive();
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useClientSearchParams();
     const [localSearchTerm, setLocalSearchTerm] = useState('');
     const [localSelectedTechs, setLocalSelectedTechs] = useState<string[]>([]);
     const [localSelectedTags, setLocalSelectedTags] = useState<string[]>([]);
@@ -245,86 +241,46 @@ export function ItemGrid({
         });
     }, [items, featuredSlugs, searchTerm, selectedTechs, selectedTags, techFilterMode, tagFilterMode, sortBy]);
 
-    const defaultView = !searchTerm && selectedTechs.length === 0 && selectedTags.length === 0 && sortBy === 'date-desc';
-    const bootFirst = leadActive && defaultView && sortedAndFilteredItems[0]?.type === 'project'
-        ? sortedAndFilteredItems[0] as ProjectProps
-        : null;
-    const masonryItems = bootFirst ? sortedAndFilteredItems.slice(1) : sortedAndFilteredItems;
-
-    useLayoutEffect(() => {
-        const lead = document.getElementById('boot-portfolio-lead');
-        if (!lead?.querySelector('img') || location.pathname !== '/portfolio') return;
-        const narrow = window.matchMedia('(max-width: 639px)').matches;
-        lead.toggleAttribute('hidden', !(narrow && defaultView));
-    }, [location.pathname, defaultView]);
-
-    const controlsSlot = bootFirst ? document.getElementById('boot-portfolio-controls') : null;
-    const copySlot = bootFirst ? document.getElementById('boot-portfolio-copy') : null;
-
-    const searchControls = !hideControls && (
-        <UniversalSearch
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            selectedTechs={selectedTechs}
-            setSelectedTechs={setSelectedTechs}
-            selectedTags={selectedTags}
-            setSelectedTags={setSelectedTags}
-            techFilterMode={techFilterMode}
-            setTechFilterMode={setTechFilterMode}
-            tagFilterMode={tagFilterMode}
-            setTagFilterMode={setTagFilterMode}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            allTechnologies={allTechnologies}
-            allTags={allTags}
-            items={items}
-            contentType={itemType === 'mixed' ? 'mixed' : itemType === 'project' ? 'projects' : 'origami'}
-            onReset={() => {
-                if (hideControls) {
-                    setLocalSearchTerm('');
-                    setLocalSelectedTechs([]);
-                    setLocalSelectedTags([]);
-                    setLocalTechFilterMode('or');
-                    setLocalTagFilterMode('or');
-                    setLocalSortBy('date-desc');
-                    return;
-                }
-                updateSearchParams(params => {
-                    params.delete('search');
-                    params.delete('tech');
-                    params.delete('tag');
-                    params.delete('techMode');
-                    params.delete('tagMode');
-                    params.delete('sort');
-                });
-            }}
-        />
-    );
-
     return (
         <section className={`mb-12 ${className}`}>
-            {!bootFirst && (
-                <h2
-                    className={title ? "gallery-heading text-2xl md:text-3xl mb-6" : "sr-only"}
-                    style={title ? { color: 'var(--color-text-primary)' } : undefined}
-                >
-                    {sectionHeadingText}
-                </h2>
-            )}
+            <h2
+                className={title ? "gallery-heading text-2xl md:text-3xl mb-6" : "sr-only"}
+                style={title ? { color: 'var(--color-text-primary)' } : undefined}
+            >
+                {sectionHeadingText}
+            </h2>
 
-            {controlsSlot ? createPortal(searchControls, controlsSlot) : searchControls}
-            {copySlot && bootFirst && createPortal(
-                <ProjectCard
-                    {...bootFirst}
+            {!hideControls && (
+                <UniversalSearch
                     searchTerm={searchTerm}
-                    priority
-                    imageAlreadyShown
-                />,
-                copySlot,
+                    setSearchTerm={setSearchTerm}
+                    selectedTechs={selectedTechs}
+                    setSelectedTechs={setSelectedTechs}
+                    selectedTags={selectedTags}
+                    setSelectedTags={setSelectedTags}
+                    techFilterMode={techFilterMode}
+                    setTechFilterMode={setTechFilterMode}
+                    tagFilterMode={tagFilterMode}
+                    setTagFilterMode={setTagFilterMode}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    allTechnologies={allTechnologies}
+                    allTags={allTags}
+                    items={items}
+                    contentType={itemType === 'mixed' ? 'mixed' : itemType === 'project' ? 'projects' : 'origami'}
+                    onReset={() => updateSearchParams(params => {
+                        params.delete('search');
+                        params.delete('tech');
+                        params.delete('tag');
+                        params.delete('techMode');
+                        params.delete('tagMode');
+                        params.delete('sort');
+                    })}
+                />
             )}
 
             <MasonrySpotlightGrid skipCount={STAGGER_SKIP_COUNT}>
-                {masonryItems.map((item, index) => {
+                {sortedAndFilteredItems.map((item, index) => {
                     const isPriority = index < PRIORITY_IMAGE_COUNT;
                     if (item.type === 'project') {
                         return (

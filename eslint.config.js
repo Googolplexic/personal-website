@@ -6,7 +6,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'build', '.react-router']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -24,7 +24,8 @@ export default defineConfig([
     rules: {
       'react-refresh/only-export-components': [
         'warn',
-        { allowConstantExport: true },
+        // React Router route module exports
+        { allowConstantExport: true, allowExportNames: ['meta', 'links', 'loader', 'clientLoader', 'Layout', 'ErrorBoundary'] },
       ],
     },
   },
