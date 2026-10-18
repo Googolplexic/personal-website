@@ -33,7 +33,7 @@ export function Portfolio({ projects }: { projects: ProjectProps[] }) {
             </div>
             <div className="page-grid">
                 <div className="col-span-full">
-                    <ExhibitGrid items={visible} searchTerm={filters.search} />
+                    <ExhibitGrid items={visible} searchTerm={filters.search} titleAs="h2" />
                 </div>
             </div>
         </div>

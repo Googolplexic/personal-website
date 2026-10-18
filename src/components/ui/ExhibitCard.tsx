@@ -16,6 +16,8 @@ interface ExhibitCardProps {
     priority?: boolean;
     /** lead: the image and a larger placard side by side, for the first piece of an exhibition */
     layout?: 'stacked' | 'lead';
+    /** h2 when the card sits directly under the page's h1, h3 under a section heading */
+    titleAs?: 'h2' | 'h3';
     className?: string;
 }
 
@@ -49,7 +51,7 @@ function cardDetails(item: ItemProps) {
  * The title link stretches over the whole card, so the Share button can sit
  * inside it without nesting interactive elements.
  */
-export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = false, layout = 'stacked', className }: ExhibitCardProps) {
+export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = false, layout = 'stacked', titleAs = 'h3', className }: ExhibitCardProps) {
     const location = useClientLocation();
     const { path, image, text, medium, date } = cardDetails(item);
     const queryString = location.search || (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : '');
@@ -79,6 +81,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
             <div className={cn('pt-5 flex flex-1 flex-col gap-3', lead && 'md:col-span-5 md:pt-0 md:gap-5')}>
                 <Placard
                     size={lead ? 'page' : 'card'}
+                    titleAs={titleAs}
                     exhibit={[item.exhibit, categoryLabel].filter(Boolean).join(' · ') || undefined}
                     title={
                         <Link

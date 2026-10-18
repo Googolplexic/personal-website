@@ -70,7 +70,7 @@ export function Origami({ myDesigns, otherDesigns, software }: OrigamiGalleryPro
             ) : (
                 <div className="page-grid">
                     <div className="col-span-full">
-                        <ExhibitGrid items={visible} searchTerm={filters.search} showCategory />
+                        <ExhibitGrid items={visible} searchTerm={filters.search} showCategory titleAs="h2" />
                     </div>
                 </div>
             )}
