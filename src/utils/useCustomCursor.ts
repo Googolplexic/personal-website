@@ -88,12 +88,23 @@ export function useCustomCursor(enabled = true) {
             return Boolean(target.closest(INTERACTIVE_SELECTOR));
         };
 
+        // scrollHeight forces a layout. Cache it and refresh when the document actually resizes,
+        // instead of reading it on every frame of a scroll.
+        let scrollH = 0;
+        const measureScrollH = () => {
+            scrollH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+        };
+        measureScrollH();
+        const scrollResize = new ResizeObserver(measureScrollH);
+        scrollResize.observe(document.documentElement);
+
+        let lastThumbH = -1;
+        let lastThumbCenter = -1;
+        let thumbShown = false;
+        let trackShown = false;
+
         const getScrollMetrics = () => {
             const viewH = window.innerHeight;
-            const scrollH = Math.max(
-                document.documentElement.scrollHeight,
-                document.body.scrollHeight,
-            );
             const maxScroll = Math.max(0, scrollH - viewH);
             const thumbH = maxScroll <= 0
                 ? viewH
@@ -220,12 +231,29 @@ export function useCustomCursor(enabled = true) {
                 trackOpacity = lerp(trackOpacity, 0, LERP_CHROME);
             }
 
-            thumb.style.height = `${thumbH}px`;
-            thumb.style.top = `${thumbCenterY}px`;
+            const roundedH = Math.round(thumbH);
+            const roundedCenter = Math.round(thumbCenterY);
+            if (roundedH !== lastThumbH) {
+                lastThumbH = roundedH;
+                thumb.style.height = `${roundedH}px`;
+            }
+            // transform, not top: moving top dirties layout on every scroll frame
+            if (roundedCenter !== lastThumbCenter) {
+                lastThumbCenter = roundedCenter;
+                thumb.style.transform = `translate3d(0, ${roundedCenter}px, 0) translateY(-50%)`;
+            }
             thumb.style.opacity = String(thumbOpacity);
             track.style.opacity = String(trackOpacity);
-            thumb.classList.toggle('visible', thumbOpacity > 0.02);
-            track.classList.toggle('visible', trackOpacity > 0.02);
+            const showThumb = thumbOpacity > 0.02;
+            const showTrack = trackOpacity > 0.02;
+            if (showThumb !== thumbShown) {
+                thumbShown = showThumb;
+                thumb.classList.toggle('visible', showThumb);
+            }
+            if (showTrack !== trackShown) {
+                trackShown = showTrack;
+                track.classList.toggle('visible', showTrack);
+            }
 
             let targetX = pointerX;
             let targetY = pointerY;
@@ -391,6 +419,7 @@ export function useCustomCursor(enabled = true) {
 
         return () => {
             if (idleFadeId) clearTimeout(idleFadeId);
+            scrollResize.disconnect();
             cancelAnimationFrame(rafId);
             window.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mousedown', onMouseDown);

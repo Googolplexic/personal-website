@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
-import type Lenis from 'lenis';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 
 let lenisInstance: Lenis | null = null;
 
 /**
  * Global smooth scroll via Lenis.
  * Call once in the app root. Respects prefers-reduced-motion.
- * Lenis is loaded asynchronously to keep it off the critical rendering path.
+ * Imported up front so the first wheel event is already smoothed, instead of
+ * a native scroll that Lenis then takes over.
  */
 export function useSmoothScroll(enabled = true) {
     useEffect(() => {
@@ -17,59 +19,30 @@ export function useSmoothScroll(enabled = true) {
 
         let destroyed = false;
         let rafId: number | null = null;
-        let loadCleanup: (() => void) | null = null;
 
-        void import('lenis').then(({ default: Lenis }) => {
+        // lerp rather than a timed ease: each wheel tick used to restart a 0.7s curve
+        const lenis = new Lenis({ lerp: 0.12, touchMultiplier: 1.2 });
+        lenisInstance = lenis;
+
+        function raf(time: number) {
             if (destroyed) return;
-
-            const lenis = new Lenis({
-                duration: 0.7,
-                easing: (t: number) => 1 - Math.pow(1 - t, 3),
-                touchMultiplier: 1.2,
-            });
-
-            lenisInstance = lenis;
-
-            // Track scrollHeight so we can auto-resize when content changes
-            // (lazy images, Suspense, masonry reflow, collapsed sections, etc.).
-            // One number comparison per frame is negligible overhead.
-            let lastScrollHeight = document.documentElement.scrollHeight;
-
-            function raf(time: number) {
-                if (destroyed) return;
-                lenis.raf(time);
-
-                const curHeight = document.documentElement.scrollHeight;
-                if (curHeight !== lastScrollHeight) {
-                    lastScrollHeight = curHeight;
-                    lenis.resize();
-                }
-
-                rafId = requestAnimationFrame(raf);
-            }
-
+            lenis.raf(time);
             rafId = requestAnimationFrame(raf);
+        }
 
-            // Recalculate scroll dimensions after load so first-load scroll works (Lenis
-            // can attach before layout is final — e.g. lazy content or fonts).
-            const onLoad = () => {
-                if (destroyed || !lenisInstance) return;
-                lenis.resize();
-            };
-            if (document.readyState === 'complete') {
-                requestAnimationFrame(onLoad);
-            } else {
-                window.addEventListener('load', onLoad);
-            }
-            const timeoutId = window.setTimeout(onLoad, 500);
-            loadCleanup = () => {
-                window.removeEventListener('load', onLoad);
-                window.clearTimeout(timeoutId);
-            };
-        });
+        rafId = requestAnimationFrame(raf);
+
+        // Lenis watches the document size itself; one extra pass after load catches webfonts
+        const onLoad = () => {
+            if (!destroyed) lenis.resize();
+        };
+        if (document.readyState === 'complete') requestAnimationFrame(onLoad);
+        else window.addEventListener('load', onLoad);
+        const timeoutId = window.setTimeout(onLoad, 500);
 
         return () => {
-            loadCleanup?.();
+            window.removeEventListener('load', onLoad);
+            window.clearTimeout(timeoutId);
             destroyed = true;
             if (rafId != null) cancelAnimationFrame(rafId);
             if (lenisInstance) {

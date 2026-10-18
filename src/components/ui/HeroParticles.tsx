@@ -75,8 +75,13 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         resize();
+        // Keep the canvas box without measuring it on every scroll frame
+        let canvasBox = canvas.getBoundingClientRect();
+        let lastScrollY = window.scrollY;
         const ro = new ResizeObserver(() => {
             resize();
+            canvasBox = canvas.getBoundingClientRect();
+            lastScrollY = window.scrollY;
             if (reduceMotion) rafRef.current = requestAnimationFrame(draw);
         });
         ro.observe(parent);
@@ -87,12 +92,11 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
                 mouseRef.current = { x: -9999, y: -9999 };
                 return;
             }
-            const rect = canvas.getBoundingClientRect();
             const isInside =
-                x >= rect.left && x <= rect.right &&
-                y >= rect.top && y <= rect.bottom;
+                x >= canvasBox.left && x <= canvasBox.right &&
+                y >= canvasBox.top && y <= canvasBox.bottom;
             mouseRef.current = isInside
-                ? { x: x - rect.left, y: y - rect.top }
+                ? { x: x - canvasBox.left, y: y - canvasBox.top }
                 : { x: -9999, y: -9999 };
         };
 
@@ -104,7 +108,18 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             pointerClientRef.current.active = false;
             mouseRef.current = { x: -9999, y: -9999 };
         };
-        const onViewportChange = () => { syncPointerToCanvas(); };
+        const onScroll = () => {
+            const scrollY = window.scrollY;
+            const dy = scrollY - lastScrollY;
+            lastScrollY = scrollY;
+            canvasBox = new DOMRect(canvasBox.x, canvasBox.y - dy, canvasBox.width, canvasBox.height);
+            syncPointerToCanvas();
+        };
+        const onResize = () => {
+            canvasBox = canvas.getBoundingClientRect();
+            lastScrollY = window.scrollY;
+            syncPointerToCanvas();
+        };
 
         const onTouchMove = (e: TouchEvent) => {
             const rect = canvas.getBoundingClientRect();
@@ -121,8 +136,8 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
 
         window.addEventListener('mousemove', onMouseMove, { passive: true });
         window.addEventListener('mouseleave', onMouseLeaveWindow);
-        window.addEventListener('scroll', onViewportChange, { passive: true });
-        window.addEventListener('resize', onViewportChange, { passive: true });
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onResize, { passive: true });
         parent.addEventListener('touchmove', onTouchMove, { passive: true });
         parent.addEventListener('touchend', onTouchEnd, { passive: true });
 
@@ -212,8 +227,8 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             ro.disconnect();
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseleave', onMouseLeaveWindow);
-            window.removeEventListener('scroll', onViewportChange);
-            window.removeEventListener('resize', onViewportChange);
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onResize);
             parent.removeEventListener('touchmove', onTouchMove);
             parent.removeEventListener('touchend', onTouchEnd);
             touchLikeQuery.removeEventListener('change', onPointerCapabilityChange);

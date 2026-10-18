@@ -78,7 +78,9 @@
     outline-offset: 3px;
   }
 
-  html { scroll-behavior: smooth; }
+  /* Lenis animates the scroll on desktop. A smooth value here animates those
+     same jumps again, which stutters, worst on the first wheel of a page. */
+  html { scroll-behavior: auto; }
 
   /* Where the custom cursor runs, it becomes the scrollbar thumb at the right edge.
      The class is set before paint (root.tsx), so the page doesn't shift sideways. */
