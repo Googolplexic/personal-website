@@ -34,7 +34,7 @@ export function Heading({
                 headingStyles[level] || headingStyles[2],
                 className
             )}
-            style={{ color: 'var(--color-text-primary)' }}
+            style={{ color: 'var(--color-ink)' }}
             {...props}
         >
             {children}

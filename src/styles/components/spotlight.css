@@ -7,7 +7,7 @@
     z-index: 0;
     --spot-x: 50%;
     --spot-y: 50%;
-    --spot-size: 320px;
+    --spot-size: var(--spotlight-size);
     background: radial-gradient(
       circle at var(--spot-x) var(--spot-y),
       rgba(255, 248, 230, 0.09) 0%,
@@ -21,11 +21,11 @@
   }
   #global-spotlight.visible {
     opacity: 1;
-    --spot-size: 320px;
+    --spot-size: var(--spotlight-size);
   }
   #global-spotlight.expanding {
     opacity: 0;
-    --spot-size: 2000px;
+    --spot-size: var(--spotlight-flood);
   }
 
   #page-dim {
@@ -35,7 +35,7 @@
     z-index: 100;
     --spot-x: 50%;
     --spot-y: 50%;
-    --spot-size: 320px;
+    --spot-size: var(--spotlight-size);
     background: radial-gradient(
       circle at var(--spot-x) var(--spot-y),
       transparent 0%,
@@ -61,8 +61,8 @@
 
   .spotlight-item {
     position: relative;
-    transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
-                filter 0.6s cubic-bezier(.4,0,.2,1);
+    transition: opacity 0.6s var(--ease-gallery),
+                filter 0.6s var(--ease-gallery);
     z-index: 1;
   }
 

@@ -135,13 +135,13 @@ export function ContentList() {
     };
 
     if (loading) {
-        return <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Loading content</p>;
+        return <p className="text-sm text-ink-faint">Loading content</p>;
     }
 
     if (error) {
         return (
             <div>
-                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{error}</p>
+                <p className="text-sm text-ink-muted">{error}</p>
                 <button type="button" className="admin-link mt-4" onClick={refetchContent}>
                     Try again
                 </button>
@@ -150,7 +150,7 @@ export function ContentList() {
     }
 
     if (!content) {
-        return <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>No content found</p>;
+        return <p className="text-sm text-ink-faint">No content found</p>;
     }
 
     const sections: { label: string; items: ContentItem[]; type: 'project' | 'origami'; category?: string }[] = [
@@ -193,7 +193,7 @@ export function ContentList() {
                                 </button>
                             ))
                         ) : (
-                            <p className="text-sm py-4" style={{ color: 'var(--color-text-tertiary)' }}>None yet</p>
+                            <p className="text-sm py-4 text-ink-faint">None yet</p>
                         )}
                     </section>
                 ))}

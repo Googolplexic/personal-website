@@ -401,7 +401,7 @@ export function GroupedItemGrid({
         <section className={`mb-12 ${className}`}>
             <h2
                 className={title ? "gallery-heading text-2xl md:text-3xl mb-4" : "sr-only"}
-                style={title ? { color: 'var(--color-text-primary)' } : undefined}
+                style={title ? { color: 'var(--color-ink)' } : undefined}
             >
                 {sectionHeadingText}
             </h2>
@@ -468,18 +468,16 @@ export function GroupedItemGrid({
                                         className="flex items-center gap-3 mb-5 w-full text-left cursor-pointer bg-transparent border-none p-0 group/header"
                                     >
                                         <h2
-                                            className="text-sm font-body tracking-[0.15em] uppercase transition-colors group-hover/header:text-(--color-accent-text)!"
-                                            style={{ color: 'var(--color-text-secondary)' }}
+                                            className="text-sm font-body tracking-[0.15em] uppercase transition-colors group-hover/header:text-gold! text-ink-muted"
                                         >
                                             {group.label}
-                                            <span className="ml-2" style={{ color: 'var(--color-text-tertiary)' }}>({group.items.length})</span>
+                                            <span className="ml-2 text-ink-faint">({group.items.length})</span>
                                         </h2>
-                                        <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border)' }} />
+                                        <div className="flex-1 h-px bg-line" />
                                         <svg
                                             width="14" height="14" viewBox="0 0 24 24"
                                             fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                                            className={`transition-all duration-300 group-hover/header:text-(--color-accent-text)! ${isCollapsed ? '-rotate-90' : ''}`}
-                                            style={{ color: 'var(--color-text-tertiary)' }}
+                                            className={`transition-all duration-300 group-hover/header:text-gold! ${isCollapsed ? '-rotate-90' : ''} text-ink-faint`}
                                         >
                                             <path d="M6 9l6 6 6-6" />
                                         </svg>
@@ -499,7 +497,7 @@ export function GroupedItemGrid({
                         })}
                     </div>
                 ) : (
-                    <p className="text-center mt-8 font-body" style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="text-center mt-8 font-body text-ink-muted">
                         No items found matching your criteria.
                     </p>
                 )
@@ -511,7 +509,7 @@ export function GroupedItemGrid({
                     </MasonrySpotlightGrid>
 
                     {sortedAndFilteredItems.length === 0 && (
-                        <p className="text-center mt-8 font-body" style={{ color: 'var(--color-text-secondary)' }}>
+                        <p className="text-center mt-8 font-body text-ink-muted">
                             No items found matching your criteria.
                         </p>
                     )}

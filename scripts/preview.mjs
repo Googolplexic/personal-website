@@ -54,5 +54,6 @@ http.createServer((req, res) => {
   const status = file ? 200 : 404;
   const body = file || path.join(CLIENT, '404.html');
   res.writeHead(status, { 'Content-Type': TYPES[path.extname(body)] ?? 'application/octet-stream' });
-  fs.createReadStream(body).pipe(res);
+  // A rebuild can delete files mid-request; end the response instead of crashing
+  fs.createReadStream(body).on('error', () => res.end()).pipe(res);
 }).listen(PORT, () => console.log(`Previewing build/client at http://localhost:${PORT}`));

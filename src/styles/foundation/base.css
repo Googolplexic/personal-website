@@ -5,43 +5,22 @@
    ============================================================ */
 @layer base {
   :root {
-    /* --- Backgrounds --- */
-    --color-bg-primary: #0a0a0a;
-    --color-bg-secondary: #0f0f0f;
-    --color-bg-surface: #141414;
-    --color-bg-elevated: #1a1a1a;
+    /* Palette tokens live in foundation/tailwind.css (@theme) */
 
-    /* --- Text --- */
-    --color-text-primary: #e8e4de;
-    --color-text-secondary: #c5c0bb;
-    --color-text-tertiary: #a9a29b;
+    /* Translucent bars that float over the page */
+    --nav-bg: rgb(10 10 10 / 0.82);
+    --nav-border: rgb(255 255 255 / 0.08);
 
-    /* --- Borders --- */
-    --color-border: rgba(255, 255, 255, 0.10);
-    --color-border-hover: rgba(255, 255, 255, 0.18);
+    /* Spotlight cone radius, and the size it floods to on page change */
+    --spotlight-size: 320px;
+    --spotlight-flood: 2000px;
 
-    /* --- Accent (warm gold — restrained) --- */
-    --color-accent: #c9a84c;
-    --color-accent-soft: rgba(201, 168, 76, 0.06);
-    --color-accent-text: #c9a84c;
+    /* Space between masonry columns and between stacked cards */
+    --masonry-gap: 3.5rem;
 
-    /* --- Spotlight — warm cone of light --- */
-    --spotlight-warm: rgba(255, 248, 230, 0.05);
-    --spotlight-warm-strong: rgba(255, 248, 230, 0.10);
-
-    /* --- Nav --- */
-    --nav-bg: rgba(10, 10, 10, 0.82);
-    --nav-border: rgba(255, 255, 255, 0.08);
-
-    /* --- Frosted glass --- */
-    --frosted-bg: rgba(10, 10, 10, 0.85);
-
-    /* --- Misc --- */
-    --divider: rgba(255, 255, 255, 0.10);
-
-    background-color: #0a0a0a;
-    color: #e8e4de;
-    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, -apple-system, sans-serif;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-body);
     line-height: 1.65;
     font-weight: 400;
     font-synthesis: none;
@@ -52,8 +31,8 @@
 
   /* --- Typography defaults --- */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'EB Garamond', 'EB Garamond Fallback', 'Garamond', Georgia, serif;
-    color: var(--color-text-primary);
+    font-family: var(--font-heading);
+    color: var(--color-ink);
     font-weight: 400;
   }
 
@@ -62,7 +41,7 @@
   h3 { @apply text-xl md:text-2xl mb-3; }
 
   a {
-    color: var(--color-accent-text);
+    color: var(--color-gold);
     text-decoration: none;
     transition: color 0.3s ease, opacity 0.3s ease;
   }
@@ -72,8 +51,8 @@
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
-    background-color: var(--color-bg-primary);
-    color: var(--color-text-primary);
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
   }
 
   button {
@@ -81,11 +60,11 @@
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 400;
-    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
+    font-family: var(--font-body);
     cursor: pointer;
     transition: all 0.35s ease;
     background: transparent;
-    color: var(--color-text-primary);
+    color: var(--color-ink);
     /* Tailwind 4 border utilities set border-style through this variable;
        keep button borders hidden unless a style utility is applied. */
     --tw-border-style: none;

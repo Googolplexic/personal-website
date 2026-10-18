@@ -3,18 +3,18 @@
   .gallery-input {
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-line);
     border-radius: 0;
     padding: 0.5rem 0;
-    color: var(--color-text-primary);
+    color: var(--color-ink);
     transition: border-color 0.3s ease;
-    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.8rem;
     letter-spacing: 0.05em;
   }
 
   .gallery-input::placeholder {
-    color: var(--color-text-tertiary);
+    color: var(--color-ink-faint);
     font-size: 0.75rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -22,18 +22,18 @@
 
   .gallery-input:focus {
     outline: none;
-    border-bottom-color: var(--color-accent);
+    border-bottom-color: var(--color-gold);
   }
 
   .gallery-select {
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-line);
     border-radius: 0;
     padding: 0.5rem 0;
-    color: var(--color-text-secondary);
+    color: var(--color-ink-muted);
     transition: border-color 0.3s ease;
-    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.75rem;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -44,12 +44,12 @@
 
   .gallery-select:focus {
     outline: none;
-    border-bottom-color: var(--color-accent);
+    border-bottom-color: var(--color-gold);
   }
 
   .gallery-select option {
     background-color: #141414;
-    color: var(--color-text-primary);
+    color: var(--color-ink);
   }
 
   .admin-input,
@@ -59,11 +59,11 @@
     max-width: 100%;
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-line);
     border-radius: 0;
     padding: 0.55rem 0;
-    color: var(--color-text-primary);
-    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
+    color: var(--color-ink);
+    font-family: var(--font-body);
     font-size: 0.9rem;
     transition: border-color 0.3s ease;
   }
@@ -71,22 +71,22 @@
   textarea.admin-input {
     min-height: 9rem;
     resize: vertical;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-line);
     padding: 0.75rem;
   }
 
   .admin-input::placeholder {
-    color: var(--color-text-tertiary);
+    color: var(--color-ink-faint);
   }
 
   .admin-input:focus,
   .admin-select:focus {
     outline: none;
-    border-bottom-color: var(--color-accent);
+    border-bottom-color: var(--color-gold);
   }
 
   textarea.admin-input:focus {
-    border-color: var(--color-accent);
+    border-color: var(--color-gold);
   }
 
   .admin-input:disabled {
@@ -100,7 +100,7 @@
 
   .admin-select option {
     background-color: #141414;
-    color: var(--color-text-primary);
+    color: var(--color-ink);
   }
 
   .admin-page {
@@ -111,7 +111,7 @@
 
   .admin-title {
     margin: 0;
-    font-family: 'EB Garamond', 'EB Garamond Fallback', Georgia, serif;
+    font-family: var(--font-heading);
     font-size: clamp(2rem, 6vw, 3rem);
     font-weight: 400;
     letter-spacing: -0.01em;
@@ -123,7 +123,7 @@
     gap: 1.25rem;
     overflow-x: auto;
     margin: 1.75rem 0 2rem;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-line);
   }
 
   .admin-tab,
@@ -131,7 +131,7 @@
   .admin-row {
     background: none;
     border: none;
-    font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif;
+    font-family: var(--font-body);
     cursor: pointer;
   }
 
@@ -139,21 +139,21 @@
     flex: 0 0 auto;
     padding: 0.85rem 0;
     border-bottom: 1px solid transparent;
-    color: var(--color-text-tertiary);
+    color: var(--color-ink-faint);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     font-size: 0.68rem;
   }
 
   .admin-tab[aria-selected='true'] {
-    color: var(--color-accent);
-    border-bottom-color: var(--color-accent);
+    color: var(--color-gold);
+    border-bottom-color: var(--color-gold);
   }
 
   .admin-link {
-    border-bottom: 1px solid var(--color-accent);
+    border-bottom: 1px solid var(--color-gold);
     padding: 0.15rem 0;
-    color: var(--color-text-primary);
+    color: var(--color-ink);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     font-size: 0.68rem;
@@ -172,8 +172,8 @@
     width: 100%;
     min-height: 3rem;
     padding: 0.85rem 0;
-    border-bottom: 1px solid var(--color-border);
-    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-ink);
     text-align: left;
     font-size: 1rem;
   }
@@ -196,7 +196,7 @@
     width: 100%;
     height: 100%;
     min-height: 0;
-    background: var(--color-bg-primary);
+    background: var(--color-canvas);
   }
 
   .admin-split {
@@ -221,7 +221,7 @@
     .admin-modal-panel {
       width: min(72rem, 100%);
       height: min(90vh, 900px);
-      border: 1px solid var(--color-border);
+      border: 1px solid var(--color-line);
     }
 
     .admin-split {

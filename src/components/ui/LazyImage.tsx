@@ -71,7 +71,7 @@ export function LazyImage({
                     height={height}
                 />
             ) : hasError ? (
-                <div className="absolute inset-0 flex items-center justify-center text-(--color-text-tertiary) text-sm">
+                <div className="absolute inset-0 flex items-center justify-center text-ink-faint text-sm">
                     Failed to load
                 </div>
             ) : null}

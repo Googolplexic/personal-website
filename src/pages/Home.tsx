@@ -139,20 +139,19 @@ export function Home({ featured, featuredSlugs }: HomeProps) {
                 <div className="relative z-10 text-center max-w-3xl mx-auto">
                     <p className="gallery-overline mb-6 animate-fade-in opacity-0">Portfolio 2026</p>
 
-                    <h1 ref={nameRef} className="gallery-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-8"
-                        style={{ color: 'var(--color-text-primary)' }}>
+                    <h1 ref={nameRef} className="gallery-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-8 text-ink">
                         Coleman Lai
                     </h1>
 
-                    <p className="text-lg sm:text-xl md:text-2xl font-heading italic tracking-wide mb-6 animate-fade-in opacity-0"
-                        style={{ color: 'var(--color-text-secondary)', animationDelay: '0.1s' }}>
+                    <p className="text-lg sm:text-xl md:text-2xl font-heading italic tracking-wide mb-6 animate-fade-in opacity-0 text-ink-muted"
+                        style={{ animationDelay: '0.1s' }}>
                         My gallery of code and paper.
                     </p>
 
                     <div className="gallery-divider mb-6 animate-fade-in opacity-0" style={{ animationDelay: '0.2s' }} />
 
-                    <p className="text-xs tracking-[0.2em] uppercase font-body animate-fade-in opacity-0"
-                        style={{ color: 'var(--color-text-tertiary)', animationDelay: '0.3s' }}>
+                    <p className="text-xs tracking-[0.2em] uppercase font-body animate-fade-in opacity-0 text-ink-faint"
+                        style={{ animationDelay: '0.3s' }}>
                         Computing Science &nbsp;<Link to="/admin" className="no-underline! cursor-default" style={{ color: 'inherit', opacity: 1 }}>·</Link>&nbsp; Origami Artist
 
                     </p>
@@ -161,8 +160,7 @@ export function Home({ featured, featuredSlugs }: HomeProps) {
                 {/* Scroll indicator */}
                 <button
                     onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="absolute bottom-10 left-1/2 scroll-indicator cursor-pointer bg-transparent border-none p-2"
-                    style={{ color: 'var(--color-accent)' }}
+                    className="absolute bottom-10 left-1/2 scroll-indicator cursor-pointer bg-transparent border-none p-2 text-gold"
                     aria-label="Scroll to content"
                 >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -203,12 +201,10 @@ export function Home({ featured, featuredSlugs }: HomeProps) {
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="text-center mb-14">
                         <p className="gallery-overline mb-4">The Gallery</p>
-                        <h2 className="gallery-heading text-3xl md:text-4xl mb-2"
-                            style={{ color: 'var(--color-text-primary)' }}>
+                        <h2 className="gallery-heading text-3xl md:text-4xl mb-2 text-ink">
                             Featured Works
                         </h2>
-                        <p className="text-sm font-heading italic"
-                            style={{ color: 'var(--color-text-secondary)' }}>
+                        <p className="text-sm font-heading italic text-ink-muted">
                             A curated selection of my proudest works. Updated from time to time.
                         </p>
                     </div>

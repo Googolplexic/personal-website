@@ -19,7 +19,7 @@ const SOCIAL_LINKS = [
     { label: 'Instagram', href: 'https://www.instagram.com/12googolplex', icon: <FaInstagram size={15} /> },
 ];
 
-const linkClass = `text-xs tracking-[0.15em] uppercase font-body ${FOOTER_HOVER}`;
+const linkClass = `text-xs tracking-[0.15em] uppercase font-body text-ink-muted ${FOOTER_HOVER}`;
 
 export function Footer() {
     return (
@@ -36,7 +36,6 @@ export function Footer() {
                                 to={link.to}
                                 onClick={() => window.scrollTo(0, 0)}
                                 className={linkClass}
-                                style={{ color: 'var(--color-text-secondary)' }}
                             >
                                 {link.label}
                             </RouterLink>
@@ -47,7 +46,6 @@ export function Footer() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={linkClass}
-                                style={{ color: 'var(--color-text-secondary)' }}
                             >
                                 {link.label}
                             </a>
@@ -63,16 +61,14 @@ export function Footer() {
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={link.label}
-                            className={FOOTER_HOVER}
-                            style={{ color: 'var(--color-text-secondary)' }}
+                            className={`text-ink-muted ${FOOTER_HOVER}`}
                         >
                             {link.icon}
                         </a>
                     ))}
                 </div>
 
-                <div className="text-xs font-body uppercase tracking-[0.15em] flex flex-col items-center gap-2"
-                    style={{ color: 'var(--color-text-secondary)' }}>
+                <div className="text-xs font-body uppercase tracking-[0.15em] flex flex-col items-center gap-2 text-ink-muted">
                     <SpotlightToggle />
                     <a
                         href="https://github.com/Googolplexic/personal-website/blob/main/LICENSE"

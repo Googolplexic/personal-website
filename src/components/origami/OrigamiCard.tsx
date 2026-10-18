@@ -60,25 +60,21 @@ export function OrigamiCard({ slug, title, description, modelImages, date, desig
                     <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-2" />
                 )}
 
-                <h3 className="gallery-heading text-lg md:text-xl mb-1 transition-colors duration-300 group-hover:text-(--color-accent-text)!"
-                    style={{ color: 'var(--color-text-primary)' }}>
+                <h3 className="gallery-heading text-lg md:text-xl mb-1 transition-colors duration-300 group-hover:text-gold! text-ink">
                     <HighlightedText text={title} searchTerm={searchTerm} />
                 </h3>
                 {designer && (
-                    <p className="text-xs tracking-wide mb-1 font-body"
-                        style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="text-xs tracking-wide mb-1 font-body text-ink-muted">
                         <HighlightedText text={designer} searchTerm={searchTerm} />
                     </p>
                 )}
                 {date && (
-                    <p className="text-xs tracking-[0.2em] uppercase mb-2 font-body"
-                        style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="text-xs tracking-[0.2em] uppercase mb-2 font-body text-ink-muted">
                         {date}
                     </p>
                 )}
                 {description && (
-                    <p className="text-sm leading-relaxed mb-4 font-body"
-                        style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="text-sm leading-relaxed mb-4 font-body text-ink-muted">
                         <HighlightedText text={description} searchTerm={searchTerm} />
                     </p>
                 )}

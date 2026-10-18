@@ -75,8 +75,8 @@ export function MultiSelect({
     const modeBtn = (mode: 'and' | 'or') => cn(
         'px-2 py-0.5 text-xs font-body tracking-[0.12em] uppercase transition-all duration-200 cursor-pointer bg-transparent border-t-0 border-x-0',
         filterMode === mode
-            ? 'border-b border-b-(--color-accent) opacity-100'
-            : 'border-b border-b-transparent opacity-60 hover:opacity-85 hover:border-b-(--color-accent-text)'
+            ? 'border-b border-b-gold opacity-100'
+            : 'border-b border-b-transparent opacity-60 hover:opacity-85 hover:border-b-gold'
     );
 
     return (
@@ -87,14 +87,13 @@ export function MultiSelect({
                 aria-label={ariaLabel ? `${triggerLabel}, ${ariaLabel}` : triggerLabel}
                 onClick={() => setOpen(v => !v)}
                 className="gallery-select w-full text-left flex items-center justify-between gap-2 cursor-pointer"
-                style={{ color: hasActiveFilter ? 'var(--color-accent-text)' : undefined }}
+                style={{ color: hasActiveFilter ? 'var(--color-gold)' : undefined }}
             >
                 <span className="truncate">{triggerLabel}</span>
                 <svg
                     width="10" height="10" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-                    className={`shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-                    style={{ color: 'var(--color-text-tertiary)' }}
+                    className={`shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''} text-ink-faint`}
                 >
                     <path d="M6 9l6 6 6-6" />
                 </svg>
@@ -105,8 +104,8 @@ export function MultiSelect({
                 <div
                     className="absolute z-50 top-full left-0 mt-1 py-2"
                     style={{
-                        background: 'var(--color-bg-elevated)',
-                        border: '1px solid var(--color-border)',
+                        background: 'var(--color-surface-raised)',
+                        border: '1px solid var(--color-line)',
                         minWidth: '180px',
                         width: 'max-content',
                         maxWidth: '280px',
@@ -115,21 +114,19 @@ export function MultiSelect({
                     {/* AND / OR toggle row — only shown for multi-select */}
                     {!singleSelect && onFilterModeChange && (
                         <div className="flex items-center justify-between px-3 pb-2 mb-1"
-                            style={{ borderBottom: '1px solid var(--color-border)' }}>
-                            <span className="text-xs font-body tracking-widest uppercase"
-                                style={{ color: 'var(--color-text-tertiary)' }}>
+                            style={{ borderBottom: '1px solid var(--color-line)' }}>
+                            <span className="text-xs font-body tracking-widest uppercase text-ink-faint">
                                 Match
                             </span>
                             <div className="flex gap-0.5">
                                 <button type="button" className={modeBtn('or')}
-                                    style={{ color: filterMode === 'or' ? 'var(--color-accent-text)' : 'var(--color-text-secondary)' }}
+                                    style={{ color: filterMode === 'or' ? 'var(--color-gold)' : 'var(--color-ink-muted)' }}
                                     onClick={() => onFilterModeChange('or')}>
                                     Any
                                 </button>
-                                <span className="text-xs font-body self-center px-0.5"
-                                    style={{ color: 'var(--color-text-tertiary)' }}>·</span>
+                                <span className="text-xs font-body self-center px-0.5 text-ink-faint">·</span>
                                 <button type="button" className={modeBtn('and')}
-                                    style={{ color: filterMode === 'and' ? 'var(--color-accent-text)' : 'var(--color-text-secondary)' }}
+                                    style={{ color: filterMode === 'and' ? 'var(--color-gold)' : 'var(--color-ink-muted)' }}
                                     onClick={() => onFilterModeChange('and')}>
                                     All
                                 </button>
@@ -153,10 +150,10 @@ export function MultiSelect({
                                     className={cn(
                                         'w-full text-left px-2 py-1.5 text-xs font-body tracking-widest uppercase transition-all duration-200 cursor-pointer bg-transparent border-t-0 border-x-0',
                                         active
-                                            ? 'border-b border-b-(--color-accent) opacity-100'
-                                            : 'border-b border-b-transparent opacity-70 hover:opacity-90 hover:border-b-(--color-accent-text)'
+                                            ? 'border-b border-b-gold opacity-100'
+                                            : 'border-b border-b-transparent opacity-70 hover:opacity-90 hover:border-b-gold'
                                     )}
-                                    style={{ color: active ? 'var(--color-accent-text)' : 'var(--color-text-secondary)' }}
+                                    style={{ color: active ? 'var(--color-gold)' : 'var(--color-ink-muted)' }}
                                 >
                                     {getLabel(option)}
                                 </button>
@@ -167,14 +164,13 @@ export function MultiSelect({
                     {/* Clear footer — only shown for multi-select with active filters */}
                     {hasActiveFilter && (
                         <div className="flex justify-end px-3 pt-2 mt-1"
-                            style={{ borderTop: '1px solid var(--color-border)' }}>
+                            style={{ borderTop: '1px solid var(--color-line)' }}>
                             <button
                                 type="button"
                                 onClick={() => onChange([])}
-                                className="text-xs font-body tracking-widest uppercase transition-colors cursor-pointer bg-transparent border-none p-0"
-                                style={{ color: 'var(--color-text-tertiary)' }}
-                                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-                                onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
+                                className="text-xs font-body tracking-widest uppercase transition-colors cursor-pointer bg-transparent border-none p-0 text-ink-faint"
+                                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
+                                onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-faint)')}
                             >
                                 Clear
                             </button>

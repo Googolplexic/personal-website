@@ -5,12 +5,10 @@ export function About() {
         <div>
             <p className="gallery-overline mb-6">An Introduction</p>
             <div className="space-y-5">
-                <p className="text-base md:text-lg leading-relaxed font-body"
-                    style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-base md:text-lg leading-relaxed font-body text-ink-muted">
                     Hi there! I'm Coleman, a Computing Science student at Simon Fraser University. I love solving problems, whether it's for coding, math, or just general life: always looking for ways to optimize, automate, or simplify things. The ultimate goal is to build intuitive user interfaces and efficient solutions that make life easier, for both me and you.
                 </p>
-                <p className="text-base md:text-lg leading-relaxed font-body"
-                    style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-base md:text-lg leading-relaxed font-body text-ink-muted">
                     This site showcases my software development projects and all of my origami work. Thematically, I wanted this site to appear like a gallery or a theatre, hence the spotlight effects and the dark and gold colour scheme. (If you don't see spotlights, try taking a look on desktop! There's a bit more cool stuff there). Take a look at my projects on{' '}
                     <Link href="https://github.com/Googolplexic" target="_blank" rel="noopener">
                         GitHub
@@ -20,8 +18,7 @@ export function About() {
                         software portfolio
                     </Link>. Any feedback is welcome!
                 </p>
-                <p className="text-base md:text-lg leading-relaxed font-body"
-                    style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-base md:text-lg leading-relaxed font-body text-ink-muted">
                     Beyond coding and academic work, I design and fold{' '}
                     <Link to="/origami" onClick={() => window.scrollTo(0, 0)}>
                         origami models

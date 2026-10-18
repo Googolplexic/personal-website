@@ -59,23 +59,20 @@ export function ProjectCard({ basePath = '/portfolio', searchTerm = '', category
                     <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-2" />
                 )}
 
-                <h3 className="gallery-heading text-lg md:text-xl mb-1 transition-colors duration-300 group-hover:text-(--color-accent-text)!"
-                    style={{ color: 'var(--color-text-primary)' }}>
+                <h3 className="gallery-heading text-lg md:text-xl mb-1 transition-colors duration-300 group-hover:text-gold! text-ink">
                     <HighlightedText text={props.title} searchTerm={searchTerm} />
                 </h3>
 
-                <p className="text-xs tracking-[0.2em] uppercase mb-3 font-body"
-                    style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-xs tracking-[0.2em] uppercase mb-3 font-body text-ink-muted">
                     {props.startDate === props.endDate ? props.startDate : `${props.startDate} – ${props.endDate || 'Present'}`}
                 </p>
 
-                <p className="text-sm leading-relaxed mb-4 font-body"
-                    style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-sm leading-relaxed mb-4 font-body text-ink-muted">
                     <HighlightedText text={props.summary} searchTerm={searchTerm} />
                 </p>
 
                 <div className="mt-auto space-y-3">
-                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-body" style={{ color: 'var(--color-text-secondary)' }}>
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-body text-ink-muted">
                         {props.technologies.map((tech, i) => (
                             <span key={i}>
                                 <HighlightedText text={tech} searchTerm={searchTerm} />

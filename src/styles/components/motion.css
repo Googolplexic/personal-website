@@ -6,7 +6,7 @@
   }
 
   .page-enter {
-    animation: page-fade-in 0.35s cubic-bezier(.4,0,.2,1) both;
+    animation: page-fade-in 0.35s var(--ease-gallery) both;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -22,13 +22,13 @@
   .stagger-visible {
     opacity: 1 !important;
     transform: scale(1) !important;
-    transition: opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1) !important;
+    transition: opacity 0.5s var(--ease-gallery), transform 0.5s var(--ease-gallery) !important;
   }
 
   .scroll-reveal {
     opacity: 0;
     transform: translateY(28px);
-    transition: opacity 0.9s cubic-bezier(.4,0,.2,1), transform 0.9s cubic-bezier(.4,0,.2,1);
+    transition: opacity 0.9s var(--ease-gallery), transform 0.9s var(--ease-gallery);
   }
 
   .scroll-reveal.revealed {

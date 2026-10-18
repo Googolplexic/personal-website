@@ -43,9 +43,9 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
                 <button
                     onClick={() => navigate(backDestination)}
                     className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300"
-                    style={{ color: 'var(--color-text-tertiary)', background: 'none', border: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
+                    style={{ color: 'var(--color-ink-faint)', background: 'none', border: 'none' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-faint)')}
                 >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                         <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -56,8 +56,7 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
                 {/* Title */}
                 <div className="mb-10">
                     <span className="exhibit-label mb-4 inline-flex">Exhibit {exhibitNumber}</span>
-                    <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4 mt-3"
-                        style={{ color: 'var(--color-text-primary)' }}>
+                    <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4 mt-3 text-ink">
                         <HighlightedText text={origami.title} searchTerm={searchTerm} />
                     </h1>
                 </div>
@@ -73,21 +72,19 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
 
                 {/* Horizontal metadata row */}
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 pb-8 mb-8"
-                    style={{ borderBottom: '1px solid var(--divider)' }}>
-                    <p className="text-xs tracking-[0.2em] uppercase font-body"
-                        style={{ color: 'var(--color-text-secondary)' }}>
+                    style={{ borderBottom: '1px solid var(--color-line)' }}>
+                    <p className="text-xs tracking-[0.2em] uppercase font-body text-ink-muted">
                         <HighlightedText text={origami.date} searchTerm={searchTerm} />
                     </p>
                     {origami.designer && (
                         <>
-                            <span className="text-xs font-body" style={{ color: 'var(--color-text-tertiary)' }}>·</span>
-                            <p className="text-xs tracking-wide font-body"
-                                style={{ color: 'var(--color-text-secondary)' }}>
+                            <span className="text-xs font-body text-ink-faint">·</span>
+                            <p className="text-xs tracking-wide font-body text-ink-muted">
                                 <HighlightedText text={origami.designer} searchTerm={searchTerm} />
                             </p>
                         </>
                     )}
-                    <span className="text-xs font-body" style={{ color: 'var(--color-text-tertiary)' }}>·</span>
+                    <span className="text-xs font-body text-ink-faint">·</span>
                     <CategoryLabel label={categoryLabel} color={categoryColor} />
                     <span className="ml-auto" />
                     <ShareButton url={shareUrl} title={origami.title} description={origami.description} />
@@ -95,8 +92,7 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
 
                 {/* Description */}
                 {origami.description && (
-                    <p className="text-base leading-relaxed font-body mb-12"
-                        style={{ color: 'var(--color-text-primary)' }}>
+                    <p className="text-base leading-relaxed font-body mb-12 text-ink">
                         <HighlightedText text={origami.description} searchTerm={searchTerm} />
                     </p>
                 )}
@@ -130,7 +126,7 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
 
                 {/* Next origami */}
                 {nextOrigami && (
-                    <div className="pt-10" style={{ borderTop: '1px solid var(--divider)' }}>
+                    <div className="pt-10" style={{ borderTop: '1px solid var(--color-line)' }}>
                         <p className="gallery-overline mb-5">Next Exhibit</p>
                         <button
                             onClick={() => { navigate(`/origami/${nextOrigami.slug}`, { state: { from: backTarget } }); window.scrollTo(0, 0); }}
@@ -139,7 +135,7 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
                             {/* Thumbnail */}
                             {nextOrigami.image && (
                                 <div className="w-16 h-16 shrink-0 overflow-hidden"
-                                    style={{ border: '1px solid var(--color-border)' }}>
+                                    style={{ border: '1px solid var(--color-line)' }}>
                                     <img
                                         src={nextOrigami.image}
                                         alt={nextOrigami.title}
@@ -150,18 +146,16 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
                             )}
                             <div className="flex-1 min-w-0">
                                 <span className="exhibit-label text-xs mb-1 block">{nextOrigami.exhibit}</span>
-                                <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300"
-                                    style={{ color: 'var(--color-text-primary)' }}
-                                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-                                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-primary)')}>
+                                <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300 text-ink"
+                                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
+                                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink)')}>
                                     {nextOrigami.title}
                                 </span>
-                                <span className="text-xs font-body tracking-widest"
-                                    style={{ color: 'var(--color-text-tertiary)' }}>
+                                <span className="text-xs font-body tracking-widest text-ink-faint">
                                     {nextOrigami.date}
                                 </span>
                             </div>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" strokeWidth="1.5" strokeLinecap="round"
                                 className="shrink-0 transition-transform duration-300 group-hover:translate-x-1">
                                 <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
