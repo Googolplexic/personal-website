@@ -90,21 +90,23 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Fallback metrics so the swap from system fonts doesn't shift layout */
+/* Fallback metrics so the swap from system fonts doesn't shift layout.
+   size-adjust matches text width; the overrides are the web font's ascent and
+   descent divided by size-adjust, since the browser scales them by it. */
 @font-face {
   font-family: 'PT Sans Fallback';
   src: local('Arial');
-  size-adjust: 98.6%;
-  ascent-override: 101%;
-  descent-override: 28%;
+  size-adjust: 95%;
+  ascent-override: 107.2%;
+  descent-override: 29.1%;
   line-gap-override: 0%;
 }
 
 @font-face {
   font-family: 'EB Garamond Fallback';
   src: local('Georgia');
-  size-adjust: 96%;
-  ascent-override: 95%;
-  descent-override: 25%;
+  size-adjust: 85.5%;
+  ascent-override: 117.8%;
+  descent-override: 34.9%;
   line-gap-override: 0%;
 }

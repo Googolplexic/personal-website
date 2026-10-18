@@ -15,9 +15,10 @@ interface ExhibitGridProps {
     /** Items shown at once instead of staggering in, so the first row isn't held back */
     skipCount?: number;
     maxColumns?: 2 | 3;
+    titleAs?: 'h2' | 'h3';
 }
 
-export function ExhibitGrid({ items, searchTerm, showCategory = false, priority = true, skipCount = 1, maxColumns }: ExhibitGridProps) {
+export function ExhibitGrid({ items, searchTerm, showCategory = false, priority = true, skipCount = 1, maxColumns, titleAs }: ExhibitGridProps) {
     if (items.length === 0) {
         return (
             <p className="mt-8 font-body text-ink-muted">
@@ -35,6 +36,7 @@ export function ExhibitGrid({ items, searchTerm, showCategory = false, priority 
                     searchTerm={searchTerm}
                     categoryLabel={showCategory ? CATEGORY_LABELS[itemCategory(item)] : undefined}
                     priority={priority && i < PRIORITY_IMAGE_COUNT}
+                    titleAs={titleAs}
                 />
             ))}
         </MasonrySpotlightGrid>
