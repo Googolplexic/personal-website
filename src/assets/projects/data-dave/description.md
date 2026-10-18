@@ -39,4 +39,4 @@ The tool uses a fine-tuned function calling system to figure out what kind of an
 
 You can also ask for visualizations in natural language and tweak them through follow-up messages. The frontend is built with React and TypeScript, the backend runs on Flask, and the two communicate over WebSocket. Assistant responses render as Markdown for clean formatting.
 
-Alternative name: Data Daddy
+(Alternative name: Data Daddy)
