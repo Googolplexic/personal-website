@@ -132,27 +132,6 @@
     margin: 0 auto;
   }
 
-  .exhibit-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-family: var(--font-body);
-    font-size: 0.6rem;
-    font-weight: 400;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--color-gold);
-  }
-
-  .exhibit-label::before,
-  .exhibit-label::after {
-    content: '';
-    width: 24px;
-    height: 1px;
-    background: var(--color-gold);
-    opacity: 0.4;
-  }
-
   .search-highlight {
     background: rgba(201, 168, 76, 0.6);
     color: #111;

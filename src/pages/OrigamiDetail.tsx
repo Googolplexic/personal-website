@@ -1,14 +1,17 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { lazy, Suspense, useState } from 'react';
+import { DetailLayout, DetailList } from '../components/detail/DetailLayout';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
+import { HighlightedText } from '../components/ui/HighlightedText';
 import { Lightbox } from '../components/ui/Lightbox';
 import { ShareButton } from '../components/ui/ShareButton';
-import { CategoryLabel } from '../components/ui/CategoryLabel';
-import { sizeForImage } from '../utils/imageSize';
-import { HighlightedText } from '../components/ui/HighlightedText';
 import { NextExhibit, OrigamiProps } from '../types';
+import { CATEGORY_LABELS } from '../utils/galleryFilters';
+import { sizeForImage } from '../utils/imageSize';
 import { BASE_URL } from '../utils/seo';
-import { useClientLocation, useClientSearchParams } from '../utils/useHydrated';
+import { useClientSearchParams } from '../utils/useHydrated';
+
+// Most pieces have no writeup, so the markdown renderer loads only for the ones that do
+const MarkdownBody = lazy(() => import('../components/ui/MarkdownBody').then(module => ({ default: module.MarkdownBody })));
 
 interface OrigamiDetailProps {
     origami: OrigamiProps;
@@ -16,146 +19,63 @@ interface OrigamiDetailProps {
     next: NextExhibit;
 }
 
-export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOrigami }: OrigamiDetailProps) {
+export function OrigamiDetail({ origami, exhibit, next }: OrigamiDetailProps) {
     const [searchParams] = useClientSearchParams();
-    const navigate = useNavigate();
-    const location = useClientLocation();
-    const { state } = location;
     const searchTerm = searchParams.get('search') || '';
     const [cpLightboxOpen, setCpLightboxOpen] = useState(false);
-
-    // Back destination: use state.from if it's a known gallery, else canonical /origami
-    const from = (state as { from?: string } | null)?.from;
-    const backTarget = (from === '/origami' || from === '/portfolio') ? from : '/origami';
-    const backLabel = from === '/' ? 'To Gallery' : 'Back to Gallery';
-    const backDestination = location.search ? `${backTarget}${location.search}` : backTarget;
-
-    const shareUrl = `${BASE_URL}/origami/${origami.slug}`;
-    const categoryLabel = origami.category === 'my-designs' ? 'My Designs' : 'Other Designs';
     const cpFull = origami.creasePatternFull || origami.creasePattern;
 
     return (
-        <div className="min-h-screen">
-            <div className="max-w-4xl mx-auto px-6 pt-28 pb-20">
-                {/* Back navigation */}
-                <button
-                    onClick={() => navigate(backDestination)}
-                    className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300 text-ink-faint hover:text-gold"
-                >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                        <path d="M19 12H5M12 19l-7-7 7-7" />
-                    </svg>
-                    {backLabel}
-                </button>
+        <DetailLayout
+            section="/origami"
+            exhibit={exhibit}
+            title={<HighlightedText text={origami.title} searchTerm={searchTerm} />}
+            lead={origami.description && <HighlightedText text={origami.description} searchTerm={searchTerm} />}
+            next={next}
+            details={
+                <>
+                    <DetailList items={[
+                        { label: 'Date', value: <span className="font-heading italic text-base text-ink">{origami.date}</span> },
+                        ...(origami.designer ? [{ label: 'Designer', value: <HighlightedText text={origami.designer} searchTerm={searchTerm} /> }] : []),
+                        { label: 'Collection', value: CATEGORY_LABELS[origami.category] },
+                    ]} />
+                    <ShareButton className="self-start" url={`${BASE_URL}/origami/${origami.slug}`} title={origami.title} description={origami.description} />
+                </>
+            }
+        >
+            <ProjectImageCarousel images={origami.modelImages} imagesFull={origami.modelImagesFull} title={origami.title} />
 
-                {/* Title */}
-                <div className="mb-10">
-                    <span className="exhibit-label mb-4 inline-flex">Exhibit {exhibitNumber}</span>
-                    <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4 mt-3 text-ink">
-                        <HighlightedText text={origami.title} searchTerm={searchTerm} />
-                    </h1>
-                </div>
+            {origami.writeup && (
+                <Suspense fallback={null}>
+                    <MarkdownBody source={origami.writeup} searchTerm={searchTerm} />
+                </Suspense>
+            )}
 
-                {/* Model images carousel */}
-                <div className="mb-8 overflow-hidden">
-                    <ProjectImageCarousel
-                        images={origami.modelImages}
-                        imagesFull={origami.modelImagesFull}
-                        title={origami.title}
-                    />
-                </div>
-
-                {/* Horizontal metadata row */}
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 pb-8 mb-8"
-                    style={{ borderBottom: '1px solid var(--color-line)' }}>
-                    <p className="text-xs tracking-[0.2em] uppercase font-body text-ink-muted">
-                        <HighlightedText text={origami.date} searchTerm={searchTerm} />
-                    </p>
-                    {origami.designer && (
-                        <>
-                            <span className="text-xs font-body text-ink-faint">·</span>
-                            <p className="text-xs tracking-wide font-body text-ink-muted">
-                                <HighlightedText text={origami.designer} searchTerm={searchTerm} />
-                            </p>
-                        </>
+            {origami.creasePattern && (
+                <section>
+                    <h2 className="gallery-overline mt-0 mb-6">Crease Pattern</h2>
+                    <div className="max-w-sm">
+                        <img
+                            src={origami.creasePattern}
+                            alt={`${origami.title} crease pattern`}
+                            className="w-full h-auto object-contain cursor-zoom-in"
+                            onClick={() => setCpLightboxOpen(true)}
+                            loading="lazy"
+                            title="Click to enlarge"
+                            width={sizeForImage(origami.creasePattern)?.width}
+                            height={sizeForImage(origami.creasePattern)?.height}
+                        />
+                    </div>
+                    {cpLightboxOpen && cpFull && (
+                        <Lightbox
+                            images={[cpFull]}
+                            initialIndex={0}
+                            alt="Crease Pattern"
+                            onClose={() => setCpLightboxOpen(false)}
+                        />
                     )}
-                    <span className="text-xs font-body text-ink-faint">·</span>
-                    <CategoryLabel label={categoryLabel} />
-                    <span className="ml-auto" />
-                    <ShareButton url={shareUrl} title={origami.title} description={origami.description} />
-                </div>
-
-                {/* Description */}
-                {origami.description && (
-                    <p className="text-base leading-relaxed font-body mb-12 text-ink">
-                        <HighlightedText text={origami.description} searchTerm={searchTerm} />
-                    </p>
-                )}
-
-                {/* Crease pattern */}
-                {origami.creasePattern && (
-                    <div className="mb-16">
-                        <p className="gallery-overline mb-6">Crease Pattern</p>
-                        <div className="max-w-sm">
-                            <img
-                                src={origami.creasePattern}
-                                alt={`${origami.title} crease pattern`}
-                                className="w-full h-auto object-contain cursor-zoom-in"
-                                onClick={() => setCpLightboxOpen(true)}
-                                loading="lazy"
-                                title="Click to enlarge"
-                                width={sizeForImage(origami.creasePattern)?.width}
-                                height={sizeForImage(origami.creasePattern)?.height}
-                            />
-                        </div>
-                        {cpLightboxOpen && cpFull && (
-                            <Lightbox
-                                images={[cpFull]}
-                                initialIndex={0}
-                                alt="Crease Pattern"
-                                onClose={() => setCpLightboxOpen(false)}
-                            />
-                        )}
-                    </div>
-                )}
-
-                {/* Next origami */}
-                {nextOrigami && (
-                    <div className="pt-10" style={{ borderTop: '1px solid var(--color-line)' }}>
-                        <p className="gallery-overline mb-5">Next Exhibit</p>
-                        <button
-                            onClick={() => { navigate(`/origami/${nextOrigami.slug}`, { state: { from: backTarget } }); window.scrollTo(0, 0); }}
-                            className="group flex items-center gap-5 w-full text-left p-0 bg-transparent border-none cursor-pointer"
-                        >
-                            {/* Thumbnail */}
-                            {nextOrigami.image && (
-                                <div className="w-16 h-16 shrink-0 overflow-hidden"
-                                    style={{ border: '1px solid var(--color-line)' }}>
-                                    <img
-                                        src={nextOrigami.image}
-                                        alt={nextOrigami.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                        loading="lazy"
-                                    />
-                                </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                                <span className="exhibit-label text-xs mb-1 block">{nextOrigami.exhibit}</span>
-                                <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300 text-ink group-hover:text-gold">
-                                    {nextOrigami.title}
-                                </span>
-                                <span className="text-xs font-body tracking-widest text-ink-faint">
-                                    {nextOrigami.date}
-                                </span>
-                            </div>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" strokeWidth="1.5" strokeLinecap="round"
-                                className="shrink-0 transition-transform duration-300 group-hover:translate-x-1">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    </div>
-                )}
-            </div>
-        </div>
+                </section>
+            )}
+        </DetailLayout>
     );
 }

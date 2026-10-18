@@ -4,6 +4,9 @@ import { cn } from '../../utils/styles';
 import { Lightbox } from '../ui/Lightbox';
 import { sizeForImage } from '../../utils/imageSize';
 
+// Hidden until the carousel is hovered on mouse devices; always shown on touch, where there is no hover
+const ARROW_CLASS = 'absolute top-1/2 -translate-y-1/2 w-11 h-11 p-0 flex items-center justify-center cursor-pointer border border-solid border-line-strong bg-canvas/70 backdrop-blur-md text-ink transition-all duration-300 hover:border-gold hover:text-gold [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100';
+
 interface ProjectImageCarouselProps {
     images: string[];
     imagesFull?: string[];
@@ -24,24 +27,32 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
         </div>;
     }
 
+    // The frame takes the shape of the photo on show, so a landscape shot isn't
+    // letterboxed to the height of the tallest portrait in the set
+    const activeSize = sizeForImage(resolvedImages[currentImageIndex]);
+    const frameStyle = activeSize && {
+        aspectRatio: `${activeSize.width} / ${activeSize.height}`,
+        maxHeight: `min(65svh, 32rem, ${activeSize.height}px)`,
+    };
+
     return (
         <div className="relative group">
             {/* Main image display */}
-            <div className="relative overflow-hidden bg-canvas">
+            <div className="relative overflow-hidden bg-canvas max-h-[min(65svh,32rem)] transition-[aspect-ratio] duration-500" style={frameStyle || undefined}>
                 <div
-                    className="flex transition-transform duration-500 ease-in-out"
+                    className={cn('flex transition-transform duration-500 ease-in-out', frameStyle && 'h-full')}
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
                 >
                     {resolvedImages.map((img, i) => {
                         const size = sizeForImage(img);
                         return (
-                            <div key={i} className="w-full shrink-0 flex justify-center items-center">
+                            <div key={i} className={cn('w-full shrink-0 flex justify-center items-center', frameStyle && 'h-full')}>
                                 {/* A definite width lets the browser reserve the image's height before it loads */}
                                 <img
                                     src={img}
                                     alt={`${title} - Image ${i + 1}`}
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
-                                    className="max-h-96 w-full object-contain cursor-pointer"
+                                    className={cn('w-full object-contain cursor-zoom-in', frameStyle ? 'max-h-full' : 'max-h-[min(65svh,32rem)]')}
                                     style={size && { maxWidth: size.width }}
                                     onClick={() => setLightboxIndex(i)}
                                     loading={i <= 1 ? 'eager' : 'lazy'}
@@ -58,31 +69,17 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                     {/* Carousel arrows */}
                     <button
                         onClick={() => changeImage(currentImageIndex === 0 ? resolvedImages.length - 1 : currentImageIndex - 1)}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 p-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer rounded-full"
-                        style={{
-                            color: 'var(--color-ink)',
-                            background: 'rgba(10, 10, 10, 0.7)',
-                            backdropFilter: 'blur(12px) saturate(1.2)',
-                            WebkitBackdropFilter: 'blur(12px) saturate(1.2)',
-                            border: '1px solid rgba(255, 255, 255, 0.15)'
-                        }}
+                        className={cn(ARROW_CLASS, 'left-3')}
                         aria-label="Previous image"
                     >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6" /></svg>
                     </button>
                     <button
                         onClick={() => changeImage(currentImageIndex === resolvedImages.length - 1 ? 0 : currentImageIndex + 1)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 p-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer rounded-full"
-                        style={{
-                            color: 'var(--color-ink)',
-                            background: 'rgba(10, 10, 10, 0.7)',
-                            backdropFilter: 'blur(12px) saturate(1.2)',
-                            WebkitBackdropFilter: 'blur(12px) saturate(1.2)',
-                            border: '1px solid rgba(255, 255, 255, 0.15)'
-                        }}
+                        className={cn(ARROW_CLASS, 'right-3')}
                         aria-label="Next image"
                     >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M9 18l6-6-6-6" /></svg>
                     </button>
                     {/* Dot indicators */}
                     <div className="flex justify-center gap-1.5 mt-4">
