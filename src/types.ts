@@ -10,6 +10,19 @@ export interface BaseItem {
     tags?: string[];
     images?: string[];
     exhibit?: string; // Wall-label code like "P·07", set by the content loader
+    /** Sizes of the item's images that the page shows, keyed by image URL; set by the content loader */
+    imageSets?: Record<string, ImageSet>;
+}
+
+/** The web copies of one image, from images.server.ts */
+export interface ImageSet {
+    /** Size of the largest copy */
+    width: number;
+    height: number;
+    /** Copies up to 1280px wide, for page display */
+    srcSet: string;
+    /** The largest copy, for the lightbox */
+    large: string;
 }
 
 // Project-specific properties

@@ -4,8 +4,16 @@ import { cn } from '../../utils/styles';
 
 const CONTROL_CLASS = 'absolute z-10 w-11 h-11 p-0 flex items-center justify-center cursor-pointer border border-solid border-line-strong bg-canvas/70 text-ink transition-colors duration-300 hover:border-gold hover:text-gold';
 
+export interface LightboxImage {
+    src: string;
+    width?: number;
+    height?: number;
+    /** The copy already shown on the page, drawn underneath until src arrives */
+    preview?: { src: string; srcSet?: string; sizes?: string };
+}
+
 interface LightboxProps {
-    images: string[];
+    images: LightboxImage[];
     initialIndex: number;
     alt?: string;
     onClose: () => void;
@@ -33,6 +41,21 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
 
     const currentImage = images[currentIndex];
     const hasMultiple = images.length > 1;
+
+    // Start fetching the neighbours so the arrows don't wait on the network
+    useEffect(() => {
+        if (images.length < 2) return;
+        for (const offset of [1, -1]) {
+            new Image().src = images[(currentIndex + offset + images.length) % images.length].src;
+        }
+    }, [currentIndex, images]);
+
+    // A frame with the image's proportions lets the preview and the full copy sit exactly on top of each other
+    const { width, height, preview } = currentImage;
+    const frameStyle = width && height ? {
+        width: `min(90vw, calc(85vh * ${width / height}), ${width}px)`,
+        aspectRatio: `${width} / ${height}`,
+    } : undefined;
 
     // Animate in
     useEffect(() => {
@@ -220,22 +243,38 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                     transition: swipeOffset ? 'none' : 'transform 0.3s ease',
                 }}
             >
-                <img
-                    src={currentImage}
-                    alt={`${alt} ${currentIndex + 1}`}
+                <div
+                    className="relative"
                     onClick={handleImageClick}
                     onMouseMove={handleMouseMove}
                     style={{
-                        maxWidth: '90vw',
-                        maxHeight: '85vh',
-                        objectFit: 'contain',
+                        ...frameStyle,
                         cursor: isZoomed ? 'zoom-out' : 'zoom-in',
                         transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
                         transform: isZoomed ? 'scale(2.5)' : 'scale(1)',
                         transition: 'transform 0.3s var(--ease-gallery)',
                     }}
-                    draggable={false}
-                />
+                >
+                    {frameStyle && preview && (
+                        <img
+                            key={`preview-${currentIndex}`}
+                            src={preview.src}
+                            srcSet={preview.srcSet}
+                            sizes={preview.sizes}
+                            alt=""
+                            className="absolute inset-0 w-full h-full object-contain"
+                            draggable={false}
+                        />
+                    )}
+                    <img
+                        key={currentIndex}
+                        src={currentImage.src}
+                        alt={`${alt} ${currentIndex + 1}`}
+                        data-fade
+                        className={frameStyle ? 'absolute inset-0 w-full h-full object-contain' : 'block max-w-[90vw] max-h-[85vh] object-contain'}
+                        draggable={false}
+                    />
+                </div>
             </div>
 
             {/* Dot indicators */}

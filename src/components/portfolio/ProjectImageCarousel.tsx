@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { useImagePreloader } from '../../utils/useImagePreloader';
+import { useMemo, useState } from 'react';
+import type { ImageSet } from '../../types';
 import { cn } from '../../utils/styles';
-import { Lightbox } from '../ui/Lightbox';
-import { sizeForImage } from '../../utils/imageSize';
+import { Lightbox, type LightboxImage } from '../ui/Lightbox';
+
+// The carousel spans the main column: about two thirds of the 90rem page on desktop, full width below
+const CAROUSEL_SIZES = '(min-width: 1440px) 960px, (min-width: 1024px) 66vw, 100vw';
 
 // Hidden until the carousel is hovered on mouse devices; always shown on touch, where there is no hover
 const ARROW_CLASS = 'absolute top-1/2 -translate-y-1/2 w-11 h-11 p-0 flex items-center justify-center cursor-pointer border border-solid border-line-strong bg-canvas/70 backdrop-blur-md text-ink transition-all duration-300 hover:border-gold hover:text-gold [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100';
@@ -10,14 +12,24 @@ const ARROW_CLASS = 'absolute top-1/2 -translate-y-1/2 w-11 h-11 p-0 flex items-
 interface ProjectImageCarouselProps {
     images: string[];
     imagesFull?: string[];
+    imageSets?: Record<string, ImageSet>;
     title: string;
 }
 
-export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title }: ProjectImageCarouselProps) {
+export function ProjectImageCarousel({ images: resolvedImages, imagesFull, imageSets, title }: ProjectImageCarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-    useImagePreloader(resolvedImages);
+    const lightboxImages = useMemo(() => resolvedImages.map((img, i): LightboxImage => {
+        const set = imageSets?.[img];
+        const full = imagesFull?.length === resolvedImages.length ? imagesFull[i] : undefined;
+        return {
+            src: set?.large ?? full ?? img,
+            width: set?.width,
+            height: set?.height,
+            preview: { src: img, srcSet: set?.srcSet, sizes: set && CAROUSEL_SIZES },
+        };
+    }), [resolvedImages, imagesFull, imageSets]);
 
     const changeImage = (newIndex: number) => setCurrentImageIndex(newIndex);
 
@@ -29,7 +41,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
 
     // The frame takes the shape of the photo on show, so a landscape shot isn't
     // letterboxed to the height of the tallest portrait in the set
-    const activeSize = sizeForImage(resolvedImages[currentImageIndex]);
+    const activeSize = imageSets?.[resolvedImages[currentImageIndex]];
     const frameStyle = activeSize && {
         aspectRatio: `${activeSize.width} / ${activeSize.height}`,
         maxHeight: `min(70svh, 44rem, ${activeSize.height}px)`,
@@ -44,7 +56,10 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
                 >
                     {resolvedImages.map((img, i) => {
-                        const size = sizeForImage(img);
+                        const set = imageSets?.[img];
+                        // The slide on show and the ones either side, so an arrow press finds the image ready
+                        const distance = Math.abs(i - currentImageIndex);
+                        const nearby = Math.min(distance, resolvedImages.length - distance) <= 1;
                         return (
                             <button
                                 key={i}
@@ -57,14 +72,17 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                                 {/* A definite width lets the browser reserve the image's height before it loads */}
                                 <img
                                     src={img}
+                                    srcSet={set?.srcSet}
+                                    sizes={set && CAROUSEL_SIZES}
                                     alt={`${title} - Image ${i + 1}`}
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
                                     data-fade
                                     className={cn('w-full object-contain', frameStyle ? 'max-h-full' : 'max-h-[min(70svh,44rem)]')}
-                                    style={size && { maxWidth: size.width }}
-                                    loading={i <= 1 ? 'eager' : 'lazy'}
-                                    width={size?.width}
-                                    height={size?.height}
+                                    style={set && { maxWidth: set.width }}
+                                    loading={nearby ? 'eager' : 'lazy'}
+                                    fetchPriority={i === 0 ? 'high' : undefined}
+                                    width={set?.width}
+                                    height={set?.height}
                                 />
                             </button>
                         );
@@ -110,7 +128,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
 
             {lightboxIndex !== null && (
                 <Lightbox
-                    images={imagesFull && imagesFull.length === resolvedImages.length ? imagesFull : resolvedImages}
+                    images={lightboxImages}
                     initialIndex={lightboxIndex}
                     alt={title}
                     onClose={() => setLightboxIndex(null)}

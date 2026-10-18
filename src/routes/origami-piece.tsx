@@ -1,7 +1,7 @@
 import { data } from 'react-router';
 import type { Route } from './+types/origami-piece';
 import { OrigamiDetail } from '../pages/OrigamiDetail';
-import { allOrigami, findExhibit } from '../content.server';
+import { allOrigami, findExhibit, origamiDetail } from '../content.server';
 import { BASE_URL, absoluteUrl, notFoundMeta, seoMeta } from '../utils/seo';
 
 export function loader({ params }: Route.LoaderArgs) {
@@ -9,7 +9,7 @@ export function loader({ params }: Route.LoaderArgs) {
     if (!found) throw data(null, { status: 404 });
     const { item: origami, exhibit, next, nextExhibit } = found;
     return {
-        origami,
+        origami: origamiDetail(origami),
         exhibit,
         next: {
             slug: next.slug,

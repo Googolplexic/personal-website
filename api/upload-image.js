@@ -1,5 +1,5 @@
 // Vercel serverless function to upload images via GitHub API
-import { uploadImageToGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, imageUploadPath } from './github-utils.js';
+import { uploadImageToGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, imageUploadPath, deleteLargerWebCopies } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -73,6 +73,11 @@ export default async function handler(req, res) {
                     );
                 } catch (webpErr) {
                     console.error('Warning: webp optimization failed (original still uploaded):', webpErr.message);
+                }
+                try {
+                    await deleteLargerWebCopies(imagePath, `Remove stale web copies for ${type === 'origami' ? 'origami' : 'project'} ${slug}`);
+                } catch (webpErr) {
+                    console.error('Warning: failed to remove stale web copies:', webpErr.message);
                 }
             }
 

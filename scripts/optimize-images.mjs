@@ -3,11 +3,10 @@
  * Image optimization script.
  *
  * For every .jpg/.jpeg/.png in src/assets/origami/ and src/assets/projects/,
- * generates a web-ready WebP thumbnail in a sibling `web/` directory.
+ * generates web-ready WebP copies in a sibling `web/` directory, at the
+ * sizes listed in scripts/image-variants.mjs.
  *
- * - Max width: 1200px  (covers 2× retina at 600px display width)
- * - Format:    WebP, quality 80
- * - Idempotent: skips images whose optimized version already exists
+ * - Idempotent: skips sizes whose optimized version already exists
  *              and is newer than the source.
  *
  * Usage:
@@ -17,9 +16,10 @@
 
 import sharp from 'sharp';
 import { readdir, stat, mkdir, unlink } from 'node:fs/promises';
-import { resolve, join, basename, extname } from 'node:path';
+import { resolve, join, basename, dirname, extname } from 'node:path';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { WEB_VARIANTS, variantPath, variantsFor } from './image-variants.mjs';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -30,8 +30,6 @@ const DIRS = [
 ];
 
 const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
-const MAX_WIDTH = 600;
-const WEBP_QUALITY = 65;
 const FORCE = process.argv.includes('--force');
 
 let optimized = 0;
@@ -60,11 +58,13 @@ async function walk(dir) {
   return results;
 }
 
+async function isFresh(outPath, srcStat) {
+  if (FORCE || !existsSync(outPath)) return false;
+  return (await stat(outPath)).mtimeMs >= srcStat.mtimeMs;
+}
+
 async function optimizeImage(srcPath) {
-  const dir = resolve(srcPath, '..');
-  const webDir = join(dir, 'web');
   const name = basename(srcPath, extname(srcPath));
-  const outPath = join(webDir, `${name}.webp`);
 
   const srcStat = await stat(srcPath);
   if (srcStat.size === 0) {
@@ -73,30 +73,34 @@ async function optimizeImage(srcPath) {
     return;
   }
 
-  // Skip if output exists and is newer than source (unless --force)
-  if (!FORCE && existsSync(outPath)) {
-    const outStat = await stat(outPath);
-    if (outStat.mtimeMs >= srcStat.mtimeMs) {
+  const stale = [];
+  for (const variant of WEB_VARIANTS) {
+    if (!(await isFresh(variantPath(srcPath, variant), srcStat))) stale.push(variant);
+  }
+
+  try {
+    const { width } = stale.length > 0 ? await sharp(srcPath).metadata() : {};
+    const wanted = stale.filter((variant) => variantsFor(width ?? 0).includes(variant));
+    if (wanted.length === 0) {
       skipped++;
       return;
     }
-  }
 
-  await mkdir(webDir, { recursive: true });
+    for (const variant of wanted) {
+      const outPath = variantPath(srcPath, variant);
+      await mkdir(dirname(outPath), { recursive: true });
+      await sharp(srcPath)
+        .resize(variant.width, null, { withoutEnlargement: true, fit: 'inside' })
+        .webp({ quality: variant.quality })
+        .toFile(outPath);
+      optimized++;
 
-  try {
-    await sharp(srcPath)
-      .resize(MAX_WIDTH, null, { withoutEnlargement: true, fit: 'inside' })
-      .webp({ quality: WEBP_QUALITY })
-      .toFile(outPath);
-    optimized++;
-
-    const srcSize = (await stat(srcPath)).size;
-    const outSize = (await stat(outPath)).size;
-    const pct = ((1 - outSize / srcSize) * 100).toFixed(0);
-    console.log(
-      `  ✓ ${basename(srcPath)} → web/${name}.webp  (${fmt(srcSize)} → ${fmt(outSize)}, -${pct}%)`
-    );
+      const outSize = (await stat(outPath)).size;
+      const pct = ((1 - outSize / srcStat.size) * 100).toFixed(0);
+      console.log(
+        `  ✓ ${basename(srcPath)} → web/${variant.dir}${name}.webp  (${fmt(srcStat.size)} → ${fmt(outSize)}, -${pct}%)`
+      );
+    }
   } catch (err) {
     if (/unsupported image format/i.test(err.message)) {
       warnings++;
@@ -132,35 +136,38 @@ async function removeOrphanedWebs(root) {
       const full = join(dir, entry.name);
       if (entry.isDirectory()) {
         if (entry.name === 'web') {
-          // inspect files inside this web/ directory
-          let webFiles;
-          try {
-            webFiles = await readdir(full);
-          } catch {
-            continue;
-          }
-
-          for (const wf of webFiles) {
-            if (extname(wf).toLowerCase() !== '.webp') continue;
-            const base = basename(wf, '.webp');
-            const parentDir = dir; // parent of web/
-            let existsFull = false;
-            for (const ext of IMAGE_EXTS) {
-              const candidate = join(parentDir, `${base}${ext}`);
-              if (existsSync(candidate)) {
-                existsFull = true;
-                break;
-              }
+          // inspect files inside this web/ directory and its size folders
+          for (const variant of WEB_VARIANTS) {
+            const variantDir = join(full, variant.dir);
+            let webFiles;
+            try {
+              webFiles = await readdir(variantDir);
+            } catch {
+              continue;
             }
 
-            if (!existsFull) {
-              const target = join(full, wf);
-              try {
-                await unlink(target);
-                removed++;
-                console.log(`  - removed orphan ${target.replace(ROOT, '.')}`);
-              } catch (err) {
-                console.error(`  ✗ failed to remove orphan ${target}: ${err.message}`);
+            for (const wf of webFiles) {
+              if (extname(wf).toLowerCase() !== '.webp') continue;
+              const base = basename(wf, '.webp');
+              const parentDir = dir; // parent of web/
+              let existsFull = false;
+              for (const ext of IMAGE_EXTS) {
+                const candidate = join(parentDir, `${base}${ext}`);
+                if (existsSync(candidate)) {
+                  existsFull = true;
+                  break;
+                }
+              }
+
+              if (!existsFull) {
+                const target = join(variantDir, wf);
+                try {
+                  await unlink(target);
+                  removed++;
+                  console.log(`  - removed orphan ${target.replace(ROOT, '.')}`);
+                } catch (err) {
+                  console.error(`  ✗ failed to remove orphan ${target}: ${err.message}`);
+                }
               }
             }
           }

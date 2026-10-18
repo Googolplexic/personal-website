@@ -2,6 +2,7 @@
 // This replaces the local file-based admin server with GitHub API calls
 
 import { Octokit } from '@octokit/rest';
+import { WEB_VARIANTS, variantPath } from '../scripts/image-variants.mjs';
 
 // Initialize GitHub client
 const octokit = new Octokit({
@@ -144,18 +145,12 @@ export async function updateFileInGitHub(path, content, message, sha = null) {
 }
 
 const IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.webp'];
-const WEBP_MAX_WIDTH = 600;
-const WEBP_QUALITY = 65;
+const [CARD_VARIANT, ...LARGER_VARIANTS] = WEB_VARIANTS;
 
 // Compute the web/ optimized path for a given image path.
 // e.g. "src/assets/origami/my-designs/foo/bar.png" → "src/assets/origami/my-designs/foo/web/bar.webp"
 export function getWebpPath(imagePath) {
-    const lastSlash = imagePath.lastIndexOf('/');
-    const dir = imagePath.substring(0, lastSlash);
-    const filename = imagePath.substring(lastSlash + 1);
-    const dotIdx = filename.lastIndexOf('.');
-    const name = dotIdx !== -1 ? filename.substring(0, dotIdx) : filename;
-    return `${dir}/web/${name}.webp`;
+    return variantPath(imagePath, CARD_VARIANT);
 }
 
 // Returns true if the path looks like a full-size image that should have a webp.
@@ -173,8 +168,8 @@ export function isOptimizableImage(filePath) {
 export async function optimizeImageBuffer(imageBuffer) {
     const sharp = (await import('sharp')).default;
     return sharp(imageBuffer)
-        .resize(WEBP_MAX_WIDTH, null, { withoutEnlargement: true, fit: 'inside' })
-        .webp({ quality: WEBP_QUALITY })
+        .resize(CARD_VARIANT.width, null, { withoutEnlargement: true, fit: 'inside' })
+        .webp({ quality: CARD_VARIANT.quality })
         .toBuffer();
 }
 
@@ -208,6 +203,15 @@ export async function deleteFileFromGitHub(path, message) {
         sha: file.sha,
         branch: BRANCH,
     });
+}
+
+// The larger web/ copies are written by the build (scripts/optimize-images.mjs). Removing them
+// whenever the original changes makes the next build write fresh ones instead of keeping stale copies.
+export async function deleteLargerWebCopies(imagePath, message) {
+    for (const variant of LARGER_VARIANTS) {
+        const path = variantPath(imagePath, variant);
+        if (await getFileFromGitHub(path)) await deleteFileFromGitHub(path, message);
+    }
 }
 
 // Generate origami structure

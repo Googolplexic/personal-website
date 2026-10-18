@@ -1,5 +1,5 @@
 // Vercel serverless function to manage images via GitHub API
-import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveContentDir, resolveImageFile, imageUploadPath } from './github-utils.js';
+import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveContentDir, resolveImageFile, imageUploadPath, deleteLargerWebCopies } from './github-utils.js';
 import { verifyJWT, parseCookies } from './auth-utils.js';
 
 export default async function handler(req, res) {
@@ -103,6 +103,11 @@ export default async function handler(req, res) {
                 } catch (webpErr) {
                     console.error('Warning: webp optimization failed (original still uploaded):', webpErr.message);
                 }
+                try {
+                    await deleteLargerWebCopies(fullPath, `Remove stale web copies for ${fileName}`);
+                } catch (webpErr) {
+                    console.error('Warning: failed to remove stale web copies:', webpErr.message);
+                }
             }
 
             return res.status(200).json({
@@ -140,6 +145,11 @@ export default async function handler(req, res) {
                     }
                 } catch (webpErr) {
                     console.error('Warning: failed to delete webp (original still deleted):', webpErr.message);
+                }
+                try {
+                    await deleteLargerWebCopies(fullPath, `Delete web copies for ${file}`);
+                } catch (webpErr) {
+                    console.error('Warning: failed to delete web copies:', webpErr.message);
                 }
             }
 
