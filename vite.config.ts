@@ -338,6 +338,9 @@ export default defineConfig(({ mode }) => ({
           if (['css'].includes(ext)) {
             return `assets/css/[name]-[hash][extname]`;
           }
+          if (ext === 'woff2') {
+            return `assets/fonts/[name]-[hash][extname]`;
+          }
 
           return `assets/[name]-[hash][extname]`;
         },

@@ -6,13 +6,13 @@ import { SiteShell } from './components/layout/SiteShell';
 import { NotFound } from './pages/NotFound';
 import { printConsoleGreeting } from './utils/consoleGreeting';
 import { notFoundMeta, seoMeta } from './utils/seo';
+import headingFont from './assets/fonts/eb-garamond-400-normal-latin.woff2?url';
+import bodyFont from './assets/fonts/pt-sans-400-normal-latin.woff2?url';
 import './index.css';
 
-const FONTS_URL = 'https://fonts.googleapis.com/css2?family=Grape+Nuts&family=EB+Garamond:ital,wght@0,400;1,400&family=PT+Sans:wght@400&display=swap';
-
 // Runs before first paint: applies a saved "spotlight off" preference so the
-// effects never flash on, and loads the web fonts without blocking render.
-const HEAD_SCRIPT = `try{var s=localStorage.getItem('spotlight-enabled');if(s==='false'||(s===null&&matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('spotlight-disabled')}catch(e){}var f=document.createElement('link');f.rel='stylesheet';f.href='${FONTS_URL}';document.head.appendChild(f)`;
+// effects never flash on.
+const HEAD_SCRIPT = `try{var s=localStorage.getItem('spotlight-enabled');if(s==='false'||(s===null&&matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('spotlight-disabled')}catch(e){}`;
 
 export const links: Route.LinksFunction = () => [
     { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
@@ -24,9 +24,8 @@ export const links: Route.LinksFunction = () => [
     { rel: 'alternate', type: 'application/rss+xml', title: 'Coleman Lai — All updates', href: 'https://www.colemanlai.com/rss.xml' },
     { rel: 'alternate', type: 'application/rss+xml', title: 'Coleman Lai — Portfolio', href: 'https://www.colemanlai.com/rss-portfolio.xml' },
     { rel: 'alternate', type: 'application/rss+xml', title: 'Coleman Lai — Origami', href: 'https://www.colemanlai.com/rss-origami.xml' },
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
-    { rel: 'preload', as: 'style', href: FONTS_URL },
+    { rel: 'preload', as: 'font', type: 'font/woff2', href: headingFont, crossOrigin: 'anonymous' },
+    { rel: 'preload', as: 'font', type: 'font/woff2', href: bodyFont, crossOrigin: 'anonymous' },
 ];
 
 // Every page sets its own tags; these only reach the fallback page used for /admin and 404s.
@@ -50,9 +49,6 @@ export function Layout({ children }: { children: ReactNode }) {
                 <Meta />
                 <Links />
                 <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
-                <noscript>
-                    <link rel="stylesheet" href={FONTS_URL} />
-                </noscript>
             </head>
             <body>
                 {children}

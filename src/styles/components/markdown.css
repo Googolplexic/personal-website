@@ -99,7 +99,7 @@
   .markdown-content th {
     color: var(--color-text-primary);
     background: var(--color-bg-elevated);
-    font-weight: 600;
+    font-weight: 400;
   }
 
   .markdown-content td {

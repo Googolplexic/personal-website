@@ -750,7 +750,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                 <button
                                     onClick={handleSave}
                                     disabled={saving || loading}
-                                    className="px-4 py-2 bg-(--color-accent) hover:opacity-90 disabled:opacity-40 text-(--color-bg-primary) rounded-sm font-medium transition-opacity"
+                                    className="px-4 py-2 bg-(--color-accent) hover:opacity-90 disabled:opacity-40 text-(--color-bg-primary) rounded-sm transition-opacity"
                                 >
                                     {saving ? 'Saving...' : 'Save Changes'}
                                 </button>

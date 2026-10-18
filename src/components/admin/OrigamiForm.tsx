@@ -196,7 +196,7 @@ export function OrigamiForm() {
                     <p className="gallery-overline">Details</p>
 
                     <div>
-                        <label htmlFor="origami-title" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="origami-title" className="block text-sm text-(--color-text-secondary) mb-1">
                             Title *
                         </label>
                         <input
@@ -211,7 +211,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-slug" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="origami-slug" className="block text-sm text-(--color-text-secondary) mb-1">
                             Slug * (auto-generated, editable)
                         </label>
                         <input
@@ -226,7 +226,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-category" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="origami-category" className="block text-sm text-(--color-text-secondary) mb-1">
                             Category *
                         </label>
                         <select
@@ -243,7 +243,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-date" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="origami-date" className="block text-sm text-(--color-text-secondary) mb-1">
                             Date (YYYY-MM) *
                         </label>
                         <input
@@ -262,7 +262,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-designer" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="origami-designer" className="block text-sm text-(--color-text-secondary) mb-1">
                             Designer {formData.category === 'other-designs' && '*'}
                         </label>
                         <input
@@ -283,7 +283,7 @@ export function OrigamiForm() {
                     <p className="gallery-overline">Notes</p>
 
                     <div>
-                        <label htmlFor="origami-description" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="origami-description" className="block text-sm text-(--color-text-secondary) mb-1">
                             Description
                         </label>
                         <textarea
@@ -298,7 +298,7 @@ export function OrigamiForm() {
                     </div>
 
                     <div>
-                        <label htmlFor="origami-images" className="block text-sm font-medium text-(--color-text-secondary) mb-1">
+                        <label htmlFor="origami-images" className="block text-sm text-(--color-text-secondary) mb-1">
                             Images *
                         </label>
                         <input
