@@ -64,7 +64,7 @@ function lightHero(section: HTMLElement, name: HTMLElement | null, clientX: numb
     const t = intensity <= 0 ? 0 : intensity < 0.06 ? intensity / 0.06 : 1;
     const bright = `rgb(${Math.round(232 + 23 * t)}, ${Math.round(228 + 27 * t)}, ${Math.round(222 + 33 * t)})`;
     name.style.backgroundImage = `radial-gradient(ellipse ${radius}% ${radius * 0.7}% at ${relX}% ${relY}%, ${bright}, ${NAME_COLOR})`;
-    name.style.webkitBackgroundClip = 'text';
+    name.style.setProperty('-webkit-background-clip', 'text');
     name.style.backgroundClip = 'text';
     name.style.color = 'transparent';
     name.style.webkitTextFillColor = 'transparent';

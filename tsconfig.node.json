@@ -26,7 +26,10 @@
   },
   "include": [
     "vite.config.ts",
+    "vitest.config.ts",
+    "playwright.config.ts",
     "react-router.config.ts",
-    "scripts/content-routes.ts"
+    "scripts/content-routes.ts",
+    "tests/e2e"
   ]
 }

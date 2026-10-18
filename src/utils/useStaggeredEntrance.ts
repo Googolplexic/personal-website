@@ -29,7 +29,7 @@ export function useStaggeredEntrance(
         if (!container) return;
 
         const staggerIndex = (item: HTMLElement) =>
-            Number((item.closest('[data-stagger-index]') as HTMLElement | null)?.dataset.staggerIndex ?? 0);
+            Number(item.closest<HTMLElement>('[data-stagger-index]')?.dataset.staggerIndex ?? 0);
         const items = Array.from(container.querySelectorAll<HTMLElement>('.spotlight-item'))
             .sort((a, b) => staggerIndex(a) - staggerIndex(b));
 

@@ -54,11 +54,7 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
         const onPointerCapabilityChange = (e: MediaQueryListEvent) => {
             isTouchLikeDeviceRef.current = e.matches;
         };
-        if (typeof touchLikeQuery.addEventListener === 'function') {
-            touchLikeQuery.addEventListener('change', onPointerCapabilityChange);
-        } else {
-            touchLikeQuery.addListener(onPointerCapabilityChange);
-        }
+        touchLikeQuery.addEventListener('change', onPointerCapabilityChange);
 
         // Captured once: ResizeObserver can fire after the canvas is detached
         // but before this effect's cleanup runs.
@@ -220,11 +216,7 @@ export function HeroParticles({ count = 110 }: { count?: number }) {
             window.removeEventListener('resize', onViewportChange);
             parent.removeEventListener('touchmove', onTouchMove);
             parent.removeEventListener('touchend', onTouchEnd);
-            if (typeof touchLikeQuery.removeEventListener === 'function') {
-                touchLikeQuery.removeEventListener('change', onPointerCapabilityChange);
-            } else {
-                touchLikeQuery.removeListener(onPointerCapabilityChange);
-            }
+            touchLikeQuery.removeEventListener('change', onPointerCapabilityChange);
         };
     }, [count]);
 

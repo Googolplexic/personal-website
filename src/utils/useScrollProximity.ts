@@ -86,12 +86,9 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
                 requestAnimationFrame(update);
             });
         };
-        const ric = (window as Window & {
-            requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
-            cancelIdleCallback?: (id: number) => void;
-        }).requestIdleCallback;
-        if (ric) {
-            idleId = ric(enableAndRun, { timeout: 2500 });
+        // Safari has no requestIdleCallback
+        if (typeof window.requestIdleCallback === 'function') {
+            idleId = window.requestIdleCallback(enableAndRun, { timeout: 2500 });
         } else {
             initTimer = window.setTimeout(enableAndRun, 1800);
         }
@@ -100,10 +97,7 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
         return () => {
             window.removeEventListener('scroll', onScroll);
             if (initTimer !== null) window.clearTimeout(initTimer);
-            if (idleId !== null) {
-                const cic = (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
-                if (cic) cic(idleId);
-            }
+            if (idleId !== null) window.cancelIdleCallback(idleId);
             // Clean up inline styles
             const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
             items.forEach(item => {

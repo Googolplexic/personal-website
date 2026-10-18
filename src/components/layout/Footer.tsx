@@ -27,7 +27,7 @@ export function Footer() {
                 <RouterLink
                     to="/"
                     onClick={() => window.scrollTo(0, 0)}
-                    aria-label="Coleman Lai, home"
+                    aria-label="CL, Coleman Lai, home"
                     className="col-span-full md:col-span-4 self-start font-signature text-2xl tracking-wide no-underline select-none text-ink transition-colors duration-300 hover:text-gold"
                 >
                     CL

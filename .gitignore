@@ -12,6 +12,8 @@ dist
 dist-ssr
 build
 .react-router
+test-results
+playwright-report
 *.local
 
 # Environment variables

@@ -132,7 +132,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             }
         };
 
-        fetchFiles();
+        void fetchFiles();
     }, [isOpen, path, type, category]);
 
     useEffect(() => {
@@ -166,7 +166,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             }
         };
 
-        fetchContent();
+        void fetchContent();
     }, [selectedFile, path, type, category]);
 
     const handleSave = async () => {
@@ -666,7 +666,7 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                                                         className="admin-input text-xs px-2 py-1 mb-2"
                                                         onKeyDown={(e) => {
                                                             if (e.key === 'Enter') {
-                                                                handleImageRename(image.name, newImageName);
+                                                                void handleImageRename(image.name, newImageName);
                                                             } else if (e.key === 'Escape') {
                                                                 setRenamingImage(null);
                                                                 setNewImageName('');
