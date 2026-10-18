@@ -86,9 +86,9 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
                 <button
                     onClick={() => navigate(backDestination)}
                     className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300"
-                    style={{ color: 'var(--color-text-tertiary)', background: 'none', border: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
+                    style={{ color: 'var(--color-ink-faint)', background: 'none', border: 'none' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-faint)')}
                 >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                         <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -99,12 +99,10 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
                 {/* Exhibit label + title */}
                 <div className="mb-12">
                     <span className="exhibit-label mb-4 inline-flex">Exhibit {exhibitNumber}</span>
-                    <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4 mt-3"
-                        style={{ color: 'var(--color-text-primary)' }}>
+                    <h1 className="gallery-heading text-4xl md:text-5xl lg:text-6xl mb-4 mt-3 text-ink">
                         <HighlightedText text={project.title} searchTerm={searchTerm} />
                     </h1>
-                    <p className="text-sm font-body italic max-w-xl"
-                        style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="text-sm font-body italic max-w-xl text-ink-muted">
                         <HighlightedText text={project.summary} searchTerm={searchTerm} />
                     </p>
                 </div>
@@ -117,7 +115,7 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
                 {/* Two-column: description + sidebar metadata */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
                     <div className="lg:col-span-8">
-                        <div className="markdown-content" style={{ color: 'var(--color-text-primary)' }}>
+                        <div className="markdown-content text-ink">
                             <Markdown components={components}>{project.description}</Markdown>
                         </div>
                     </div>
@@ -126,16 +124,14 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
                         <div className="lg:sticky lg:top-28 space-y-8">
                             <div>
                                 <p className="gallery-overline mb-2">Timeline</p>
-                                <p className="text-sm font-heading italic"
-                                    style={{ color: 'var(--color-text-primary)' }}>
+                                <p className="text-sm font-heading italic text-ink">
                                     {timelineLabel}
                                 </p>
                             </div>
 
                             <div>
                                 <p className="gallery-overline mb-3">Technologies</p>
-                                <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-body"
-                                    style={{ color: 'var(--color-text-tertiary)' }}>
+                                <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-body text-ink-faint">
                                     {project.technologies.map((tech, i) => (
                                         <span key={i}>
                                             <HighlightedText text={tech} searchTerm={searchTerm} />
@@ -147,20 +143,18 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
                             <div className="space-y-2">
                                 {project.githubUrl && (
                                     <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
-                                        className="block text-xs tracking-[0.15em] uppercase font-body transition-colors"
-                                        style={{ color: 'var(--color-text-tertiary)' }}
-                                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-                                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}>
+                                        className="block text-xs tracking-[0.15em] uppercase font-body transition-colors text-ink-faint"
+                                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
+                                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-faint)')}>
                                         GitHub
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="inline ml-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                                     </a>
                                 )}
                                 {project.liveUrl && (
                                     <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
-                                        className="block text-xs tracking-[0.15em] uppercase font-body transition-colors"
-                                        style={{ color: 'var(--color-text-tertiary)' }}
-                                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-                                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}>
+                                        className="block text-xs tracking-[0.15em] uppercase font-body transition-colors text-ink-faint"
+                                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
+                                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-faint)')}>
                                         Live Site
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="inline ml-1"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                                     </a>
@@ -175,7 +169,7 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
 
                 {/* Next project */}
                 {nextProject && (
-                    <div className="mt-24 pt-10" style={{ borderTop: '1px solid var(--divider)' }}>
+                    <div className="mt-24 pt-10" style={{ borderTop: '1px solid var(--color-line)' }}>
                         <p className="gallery-overline mb-5">Next Exhibit</p>
                         <button
                             onClick={() => { navigate(`/portfolio/${nextProject.slug}`, { state: { from: backTarget } }); window.scrollTo(0, 0); }}
@@ -184,7 +178,7 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
                             {/* Thumbnail */}
                             {nextProject.image && (
                                 <div className="w-16 h-16 shrink-0 overflow-hidden"
-                                    style={{ border: '1px solid var(--color-border)' }}>
+                                    style={{ border: '1px solid var(--color-line)' }}>
                                     <img
                                         src={nextProject.image}
                                         alt={nextProject.title}
@@ -195,18 +189,16 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
                             )}
                             <div className="flex-1 min-w-0">
                                 <span className="exhibit-label text-xs mb-1 block">{nextProject.exhibit}</span>
-                                <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300"
-                                    style={{ color: 'var(--color-text-primary)' }}
-                                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-                                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-primary)')}>
+                                <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300 text-ink"
+                                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
+                                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink)')}>
                                     {nextProject.title}
                                 </span>
-                                <span className="text-xs font-body tracking-widest"
-                                    style={{ color: 'var(--color-text-tertiary)' }}>
+                                <span className="text-xs font-body tracking-widest text-ink-faint">
                                     {nextProject.date}
                                 </span>
                             </div>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" strokeWidth="1.5" strokeLinecap="round"
                                 className="shrink-0 transition-transform duration-300 group-hover:translate-x-1">
                                 <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>

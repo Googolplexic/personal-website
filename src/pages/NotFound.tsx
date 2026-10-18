@@ -14,19 +14,18 @@ export function NotFound({
     return (
         <div className="min-h-screen flex flex-col items-center justify-center px-5 text-center">
             <p className="gallery-overline mb-4">{overline}</p>
-            <h1 className="gallery-heading text-5xl md:text-6xl mb-4"
-                style={{ color: 'var(--color-text-primary)' }}>
+            <h1 className="gallery-heading text-5xl md:text-6xl mb-4 text-ink">
                 {title}
             </h1>
-            <p className="font-body text-lg mb-10" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="font-body text-lg mb-10 text-ink-muted">
                 {message}
             </p>
             <RouterLink
                 to="/"
                 className="inline-flex items-center gap-2 px-5 py-2.5 font-body text-xs tracking-[0.15em] uppercase no-underline transition-colors duration-300"
                 style={{
-                    color: 'var(--color-text-primary)',
-                    border: '1px solid var(--color-text-tertiary)'
+                    color: 'var(--color-ink)',
+                    border: '1px solid var(--color-ink-faint)'
                 }}
             >
                 Return to Gallery

@@ -20,14 +20,14 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
 
     if (resolvedImages.length === 0) {
         return <div className="text-center py-8">
-            <h2 className="gallery-heading text-2xl" style={{ color: 'var(--color-text-secondary)' }}>No images :(</h2>
+            <h2 className="gallery-heading text-2xl text-ink-muted">No images :(</h2>
         </div>;
     }
 
     return (
         <div className="relative group">
             {/* Main image display */}
-            <div className="relative overflow-hidden" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
+            <div className="relative overflow-hidden bg-canvas">
                 <div
                     className="flex transition-transform duration-500 ease-in-out"
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
@@ -60,7 +60,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                         onClick={() => changeImage(currentImageIndex === 0 ? resolvedImages.length - 1 : currentImageIndex - 1)}
                         className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 p-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer rounded-full"
                         style={{
-                            color: 'var(--color-text-primary)',
+                            color: 'var(--color-ink)',
                             background: 'rgba(10, 10, 10, 0.7)',
                             backdropFilter: 'blur(12px) saturate(1.2)',
                             WebkitBackdropFilter: 'blur(12px) saturate(1.2)',
@@ -74,7 +74,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                         onClick={() => changeImage(currentImageIndex === resolvedImages.length - 1 ? 0 : currentImageIndex + 1)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 p-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer rounded-full"
                         style={{
-                            color: 'var(--color-text-primary)',
+                            color: 'var(--color-ink)',
                             background: 'rgba(10, 10, 10, 0.7)',
                             backdropFilter: 'blur(12px) saturate(1.2)',
                             WebkitBackdropFilter: 'blur(12px) saturate(1.2)',
@@ -93,12 +93,11 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                                 aria-label={`View image ${index + 1}`}
                                 onClick={() => changeImage(index)}
                                 className={cn(
-                                    'w-10 h-0.5 transition-all duration-300 border-none focus:outline-hidden p-0 cursor-pointer',
+                                    'w-10 h-0.5 bg-ink-muted transition-all duration-300 border-none focus:outline-hidden p-0 cursor-pointer',
                                     index === currentImageIndex
                                         ? 'opacity-100'
                                         : 'opacity-30 hover:opacity-60'
                                 )}
-                                style={{ backgroundColor: 'var(--color-text-secondary)' }}
                             />
                         ))}
                     </div>

@@ -1,6 +1,26 @@
 @import 'tailwindcss' source(none);
 @source '../../**/*.{ts,tsx}';
 
+/* Dark gallery palette: near-black walls, warm paper-white text, one gold accent.
+   Static so the variables exist for inline styles and canvas code too. */
+@theme static {
+  --color-canvas: #0a0a0a;
+  --color-canvas-raised: #0f0f0f;
+  --color-surface: #141414;
+  --color-surface-raised: #1a1a1a;
+
+  --color-ink: #e8e4de;
+  --color-ink-muted: #c5c0bb;
+  --color-ink-faint: #a9a29b;
+
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-line-strong: rgb(255 255 255 / 0.18);
+
+  --color-gold: #c9a84c;
+
+  --ease-gallery: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 @theme {
   --font-heading: 'EB Garamond', 'EB Garamond Fallback', Garamond, Georgia, serif;
   --font-body: 'PT Sans', 'PT Sans Fallback', system-ui, -apple-system, sans-serif;

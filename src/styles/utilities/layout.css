@@ -1,12 +1,8 @@
 /* Shared utility classes and layout helpers */
 @layer utilities {
-  .font-heading { font-family: 'EB Garamond', 'EB Garamond Fallback', 'Garamond', Georgia, serif; }
-  .font-body { font-family: 'PT Sans', 'PT Sans Fallback', system-ui, sans-serif; }
-  .text-balance { text-wrap: balance; }
-
   .masonry-grid {
     display: flex;
-    gap: 3.5rem;
+    gap: var(--masonry-gap);
   }
 
   .masonry-col {
@@ -18,7 +14,7 @@
   .masonry-static {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    column-gap: 3.5rem;
+    column-gap: var(--masonry-gap);
     align-items: start;
   }
 
@@ -34,8 +30,8 @@
   .masonry-col > * > .spotlight-item,
   .masonry-col > .spotlight-item {
     break-inside: avoid;
-    margin-bottom: 3.5rem;
+    margin-bottom: var(--masonry-gap);
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-line);
   }
 }

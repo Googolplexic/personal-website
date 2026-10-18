@@ -245,7 +245,7 @@ export function ItemGrid({
         <section className={`mb-12 ${className}`}>
             <h2
                 className={title ? "gallery-heading text-2xl md:text-3xl mb-6" : "sr-only"}
-                style={title ? { color: 'var(--color-text-primary)' } : undefined}
+                style={title ? { color: 'var(--color-ink)' } : undefined}
             >
                 {sectionHeadingText}
             </h2>
@@ -311,7 +311,7 @@ export function ItemGrid({
             </MasonrySpotlightGrid>
 
             {sortedAndFilteredItems.length === 0 && (
-                <p className="text-center mt-8 font-body" style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-center mt-8 font-body text-ink-muted">
                     No items found matching your criteria.
                 </p>
             )}

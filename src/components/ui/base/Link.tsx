@@ -37,7 +37,7 @@ export function Link({
     ...props
 }: LinkProps) {
     const classes = cn(variantStyles[variant || 'default'], className);
-    const linkStyle = { color: 'var(--color-accent-text)', ...style };
+    const linkStyle = { color: 'var(--color-gold)', ...style };
 
     if (to) {
         return (

@@ -24,13 +24,12 @@ export function ExternalRedirect({ to }: { to: string }) {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center text-center">
-            <h1 className="gallery-heading text-3xl mb-4"
-                style={{ color: 'var(--color-text-primary)' }}>
+            <h1 className="gallery-heading text-3xl mb-4 text-ink">
                 Loading...
             </h1>
             <div
                 className="mt-4 animate-spin h-8 w-8 rounded-full border-4 border-t-transparent mx-auto"
-                style={{ borderColor: 'var(--color-accent)', borderTopColor: 'transparent' }}
+                style={{ borderColor: 'var(--color-gold)', borderTopColor: 'transparent' }}
             />
         </div>
     );

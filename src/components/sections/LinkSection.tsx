@@ -27,8 +27,7 @@ export function LinkSection({ id, title, links, align = 'left' }: LinkSectionPro
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`contact-link no-underline flex items-center gap-4 py-3 transition-colors duration-300 ${isRight ? 'lg:flex-row-reverse' : ''}`}
-                        style={{ color: 'var(--color-text-secondary)' }}
+                        className={`contact-link no-underline flex items-center gap-4 py-3 transition-colors duration-300 ${isRight ? 'lg:flex-row-reverse' : ''} text-ink-muted`}
                     >
                         <span className="contact-icon transition-colors duration-300">
                             {link.icon}
@@ -37,8 +36,7 @@ export function LinkSection({ id, title, links, align = 'left' }: LinkSectionPro
                             <p className="contact-name text-sm font-body transition-colors duration-300">
                                 {link.name}
                             </p>
-                            <p className="text-xs font-body"
-                                style={{ color: 'var(--color-text-tertiary)' }}>
+                            <p className="text-xs font-body text-ink-faint">
                                 {link.value}
                             </p>
                         </div>

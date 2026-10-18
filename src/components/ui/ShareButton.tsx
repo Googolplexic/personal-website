@@ -29,7 +29,7 @@ export function ShareButton({ url, title, description, className = '' }: ShareBu
     };
 
     const linkStyle = {
-        color: 'var(--color-text-secondary)',
+        color: 'var(--color-ink-muted)',
         background: 'none',
         border: 'none',
         padding: '10px 0',
@@ -58,8 +58,8 @@ export function ShareButton({ url, title, description, className = '' }: ShareBu
             onClick={handleShare}
             className={`block text-xs tracking-[0.15em] uppercase font-body transition-colors ${className}`}
             style={linkStyle}
-            onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-muted)')}
             title={state === 'copied' ? 'Link copied!' : 'Share'}
             aria-label="Share"
         >

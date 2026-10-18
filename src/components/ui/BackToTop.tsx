@@ -52,11 +52,11 @@ export function BackToTop() {
             onMouseEnter={(e) => {
                 if (!visible) return;
                 e.currentTarget.style.opacity = '1';
-                e.currentTarget.style.borderColor = 'var(--color-accent)';
+                e.currentTarget.style.borderColor = 'var(--color-gold)';
             }}
             onMouseLeave={(e) => {
                 e.currentTarget.style.opacity = visible ? '0.7' : '0';
-                e.currentTarget.style.borderColor = 'var(--color-border)';
+                e.currentTarget.style.borderColor = 'var(--color-line)';
             }}
         >
             <svg
@@ -67,8 +67,7 @@ export function BackToTop() {
                 stroke="currentColor"
                 strokeWidth="1.5"
                 strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ color: 'var(--color-accent)' }}
+                strokeLinejoin="round" className="text-gold"
             >
                 <path d="M18 15l-6-6-6 6" />
             </svg>

@@ -27,8 +27,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
     }, [isAdmin, spotlightEnabled]);
 
     return (
-        <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-500 md:text-base text-sm"
-            style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
+        <div className="min-h-screen w-full overflow-x-hidden bg-canvas text-ink transition-colors duration-500 md:text-base text-sm">
             {/* Global spotlight overlay — at root level so no ancestor transform can clip it */}
             {!isAdmin && <div id="global-spotlight" />}
             {/* Page-wide dim overlay — darkens everything outside cursor area */}

@@ -22,10 +22,10 @@ const weightMap: Record<string, string> = {
 };
 
 const colorVarMap: Record<string, string> = {
-    primary: 'var(--color-text-primary)',
-    secondary: 'var(--color-text-secondary)',
-    tertiary: 'var(--color-text-tertiary)',
-    inverse: 'var(--color-bg-primary)',
+    primary: 'var(--color-ink)',
+    secondary: 'var(--color-ink-muted)',
+    tertiary: 'var(--color-ink-faint)',
+    inverse: 'var(--color-canvas)',
 };
 
 export interface TextProps {

@@ -144,7 +144,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                 onClick={handleClose}
                 className="absolute top-5 right-5 z-10 w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer border-none p-0"
                 style={{
-                    color: 'var(--color-text-primary)',
+                    color: 'var(--color-ink)',
                     background: 'rgba(255, 255, 255, 0.08)',
                     border: '1px solid rgba(255, 255, 255, 0.12)',
                 }}
@@ -158,8 +158,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
             {/* Counter */}
             {hasMultiple && (
                 <div
-                    className="absolute top-6 left-1/2 -translate-x-1/2 text-xs tracking-[0.2em] uppercase font-body"
-                    style={{ color: 'var(--color-text-tertiary)' }}
+                    className="absolute top-6 left-1/2 -translate-x-1/2 text-xs tracking-[0.2em] uppercase font-body text-ink-faint"
                 >
                     {currentIndex + 1} / {images.length}
                 </div>
@@ -172,7 +171,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                         onClick={(e) => { e.stopPropagation(); goTo(currentIndex - 1); }}
                         className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer border-none p-0 z-10"
                         style={{
-                            color: 'var(--color-text-primary)',
+                            color: 'var(--color-ink)',
                             background: 'rgba(255, 255, 255, 0.06)',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                         }}
@@ -184,7 +183,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                         onClick={(e) => { e.stopPropagation(); goTo(currentIndex + 1); }}
                         className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 cursor-pointer border-none p-0 z-10"
                         style={{
-                            color: 'var(--color-text-primary)',
+                            color: 'var(--color-ink)',
                             background: 'rgba(255, 255, 255, 0.06)',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                         }}
@@ -217,7 +216,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                         cursor: isZoomed ? 'zoom-out' : 'zoom-in',
                         transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
                         transform: isZoomed ? 'scale(2.5)' : 'scale(1)',
-                        transition: 'transform 0.3s cubic-bezier(.4,0,.2,1)',
+                        transition: 'transform 0.3s var(--ease-gallery)',
                     }}
                     draggable={false}
                 />
@@ -232,7 +231,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                             onClick={(e) => { e.stopPropagation(); goTo(i); }}
                             className="w-8 h-0.5 border-none p-0 cursor-pointer transition-all duration-300"
                             style={{
-                                backgroundColor: 'var(--color-text-secondary)',
+                                backgroundColor: 'var(--color-ink-muted)',
                                 opacity: i === currentIndex ? 1 : 0.3,
                             }}
                             aria-label={`View image ${i + 1}`}

@@ -60,7 +60,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
                     disabled={isLoading}
                 />
                 {error && (
-                    <p className="mt-4 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="mt-4 text-sm text-ink-muted">
                         {error}
                     </p>
                 )}

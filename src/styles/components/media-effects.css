@@ -11,7 +11,7 @@
   .img-skeleton {
     position: relative;
     overflow: hidden;
-    background: var(--color-bg-secondary);
+    background: var(--color-canvas-raised);
   }
 
   .img-skeleton::after {
