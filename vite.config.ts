@@ -6,6 +6,7 @@ import { statSync, readdirSync, readFileSync, writeFileSync, existsSync } from '
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
 import { getSiteVersionFromGit } from './scripts/site-version-from-git.mjs'
+import { parseFrontmatter } from './scripts/frontmatter.mjs'
 import { scanOrigami, scanProjects } from './scripts/content-routes.ts'
 
 /**
@@ -27,39 +28,7 @@ function markdownFrontmatterPlugin(): Plugin {
     },
     load(id) {
       if (!id.endsWith('?parsed')) return
-      const filePath = id.slice(0, -7)
-      const raw = readFileSync(filePath, 'utf-8')
-
-      // Minimal frontmatter parser (avoids shipping js-yaml to client)
-      const attributes: Record<string, unknown> = {}
-      let body = raw
-      if (raw.startsWith('---')) {
-        const end = raw.indexOf('\n---', 3)
-        if (end !== -1) {
-          const yamlStr = raw.slice(4, end)
-          body = raw.slice(end + 4).replace(/^\n/, '')
-          // Simple YAML parser for flat/array values
-          let currentKey = ''
-          for (const rawLine of yamlStr.split('\n')) {
-            const line = rawLine.replace(/\r$/, '')
-            const kvMatch = line.match(/^(\w[\w\s]*?):\s*(.*)$/)
-            if (kvMatch) {
-              currentKey = kvMatch[1].trim()
-              const val = kvMatch[2].trim()
-              if (val === '') {
-                attributes[currentKey] = []
-              } else {
-                attributes[currentKey] = val
-              }
-            } else if (line.match(/^-\s+/) && currentKey) {
-              const item = line.replace(/^-\s+/, '').trim()
-              if (!Array.isArray(attributes[currentKey])) attributes[currentKey] = []
-                ; (attributes[currentKey] as string[]).push(item)
-            }
-          }
-        }
-      }
-
+      const { attributes, body } = parseFrontmatter(readFileSync(id.slice(0, -7), 'utf-8'))
       return `export const attributes = ${JSON.stringify(attributes)};\nexport const body = ${JSON.stringify(body)};`
     }
   }

@@ -73,7 +73,7 @@ export function ContentList() {
             }
         };
 
-        fetchContent();
+        void fetchContent();
     }, []);
 
     const refetchContent = async () => {
@@ -170,7 +170,7 @@ export function ContentList() {
                 category={editModalState.category}
                 onSave={() => {
                     // Optionally refresh content list after saving
-                    refetchContent();
+                    void refetchContent();
                 }}
             />
 
