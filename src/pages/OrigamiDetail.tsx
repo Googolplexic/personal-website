@@ -32,8 +32,6 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
 
     const shareUrl = `${BASE_URL}/origami/${origami.slug}`;
     const categoryLabel = origami.category === 'my-designs' ? 'My Designs' : 'Other Designs';
-    const categoryColor = origami.category === 'my-designs' ? 'gallery-cat-green' : 'gallery-cat-blue';
-
     const cpFull = origami.creasePatternFull || origami.creasePattern;
 
     return (
@@ -82,7 +80,7 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
                         </>
                     )}
                     <span className="text-xs font-body text-ink-faint">·</span>
-                    <CategoryLabel label={categoryLabel} color={categoryColor} />
+                    <CategoryLabel label={categoryLabel} />
                     <span className="ml-auto" />
                     <ShareButton url={shareUrl} title={origami.title} description={origami.description} />
                 </div>

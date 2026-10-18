@@ -15,12 +15,11 @@ interface OrigamiCardProps {
     designer?: string;
     searchTerm?: string;
     categoryLabel?: string;
-    categoryColor?: string;
     showCategory?: boolean;
     priority?: boolean;
 }
 
-export function OrigamiCard({ slug, title, description, modelImages, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false }: OrigamiCardProps) {
+export function OrigamiCard({ slug, title, description, modelImages, date, designer, searchTerm = '', categoryLabel, showCategory = false, priority = false }: OrigamiCardProps) {
     const navigate = useNavigate();
     const location = useClientLocation();
     const heroImage = modelImages[0];
@@ -56,8 +55,8 @@ export function OrigamiCard({ slug, title, description, modelImages, date, desig
             )}
 
             <div className="pt-4 pb-6 flex-1 flex flex-col">
-                {showCategory && categoryLabel && categoryColor && (
-                    <CategoryLabel label={categoryLabel} color={categoryColor} className="mb-2" />
+                {showCategory && categoryLabel && (
+                    <CategoryLabel label={categoryLabel} className="mb-2" />
                 )}
 
                 <h3 className="gallery-heading text-lg md:text-xl mb-1 transition-colors duration-300 group-hover:text-gold! text-ink">

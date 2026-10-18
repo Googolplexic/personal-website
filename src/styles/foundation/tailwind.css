@@ -45,17 +45,6 @@
   }
 }
 
-/* Tailwind 4 defaults borders to currentColor; v3 used gray-200 */
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
-}
-
 /* Register --spot-size so it can be animated */
 @property --spot-size {
   syntax: '<length>';
