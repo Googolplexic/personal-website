@@ -1,19 +1,9 @@
 import { useEffect } from 'react';
-
-const RICK_ROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-
-function isValidUrl(string: string) {
-    try {
-        const url = new URL(string);
-        return url.protocol === 'http:' || url.protocol === 'https:';
-    } catch {
-        return false;
-    }
-}
+import { redirectTarget } from '../../utils/redirect';
 
 /** Handles `/?to=<url>`: a short loading screen, then off-site. */
 export function ExternalRedirect({ to }: { to: string }) {
-    const targetUrl = isValidUrl(to) ? to : RICK_ROLL;
+    const targetUrl = redirectTarget(to);
 
     useEffect(() => {
         const timer = setTimeout(() => {

@@ -1,30 +1,9 @@
 // Vercel serverless function to manage images via GitHub API
-import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveContentDir, resolveImageFile, imageUploadPath, deleteLargerWebCopies } from './github-utils.js';
-import { verifyJWT, parseCookies } from './auth-utils.js';
+import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveContentDir, resolveImageFile, imageUploadPath, deleteLargerWebCopies, MAX_IMAGE_BYTES } from './github-utils.js';
+import { requireAdmin } from './auth-utils.js';
 
 export default async function handler(req, res) {
-    // Enable CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-
-    // Validate authentication using cookies
-    const cookies = parseCookies(req.headers.cookie);
-    const token = cookies.adminToken;
-
-    if (!token) {
-        return res.status(401).json({ error: 'Authentication required' });
-    }
-
-    const decoded = verifyJWT(token);
-    if (!decoded || !decoded.admin) {
-        return res.status(401).json({ error: 'Invalid authentication' });
-    }
+    if (!requireAdmin(req, res)) return;
 
     try {
         const { path: requestPath, file } = req.query;
@@ -77,6 +56,9 @@ export default async function handler(req, res) {
             const imageBuffer = Buffer.from(base64Data, 'base64');
             if (!imageBuffer.length) {
                 return res.status(400).json({ error: 'Image file is empty or invalid' });
+            }
+            if (imageBuffer.length > MAX_IMAGE_BYTES) {
+                return res.status(413).json({ error: 'Image is larger than 3 MB' });
             }
 
             const fullPath = imageUploadPath(resolved.kind, resolved.slug, resolved.category, fileName);

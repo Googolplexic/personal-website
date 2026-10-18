@@ -145,6 +145,9 @@ export async function updateFileInGitHub(path, content, message, sha = null) {
 }
 
 const IMAGE_EXTS = ['.jpg', '.jpeg', '.png', '.webp'];
+
+// Vercel rejects request bodies over 4.5 MB, about 3.3 MB of image once base64-encoded
+export const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 const [CARD_VARIANT, ...LARGER_VARIANTS] = WEB_VARIANTS;
 
 // Compute the web/ optimized path for a given image path.

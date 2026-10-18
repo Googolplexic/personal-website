@@ -1,28 +1,49 @@
-import { 
-    verifyPassword, 
-    generateJWT, 
-    verifyJWT, 
-    createAuthCookie, 
-    createLogoutCookie, 
+import {
+    checkAdminPassword,
+    generateJWT,
+    verifyJWT,
+    createAuthCookie,
+    createLogoutCookie,
     parseCookies,
-    getStoredPasswordHash 
+    isSameOrigin,
 } from './auth-utils.js';
+
+// Failed logins per IP. This lives in the function instance, so it resets on a cold start
+// and isn't shared between instances; it slows down guessing rather than stopping it outright.
+const FAILURE_WINDOW_MS = 15 * 60 * 1000;
+const MAX_FAILURES = 5;
+const FAILURE_DELAY_MS = 1000;
+const failedLogins = new Map();
+
+function clientIp(req) {
+    return String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown';
+}
+
+function recentFailures(ip) {
+    const entry = failedLogins.get(ip);
+    if (!entry) return null;
+    if (Date.now() - entry.first > FAILURE_WINDOW_MS) {
+        failedLogins.delete(ip);
+        return null;
+    }
+    return entry;
+}
+
+function recordFailure(ip) {
+    const entry = recentFailures(ip) ?? { count: 0, first: Date.now() };
+    entry.count++;
+    failedLogins.set(ip, entry);
+}
 
 // Vercel serverless function for admin authentication
 export default async function handler(req, res) {
-    // Enable CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+    if (!isSameOrigin(req)) {
+        return res.status(403).json({ error: 'Cross-origin requests are not allowed' });
     }
 
     if (req.method === 'POST') {
         const { password } = req.body;
-        
+
         if (!password) {
             return res.status(400).json({
                 success: false,
@@ -30,21 +51,28 @@ export default async function handler(req, res) {
             });
         }
 
+        const ip = clientIp(req);
+        const failures = recentFailures(ip);
+        if (failures && failures.count >= MAX_FAILURES) {
+            res.setHeader('Retry-After', String(Math.ceil((failures.first + FAILURE_WINDOW_MS - Date.now()) / 1000)));
+            return res.status(429).json({
+                success: false,
+                error: 'Too many attempts. Try again later.',
+            });
+        }
+
         try {
-            // Get the stored password hash
-            const storedHash = await getStoredPasswordHash();
-            
-            if (!storedHash) {
+            const isValidPassword = await checkAdminPassword(password);
+
+            if (isValidPassword === null) {
                 return res.status(500).json({
                     success: false,
                     error: 'Server configuration error',
                 });
             }
 
-            // Verify the password against the hash
-            const isValidPassword = await verifyPassword(password, storedHash);
-
             if (isValidPassword) {
+                failedLogins.delete(ip);
                 // Generate JWT token
                 const payload = {
                     admin: true,
@@ -60,6 +88,8 @@ export default async function handler(req, res) {
                     message: 'Authentication successful',
                 });
             } else {
+                recordFailure(ip);
+                await new Promise((resolve) => setTimeout(resolve, FAILURE_DELAY_MS));
                 return res.status(401).json({
                     success: false,
                     error: 'Invalid password',

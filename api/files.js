@@ -1,6 +1,6 @@
 // Vercel serverless function to get file lists via GitHub API
 import { Octokit } from '@octokit/rest';
-import { verifyJWT, parseCookies } from './auth-utils.js';
+import { requireAdmin } from './auth-utils.js';
 import { resolveContentDir } from './github-utils.js';
 
 const octokit = new Octokit({
@@ -11,28 +11,7 @@ const REPO_OWNER = 'Googolplexic';
 const REPO_NAME = 'personal-website';
 
 export default async function handler(req, res) {
-    // Enable CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-
-    // Validate authentication using cookies
-    const cookies = parseCookies(req.headers.cookie);
-    const token = cookies.adminToken;
-    
-    if (!token) {
-        return res.status(401).json({ error: 'Authentication required' });
-    }
-    
-    const decoded = verifyJWT(token);
-    if (!decoded || !decoded.admin) {
-        return res.status(401).json({ error: 'Invalid authentication' });
-    }
+    if (!requireAdmin(req, res)) return;
 
     if (req.method === 'GET') {
         try {

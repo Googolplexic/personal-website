@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import { timingSafeEqual } from 'node:crypto';
 import jwt from 'jsonwebtoken';
 
 function getJwtSecret() {
@@ -8,18 +9,48 @@ function getJwtSecret() {
 }
 
 /**
- * Hash a password using bcrypt
+ * Check a login attempt. Prefers ADMIN_PASSWORD_HASH (made with scripts/hash-password.mjs);
+ * falls back to comparing against a plain ADMIN_PASSWORD. Returns null when neither is set.
  */
-export async function hashPassword(password) {
-    const saltRounds = 12;
-    return await bcrypt.hash(password, saltRounds);
+export async function checkAdminPassword(password) {
+    const hash = process.env.ADMIN_PASSWORD_HASH;
+    if (hash) return bcrypt.compare(password, hash);
+
+    const plain = process.env.ADMIN_PASSWORD;
+    if (!plain) return null;
+    const given = Buffer.from(String(password));
+    const expected = Buffer.from(plain);
+    return given.length === expected.length && timingSafeEqual(given, expected);
 }
 
 /**
- * Verify a password against a hash
+ * Browsers send Origin on cross-site requests; a host that doesn't match ours means another site sent it.
  */
-export async function verifyPassword(password, hash) {
-    return await bcrypt.compare(password, hash);
+export function isSameOrigin(req) {
+    const origin = req.headers.origin;
+    if (!origin) return true;
+    try {
+        return new URL(origin).host === req.headers.host;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Responds with 403 or 401 and returns false unless the request comes from this site with a valid admin cookie.
+ */
+export function requireAdmin(req, res) {
+    if (!isSameOrigin(req)) {
+        res.status(403).json({ error: 'Cross-origin requests are not allowed' });
+        return false;
+    }
+    const token = parseCookies(req.headers.cookie).adminToken;
+    const decoded = token ? verifyJWT(token) : null;
+    if (!decoded?.admin) {
+        res.status(401).json({ error: 'Authentication required' });
+        return false;
+    }
+    return true;
 }
 
 /**
@@ -86,19 +117,4 @@ export function parseCookies(cookieHeader) {
         });
     }
     return cookies;
-}
-
-/**
- * Get stored password hash (since we can't hash the env variable each time)
- * In a real app, this would come from a database
- */
-export async function getStoredPasswordHash() {
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    if (!adminPassword) {
-        return null;
-    }
-    
-    // For demo purposes, we'll hash the env password on the fly
-    // In production, you'd store the hash in a database
-    return await hashPassword(adminPassword);
 }
