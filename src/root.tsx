@@ -6,8 +6,6 @@ import { SiteShell } from './components/layout/SiteShell';
 import { NotFound } from './pages/NotFound';
 import { printConsoleGreeting } from './utils/consoleGreeting';
 import { notFoundMeta, seoMeta } from './utils/seo';
-import headingFont from './assets/fonts/eb-garamond-400-normal-latin.woff2?url';
-import bodyFont from './assets/fonts/pt-sans-400-normal-latin.woff2?url';
 import './index.css';
 
 // Runs before first paint: applies a saved "spotlight off" preference so the
@@ -24,8 +22,6 @@ export const links: Route.LinksFunction = () => [
     { rel: 'alternate', type: 'application/rss+xml', title: 'Coleman Lai — All updates', href: 'https://www.colemanlai.com/rss.xml' },
     { rel: 'alternate', type: 'application/rss+xml', title: 'Coleman Lai — Portfolio', href: 'https://www.colemanlai.com/rss-portfolio.xml' },
     { rel: 'alternate', type: 'application/rss+xml', title: 'Coleman Lai — Origami', href: 'https://www.colemanlai.com/rss-origami.xml' },
-    { rel: 'preload', as: 'font', type: 'font/woff2', href: headingFont, crossOrigin: 'anonymous' },
-    { rel: 'preload', as: 'font', type: 'font/woff2', href: bodyFont, crossOrigin: 'anonymous' },
 ];
 
 // Every page sets its own tags; these only reach the fallback page used for /admin and 404s.
