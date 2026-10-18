@@ -1,12 +1,11 @@
 import { useNavigate } from 'react-router';
-import Markdown from 'react-markdown';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
 import { HighlightedText } from '../components/ui/HighlightedText';
+import { MarkdownBody } from '../components/ui/MarkdownBody';
 import { ShareButton } from '../components/ui/ShareButton';
 import { NextExhibit, ProjectProps } from '../types';
 import { BASE_URL } from '../utils/seo';
 import { useClientLocation, useClientSearchParams } from '../utils/useHydrated';
-import React from 'react';
 
 interface ProjectDetailProps {
     project: ProjectProps;
@@ -30,54 +29,6 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
     const timelineLabel = project.startDate === project.endDate
         ? project.startDate
         : `${project.startDate} – ${project.endDate || 'Present'}`;
-
-    const components = {
-        p: ({ children, ...props }: React.HTMLProps<HTMLParagraphElement>) => (
-            <p {...props}>
-                {React.Children.map(children, child =>
-                    typeof child === 'string'
-                        ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
-                        : child
-                )}
-            </p>
-        ),
-        h1: ({ children, ...props }: React.HTMLProps<HTMLHeadingElement>) => (
-            <h1 {...props}>
-                {React.Children.map(children, child =>
-                    typeof child === 'string'
-                        ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
-                        : child
-                )}
-            </h1>
-        ),
-        h2: ({ children, ...props }: React.HTMLProps<HTMLHeadingElement>) => (
-            <h2 {...props}>
-                {React.Children.map(children, child =>
-                    typeof child === 'string'
-                        ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
-                        : child
-                )}
-            </h2>
-        ),
-        h3: ({ children, ...props }: React.HTMLProps<HTMLHeadingElement>) => (
-            <h3 {...props}>
-                {React.Children.map(children, child =>
-                    typeof child === 'string'
-                        ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
-                        : child
-                )}
-            </h3>
-        ),
-        li: ({ children, ...props }: React.HTMLProps<HTMLLIElement>) => (
-            <li {...props}>
-                {React.Children.map(children, child =>
-                    typeof child === 'string'
-                        ? <HighlightedText text={child} searchTerm={searchTerm} allowHtml={true} />
-                        : child
-                )}
-            </li>
-        ),
-    };
 
     return (
         <div className="min-h-screen">
@@ -112,9 +63,7 @@ export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProje
                 {/* Two-column: description + sidebar metadata */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
                     <div className="lg:col-span-8">
-                        <div className="markdown-content text-ink">
-                            <Markdown components={components}>{project.description}</Markdown>
-                        </div>
+                        <MarkdownBody source={project.description} searchTerm={searchTerm} />
                     </div>
 
                     <aside className="lg:col-span-4">

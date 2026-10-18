@@ -9,6 +9,7 @@ export interface BaseItem {
     keywords?: string[];   // SEO keywords as array
     tags?: string[];
     images?: string[];
+    exhibit?: string; // Wall-label code like "P·07", set by the content loader
 }
 
 // Project-specific properties
@@ -25,6 +26,7 @@ export interface ProjectProps extends BaseItem {
 // Origami-specific properties
 export interface OrigamiProps extends BaseItem {
     description?: string; // Plain text description
+    writeup?: string; // Markdown body of info.md, below the frontmatter
     modelImages: string[];
     modelImagesFull?: string[];
     creasePattern?: string;

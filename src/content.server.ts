@@ -4,11 +4,17 @@ import type { OrigamiProps, ProjectProps } from './types';
 
 export { allProjects, allOrigami, myDesigns, otherDesigns };
 
+/** Exhibit numbers count up from the oldest item; the lists are sorted newest first. */
+function exhibitCode(list: { slug: string }[], index: number, prefix: 'P' | 'O') {
+    return `${prefix}·${String(list.length - index).padStart(2, '0')}`;
+}
+
 /** The fields project cards and listing search read; detail pages get the full record. */
 export function projectCard(project: ProjectProps): ProjectProps {
     return {
         type: 'project',
         slug: project.slug,
+        exhibit: exhibitCode(allProjects, allProjects.findIndex((p) => p.slug === project.slug), 'P'),
         title: project.title,
         summary: project.summary,
         description: project.description,
@@ -27,6 +33,7 @@ export function origamiCard(piece: OrigamiProps): OrigamiProps {
         type: 'origami',
         category: piece.category,
         slug: piece.slug,
+        exhibit: exhibitCode(allOrigami, allOrigami.findIndex((p) => p.slug === piece.slug), 'O'),
         title: piece.title,
         description: piece.description,
         date: piece.date,
@@ -37,19 +44,15 @@ export function origamiCard(piece: OrigamiProps): OrigamiProps {
     };
 }
 
-/**
- * Finds an item plus the one shown as "Next Exhibit". Exhibit numbers count up
- * from the oldest item, and the lists are sorted newest first.
- */
+/** Finds an item plus the one shown as "Next Exhibit". */
 export function findExhibit<T extends { slug: string }>(list: T[], slug: string | undefined, prefix: 'P' | 'O') {
     const index = list.findIndex((item) => item.slug === slug);
     if (index === -1) return null;
     const nextIndex = (index - 1 + list.length) % list.length;
-    const exhibitNumber = (i: number) => `${prefix}·${String(list.length - i).padStart(2, '0')}`;
     return {
         item: list[index],
-        exhibit: exhibitNumber(index),
+        exhibit: exhibitCode(list, index, prefix),
         next: list[nextIndex],
-        nextExhibit: exhibitNumber(nextIndex),
+        nextExhibit: exhibitCode(list, nextIndex, prefix),
     };
 }
