@@ -8,10 +8,11 @@ import { printConsoleGreeting } from './utils/consoleGreeting';
 import { notFoundMeta, seoMeta } from './utils/seo';
 import './index.css';
 
-// Runs before first paint: applies a saved "spotlight off" preference so the
-// effects never flash on, and hides the native scrollbar where the custom
-// cursor will replace it (conditions match useCustomCursor).
-const HEAD_SCRIPT = `try{var c=document.documentElement.classList,m=function(q){return matchMedia(q).matches},r=m('(prefers-reduced-motion: reduce)'),s=localStorage.getItem('spotlight-enabled');if(s==='false'||(s===null&&r))c.add('spotlight-disabled');if(!r&&m('(hover: hover) and (pointer: fine)')&&location.pathname!=='/admin')c.add('custom-scrollbar')}catch(e){}`;
+// Runs before first paint: marks images loaded so they can fade in whole
+// (React may hydrate after they finish), applies a saved "spotlight off"
+// preference so the effects never flash on, and hides the native scrollbar
+// where the custom cursor will replace it (conditions match useCustomCursor).
+const HEAD_SCRIPT = `try{var d=document,l=function(e){if(e.target.tagName==='IMG')e.target.setAttribute('data-loaded','')};d.addEventListener('load',l,true);d.addEventListener('error',l,true);new MutationObserver(function(r){r.forEach(function(x){x.target.removeAttribute('data-loaded')})}).observe(d,{subtree:true,attributeFilter:['src']});d.documentElement.classList.add('img-fade')}catch(e){}try{var c=document.documentElement.classList,m=function(q){return matchMedia(q).matches},r=m('(prefers-reduced-motion: reduce)'),s=localStorage.getItem('spotlight-enabled');if(s==='false'||(s===null&&r))c.add('spotlight-disabled');if(!r&&m('(hover: hover) and (pointer: fine)')&&location.pathname!=='/admin')c.add('custom-scrollbar')}catch(e){}`;
 
 export const links: Route.LinksFunction = () => [
     { rel: 'icon', href: '/favicon.ico', sizes: 'any' },

@@ -63,6 +63,7 @@ export function OrigamiDetail({ origami, exhibit, next }: OrigamiDetailProps) {
                         <img
                             src={origami.creasePattern}
                             alt={`${origami.title} crease pattern`}
+                            data-fade
                             className="block w-full h-auto object-contain"
                             loading="lazy"
                             title="Click to enlarge"

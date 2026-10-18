@@ -62,7 +62,11 @@ export function GroupedExhibitGrid({ items, searchTerm }: GroupedExhibitGridProp
                                 isCollapsed ? 'grid-rows-[0fr]' : 'grid-rows-[1fr]',
                             )}
                         >
-                            <div className="overflow-hidden" inert={isCollapsed}>
+                            {/* Clips only while closed or opening, so an open group's focus rings aren't cut off */}
+                            <div
+                                className={isCollapsed ? 'overflow-hidden' : 'overflow-visible transition-[overflow] transition-discrete duration-0 delay-500'}
+                                inert={isCollapsed}
+                            >
                                 <ExhibitGrid
                                     items={group.items}
                                     searchTerm={searchTerm}

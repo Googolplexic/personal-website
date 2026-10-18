@@ -70,6 +70,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                     <img
                         src={image}
                         alt={item.title}
+                        data-fade
                         className="block w-full h-auto"
                         loading={priority ? 'eager' : 'lazy'}
                         decoding={priority ? 'sync' : 'async'}

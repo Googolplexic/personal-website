@@ -59,6 +59,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                                     src={img}
                                     alt={`${title} - Image ${i + 1}`}
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
+                                    data-fade
                                     className={cn('w-full object-contain', frameStyle ? 'max-h-full' : 'max-h-[min(70svh,44rem)]')}
                                     style={size && { maxWidth: size.width }}
                                     loading={i <= 1 ? 'eager' : 'lazy'}
