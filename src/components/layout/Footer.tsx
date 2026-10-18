@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router';
+import { Link as RouterLink, useLocation } from 'react-router';
 import { SpotlightToggle } from './SpotlightToggle';
 import { FOOTER_META_LINK } from './footerStyles';
 
@@ -21,12 +21,18 @@ const SOCIAL_LINKS = [
 const linkClass = 'inline-flex items-center min-h-9 text-xs tracking-[0.15em] uppercase font-body text-ink-muted link-underline';
 
 export function Footer() {
+    const location = useLocation();
+    // Scrolling here, before the route changes, jumps the old page to the top and then swaps it
+    const scrollIfSamePage = (path: string) => () => {
+        if (location.pathname === path) window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <footer className="border-t border-solid border-line">
             <div className="page-grid pt-12 pb-8 gap-y-10">
                 <RouterLink
                     to="/"
-                    onClick={() => window.scrollTo(0, 0)}
+                    onClick={scrollIfSamePage('/')}
                     aria-label="CL, Coleman Lai, home"
                     className="col-span-full md:col-span-4 self-start font-signature text-2xl tracking-wide no-underline select-none text-ink transition-colors duration-300 hover:text-gold"
                 >
@@ -38,7 +44,7 @@ export function Footer() {
                         {NAV_LINKS.map(link => (
                             <li key={link.label}>
                                 {link.to ? (
-                                    <RouterLink to={link.to} onClick={() => window.scrollTo(0, 0)} className={linkClass}>
+                                    <RouterLink to={link.to} onClick={scrollIfSamePage(link.to)} className={linkClass}>
                                         {link.label}
                                     </RouterLink>
                                 ) : (

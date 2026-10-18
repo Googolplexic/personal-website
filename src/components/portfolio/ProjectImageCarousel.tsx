@@ -39,19 +39,24 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
         </div>;
     }
 
-    // The frame takes the shape of the photo on show, so a landscape shot isn't
-    // letterboxed to the height of the tallest portrait in the set
-    const activeSize = imageSets?.[resolvedImages[currentImageIndex]];
-    const frameStyle = activeSize && {
-        aspectRatio: `${activeSize.width} / ${activeSize.height}`,
-        maxHeight: `min(70svh, 44rem, ${activeSize.height}px)`,
+    // One slot for every slide, sized to the tallest photo, so the text below
+    // stays put when the pictures have different heights
+    const tallest = resolvedImages.reduce<ImageSet | undefined>((best, img) => {
+        const set = imageSets?.[img];
+        if (!set) return best;
+        if (!best || set.height / set.width > best.height / best.width) return set;
+        return best;
+    }, undefined);
+    const frameStyle = tallest && {
+        aspectRatio: `${tallest.width} / ${tallest.height}`,
+        maxHeight: 'min(70svh, 44rem)',
     };
 
     return (
         <div className="relative group">
             {/* Main image display */}
             {/* mx-auto: the height cap shrinks a tall photo's frame, which would otherwise sit on the left */}
-            <div className="relative mx-auto overflow-hidden bg-canvas max-h-[min(70svh,44rem)] transition-[aspect-ratio] duration-500" style={frameStyle || undefined}>
+            <div className="relative mx-auto overflow-hidden bg-canvas max-h-[min(70svh,44rem)]" style={frameStyle || undefined}>
                 <div
                     className={cn('flex transition-transform duration-500 ease-in-out', frameStyle && 'h-full')}
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
@@ -77,8 +82,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                                     sizes={set && CAROUSEL_SIZES}
                                     alt={`${title} - Image ${i + 1}`}
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
-                                    // The first slide paints as it arrives; waiting to fade it in delays the page's main paint
-                                    data-fade={i === 0 ? undefined : true}
+                                    data-fade
                                     className={cn('w-full object-contain', frameStyle ? 'max-h-full' : 'max-h-[min(70svh,44rem)]')}
                                     style={set && { maxWidth: set.width }}
                                     loading={nearby ? 'eager' : 'lazy'}

@@ -39,7 +39,7 @@ export function Navbar() {
                 {/* CL Monogram */}
                 <RouterLink
                     to="/"
-                    onClick={() => window.scrollTo(0, 0)}
+                    onClick={() => { if (location.pathname === '/') window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                     aria-label="CL, Coleman Lai, home"
                     className="font-signature text-2xl tracking-wide no-underline select-none transition-colors duration-300 text-ink hover:text-gold"
                 >
@@ -92,7 +92,7 @@ function NavLink({ to, block = false, children }: { to: string; block?: boolean;
     return (
         <RouterLink
             to={to}
-            onClick={() => window.scrollTo(0, 0)}
+            onClick={() => { if (location.pathname === to) window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             aria-current={isActive ? 'page' : undefined}
             className={cn(
                 'nav-link-gallery',
