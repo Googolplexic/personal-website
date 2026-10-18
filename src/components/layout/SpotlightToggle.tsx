@@ -3,11 +3,7 @@ import { FOOTER_META_LINK } from './footerStyles';
 
 /**
  * Subtle text toggle that matches the Footer's other meta links
- * (copyright line, BuildMeta): inherits the surrounding secondary-text
- * color and eases up to primary on hover.
- *
- * Uses the shared FOOTER_META_LINK class for consistent hover behavior
- * with every other element in the footer.
+ * (copyright line, BuildMeta) through the shared FOOTER_META_LINK class.
  */
 export function SpotlightToggle() {
     const { enabled, toggleEnabled } = useSpotlightPreference();

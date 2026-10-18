@@ -1,0 +1,14 @@
+/* The site's one link hover: text turns gold and a hairline gold underline fades in.
+   Opt-in, because cards are anchors too and would underline every line inside them. */
+@utility link-underline {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: transparent;
+  transition: color 0.3s var(--ease-gallery), text-decoration-color 0.3s var(--ease-gallery);
+
+  &:hover {
+    color: var(--color-gold);
+    text-decoration-color: var(--color-gold);
+  }
+}

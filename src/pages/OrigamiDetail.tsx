@@ -42,10 +42,7 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
                 {/* Back navigation */}
                 <button
                     onClick={() => navigate(backDestination)}
-                    className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300"
-                    style={{ color: 'var(--color-ink-faint)', background: 'none', border: 'none' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-faint)')}
+                    className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-body mb-10 p-0 transition-colors duration-300 text-ink-faint hover:text-gold"
                 >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                         <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -146,9 +143,7 @@ export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOriga
                             )}
                             <div className="flex-1 min-w-0">
                                 <span className="exhibit-label text-xs mb-1 block">{nextOrigami.exhibit}</span>
-                                <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300 text-ink"
-                                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
-                                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink)')}>
+                                <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300 text-ink group-hover:text-gold">
                                     {nextOrigami.title}
                                 </span>
                                 <span className="text-xs font-body tracking-widest text-ink-faint">

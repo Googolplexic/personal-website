@@ -26,7 +26,7 @@ export function Origami({ myDesigns, otherDesigns, software }: OrigamiGalleryPro
                 <a
                     href="https://www.instagram.com/12googolplex"
                     target="_blank"
-                    rel="noopener noreferrer" className="text-gold"
+                    rel="noopener noreferrer" className="link-underline text-gold"
                 >
                     @12googolplex
                 </a>

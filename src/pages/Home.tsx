@@ -1,7 +1,7 @@
 import { About } from '../components/sections/About';
 import { LinkSection, type LinkSectionItem } from '../components/sections/LinkSection';
 import { ItemGrid } from '../components/ui/ItemGrid';
-import { Link } from '../components/ui/base';
+import { Link } from 'react-router';
 import { ItemProps } from '../types';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
 import { useCallback, useEffect, useRef } from 'react';
@@ -152,7 +152,7 @@ export function Home({ featured, featuredSlugs }: HomeProps) {
 
                     <p className="text-xs tracking-[0.2em] uppercase font-body animate-fade-in opacity-0 text-ink-faint"
                         style={{ animationDelay: '0.3s' }}>
-                        Computing Science &nbsp;<Link to="/admin" className="no-underline! cursor-default" style={{ color: 'inherit', opacity: 1 }}>·</Link>&nbsp; Origami Artist
+                        Computing Science &nbsp;<Link to="/admin" className="cursor-default text-inherit">·</Link>&nbsp; Origami Artist
 
                     </p>
                 </div>

@@ -168,9 +168,7 @@ export function MultiSelect({
                             <button
                                 type="button"
                                 onClick={() => onChange([])}
-                                className="text-xs font-body tracking-widest uppercase transition-colors cursor-pointer bg-transparent border-none p-0 text-ink-faint"
-                                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
-                                onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-faint)')}
+                                className="text-xs font-body tracking-widest uppercase transition-colors cursor-pointer bg-transparent border-none p-0 text-ink-faint hover:text-gold"
                             >
                                 Clear
                             </button>
