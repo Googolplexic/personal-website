@@ -76,7 +76,8 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                                     sizes={set && CAROUSEL_SIZES}
                                     alt={`${title} - Image ${i + 1}`}
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
-                                    data-fade
+                                    // The first slide paints as it arrives; waiting to fade it in delays the page's main paint
+                                    data-fade={i === 0 ? undefined : true}
                                     className={cn('w-full object-contain', frameStyle ? 'max-h-full' : 'max-h-[min(70svh,44rem)]')}
                                     style={set && { maxWidth: set.width }}
                                     loading={nearby ? 'eager' : 'lazy'}

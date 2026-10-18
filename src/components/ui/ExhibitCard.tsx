@@ -76,7 +76,8 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                         srcSet={set?.srcSet}
                         sizes={set && (lead ? LEAD_IMAGE_SIZES : CARD_IMAGE_SIZES)}
                         alt={item.title}
-                        data-fade
+                        // Opening images paint as they arrive; waiting to fade them in delays the page's main paint
+                        data-fade={priority ? undefined : true}
                         className="block w-full h-auto"
                         loading={priority ? 'eager' : 'lazy'}
                         fetchPriority={priority ? 'high' : undefined}
