@@ -8,6 +8,7 @@ import { ItemProps } from '../types';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
 import { useCallback, useEffect, useRef } from 'react';
 import { HeroParticles } from '../components/ui/HeroParticles';
+import { useSpotlightPreference } from '../useSpotlightPreference';
 
 const CONNECT_LINKS: LinkSectionItem[] = [
     { name: 'Personal Email', value: 'coleman@colemanlai.com', href: 'mailto:coleman@colemanlai.com' },
@@ -34,76 +35,101 @@ interface HomeProps {
     featured: ItemProps[];
 }
 
+const NAME_COLOR = '#e8e4de';
+
+/** Moves the hero spotlight to the pointer and lights the name from that direction. */
+function lightHero(section: HTMLElement, name: HTMLElement | null, clientX: number, clientY: number) {
+    const spotlight = section.querySelector<HTMLElement>('.hero-spotlight');
+    if (!spotlight) return;
+    spotlight.classList.add('visible');
+    const rect = section.getBoundingClientRect();
+    spotlight.style.setProperty('--hero-x', `${((clientX - rect.left) / rect.width) * 100}%`);
+    spotlight.style.setProperty('--hero-y', `${((clientY - rect.top) / rect.height) * 100}%`);
+
+    if (!name) return;
+    const nameRect = name.getBoundingClientRect();
+    // Cursor position relative to name (0–100) so the highlight tracks the mouse in 2D
+    const relX = ((clientX - nameRect.left) / nameRect.width) * 100;
+    const relY = ((clientY - nameRect.top) / nameRect.height) * 100;
+    // Distance from name center for overall intensity falloff
+    const dx = (clientX - (nameRect.left + nameRect.width / 2)) / (nameRect.width * 1.5);
+    const dy = (clientY - (nameRect.top + nameRect.height / 2)) / 300;
+    const raw = Math.max(0, 1 - Math.sqrt(dx * dx + dy * dy));
+    const intensity = raw * raw * (3 - 2 * raw); // smoothstep
+
+    // Tighter radial = more directional spotlight; size shrinks when cursor is closer
+    const radius = 22 + 20 * (1 - intensity);
+
+    // Smooth edge: blend base→white only in low intensity so no snap; full punch when near
+    const t = intensity <= 0 ? 0 : intensity < 0.06 ? intensity / 0.06 : 1;
+    const bright = `rgb(${Math.round(232 + 23 * t)}, ${Math.round(228 + 27 * t)}, ${Math.round(222 + 33 * t)})`;
+    name.style.backgroundImage = `radial-gradient(ellipse ${radius}% ${radius * 0.7}% at ${relX}% ${relY}%, ${bright}, ${NAME_COLOR})`;
+    name.style.webkitBackgroundClip = 'text';
+    name.style.backgroundClip = 'text';
+    name.style.color = 'transparent';
+    name.style.webkitTextFillColor = 'transparent';
+    name.style.filter = `drop-shadow(0 0 ${40 * intensity}px rgba(255, 248, 230, ${0.85 * intensity})) drop-shadow(0 0 ${14 * intensity}px rgba(255, 255, 248, ${0.5 * intensity}))`;
+    name.style.transition = 'none';
+}
+
+/** Fades the name back to plain text as the pointer leaves the hero. */
+function dimHero(section: HTMLElement, name: HTMLElement | null) {
+    section.querySelector('.hero-spotlight')?.classList.remove('visible');
+    if (!name) return;
+    name.style.transition = 'filter 0.5s ease-out';
+    name.style.backgroundImage = `linear-gradient(90deg, ${NAME_COLOR} 0%, ${NAME_COLOR} 100%)`;
+    name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0)) drop-shadow(0 0 0px rgba(255, 255, 248, 0))';
+}
+
+/** Drops the lighting at once, for when the hero is off screen or the spotlight is switched off. */
+function clearHero(section: HTMLElement, name: HTMLElement | null) {
+    section.querySelector('.hero-spotlight')?.classList.remove('visible');
+    if (!name) return;
+    name.style.backgroundImage = 'none';
+    name.style.color = NAME_COLOR;
+    name.style.webkitTextFillColor = 'unset';
+    name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0))';
+}
+
 export function Home({ featured }: HomeProps) {
     const nameRef = useRef<HTMLHeadingElement>(null);
     const heroRef = useRef<HTMLElement>(null);
+    const pointerRef = useRef({ x: 0, y: 0 });
+    const frameRef = useRef(0);
+    const { enabled: spotlightEnabled } = useSpotlightPreference();
     const [lead, ...rest] = featured;
 
     const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
         if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+        if (document.documentElement.classList.contains('spotlight-disabled')) return;
+        pointerRef.current = { x: e.clientX, y: e.clientY };
+        if (frameRef.current) return;
         const section = e.currentTarget;
-        const spotlight = section.querySelector('.hero-spotlight') as HTMLElement;
-        if (!spotlight) return;
-        // Show the spotlight on first mouse movement
-        if (!spotlight.classList.contains('visible')) spotlight.classList.add('visible');
-        const rect = section.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        spotlight.style.setProperty('--hero-x', `${x}%`);
-        spotlight.style.setProperty('--hero-y', `${y}%`);
-
-        // Text illumination — radial spotlight follows cursor in 2D for a directional beam
-        const name = nameRef.current;
-        if (name) {
-            const nameRect = name.getBoundingClientRect();
-            // Cursor position relative to name (0–100) so the highlight tracks the mouse in 2D
-            const relX = ((e.clientX - nameRect.left) / nameRect.width) * 100;
-            const relY = ((e.clientY - nameRect.top) / nameRect.height) * 100;
-            // Distance from name center for overall intensity falloff
-            const cx = nameRect.left + nameRect.width / 2;
-            const cy = nameRect.top + nameRect.height / 2;
-            const dx = (e.clientX - cx) / (nameRect.width * 1.5);
-            const dy = (e.clientY - cy) / 300;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const raw = Math.max(0, 1 - dist);
-            const intensity = raw * raw * (3 - 2 * raw); // smoothstep
-
-            // Tighter radial = more directional spotlight; size shrinks when cursor is closer
-            const radius = 22 + 20 * (1 - intensity);
-
-            // Smooth edge: blend base→white only in low intensity so no snap; full punch when near
-            const t = intensity <= 0 ? 0 : intensity < 0.06 ? intensity / 0.06 : 1;
-            const r = Math.round(232 + 23 * t);
-            const g = Math.round(228 + 27 * t);
-            const b = Math.round(222 + 33 * t);
-            const bright = `rgb(${r}, ${g}, ${b})`;
-            const base = '#e8e4de';
-            name.style.backgroundImage = `radial-gradient(ellipse ${radius}% ${radius * 0.7}% at ${relX}% ${relY}%, ${bright}, ${base})`;
-            name.style.webkitBackgroundClip = 'text';
-            name.style.backgroundClip = 'text';
-            name.style.color = 'transparent';
-            name.style.webkitTextFillColor = 'transparent';
-            name.style.filter = `drop-shadow(0 0 ${40 * intensity}px rgba(255, 248, 230, ${0.85 * intensity})) drop-shadow(0 0 ${14 * intensity}px rgba(255, 255, 248, ${0.5 * intensity}))`;
-            name.style.transition = 'none';
-        }
+        // At most one lighting update per frame, however fast mousemove fires
+        frameRef.current = requestAnimationFrame(() => {
+            frameRef.current = 0;
+            lightHero(section, nameRef.current, pointerRef.current.x, pointerRef.current.y);
+        });
     }, []);
+
+    const handleHeroMouseLeave = useCallback((e: React.MouseEvent<HTMLElement>) => {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = 0;
+        dimHero(e.currentTarget, nameRef.current);
+    }, []);
+
+    useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
+
+    useEffect(() => {
+        if (!spotlightEnabled && heroRef.current) clearHero(heroRef.current, nameRef.current);
+    }, [spotlightEnabled]);
 
     useEffect(() => {
         const el = heroRef.current;
         if (!el) return;
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (!entry.isIntersecting) {
-                    const name = nameRef.current;
-                    if (name) {
-                        name.style.backgroundImage = 'none';
-                        name.style.color = '#e8e4de';
-                        name.style.webkitTextFillColor = 'unset';
-                        name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0))';
-                    }
-                    const spotlight = el.querySelector('.hero-spotlight');
-                    if (spotlight) spotlight.classList.remove('visible');
-                }
+                if (!entry.isIntersecting) clearHero(el, nameRef.current);
             },
             { threshold: 0 }
         );
@@ -118,22 +144,13 @@ export function Home({ featured }: HomeProps) {
                 ref={heroRef}
                 className="hero-black-fade min-h-svh flex flex-col justify-end relative pt-32 pb-28 md:pb-36"
                 onMouseMove={handleHeroMouseMove}
-                onMouseLeave={() => {
-                    const spotlight = heroRef.current?.querySelector('.hero-spotlight');
-                    if (spotlight) spotlight.classList.remove('visible');
-                    const name = nameRef.current;
-                    if (name) {
-                        name.style.transition = 'filter 0.5s ease-out';
-                        name.style.backgroundImage = 'linear-gradient(90deg, #e8e4de 0%, #e8e4de 100%)';
-                        name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0)) drop-shadow(0 0 0px rgba(255, 255, 248, 0))';
-                    }
-                }}
+                onMouseLeave={handleHeroMouseLeave}
             >
                 {/* Spotlight cone from above */}
                 <div className="hero-spotlight" />
 
                 {/* Floating dust motes */}
-                <HeroParticles />
+                {spotlightEnabled && <HeroParticles />}
 
                 <div className="page-grid relative z-10">
                     <div className="col-span-full">

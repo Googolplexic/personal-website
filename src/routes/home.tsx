@@ -6,7 +6,7 @@ import { keepDataOnQueryChange } from '../utils/routeData';
 import { BASE_URL, seoMeta } from '../utils/seo';
 import { useClientSearchParams } from '../utils/useHydrated';
 
-const FEATURED_SLUGS = ['pi-2026', 'personal-website', 'ryujin-3-5', 'torgal', 'tonberry', 'origami-fractions'];
+const FEATURED_SLUGS = ['ryujin-3-5', 'torgal', 'pi-2026', 'personal-website', 'tonberry', 'origami-fractions'];
 const DESCRIPTION = 'Software projects and origami by Coleman Lai, a Computing Science student at Simon Fraser University in Vancouver.';
 
 export function loader() {
