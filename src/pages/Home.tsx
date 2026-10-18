@@ -193,8 +193,8 @@ export function Home({ featured }: HomeProps) {
                         </div>
                     )}
                     {rest.length > 0 && (
-                        <div className="col-span-full mt-16 lg:mt-24">
-                            <ExhibitGrid items={rest} priority={false} skipCount={0} />
+                        <div className="col-span-full lg:col-start-4 lg:col-span-9 mt-16 lg:mt-24">
+                            <ExhibitGrid items={rest} priority={false} skipCount={0} maxColumns={2} />
                         </div>
                     )}
                 </div>
