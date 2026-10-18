@@ -76,7 +76,8 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
                                 <img
                                     src={next.image}
                                     alt=""
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    data-fade
+                                    className="w-full h-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-105"
                                     loading="lazy"
                                 />
                             </div>
