@@ -18,6 +18,11 @@
     /* Space between masonry columns and between stacked cards */
     --masonry-gap: 3.5rem;
 
+    /* Page grid: content width, outer margin and column gutter */
+    --page-max: 72rem;
+    --page-margin: clamp(1.25rem, 4vw, 3rem);
+    --grid-gutter: clamp(1rem, 2.5vw, 2rem);
+
     background-color: var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-body);

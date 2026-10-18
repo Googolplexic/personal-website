@@ -1,4 +1,17 @@
 /* Shared utility classes and layout helpers */
+
+/* 12-column page grid. Sections put a SectionHeader in a narrow label column
+   (lg:col-span-3) beside their content (lg:col-span-9). */
+@utility page-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
+}
+
 @layer utilities {
   .masonry-grid {
     display: flex;

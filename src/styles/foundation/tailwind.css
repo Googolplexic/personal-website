@@ -37,6 +37,22 @@
   --text-3xl--line-height: 2.25rem;
   --text-4xl--line-height: 2.5rem;
 
+  /* Fluid steps for the redesign: a rem floor and ceiling with viewport scaling between,
+     so text still grows with browser zoom */
+  --text-display: clamp(3rem, 1.6rem + 5.6vw, 6.5rem);
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.02em;
+  --text-title: clamp(2.25rem, 1.65rem + 2.4vw, 3.75rem);
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.01em;
+  --text-heading: clamp(1.5rem, 1.25rem + 1vw, 2.25rem);
+  --text-heading--line-height: 1.2;
+  --text-lead: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --text-lead--line-height: 1.5;
+  --text-label: 0.65rem;
+  --text-label--line-height: 1rem;
+  --text-label--letter-spacing: 0.25em;
+
   --animate-fade-in: fade-in 0.6s ease-out forwards;
 
   @keyframes fade-in {
