@@ -147,7 +147,11 @@ export function useCustomCursor(enabled = true) {
             glow.classList.remove('visible');
             clearPressState();
             document.documentElement.classList.remove('custom-cursor-visible');
-            document.documentElement.classList.remove('custom-cursor-active');
+            // Sitting still hides the gold dot and leaves the page empty. The system
+            // pointer stays off (custom-cursor-active) unless this is a text field,
+            // which needs its caret back.
+            const under = document.elementFromPoint(pointerX, pointerY);
+            if (isTextInputElement(under)) document.documentElement.classList.remove('custom-cursor-active');
         };
 
         const scheduleIdleFade = () => {
@@ -338,6 +342,7 @@ export function useCustomCursor(enabled = true) {
             if (scrollbarDragging) return;
             if (idleFadeId) clearTimeout(idleFadeId);
             hideCursor();
+            document.documentElement.classList.remove('custom-cursor-active');
         };
 
         const onMouseEnter = () => {

@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState, ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, ReactNode } from 'react';
 import { useLocation } from 'react-router';
-import { getLenis } from '../../utils/useSmoothScroll';
 
 interface PageTransitionProps {
     children: ReactNode;
 }
 
 /**
- * Wraps page content with a CSS-animation fade-in on route changes.
- * Uses `key` to force remount, which re-triggers the animation.
+ * Fades page content in on route changes. Scrolls to the top before paint,
+ * so the new page never appears at the previous page's scroll position.
  * Respects prefers-reduced-motion.
  */
 export function PageTransition({ children }: PageTransitionProps) {
@@ -23,7 +22,13 @@ export function PageTransition({ children }: PageTransitionProps) {
         setHasNavigated(true);
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
+        // The browser would otherwise restore the last scroll offset after a
+        // client navigation and yank the new page back down.
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    }, []);
+
+    useLayoutEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
@@ -36,18 +41,7 @@ export function PageTransition({ children }: PageTransitionProps) {
             // lightbox (or similar) that was unmounted during navigation.
             document.body.style.overflow = '';
             document.documentElement.classList.remove('scroll-locked');
-
-            // Use Lenis for scroll-to-top when active, fall back to native.
-            const lenis = getLenis();
-            if (lenis) {
-                lenis.scrollTo(0, { immediate: true });
-                // Recalculate scroll dimensions after route change so Lenis
-                // knows the new page height (e.g. short → long page).
-                // Use rAF to wait for the new content to render first.
-                requestAnimationFrame(() => lenis.resize());
-            } else {
-                window.scrollTo(0, 0);
-            }
+            window.scrollTo(0, 0);
         }
     }, [location.pathname]);
 

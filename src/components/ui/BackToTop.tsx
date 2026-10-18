@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import { getLenis } from '../../utils/useSmoothScroll';
 
 /**
  * Subtle back-to-top button that appears after scrolling down.
- * Uses Lenis smooth scroll when available, falls back to native.
  */
 export function BackToTop() {
     const [visible, setVisible] = useState(false);
@@ -19,12 +17,7 @@ export function BackToTop() {
 
     const scrollToTop = () => {
         setVisible(false);
-        const lenis = getLenis();
-        if (lenis) {
-            lenis.scrollTo(0, { duration: 1.2 });
-        } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     return (
