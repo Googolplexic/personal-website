@@ -32,7 +32,7 @@ export function MarkdownBody({ source, searchTerm = '' }: MarkdownBodyProps) {
     const components = useMemo(() => highlightedComponents(searchTerm), [searchTerm]);
 
     return (
-        <div className="markdown-content text-ink">
+        <div className="markdown-content max-w-prose text-ink">
             <Markdown components={components}>{source}</Markdown>
         </div>
     );

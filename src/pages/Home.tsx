@@ -16,7 +16,7 @@ const CONNECT_LINKS: LinkSectionItem[] = [
 ];
 
 const WORK_LINKS: LinkSectionItem[] = [
-    { name: 'Resume', value: 'View PDF', href: '/resume.pdf' },
+    { name: 'Resume', value: 'Open resume (PDF)', href: '/resume.pdf', feature: true },
     { name: 'GitHub', value: 'Googolplexic', href: 'https://github.com/Googolplexic' },
 ];
 

@@ -32,13 +32,13 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
     const activeSize = sizeForImage(resolvedImages[currentImageIndex]);
     const frameStyle = activeSize && {
         aspectRatio: `${activeSize.width} / ${activeSize.height}`,
-        maxHeight: `min(65svh, 32rem, ${activeSize.height}px)`,
+        maxHeight: `min(70svh, 44rem, ${activeSize.height}px)`,
     };
 
     return (
         <div className="relative group">
             {/* Main image display */}
-            <div className="relative overflow-hidden bg-canvas max-h-[min(65svh,32rem)] transition-[aspect-ratio] duration-500" style={frameStyle || undefined}>
+            <div className="relative overflow-hidden bg-canvas max-h-[min(70svh,44rem)] transition-[aspect-ratio] duration-500" style={frameStyle || undefined}>
                 <div
                     className={cn('flex transition-transform duration-500 ease-in-out', frameStyle && 'h-full')}
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
@@ -52,7 +52,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, title
                                     src={img}
                                     alt={`${title} - Image ${i + 1}`}
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
-                                    className={cn('w-full object-contain cursor-zoom-in', frameStyle ? 'max-h-full' : 'max-h-[min(65svh,32rem)]')}
+                                    className={cn('w-full object-contain cursor-zoom-in', frameStyle ? 'max-h-full' : 'max-h-[min(70svh,44rem)]')}
                                     style={size && { maxWidth: size.width }}
                                     onClick={() => setLightboxIndex(i)}
                                     loading={i <= 1 ? 'eager' : 'lazy'}
