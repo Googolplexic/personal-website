@@ -77,6 +77,11 @@ export default function App() {
     );
 }
 
+// Shown on the fallback page (/admin and 404s) until the app boots
+export function HydrateFallback() {
+    return null;
+}
+
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     const notFound = isRouteErrorResponse(error) && error.status === 404;
 
