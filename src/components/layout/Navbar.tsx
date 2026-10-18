@@ -44,7 +44,6 @@ export function Navbar() {
                     to="/"
                     onClick={() => window.scrollTo(0, 0)}
                     className="font-signature text-2xl tracking-wide no-underline select-none transition-colors duration-300 text-ink hover:text-gold"
-                    style={{ opacity: 1 }}
                 >
                     CL
                 </RouterLink>
@@ -99,7 +98,6 @@ function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
                 'nav-link-gallery',
                 isActive && 'active'
             )}
-            style={{ opacity: 1 }}
         >
             {children}
         </RouterLink>

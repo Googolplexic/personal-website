@@ -1,7 +1,7 @@
 import { Link as RouterLink } from 'react-router';
 import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { SpotlightToggle } from './SpotlightToggle';
-import { FOOTER_HOVER, FOOTER_META_LINK } from './footerStyles';
+import { FOOTER_META_LINK } from './footerStyles';
 
 declare const __GIT_HASH__: string;
 declare const __GIT_DATE__: string;
@@ -19,7 +19,7 @@ const SOCIAL_LINKS = [
     { label: 'Instagram', href: 'https://www.instagram.com/12googolplex', icon: <FaInstagram size={15} /> },
 ];
 
-const linkClass = `text-xs tracking-[0.15em] uppercase font-body text-ink-muted ${FOOTER_HOVER}`;
+const linkClass = 'text-xs tracking-[0.15em] uppercase font-body text-ink-muted link-underline';
 
 export function Footer() {
     return (
@@ -61,7 +61,7 @@ export function Footer() {
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={link.label}
-                            className={`text-ink-muted ${FOOTER_HOVER}`}
+                            className="text-ink-muted transition-colors duration-300 hover:text-gold"
                         >
                             {link.icon}
                         </a>
@@ -96,7 +96,6 @@ function BuildMeta() {
             target="_blank"
             rel="noopener noreferrer"
             className={`${FOOTER_META_LINK} inline-flex items-center min-h-8 px-3`}
-            style={{ textDecoration: 'none' }}
         >
             v{version} · {date} · {hash}
         </a>

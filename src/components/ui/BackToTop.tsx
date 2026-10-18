@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { getLenis } from '../../utils/useSmoothScroll';
 
 /**
@@ -7,7 +7,6 @@ import { getLenis } from '../../utils/useSmoothScroll';
  */
 export function BackToTop() {
     const [visible, setVisible] = useState(false);
-    const btnRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         const onScroll = () => {
@@ -19,12 +18,6 @@ export function BackToTop() {
     }, []);
 
     const scrollToTop = () => {
-        // Hide immediately via DOM — don't wait for React re-render
-        if (btnRef.current) {
-            btnRef.current.style.opacity = '0';
-            btnRef.current.style.transform = 'translateY(12px)';
-            btnRef.current.style.pointerEvents = 'none';
-        }
         setVisible(false);
         const lenis = getLenis();
         if (lenis) {
@@ -36,28 +29,10 @@ export function BackToTop() {
 
     return (
         <button
-            ref={btnRef}
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="fixed bottom-8 right-8 z-150 p-3 rounded-full transition-all duration-500"
-            style={{
-                opacity: visible ? 0.7 : 0,
-                pointerEvents: visible ? 'auto' : 'none',
-                transform: visible ? 'translateY(0)' : 'translateY(12px)',
-                backgroundColor: 'var(--nav-bg)',
-                border: '1px solid var(--nav-border)',
-                backdropFilter: 'blur(16px) saturate(1.2)',
-                WebkitBackdropFilter: 'blur(16px) saturate(1.2)',
-            }}
-            onMouseEnter={(e) => {
-                if (!visible) return;
-                e.currentTarget.style.opacity = '1';
-                e.currentTarget.style.borderColor = 'var(--color-gold)';
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = visible ? '0.7' : '0';
-                e.currentTarget.style.borderColor = 'var(--color-line)';
-            }}
+            data-visible={visible}
+            className="fixed bottom-8 right-8 z-150 p-3 rounded-full transition-all duration-500 border border-solid border-(--nav-border) bg-(--nav-bg) backdrop-blur-lg backdrop-saturate-120 opacity-0 pointer-events-none translate-y-3 data-[visible=true]:opacity-70 data-[visible=true]:pointer-events-auto data-[visible=true]:translate-y-0 data-[visible=true]:hover:opacity-100 hover:border-gold"
         >
             <svg
                 width="18"

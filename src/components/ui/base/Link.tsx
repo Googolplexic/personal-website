@@ -2,17 +2,10 @@ import { ReactNode } from 'react';
 import { Link as RouterLink } from 'react-router';
 import { cn } from '../../../utils/styles';
 
-const variantStyles: Record<string, string> = {
-    primary: 'underline-offset-4 hover:underline transition-colors',
-    nav: 'nav-link-gallery',
-    default: 'transition-colors hover:opacity-80',
-};
-
 export interface LinkProps {
     children: ReactNode;
     to?: string;
     href?: string;
-    variant?: 'primary' | 'nav' | 'default';
     className?: string;
     style?: React.CSSProperties;
     onClick?: (e: React.MouseEvent) => void;
@@ -21,14 +14,13 @@ export interface LinkProps {
 }
 
 /**
- * Link - Navigation and anchor link component
+ * Link - Gold text link for prose
  * Handles both internal (React Router) and external links
  */
 export function Link({
     children,
     to,
     href,
-    variant,
     className,
     style,
     onClick,
@@ -36,15 +28,14 @@ export function Link({
     rel,
     ...props
 }: LinkProps) {
-    const classes = cn(variantStyles[variant || 'default'], className);
-    const linkStyle = { color: 'var(--color-gold)', ...style };
+    const classes = cn('link-underline text-gold', className);
 
     if (to) {
         return (
             <RouterLink
                 to={to}
                 className={classes}
-                style={linkStyle}
+                style={style}
                 onClick={onClick}
                 {...props}
             >
@@ -57,7 +48,7 @@ export function Link({
         <a
             href={href}
             className={classes}
-            style={linkStyle}
+            style={style}
             onClick={onClick}
             target={target}
             rel={rel}

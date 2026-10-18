@@ -28,16 +28,6 @@ export function ShareButton({ url, title, description, className = '' }: ShareBu
         }
     };
 
-    const linkStyle = {
-        color: 'var(--color-ink-muted)',
-        background: 'none',
-        border: 'none',
-        padding: '10px 0',
-        minHeight: 44,
-        cursor: 'pointer',
-        boxSizing: 'border-box' as const,
-    };
-
     const shareIcon = (
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline ml-1">
             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
@@ -56,10 +46,7 @@ export function ShareButton({ url, title, description, className = '' }: ShareBu
         <button
             type="button"
             onClick={handleShare}
-            className={`block text-xs tracking-[0.15em] uppercase font-body transition-colors ${className}`}
-            style={linkStyle}
-            onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-gold)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-muted)')}
+            className={`block min-h-11 px-0 py-2.5 text-xs tracking-[0.15em] uppercase font-body text-ink-muted link-underline ${className}`}
             title={state === 'copied' ? 'Link copied!' : 'Share'}
             aria-label="Share"
         >
