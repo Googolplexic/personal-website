@@ -35,7 +35,7 @@ export function Origami({ myDesigns, otherDesigns, software }: OrigamiGalleryPro
             <div className="page-grid mb-12 lg:mb-16">
                 <SectionHeader titleAs="h1" overline="The Gallery" title="Origami">
                     <p className="m-0 font-heading italic text-base text-balance">
-                        Where geometric precision meets artistic expression.
+                        My own designs, and models by other artists that I've folded.
                     </p>
                     <p className="mt-3 mb-0 text-ink-faint">
                         More on{' '}

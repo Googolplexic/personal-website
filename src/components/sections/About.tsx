@@ -10,7 +10,7 @@ export function About() {
                     Hi there! I'm Coleman, a Computing Science student at Simon Fraser University. I love solving problems, whether it's for coding, math, or just general life: always looking for ways to optimize, automate, or simplify things. The ultimate goal is to build intuitive user interfaces and efficient solutions that make life easier, for both me and you.
                 </p>
                 <p className="m-0 text-base md:text-lg leading-relaxed font-body text-ink-muted">
-                    This site showcases my software development projects and all of my origami work. Thematically, I wanted this site to appear like a gallery or a theatre, hence the spotlight effects and the dark and gold colour scheme. (If you don't see spotlights, try taking a look on desktop! There's a bit more cool stuff there). Take a look at my projects on{' '}
+                    This site showcases my software development projects and all of my origami work. Thematically, I wanted this site to appear like a gallery or a theatre, hence the spotlight effects and the dark and gold colour scheme. Take a look at my projects on{' '}
                     <Link href="https://github.com/Googolplexic" target="_blank" rel="noopener">
                         GitHub
                     </Link>

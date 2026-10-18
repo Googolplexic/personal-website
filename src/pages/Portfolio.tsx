@@ -17,7 +17,7 @@ export function Portfolio({ projects }: { projects: ProjectProps[] }) {
         <div className="pt-32 pb-20">
             <div className="page-grid mb-12 lg:mb-16">
                 <SectionHeader titleAs="h1" overline="The Gallery" title="Portfolio">
-                    <p className="m-0 font-heading italic text-base">Software crafted with care.</p>
+                    <p className="m-0 font-heading italic text-base text-balance">What I've built at hackathons, in class and on my own.</p>
                 </SectionHeader>
                 <div className="col-span-full lg:col-span-9">
                     <FilterBar
