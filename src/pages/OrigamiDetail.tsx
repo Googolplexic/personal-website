@@ -1,34 +1,28 @@
 import { useState } from 'react';
-import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router';
-import allOrigami from '../assets/origami';
+import { useNavigate } from 'react-router';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
 import { Lightbox } from '../components/ui/Lightbox';
-import { NotFound } from './NotFound';
 import { ShareButton } from '../components/ui/ShareButton';
 import { CategoryLabel } from '../components/ui/CategoryLabel';
 import { sizeForImage } from '../utils/imageSize';
 import { HighlightedText } from '../components/ui/HighlightedText';
+import { NextExhibit, OrigamiProps } from '../types';
+import { BASE_URL } from '../utils/seo';
+import { useClientLocation, useClientSearchParams } from '../utils/useHydrated';
 
-const BASE_URL = 'https://www.colemanlai.com';
+interface OrigamiDetailProps {
+    origami: OrigamiProps;
+    exhibit: string;
+    next: NextExhibit;
+}
 
-export function OrigamiDetail() {
-    const { origamiSlug } = useParams();
-    const [searchParams] = useSearchParams();
+export function OrigamiDetail({ origami, exhibit: exhibitNumber, next: nextOrigami }: OrigamiDetailProps) {
+    const [searchParams] = useClientSearchParams();
     const navigate = useNavigate();
-    const location = useLocation();
+    const location = useClientLocation();
     const { state } = location;
     const searchTerm = searchParams.get('search') || '';
     const [cpLightboxOpen, setCpLightboxOpen] = useState(false);
-    const origami = allOrigami.find(o => o.slug === origamiSlug);
-
-    if (!origami) return <NotFound />;
-
-    const currentIndex = allOrigami.indexOf(origami);
-    // Next = higher exhibit number (newer) = previous in array order
-    const nextIndex = (currentIndex - 1 + allOrigami.length) % allOrigami.length;
-    const nextOrigami = allOrigami[nextIndex];
-    const exhibitNumber = 'O·' + String(allOrigami.length - currentIndex).padStart(2, '0');
-    const nextExhibitNumber = 'O·' + String(allOrigami.length - nextIndex).padStart(2, '0');
 
     // Back destination: use state.from if it's a known gallery, else canonical /origami
     const from = (state as { from?: string } | null)?.from;
@@ -143,11 +137,11 @@ export function OrigamiDetail() {
                             className="group flex items-center gap-5 w-full text-left p-0 bg-transparent border-none cursor-pointer"
                         >
                             {/* Thumbnail */}
-                            {nextOrigami.modelImages.length > 0 && (
+                            {nextOrigami.image && (
                                 <div className="w-16 h-16 shrink-0 overflow-hidden"
                                     style={{ border: '1px solid var(--color-border)' }}>
                                     <img
-                                        src={nextOrigami.modelImages[0]}
+                                        src={nextOrigami.image}
                                         alt={nextOrigami.title}
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         loading="lazy"
@@ -155,7 +149,7 @@ export function OrigamiDetail() {
                                 </div>
                             )}
                             <div className="flex-1 min-w-0">
-                                <span className="exhibit-label text-xs mb-1 block">{nextExhibitNumber}</span>
+                                <span className="exhibit-label text-xs mb-1 block">{nextOrigami.exhibit}</span>
                                 <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300"
                                     style={{ color: 'var(--color-text-primary)' }}
                                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}

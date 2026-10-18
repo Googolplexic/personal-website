@@ -1,33 +1,25 @@
-import { useParams, useSearchParams, useNavigate, useLocation } from 'react-router';
-import allProjects from '../assets/projects';
+import { useNavigate } from 'react-router';
 import Markdown from 'react-markdown';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
-import { NotFound } from './NotFound';
 import { HighlightedText } from '../components/ui/HighlightedText';
 import { ShareButton } from '../components/ui/ShareButton';
+import { NextExhibit, ProjectProps } from '../types';
+import { BASE_URL } from '../utils/seo';
+import { useClientLocation, useClientSearchParams } from '../utils/useHydrated';
 import React from 'react';
 
-const BASE_URL = 'https://www.colemanlai.com';
+interface ProjectDetailProps {
+    project: ProjectProps;
+    exhibit: string;
+    next: NextExhibit;
+}
 
-export function ProjectDetail() {
-    const { projectSlug } = useParams();
-    const [searchParams] = useSearchParams();
+export function ProjectDetail({ project, exhibit: exhibitNumber, next: nextProject }: ProjectDetailProps) {
+    const [searchParams] = useClientSearchParams();
     const navigate = useNavigate();
-    const location = useLocation();
+    const location = useClientLocation();
     const { state } = location;
     const searchTerm = searchParams.get('search') || '';
-    const project = allProjects.find(p => p.slug === projectSlug);
-
-    if (!project) {
-        return <NotFound />;
-    }
-
-    const currentIndex = allProjects.indexOf(project);
-    const exhibitNumber = 'P·' + String(allProjects.length - currentIndex).padStart(2, '0');
-    // Next = higher exhibit number (newer) = previous in array order
-    const nextIndex = (currentIndex - 1 + allProjects.length) % allProjects.length;
-    const nextProject = allProjects[nextIndex];
-    const nextExhibitNumber = 'P·' + String(allProjects.length - nextIndex).padStart(2, '0');
 
     // Back destination: use state.from if it's a known gallery, else canonical /portfolio
     const from = (state as { from?: string } | null)?.from;
@@ -190,11 +182,11 @@ export function ProjectDetail() {
                             className="group flex items-center gap-5 w-full text-left p-0 bg-transparent border-none cursor-pointer"
                         >
                             {/* Thumbnail */}
-                            {Array.isArray(nextProject.images) && nextProject.images.length > 0 && (
+                            {nextProject.image && (
                                 <div className="w-16 h-16 shrink-0 overflow-hidden"
                                     style={{ border: '1px solid var(--color-border)' }}>
                                     <img
-                                        src={nextProject.images[0] as string}
+                                        src={nextProject.image}
                                         alt={nextProject.title}
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         loading="lazy"
@@ -202,7 +194,7 @@ export function ProjectDetail() {
                                 </div>
                             )}
                             <div className="flex-1 min-w-0">
-                                <span className="exhibit-label text-xs mb-1 block">{nextExhibitNumber}</span>
+                                <span className="exhibit-label text-xs mb-1 block">{nextProject.exhibit}</span>
                                 <span className="block font-heading italic text-lg leading-tight mb-0.5 transition-colors duration-300"
                                     style={{ color: 'var(--color-text-primary)' }}
                                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-accent-text)')}
@@ -211,7 +203,7 @@ export function ProjectDetail() {
                                 </span>
                                 <span className="text-xs font-body tracking-widest"
                                     style={{ color: 'var(--color-text-tertiary)' }}>
-                                    {nextProject.startDate}
+                                    {nextProject.date}
                                 </span>
                             </div>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round"

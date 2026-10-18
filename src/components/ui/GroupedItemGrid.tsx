@@ -1,6 +1,6 @@
 import { ItemProps, ProjectProps, OrigamiProps } from "../../types";
 import { useState, useMemo, type Dispatch, type SetStateAction } from 'react';
-import { useSearchParams } from 'react-router';
+import { useClientSearchParams } from '../../utils/useHydrated';
 import { GroupedSearch, SortOption, CategoryFilter } from "../search/GroupedSearch";
 import { ProjectCard } from "../portfolio/ProjectCard";
 import { OrigamiCard } from "../origami/OrigamiCard";
@@ -35,7 +35,7 @@ export function GroupedItemGrid({
 }: GroupedItemGridProps) {
     const PRIORITY_IMAGE_COUNT = 3;
     const STAGGER_SKIP_COUNT = 1;
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useClientSearchParams();
     const [localSearchTerm, setLocalSearchTerm] = useState('');
     const [localSelectedTechs, setLocalSelectedTechs] = useState<string[]>([]);
     const [localSelectedTags, setLocalSelectedTags] = useState<string[]>([]);

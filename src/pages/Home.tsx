@@ -1,14 +1,10 @@
 import { About } from '../components/sections/About';
 import { LinkSection, type LinkSectionItem } from '../components/sections/LinkSection';
-import { SEO } from '../components/layout/SEO';
 import { ItemGrid } from '../components/ui/ItemGrid';
 import { Link } from '../components/ui/base';
-import allProjects from '../assets/projects';
-import allOrigami from '../assets/origami';
 import { ItemProps } from '../types';
 import { useScrollRevealClass } from '../utils/useScrollReveal';
 import { useCallback, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import { HeroParticles } from '../components/ui/HeroParticles';
 import { FiDownload, FiMail } from 'react-icons/fi';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
@@ -35,27 +31,14 @@ function ScrollSection({ children, className = '' }: { children: React.ReactNode
     );
 }
 
-const BASE_URL = 'https://www.colemanlai.com';
-const allItems: ItemProps[] = [...allProjects, ...allOrigami];
-
-function itemLeadImage(item: ItemProps): string | undefined {
-    if (item.type === 'project') {
-        return Array.isArray(item.images) ? item.images[0] : undefined;
-    }
-    return item.modelImages?.[0];
+interface HomeProps {
+    featured: ItemProps[];
+    featuredSlugs: string[];
 }
 
-function absoluteImage(src: string | undefined): string | undefined {
-    if (!src) return undefined;
-    return src.startsWith('http') ? src : `${BASE_URL}${src}`;
-}
-
-export function Home() {
-    const featuredSlugs = ['pi-2026', 'personal-website', 'ryujin-3-5', 'torgal', 'tonberry', 'origami-fractions'];
+export function Home({ featured, featuredSlugs }: HomeProps) {
     const nameRef = useRef<HTMLHeadingElement>(null);
     const heroRef = useRef<HTMLElement>(null);
-
-    const bootHero = typeof document !== 'undefined' ? document.getElementById('boot-hero') : null;
 
     const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
         if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
@@ -107,29 +90,8 @@ export function Home() {
     }, []);
 
     useEffect(() => {
-        if (document.getElementById('boot-hero')) return;
         const el = heroRef.current;
         if (!el) return;
-        (heroRef as React.MutableRefObject<HTMLElement | null>).current = el;
-        const bootName = el.querySelector('h1');
-        if (bootName instanceof HTMLHeadingElement) {
-            (nameRef as React.MutableRefObject<HTMLHeadingElement | null>).current = bootName;
-        }
-        const onMove = (event: Event) => handleHeroMouseMove(event as unknown as React.MouseEvent<HTMLElement>);
-        const onLeave = () => {
-            const spotlight = el.querySelector('.hero-spotlight');
-            if (spotlight) spotlight.classList.remove('visible');
-            const name = nameRef.current;
-            if (name) {
-                name.style.transition = 'filter 0.5s ease-out';
-                name.style.backgroundImage = 'linear-gradient(90deg, #e8e4de 0%, #e8e4de 100%)';
-                name.style.filter = 'drop-shadow(0 0 0px rgba(255, 248, 230, 0)) drop-shadow(0 0 0px rgba(255, 255, 248, 0))';
-            }
-        };
-        if (el.id === 'boot-hero') {
-            el.addEventListener('mousemove', onMove);
-            el.addEventListener('mouseleave', onLeave);
-        }
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (!entry.isIntersecting) {
@@ -147,93 +109,13 @@ export function Home() {
             { threshold: 0 }
         );
         observer.observe(el);
-        return () => {
-            observer.disconnect();
-            el.removeEventListener('mousemove', onMove);
-            el.removeEventListener('mouseleave', onLeave);
-        };
-    }, [handleHeroMouseMove]);
-
-    const structuredData = [
-        {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "name": "Coleman Lai",
-            "alternateName": "Coleman Lai Portfolio",
-            "url": "https://www.colemanlai.com",
-            "description": "Software projects and origami by Coleman Lai, a Computing Science student at Simon Fraser University in Vancouver.",
-            "author": { "@type": "Person", "name": "Coleman Lai" },
-            "potentialAction": {
-                "@type": "SearchAction",
-                "target": "https://www.colemanlai.com/portfolio?search={search_term_string}",
-                "query-input": "required name=search_term_string"
-            }
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Person",
-            "name": "Coleman Lai",
-            "url": "https://www.colemanlai.com",
-            "jobTitle": "Computing Science Student",
-            "alumniOf": {
-                "@type": "CollegeOrUniversity",
-                "name": "Simon Fraser University",
-                "sameAs": "https://www.sfu.ca"
-            },
-            "knowsAbout": ["Software Development", "Full-Stack Development", "Origami", "Paper Art", "React", "TypeScript"],
-            "sameAs": [
-                "https://www.linkedin.com/in/coleman-lai",
-                "https://github.com/Googolplexic",
-                "https://www.instagram.com/12googolplex"
-            ]
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "ProfilePage",
-            "mainEntity": {
-                "@type": "Person",
-                "name": "Coleman Lai"
-            },
-            "dateCreated": "2024-01-01",
-            "dateModified": new Date().toISOString().split('T')[0]
-        }
-    ];
-
-    const sharePiece = allItems.find(item => item.slug === 'ryujin-3-5');
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <>
-            <SEO
-                title="Coleman Lai | Developer & Origami Artist | Vancouver"
-                description="Software projects and origami by Coleman Lai, a Computing Science student at Simon Fraser University in Vancouver."
-                keywords={[
-                    "Coleman Lai",
-                    "software developer",
-                    "computing science",
-                    "origami artist",
-                    "SFU",
-                    "Simon Fraser University",
-                    "Vancouver",
-                    "full-stack developer",
-                    "origami",
-                    "paper art",
-                    "portfolio",
-                    "web developer",
-                    "data science"
-                ]}
-                pathname="/"
-                image={absoluteImage(sharePiece && itemLeadImage(sharePiece))}
-                imageAlt="Ryujin 3.5"
-                structuredData={structuredData}
-                breadcrumbs={[
-                    { name: "Home", url: "https://www.colemanlai.com" }
-                ]}
-            />
-
-            {bootHero && createPortal(<HeroParticles />, bootHero)}
-
             {/* ===== HERO ===== */}
-            {!bootHero && <section
+            <section
                 ref={heroRef}
                 className="hero-black-fade min-h-screen flex flex-col items-center justify-center relative px-6"
                 onMouseMove={handleHeroMouseMove}
@@ -287,7 +169,7 @@ export function Home() {
                         <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
                     </svg>
                 </button>
-            </section>}
+            </section>
 
             {/* ===== ABOUT ===== */}
             <ScrollSection className="py-24 md:py-36">
@@ -331,7 +213,7 @@ export function Home() {
                         </p>
                     </div>
                     <ItemGrid
-                        items={allItems}
+                        items={featured}
                         featuredSlugs={featuredSlugs}
                         hideControls
                         itemType="mixed"

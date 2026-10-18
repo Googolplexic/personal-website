@@ -1,5 +1,5 @@
 /**
- * Generates static RSS 2.0 feeds in dist/ after vite build.
+ * Generates static RSS 2.0 feeds in build/client/ after react-router build.
  * Writes rss.xml (combined), rss-portfolio.xml, rss-origami.xml.
  *
  * Item ordering uses editorial dates from frontmatter (portfolio: endDate or startDate;
@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const DIST = path.join(ROOT, 'dist');
+const DIST = path.join(ROOT, 'build', 'client');
 const CACHE_FILE = path.join(ROOT, 'lastmod-cache.json');
 const BASE_URL = 'https://www.colemanlai.com';
 
@@ -473,7 +473,7 @@ function validateXml(xml) {
 
 function main() {
   if (!fs.existsSync(DIST)) {
-    console.error('generate-rss: dist/ not found; run vite build first.');
+    console.error('generate-rss: build/client/ not found; run react-router build first.');
     process.exit(1);
   }
 

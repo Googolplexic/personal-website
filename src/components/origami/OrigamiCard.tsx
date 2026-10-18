@@ -1,10 +1,10 @@
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate } from 'react-router';
 import { HighlightedText } from '../ui/HighlightedText';
 import { CategoryLabel } from '../ui/CategoryLabel';
 import { ShareButton } from '../ui/ShareButton';
 import { sizeForImage } from '../../utils/imageSize';
-
-const BASE_URL = 'https://www.colemanlai.com';
+import { BASE_URL } from '../../utils/seo';
+import { useClientLocation } from '../../utils/useHydrated';
 
 interface OrigamiCardProps {
     slug: string;
@@ -22,7 +22,7 @@ interface OrigamiCardProps {
 
 export function OrigamiCard({ slug, title, description, modelImages, date, designer, searchTerm = '', categoryLabel, categoryColor, showCategory = false, priority = false }: OrigamiCardProps) {
     const navigate = useNavigate();
-    const location = useLocation();
+    const location = useClientLocation();
     const heroImage = modelImages[0];
     const shareUrl = `${BASE_URL}/origami/${slug}`;
     const queryString = location.search || (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : '');

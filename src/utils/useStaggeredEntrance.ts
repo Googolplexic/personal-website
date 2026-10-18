@@ -2,93 +2,73 @@ import { useEffect, useRef, RefObject } from 'react';
 
 /**
  * Hook to stagger the reveal of child items within a container.
- * Each .spotlight-item inside the container gets revealed one-by-one
- * with a configurable delay, like lights turning on in a gallery.
- * 
- * Uses IntersectionObserver — only triggers once when container enters view.
- * Respects prefers-reduced-motion.
- * 
+ * Items below the fold are hidden, then revealed as they scroll into view,
+ * one after another, like lights turning on in a gallery. Items already on
+ * screen stay visible, since the page arrives prerendered.
+ *
+ * Respects prefers-reduced-motion and skips touch devices.
  * Pass an existing ref to attach to, or omit to create a new one.
  */
 export function useStaggeredEntrance(
     externalRef?: RefObject<HTMLDivElement | null>,
     staggerDelay = 80,
     /** Number of items to show immediately (no stagger) for LCP */
-    skipCount = 0
+    skipCount = 0,
+    /** Change this when the items are re-rendered into new elements */
+    layoutKey?: unknown
 ) {
     const internalRef = useRef<HTMLDivElement>(null);
     const containerRef = externalRef || internalRef;
-    const hasTriggered = useRef(false);
 
     useEffect(() => {
-        if (hasTriggered.current) return;
         // On touch devices, skip stagger animation to reduce first-load main-thread work.
-        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-            hasTriggered.current = true;
-            return;
-        }
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            hasTriggered.current = true;
-            return;
-        }
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
         const container = containerRef.current;
         if (!container) return;
-        const rawItems = container.querySelectorAll<HTMLElement>('.spotlight-item');
 
-        // Sort by data-stagger-index when present (masonry row-order),
-        // otherwise keep DOM order.
-        const items = Array.from(rawItems).sort((a, b) => {
-            const ai = (a.closest('[data-stagger-index]') as HTMLElement | null)?.dataset.staggerIndex;
-            const bi = (b.closest('[data-stagger-index]') as HTMLElement | null)?.dataset.staggerIndex;
-            if (ai != null && bi != null) return Number(ai) - Number(bi);
-            return 0;
-        });
+        const staggerIndex = (item: HTMLElement) =>
+            Number((item.closest('[data-stagger-index]') as HTMLElement | null)?.dataset.staggerIndex ?? 0);
+        const items = Array.from(container.querySelectorAll<HTMLElement>('.spotlight-item'))
+            .sort((a, b) => staggerIndex(a) - staggerIndex(b));
 
-        // Pre-hide staggered items immediately so they never flash visible then hide.
-        items.forEach((item, i) => {
-            if (i >= skipCount) {
-                item.classList.add('stagger-hidden');
-            }
-        });
+        const viewportBottom = window.innerHeight;
+        const pending = items.filter((item, i) => i >= skipCount && item.getBoundingClientRect().top > viewportBottom);
+        pending.forEach(item => item.classList.add('stagger-hidden'));
 
+        const timers: number[] = [];
         const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting && !hasTriggered.current) {
-                    hasTriggered.current = true;
-                    observer.disconnect();
+            (entries) => {
+                const entering = entries
+                    .filter(entry => entry.isIntersecting)
+                    .map(entry => entry.target as HTMLElement)
+                    .sort((a, b) => staggerIndex(a) - staggerIndex(b));
 
-                    items.forEach((item, i) => {
-                        if (i >= skipCount) {
-                            setTimeout(() => {
-                                item.classList.remove('stagger-hidden');
-                                item.classList.add('stagger-visible');
-                            }, (i - skipCount) * staggerDelay);
-                        }
-                    });
-
-                    const staggeredCount = Math.max(0, items.length - skipCount);
-                    // Remove animation class after all complete, leaving no trace
-                    setTimeout(() => {
-                        items.forEach(item => {
-                            item.classList.remove('stagger-visible');
-                        });
-                    }, staggeredCount * staggerDelay + 700);
-                }
+                entering.forEach((item, i) => {
+                    observer.unobserve(item);
+                    timers.push(window.setTimeout(() => {
+                        item.classList.remove('stagger-hidden');
+                        item.classList.add('stagger-visible');
+                        // Remove the animation class once it finishes, leaving no trace
+                        timers.push(window.setTimeout(() => item.classList.remove('stagger-visible'), 700));
+                    }, i * staggerDelay));
+                });
             },
             { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
         );
 
-        observer.observe(container);
+        pending.forEach(item => observer.observe(item));
 
         return () => {
             observer.disconnect();
+            timers.forEach(timer => window.clearTimeout(timer));
             items.forEach(item => {
                 item.classList.remove('stagger-hidden');
                 item.classList.remove('stagger-visible');
             });
         };
-    }, [containerRef, staggerDelay, skipCount]);
+    }, [containerRef, staggerDelay, skipCount, layoutKey]);
 
     return containerRef;
 }

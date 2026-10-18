@@ -1,7 +1,5 @@
 export { Footer } from './Footer';
 export { Navbar } from './Navbar';
-export { ThemeProvider } from './ThemeProvider';
 export { SpotlightProvider } from './SpotlightProvider';
 export { SpotlightToggle } from './SpotlightToggle';
-export { RootRoute } from './RootRoute';
-export { SEO } from './SEO';
+export { ExternalRedirect } from './ExternalRedirect';

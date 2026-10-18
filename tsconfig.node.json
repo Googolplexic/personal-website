@@ -25,6 +25,8 @@
     "noUncheckedSideEffectImports": true
   },
   "include": [
-    "vite.config.ts"
+    "vite.config.ts",
+    "react-router.config.ts",
+    "scripts/content-routes.ts"
   ]
 }

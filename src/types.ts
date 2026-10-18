@@ -1,8 +1,3 @@
-export type ThemeContextType = {
-    darkMode: boolean;
-    toggleDarkMode: () => void;
-};
-
 // Base interface for common properties
 export interface BaseItem {
     title: string;
@@ -42,3 +37,12 @@ export interface OrigamiProps extends BaseItem {
 
 // Union type for items that can be either projects or origami
 export type ItemProps = ProjectProps | OrigamiProps;
+
+/** The "Next Exhibit" link at the foot of a detail page. */
+export interface NextExhibit {
+    slug: string;
+    title: string;
+    date: string;
+    image?: string;
+    exhibit: string;
+}
