@@ -39,26 +39,27 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
         </div>;
     }
 
-    // One slot for every slide, sized to the tallest photo, so the text below
-    // stays put when the pictures have different heights
-    const tallest = resolvedImages.reduce<ImageSet | undefined>((best, img) => {
+    // One height for every slide, so the text below stays put. As tall as the widest
+    // photo at the column width, and no taller than that photo or the cap. The width
+    // stays the column, so a portrait fits that height and sits narrower.
+    const widest = resolvedImages.reduce<ImageSet | undefined>((best, img) => {
         const set = imageSets?.[img];
         if (!set) return best;
-        if (!best || set.height / set.width > best.height / best.width) return set;
+        if (!best || set.width / set.height > best.width / best.height) return set;
         return best;
     }, undefined);
-    const frameStyle = tallest && {
-        aspectRatio: `${tallest.width} / ${tallest.height}`,
-        maxHeight: 'min(70svh, 44rem)',
+    const frameStyle = {
+        height: widest
+            ? `min(70svh, 44rem, ${widest.height}px, calc(100cqw * ${widest.height} / ${widest.width}))`
+            : 'min(70svh, 44rem)',
     };
 
     return (
-        <div className="relative group">
+        <div className="@container relative group">
             {/* Main image display */}
-            {/* mx-auto: the height cap shrinks a tall photo's frame, which would otherwise sit on the left */}
-            <div className="relative mx-auto overflow-hidden bg-canvas max-h-[min(70svh,44rem)]" style={frameStyle || undefined}>
+            <div className="relative w-full overflow-hidden bg-canvas" style={frameStyle}>
                 <div
-                    className={cn('flex transition-transform duration-500 ease-in-out', frameStyle && 'h-full')}
+                    className="flex h-full transition-transform duration-500 ease-in-out"
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
                 >
                     {resolvedImages.map((img, i) => {
@@ -73,7 +74,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                                 aria-haspopup="dialog"
                                 inert={i !== currentImageIndex}
                                 onClick={() => setLightboxIndex(i)}
-                                className={cn('w-full shrink-0 flex justify-center items-center p-0 bg-transparent cursor-zoom-in', frameStyle && 'h-full')}
+                                className="relative w-full h-full shrink-0 min-w-0 p-0 bg-transparent cursor-zoom-in"
                             >
                                 {/* A definite width lets the browser reserve the image's height before it loads */}
                                 <img
@@ -83,8 +84,11 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                                     alt={`${title} - Image ${i + 1}`}
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
                                     data-fade
-                                    className={cn('w-full object-contain', frameStyle ? 'max-h-full' : 'max-h-[min(70svh,44rem)]')}
-                                    style={set && { maxWidth: set.width }}
+                                    className="absolute inset-0 m-auto w-full h-full object-contain"
+                                    style={set ? {
+                                        maxWidth: `min(100%, ${set.width}px)`,
+                                        maxHeight: `min(100%, ${set.height}px)`,
+                                    } : undefined}
                                     loading={nearby ? 'eager' : 'lazy'}
                                     fetchPriority={i === 0 ? 'high' : undefined}
                                     width={set?.width}
