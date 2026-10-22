@@ -3,6 +3,24 @@
   "framework": null,
   "buildCommand": "pnpm run build",
   "outputDirectory": "build/client",
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/:section/index.html",
+      "destination": "/:section",
+      "permanent": true
+    },
+    {
+      "source": "/:section/:slug/index.html",
+      "destination": "/:section/:slug",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/admin",
