@@ -79,7 +79,9 @@ test('the command menu opens with the shortcut, finds a piece and goes to it', a
     const menu = page.getByRole('dialog', { name: 'Search the site' });
     await expect(menu).toBeVisible();
     // Contrast is checked once the fade-in has finished
-    await menu.evaluate((dialog) => Promise.all(dialog.getAnimations({ subtree: true }).map((animation) => animation.finished)));
+    await menu.evaluate((dialog) =>
+        Promise.all(dialog.getAnimations({ subtree: true }).map((animation: { finished: Promise<unknown> }) => animation.finished)),
+    );
 
     const { violations } = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
     expect(violations.map(({ id }) => id)).toEqual([]);
