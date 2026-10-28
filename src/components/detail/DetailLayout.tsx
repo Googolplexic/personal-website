@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 import { Link, useViewTransitionState } from 'react-router';
 import type { NextExhibit } from '../../types';
 import { useClientLocation } from '../../utils/useHydrated';
-import { exhibitTransition } from '../../utils/viewTransition';
+import { exhibitTransition, rememberPreview } from '../../utils/viewTransition';
 import { Placard } from '../ui/Placard';
 
 /** Pages a visitor can open a piece from; Back returns to whichever one they came from. */
@@ -33,6 +33,7 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
     const backDestination = backTarget !== '/' && location.search ? `${backTarget}${location.search}` : backTarget;
     const nextPath = `${section}/${next.slug}`;
     const toNext = useViewTransitionState(nextPath);
+    const nextImageRef = useRef<HTMLImageElement>(null);
 
     return (
         <article className="pt-28 pb-20">
@@ -74,11 +75,13 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
                         to={nextPath}
                         state={{ from: backTarget }}
                         viewTransition
+                        onClick={() => rememberPreview(next.slug, nextImageRef.current)}
                         className="group flex items-center gap-5 text-inherit no-underline"
                     >
                         {next.image && (
                             <div className="w-20 h-20 shrink-0 overflow-hidden border border-solid border-line vt-exhibit" style={exhibitTransition(next.slug, toNext)}>
                                 <img
+                                    ref={nextImageRef}
                                     src={next.image}
                                     alt=""
                                     data-fade

@@ -70,8 +70,8 @@
     animation: image-fade-in 0.2s var(--ease-gallery) forwards;
   }
 
-  /* The fade's first frame is opacity 0. Capturing that makes the shared element arrive blank. */
-  html:active-view-transition .vt-exhibit img[data-fade][data-loaded] {
+  /* Already in the cache when it appeared: show it at once, as if it had never left */
+  .img-fade img[data-fade][data-instant] {
     animation: none;
     opacity: 1;
   }
@@ -98,6 +98,10 @@
 
   .img-fade [data-placeholder]:has(+ img[data-loaded]) {
     opacity: 0;
+  }
+
+  .img-fade [data-placeholder]:has(+ img[data-instant]) {
+    transition: none;
   }
 
   @keyframes command-menu-in {

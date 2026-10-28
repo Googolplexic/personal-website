@@ -1,9 +1,10 @@
+import { useRef } from 'react';
 import { Link, useViewTransitionState } from 'react-router';
 import type { ItemProps } from '../../types';
 import { BASE_URL } from '../../utils/seo';
 import { cn } from '../../utils/styles';
 import { useClientLocation } from '../../utils/useHydrated';
-import { exhibitTransition } from '../../utils/viewTransition';
+import { exhibitTransition, rememberPreview } from '../../utils/viewTransition';
 import { HighlightedText } from './HighlightedText';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { Placard } from './Placard';
@@ -64,6 +65,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
     const set = image ? item.imageSets?.[image] : undefined;
     const lead = layout === 'lead';
     const transitioning = useViewTransitionState(path);
+    const imageRef = useRef<HTMLImageElement>(null);
 
     return (
         <article className={cn(
@@ -79,6 +81,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                 >
                     <ImagePlaceholder set={set} />
                     <img
+                        ref={imageRef}
                         src={image}
                         srcSet={set?.srcSet}
                         sizes={set && (lead ? LEAD_IMAGE_SIZES : CARD_IMAGE_SIZES)}
@@ -104,6 +107,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                             to={`${path}${queryString}`}
                             state={{ from: location.pathname }}
                             viewTransition
+                            onClick={() => rememberPreview(item.slug, imageRef.current)}
                             className="text-inherit no-underline focus-visible:outline-none after:absolute after:inset-0 after:content-['']"
                         >
                             <HighlightedText text={item.title} searchTerm={searchTerm} />

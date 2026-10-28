@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { ImageSet } from '../../types';
 import { cn } from '../../utils/styles';
-import { exhibitTransition } from '../../utils/viewTransition';
+import { exhibitTransition, previewFor } from '../../utils/viewTransition';
 import { ImagePlaceholder } from '../ui/ImagePlaceholder';
 import { Lightbox, type LightboxImage } from '../ui/Lightbox';
 
@@ -23,6 +23,8 @@ interface ProjectImageCarouselProps {
 export function ProjectImageCarousel({ images: resolvedImages, imagesFull, imageSets, title, slug }: ProjectImageCarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+    // The listing card's image, when that's how the visitor got here; it is the first slide
+    const [preview] = useState(() => previewFor(slug));
 
     const lightboxImages = useMemo(() => resolvedImages.map((img, i): LightboxImage => {
         const set = imageSets?.[img];
@@ -86,6 +88,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                             >
                                 <ImagePlaceholder
                                     set={set}
+                                    preview={i === 0 ? preview : undefined}
                                     fit="contain"
                                     className="m-auto w-full h-full"
                                     style={fitStyle}

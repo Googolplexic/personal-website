@@ -3,7 +3,6 @@ import { useLocation, Link as RouterLink } from 'react-router';
 import { cn } from '../../utils/styles';
 import { useHydrated } from '../../utils/useHydrated';
 import { openCommandMenu, preloadCommandMenu, shortcutLabel } from '../command/openCommandMenu';
-import { Kbd } from '../ui/Kbd';
 import { SearchIcon } from '../ui/SearchIcon';
 
 export function Navbar() {
@@ -56,19 +55,22 @@ export function Navbar() {
                     <NavLink to="/">Home</NavLink>
                     <NavLink to="/portfolio">Portfolio</NavLink>
                     <NavLink to="/origami">Origami</NavLink>
+                    <span aria-hidden="true" className="h-3 w-px bg-line-strong" />
+                    {/* Styled as one more nav link; focus gets the gold underline, not a box round the whole thing */}
                     <button
                         type="button"
                         onClick={openCommandMenu}
                         onPointerEnter={preloadCommandMenu}
                         onFocus={preloadCommandMenu}
                         aria-keyshortcuts="Control+K Meta+K"
-                        className="group/search flex items-center gap-2.5 min-h-11 px-0 shrink-0 bg-transparent text-ink-faint transition-colors duration-300 hover:text-gold"
+                        className="nav-link-gallery group/search flex items-center gap-2 min-h-11 px-0 shrink-0 bg-transparent cursor-pointer after:bottom-3 hover:text-gold focus-visible:outline-none focus-visible:text-gold focus-visible:after:w-full focus-visible:after:left-0"
                     >
-                        <SearchIcon />
-                        <span className="sr-only">Search the site</span>
-                        {/* Fixed width, so the label swapping to ⌘ after hydration doesn't move anything */}
-                        {/* Wide enough for "Ctrl K" in the fallback font, so it stays one line and ⌘ K doesn't shift the bar */}
-                        <Kbd className="w-[4.75rem] shrink-0 transition-colors duration-300 group-hover/search:border-gold group-hover/search:text-gold">{shortcut}</Kbd>
+                        <SearchIcon className="size-3.5" />
+                        <span>Search<span className="sr-only"> the site</span></span>
+                        {/* Fixed width, so the label swapping to ⌘ K after hydration doesn't shift the links */}
+                        <span className="w-[3.25rem] normal-case tracking-[0.08em]">
+                            {shortcut}
+                        </span>
                     </button>
                 </div>
 
@@ -79,7 +81,7 @@ export function Navbar() {
                         onClick={openCommandMenu}
                         onTouchStart={preloadCommandMenu}
                         aria-label="Search the site"
-                        className="flex items-center justify-center w-11 h-11 p-0 bg-transparent text-ink transition-colors duration-300 hover:text-gold"
+                        className="flex items-center justify-center w-11 h-11 p-0 bg-transparent text-ink transition-colors duration-300 hover:text-gold focus-visible:outline-none focus-visible:text-gold"
                     >
                         <SearchIcon />
                     </button>
