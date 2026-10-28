@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
-import { apiUrl } from '../../config/api';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { apiUrl, newIdempotencyKey } from '../../config/api';
 import { marked } from 'marked';
+
+/** How long the undo toast waits before a delete reaches the server */
+const UNDO_MS = 5000;
 
 interface EnhancedEditModalProps {
     isOpen: boolean;
@@ -16,6 +19,15 @@ interface ImageFile {
     name: string;
     url: string;
 }
+
+interface PendingDelete {
+    image: ImageFile;
+    /** Where it sat in the list, so Undo puts it back in place */
+    index: number;
+    url: string;
+}
+
+const insertAt = <T,>(list: T[], index: number, item: T) => [...list.slice(0, index), item, ...list.slice(index)];
 
 // Function to remove frontmatter from markdown content
 const removeFrontmatter = (content: string): string => {
@@ -36,6 +48,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
     const [activeTab, setActiveTab] = useState<'edit' | 'images'>('edit');
     const [renamingImage, setRenamingImage] = useState<string | null>(null);
     const [newImageName, setNewImageName] = useState('');
+    const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
+    const pendingDeleteRef = useRef<{ pending: PendingDelete; timer: number } | null>(null);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -214,6 +228,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         if (!files || files.length === 0) return;
 
         setUploading(true);
+        // Otherwise the refreshed list below could bring back an image that's about to be deleted
+        await flushPendingDelete();
         try {
             // Find the highest existing numbered index across current images
             let maxIndex = 0;
@@ -268,7 +284,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     method: 'POST',
                     credentials: 'include',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Idempotency-Key': newIdempotencyKey(),
                     },
                     body: JSON.stringify({
                         imageData: base64Data,
@@ -352,44 +369,88 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
         }
     };
 
-    const handleImageDelete = async (imageName: string) => {
-        if (!confirm(`Are you sure you want to delete ${imageName}?`)) {
-            return;
-        }
+    const imageFileUrl = (name: string) => type === 'project'
+        ? apiUrl(`/images?path=project/${path}&file=${name}`)
+        : apiUrl(`/images?path=origami/${category}/${path}&file=${name}`);
 
+    // Deleting hides the image at once and waits UNDO_MS before telling the server,
+    // so a misclick can be taken back from the toast
+    const commitDelete = useCallback(async ({ image, index, url }: PendingDelete) => {
         try {
-
-
-            // Use the same URL pattern as the images API
-            const url = type === 'project'
-                ? apiUrl(`/images?path=project/${path}&file=${imageName}`)
-                : apiUrl(`/images?path=origami/${category}/${path}&file=${imageName}`);
-
             const response = await fetch(url, {
                 method: 'DELETE',
                 credentials: 'include',
+                headers: { 'Idempotency-Key': newIdempotencyKey() },
             });
-
-            if (response.ok) {
-                // Remove the image from the list
-                setImages(prev => prev.filter(img => img.name !== imageName));
-            } else {
-                setError('Failed to delete image');
-            }
+            if (!response.ok) throw new Error(`Delete answered ${response.status}`);
         } catch (error) {
-            setError('Failed to delete image');
             console.error('Failed to delete image:', error);
+            setError(`Couldn't delete ${image.name}, so it's back in the list.`);
+            setImages(prev => prev.some(img => img.name === image.name) ? prev : insertAt(prev, index, image));
         }
+    }, []);
+
+    /** Sends the delete that's waiting out its undo time, now. */
+    const flushPendingDelete = useCallback(() => {
+        const current = pendingDeleteRef.current;
+        if (!current) return Promise.resolve();
+        clearTimeout(current.timer);
+        pendingDeleteRef.current = null;
+        setPendingDelete(null);
+        return commitDelete(current.pending);
+    }, [commitDelete]);
+
+    // Closing the editor (or leaving the page) doesn't cancel a delete the toast was counting down
+    useEffect(() => {
+        if (!isOpen) void flushPendingDelete();
+    }, [isOpen, flushPendingDelete]);
+    useEffect(() => () => void flushPendingDelete(), [flushPendingDelete]);
+
+    const handleImageDelete = (imageName: string) => {
+        const index = images.findIndex(img => img.name === imageName);
+        if (index === -1) return;
+        void flushPendingDelete();
+        const pending = { image: images[index], index, url: imageFileUrl(imageName) };
+        setImages(prev => prev.filter(img => img.name !== imageName));
+        pendingDeleteRef.current = { pending, timer: window.setTimeout(() => void flushPendingDelete(), UNDO_MS) };
+        setPendingDelete(pending);
     };
 
+    const undoDelete = () => {
+        const current = pendingDeleteRef.current;
+        if (!current) return;
+        clearTimeout(current.timer);
+        pendingDeleteRef.current = null;
+        setPendingDelete(null);
+        setImages(prev => insertAt(prev, current.pending.index, current.pending.image));
+    };
+
+    // Renaming shows the new name right away and puts the old one back if the server refuses
     const handleImageRename = async (oldName: string, newName: string) => {
         if (!newName.trim() || newName === oldName) {
             return;
         }
 
+        const cleanNewName = type === 'project' && newName.startsWith('images/')
+            ? newName.substring(7)
+            : newName;
+        const displayNewName = type === 'project' && !cleanNewName.startsWith('images/')
+            ? `images/${cleanNewName}`
+            : cleanNewName;
+        const renameTo = (from: string, to: string) => setImages(prev => prev.map(img =>
+            img.name === from ? { ...img, name: to } : img
+        ));
+        const fail = (message: string) => {
+            renameTo(displayNewName, oldName);
+            setError(message);
+        };
+
+        renameTo(oldName, displayNewName);
+        setRenamingImage(null);
+        setNewImageName('');
+        const actionKey = newIdempotencyKey();
+
         try {
-
-
             // Step 1: Get the existing image data
             const getUrl = type === 'project'
                 ? apiUrl(`/images?path=project/${path}&file=${oldName}`)
@@ -400,18 +461,13 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             });
 
             if (!getResponse.ok) {
-                setError('Failed to fetch image for renaming');
+                fail('Failed to fetch image for renaming');
                 return;
             }
 
             const imageData = await getResponse.json();
 
-            // Step 2: Upload with new name
-            // For projects, ensure we keep the filename without images/ prefix for the API call
-            const cleanNewName = type === 'project' && newName.startsWith('images/')
-                ? newName.substring(7)
-                : newName;
-
+            // Step 2: Upload with new name (without the images/ prefix for projects)
             const uploadUrl = type === 'project'
                 ? apiUrl(`/images?path=project/${path}`)
                 : apiUrl(`/images?path=origami/${category}/${path}`);
@@ -420,7 +476,8 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                 method: 'POST',
                 credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Idempotency-Key': `${actionKey}-copy`,
                 },
                 body: JSON.stringify({
                     imageData: `data:image/jpeg;base64,${imageData.content}`, // Ensure proper format
@@ -429,39 +486,22 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
             });
 
             if (!uploadResponse.ok) {
-                setError('Failed to upload renamed image');
+                fail('Failed to upload renamed image');
                 return;
             }
 
-            // Step 3: Delete old image
+            // Step 3: Delete old image. The copy exists by now, so the new name stays either way.
             const deleteResponse = await fetch(getUrl, {
                 method: 'DELETE',
-                credentials: 'include'
+                credentials: 'include',
+                headers: { 'Idempotency-Key': `${actionKey}-remove` },
             });
 
             if (!deleteResponse.ok) {
-                setError('Failed to delete old image after rename');
-                return;
+                setError(`Renamed, but the old copy (${oldName}) is still there. Delete it to tidy up.`);
             }
-
-            // Step 4: Update the local state
-            // For projects, the new name should include images/ prefix for display
-            const displayNewName = type === 'project' && !cleanNewName.startsWith('images/')
-                ? `images/${cleanNewName}`
-                : cleanNewName;
-
-            setImages(prev => prev.map(img =>
-                img.name === oldName
-                    ? { ...img, name: displayNewName }
-                    : img
-            ));
-
-            // Reset rename state
-            setRenamingImage(null);
-            setNewImageName('');
-
         } catch (error) {
-            setError('Failed to rename image');
+            fail('Failed to rename image');
             console.error('Failed to rename image:', error);
         }
     };
@@ -759,6 +799,26 @@ export function EnhancedEditModal({ isOpen, onClose, title, path, type, category
                     </div>
                 </div>
             </div>
+
+            {pendingDelete && (
+                <div
+                    key={pendingDelete.image.name}
+                    role="status"
+                    className="admin-toast flex items-center gap-5 max-w-[calc(100vw-2rem)] pl-4 pr-3 min-h-12 overflow-hidden border border-solid border-line-strong bg-canvas-raised shadow-[0_16px_48px_rgb(0_0_0/0.55)] text-sm text-ink"
+                >
+                    <span className="min-w-0 truncate">
+                        Deleted <span className="font-mono text-xs text-ink-muted">{pendingDelete.image.name}</span>
+                    </span>
+                    <button type="button" onClick={undoDelete} className="admin-link shrink-0 min-h-11 text-gold">
+                        Undo
+                    </button>
+                    <span
+                        aria-hidden="true"
+                        className="admin-toast-countdown absolute left-0 bottom-0 w-full h-px bg-gold"
+                        style={{ animationDuration: `${UNDO_MS}ms` }}
+                    />
+                </div>
+            )}
         </>
     );
 }

@@ -23,6 +23,8 @@ export interface ImageSet {
     srcSet: string;
     /** The largest copy, for the lightbox */
     large: string;
+    /** A tiny WebP copy as a data URL, shown blurred while the image loads (ImagePlaceholder) */
+    placeholder: string;
 }
 
 // Project-specific properties

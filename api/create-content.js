@@ -1,6 +1,7 @@
 // Vercel serverless function to create projects/origami via GitHub API
 import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, getFileFromGitHub } from './github-utils.js';
 import { requireAdmin } from './auth-utils.js';
+import { withIdempotency } from './idempotency-utils.js';
 
 function normalizeSlug(value) {
     return String(value || '')
@@ -10,7 +11,7 @@ function normalizeSlug(value) {
         .replace(/(^-|-$)/g, '');
 }
 
-export default async function handler(req, res) {
+export default withIdempotency(async function handler(req, res) {
     if (!requireAdmin(req, res)) return;
 
     if (req.method === 'POST') {
@@ -54,7 +55,7 @@ export default async function handler(req, res) {
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
-}
+});
 
 async function createOrigami(data) {
     const { title, description, date, designer, category, slug: customSlug } = data;

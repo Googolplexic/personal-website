@@ -2,6 +2,7 @@ import { lazy, Suspense, useState } from 'react';
 import { DetailLayout, DetailList } from '../components/detail/DetailLayout';
 import { ProjectImageCarousel } from '../components/portfolio/ProjectImageCarousel';
 import { HighlightedText } from '../components/ui/HighlightedText';
+import { ImagePlaceholder } from '../components/ui/ImagePlaceholder';
 import { Lightbox } from '../components/ui/Lightbox';
 import { ShareButton } from '../components/ui/ShareButton';
 import { NextExhibit, OrigamiProps } from '../types';
@@ -46,7 +47,7 @@ export function OrigamiDetail({ origami, exhibit, next }: OrigamiDetailProps) {
                 </>
             }
         >
-            <ProjectImageCarousel images={origami.modelImages} imagesFull={origami.modelImagesFull} imageSets={origami.imageSets} title={origami.title} />
+            <ProjectImageCarousel images={origami.modelImages} imagesFull={origami.modelImagesFull} imageSets={origami.imageSets} title={origami.title} slug={origami.slug} />
 
             {origami.writeup && (
                 <Suspense fallback={null}>
@@ -61,15 +62,16 @@ export function OrigamiDetail({ origami, exhibit, next }: OrigamiDetailProps) {
                         type="button"
                         aria-haspopup="dialog"
                         onClick={() => setCpLightboxOpen(true)}
-                        className="block w-full max-w-sm p-0 bg-transparent cursor-zoom-in"
+                        className="relative block w-full max-w-sm p-0 bg-transparent cursor-zoom-in"
                     >
+                        <ImagePlaceholder set={cpSet} fit="contain" />
                         <img
                             src={origami.creasePattern}
                             srcSet={cpSet?.srcSet}
                             sizes={cpSet && CREASE_PATTERN_SIZES}
                             alt={`${origami.title} crease pattern`}
                             data-fade
-                            className="block w-full h-auto object-contain"
+                            className="relative block w-full h-auto object-contain"
                             loading="lazy"
                             title="Click to enlarge"
                             width={cpSet?.width}

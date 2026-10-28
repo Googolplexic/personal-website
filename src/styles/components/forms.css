@@ -155,6 +155,31 @@
     height: 100%;
   }
 
+  /* Undo toast: slides up, and a gold line runs down for the time left to undo */
+  @keyframes admin-toast-in {
+    from { opacity: 0; transform: translate(-50%, 0.75rem); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+
+  @keyframes admin-toast-countdown {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+  }
+
+  .admin-toast {
+    position: fixed;
+    z-index: 410;
+    left: 50%;
+    bottom: calc(1.5rem + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    animation: admin-toast-in 0.25s var(--ease-gallery) both;
+  }
+
+  .admin-toast-countdown {
+    transform-origin: left;
+    animation: admin-toast-countdown linear both;
+  }
+
   @media (min-width: 768px) {
     .admin-page {
       padding: 4rem 2rem 5rem;

@@ -1,8 +1,9 @@
 // Vercel serverless function to upload images via GitHub API
 import { uploadImageToGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, imageUploadPath, deleteLargerWebCopies, MAX_IMAGE_BYTES } from './github-utils.js';
 import { requireAdmin } from './auth-utils.js';
+import { withIdempotency } from './idempotency-utils.js';
 
-export default async function handler(req, res) {
+export default withIdempotency(async function handler(req, res) {
     if (!requireAdmin(req, res)) return;
 
     if (req.method === 'POST') {
@@ -37,14 +38,14 @@ export default async function handler(req, res) {
             }
 
             // Upload image to GitHub
-            await uploadImageToGitHub(
+            const uploaded = await uploadImageToGitHub(
                 imagePath,
                 imageBuffer,
                 `Upload image for ${type === 'origami' ? 'origami' : 'project'} ${slug}`
             );
 
-            // Also generate and upload the optimized web/ version
-            if (isOptimizableImage(imagePath)) {
+            // Also generate and upload the optimized web/ version, unless the same image was already there
+            if (uploaded && isOptimizableImage(imagePath)) {
                 try {
                     const webpBuffer = await optimizeImageBuffer(imageBuffer);
                     const webpPath = getWebpPath(imagePath);
@@ -76,4 +77,4 @@ export default async function handler(req, res) {
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
-}
+});

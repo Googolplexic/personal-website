@@ -73,6 +73,24 @@ test('the lightbox opens, moves to the next image and closes with Escape', async
     await expect(dialog).toBeHidden();
 });
 
+test('the command menu opens with the shortcut, finds a piece and goes to it', async ({ page }) => {
+    await open(page, '/portfolio');
+    await page.keyboard.press('ControlOrMeta+k');
+    const menu = page.getByRole('dialog', { name: 'Search the site' });
+    await expect(menu).toBeVisible();
+    // Contrast is checked once the fade-in has finished
+    await menu.evaluate((dialog) => Promise.all(dialog.getAnimations({ subtree: true }).map((animation) => animation.finished)));
+
+    const { violations } = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(violations.map(({ id }) => id)).toEqual([]);
+
+    await page.keyboard.type('ryujin');
+    await expect(menu.getByRole('option', { name: /Ryujin/ })).toHaveAttribute('aria-selected', 'true');
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/origami\/ryujin-3-5$/);
+    await expect(menu).toBeHidden();
+});
+
 test.describe('?to= redirects', () => {
     for (const [to, expected] of [
         ['https://github.com/Googolplexic', 'https://github.com/Googolplexic'],

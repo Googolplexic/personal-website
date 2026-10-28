@@ -7,5 +7,6 @@ export default [
     route('origami', 'routes/origami.tsx'),
     route('origami/:slug', 'routes/origami-piece.tsx'),
     route('admin', 'routes/admin.tsx'),
+    route('search-index.json', 'routes/search-index.ts'),
     route('*', 'routes/not-found.tsx'),
 ] satisfies RouteConfig;

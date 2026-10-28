@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
-import { Link } from 'react-router';
+import { Link, useViewTransitionState } from 'react-router';
 import type { NextExhibit } from '../../types';
 import { useClientLocation } from '../../utils/useHydrated';
+import { exhibitTransition } from '../../utils/viewTransition';
 import { Placard } from '../ui/Placard';
 
 /** Pages a visitor can open a piece from; Back returns to whichever one they came from. */
@@ -30,6 +31,8 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
     const backTarget = from && BACK_TARGETS.includes(from) ? from : section;
     const backLabel = backTarget === '/' ? 'Back to Home' : 'Back to Gallery';
     const backDestination = backTarget !== '/' && location.search ? `${backTarget}${location.search}` : backTarget;
+    const nextPath = `${section}/${next.slug}`;
+    const toNext = useViewTransitionState(nextPath);
 
     return (
         <article className="pt-28 pb-20">
@@ -37,6 +40,7 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
                 <div className="col-span-full mb-8 lg:mb-12">
                     <Link
                         to={backDestination}
+                        viewTransition
                         className="inline-flex items-center gap-2 min-h-11 text-xs tracking-[0.2em] uppercase font-body no-underline text-ink-faint transition-colors duration-300 hover:text-gold"
                     >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
@@ -48,7 +52,7 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
 
                 <header className="col-span-full lg:col-span-10 mb-12 lg:mb-16">
                     <p className="text-label uppercase font-body text-gold mt-0 mb-4">Exhibit {exhibit}</p>
-                    <h1 className="gallery-heading text-title m-0 text-ink text-balance">{title}</h1>
+                    <h1 className="gallery-heading text-title m-0 text-ink">{title}</h1>
                     {lead && <p className="mt-5 mb-0 max-w-2xl text-lead font-heading italic text-ink-muted">{lead}</p>}
                 </header>
 
@@ -67,12 +71,13 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
                 <nav aria-label="Next exhibit" className="col-span-full border-t border-solid border-line pt-10">
                     <p className="gallery-overline mt-0 mb-5">Next Exhibit</p>
                     <Link
-                        to={`${section}/${next.slug}`}
+                        to={nextPath}
                         state={{ from: backTarget }}
+                        viewTransition
                         className="group flex items-center gap-5 text-inherit no-underline"
                     >
                         {next.image && (
-                            <div className="w-20 h-20 shrink-0 overflow-hidden border border-solid border-line">
+                            <div className="w-20 h-20 shrink-0 overflow-hidden border border-solid border-line vt-exhibit" style={exhibitTransition(next.slug, toNext)}>
                                 <img
                                     src={next.image}
                                     alt=""

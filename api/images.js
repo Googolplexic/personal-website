@@ -1,8 +1,9 @@
 // Vercel serverless function to manage images via GitHub API
 import { getImageFromGitHub, uploadImageToGitHub, deleteFileFromGitHub, getFileFromGitHub, isOptimizableImage, getWebpPath, optimizeImageBuffer, resolveContentDir, resolveImageFile, imageUploadPath, deleteLargerWebCopies, MAX_IMAGE_BYTES } from './github-utils.js';
 import { requireAdmin } from './auth-utils.js';
+import { withIdempotency } from './idempotency-utils.js';
 
-export default async function handler(req, res) {
+export default withIdempotency(async function handler(req, res) {
     if (!requireAdmin(req, res)) return;
 
     try {
@@ -66,14 +67,14 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: 'Invalid file name' });
             }
 
-            await uploadImageToGitHub(
+            const uploaded = await uploadImageToGitHub(
                 fullPath,
                 imageBuffer,
                 `Upload image ${fileName} to ${requestPath}`
             );
 
-            // Also generate and upload the optimized web/ version
-            if (isOptimizableImage(fullPath)) {
+            // Also generate and upload the optimized web/ version, unless the same image was already there
+            if (uploaded && isOptimizableImage(fullPath)) {
                 try {
                     const webpBuffer = await optimizeImageBuffer(imageBuffer);
                     const webpPath = getWebpPath(fullPath);
@@ -147,4 +148,4 @@ export default async function handler(req, res) {
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
-}
+});

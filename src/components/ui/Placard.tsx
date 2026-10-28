@@ -28,7 +28,7 @@ export function Placard({ exhibit, title, medium, date, titleAs: Title = 'h3', s
                 {title}
             </Title>
             {medium && <p className="mt-2 mb-0 text-sm font-body text-ink-muted">{medium}</p>}
-            {date && <p className="mt-1 mb-0 text-xs uppercase tracking-[0.2em] font-body text-ink-faint">{date}</p>}
+            {date && <p className="mt-1 mb-0 text-xs uppercase tracking-[0.2em] tabular-nums font-body text-ink-faint">{date}</p>}
         </div>
     );
 }

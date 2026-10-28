@@ -24,3 +24,9 @@ export const API_BASE_URL = getApiBaseUrl();
 
 // Helper function to construct API URLs
 export const apiUrl = (endpoint: string) => `${API_BASE_URL}${endpoint}`;
+
+/**
+ * A key for the Idempotency-Key header (api/idempotency-utils.js). Send the same key
+ * when repeating the same action, so a double submit or retry doesn't commit twice.
+ */
+export const newIdempotencyKey = () => crypto.randomUUID();

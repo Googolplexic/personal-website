@@ -1,9 +1,11 @@
-import { Link } from 'react-router';
+import { Link, useViewTransitionState } from 'react-router';
 import type { ItemProps } from '../../types';
 import { BASE_URL } from '../../utils/seo';
 import { cn } from '../../utils/styles';
 import { useClientLocation } from '../../utils/useHydrated';
+import { exhibitTransition } from '../../utils/viewTransition';
 import { HighlightedText } from './HighlightedText';
+import { ImagePlaceholder } from './ImagePlaceholder';
 import { Placard } from './Placard';
 import { ShareButton } from './ShareButton';
 
@@ -61,6 +63,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
     const queryString = location.search || (searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : '');
     const set = image ? item.imageSets?.[image] : undefined;
     const lead = layout === 'lead';
+    const transitioning = useViewTransitionState(path);
 
     return (
         <article className={cn(
@@ -70,14 +73,18 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
             className,
         )}>
             {image && (
-                <div className={cn('overflow-hidden', lead && 'md:col-span-7')}>
+                <div
+                    className={cn('relative overflow-hidden vt-exhibit', lead && 'md:col-span-7')}
+                    style={exhibitTransition(item.slug, transitioning)}
+                >
+                    <ImagePlaceholder set={set} />
                     <img
                         src={image}
                         srcSet={set?.srcSet}
                         sizes={set && (lead ? LEAD_IMAGE_SIZES : CARD_IMAGE_SIZES)}
                         alt={item.title}
                         data-fade
-                        className="block w-full h-auto"
+                        className="relative block w-full h-auto"
                         loading={priority ? 'eager' : 'lazy'}
                         fetchPriority={priority ? 'high' : undefined}
                         decoding="async"
@@ -96,6 +103,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                         <Link
                             to={`${path}${queryString}`}
                             state={{ from: location.pathname }}
+                            viewTransition
                             className="text-inherit no-underline focus-visible:outline-none after:absolute after:inset-0 after:content-['']"
                         >
                             <HighlightedText text={item.title} searchTerm={searchTerm} />

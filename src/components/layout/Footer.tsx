@@ -29,7 +29,7 @@ export function Footer() {
 
     return (
         <footer className="border-t border-solid border-line">
-            <div className="page-grid pt-12 pb-8 gap-y-10">
+            <div className="page-grid pt-12 pb-[calc(2rem+env(safe-area-inset-bottom))] gap-y-10">
                 <RouterLink
                     to="/"
                     onClick={scrollIfSamePage('/')}

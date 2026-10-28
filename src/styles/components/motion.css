@@ -63,17 +63,88 @@
     animation: image-fade-in 0.2s var(--ease-gallery) forwards;
   }
 
-  /* background-image, so a parent's bg-* colour utility doesn't hide it */
-  .img-fade :has(> img[data-fade]:not([data-loaded])) {
+  /* background-image, so a parent's bg-* colour utility doesn't hide it.
+     Images with a blurred placeholder (ImagePlaceholder) show that instead. */
+  .img-fade :has(> img[data-fade]:not([data-loaded])):not(:has(> [data-placeholder])) {
     background-image: linear-gradient(100deg, var(--color-surface) 40%, var(--color-surface-raised) 50%, var(--color-surface) 60%);
     background-size: 200% 100%;
     animation: image-shimmer 1.6s linear infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .img-fade :has(> img[data-fade]:not([data-loaded])) {
+    .img-fade :has(> img[data-fade]:not([data-loaded])):not(:has(> [data-placeholder])) {
       background-image: linear-gradient(var(--color-surface), var(--color-surface));
       animation: none;
+    }
+  }
+
+  /* Stays until the image has faded in over it, so transparent images don't keep a blurry backing */
+  .img-fade [data-placeholder] {
+    transition: opacity 0.3s var(--ease-gallery) 0.2s;
+  }
+
+  .img-fade [data-placeholder]:has(+ img[data-loaded]) {
+    opacity: 0;
+  }
+
+  @keyframes command-menu-in {
+    from { opacity: 0; transform: translateY(-6px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .command-menu-backdrop {
+    animation: page-fade-in 0.18s var(--ease-gallery) both;
+  }
+
+  .command-menu-panel {
+    animation: command-menu-in 0.2s var(--ease-gallery) both;
+  }
+
+  /* View Transitions: only the piece's image moves between pages. The page swaps
+     at once and fades in through .page-enter as it does on any other navigation. */
+  ::view-transition-old(root) {
+    animation: none;
+    opacity: 0;
+  }
+
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  .vt-exhibit {
+    view-transition-class: exhibit;
+  }
+
+  ::view-transition-group(.exhibit) {
+    animation-duration: 0.45s;
+    animation-timing-function: var(--ease-gallery);
+  }
+
+  /* The card and the carousel slide have different shapes; keep the picture whole in both */
+  ::view-transition-old(.exhibit),
+  ::view-transition-new(.exhibit) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    animation-duration: 0.45s;
+  }
+
+  /* A named image with no partner on the other page just leaves or arrives with its page */
+  ::view-transition-old(.exhibit):only-child {
+    animation: none;
+    opacity: 0;
+  }
+
+  ::view-transition-new(.exhibit):only-child {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation: none !important;
     }
   }
 

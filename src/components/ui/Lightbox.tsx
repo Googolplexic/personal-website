@@ -1,8 +1,21 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../utils/styles';
+import { Kbd } from './Kbd';
 
 const CONTROL_CLASS = 'absolute z-10 w-11 h-11 p-0 flex items-center justify-center cursor-pointer border border-solid border-line-strong bg-canvas/70 text-ink transition-colors duration-300 hover:border-gold hover:text-gold';
+
+// Clear of the notch and home indicator on phones with viewport-fit=cover
+const TOP = 'top-[max(1.25rem,env(safe-area-inset-top))]';
+const BOTTOM = 'bottom-[max(1.5rem,env(safe-area-inset-bottom))]';
+
+const SETTLE = 'transform 0.35s var(--ease-gallery)';
+/** Distance (px) or flick speed (px/ms) that turns a drag into a page turn or a dismiss */
+const SWIPE_DISTANCE = 60;
+const DISMISS_DISTANCE = 120;
+const FLICK_SPEED = 0.5;
+/** Movement before a touch counts as a drag, so taps still reach the buttons and zoom */
+const DRAG_SLOP = 8;
 
 export interface LightboxImage {
     src: string;
@@ -19,18 +32,39 @@ interface LightboxProps {
     onClose: () => void;
 }
 
+interface Drag {
+    startX: number;
+    startY: number;
+    /** Where the image was when the finger landed, so a drag can catch it mid-animation */
+    baseX: number;
+    baseY: number;
+    axis: 'x' | 'y' | null;
+    x: number;
+    y: number;
+    lastY: number;
+    lastTime: number;
+    lastX: number;
+    velocityX: number;
+    velocityY: number;
+}
+
 /**
- * Full-screen image lightbox with zoom, keyboard nav, and swipe on mobile.
+ * Full-screen image lightbox with zoom, keyboard nav, and touch gestures:
+ * swipe sideways to change image, swipe up or down to close.
  */
 export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: LightboxProps) {
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     const [isZoomed, setIsZoomed] = useState(false);
     const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
-    const [swipeStart, setSwipeStart] = useState<{ x: number; y: number } | null>(null);
-    const [swipeOffset, setSwipeOffset] = useState(0);
     const [isEntering, setIsEntering] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
+    const backdropRef = useRef<HTMLDivElement>(null);
+    const stageRef = useRef<HTMLDivElement>(null);
     const closeRef = useRef<HTMLButtonElement>(null);
+    const dragRef = useRef<Drag | null>(null);
+    /** Set when a touch turned into a drag, so the click that follows doesn't zoom or close */
+    const draggedRef = useRef(false);
+    const closingRef = useRef(false);
 
     // Focus moves into the dialog, and back to whatever opened it on close
     useEffect(() => {
@@ -74,6 +108,20 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
         };
     }, []);
 
+    /** Moves the image (and dims the backdrop as it's pulled away vertically) without a React render per frame */
+    const moveStage = useCallback((x: number, y: number, animate: boolean) => {
+        const stage = stageRef.current;
+        const backdrop = backdropRef.current;
+        if (stage) {
+            stage.style.transition = animate ? SETTLE : 'none';
+            stage.style.transform = x || y ? `translate3d(${x}px, ${y}px, 0)` : '';
+        }
+        if (backdrop) {
+            backdrop.style.transition = animate ? 'opacity 0.35s var(--ease-gallery)' : 'none';
+            backdrop.style.opacity = String(1 - Math.min(Math.abs(y) / 400, 0.6));
+        }
+    }, []);
+
     const goTo = useCallback((index: number) => {
         setIsZoomed(false);
         if (index < 0) setCurrentIndex(images.length - 1);
@@ -82,6 +130,8 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
     }, [images.length]);
 
     const handleClose = useCallback(() => {
+        if (closingRef.current) return;
+        closingRef.current = true;
         setIsEntering(true);
         setTimeout(onClose, 250);
     }, [onClose]);
@@ -114,6 +164,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
 
     // Zoom on click (desktop)
     const handleImageClick = (e: React.MouseEvent) => {
+        if (draggedRef.current) return;
         if (isZoomed) {
             setIsZoomed(false);
         } else {
@@ -136,30 +187,104 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
         });
     };
 
-    // Touch swipe
     const handleTouchStart = (e: React.TouchEvent) => {
-        if (isZoomed) return;
-        setSwipeStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+        draggedRef.current = false;
+        if (isZoomed || closingRef.current || e.touches.length > 1) {
+            dragRef.current = null;
+            return;
+        }
+        // Pick the image up where it is, even halfway through settling back
+        const stage = stageRef.current;
+        const current = stage ? new DOMMatrixReadOnly(getComputedStyle(stage).transform) : null;
+        const baseX = current?.m41 ?? 0;
+        const baseY = current?.m42 ?? 0;
+        const touch = e.touches[0];
+        dragRef.current = {
+            startX: touch.clientX,
+            startY: touch.clientY,
+            baseX,
+            baseY,
+            axis: baseX ? 'x' : baseY ? 'y' : null,
+            x: baseX,
+            y: baseY,
+            lastX: touch.clientX,
+            lastY: touch.clientY,
+            lastTime: e.timeStamp,
+            velocityX: 0,
+            velocityY: 0,
+        };
+        moveStage(baseX, baseY, false);
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        if (!swipeStart || isZoomed) return;
-        const deltaX = e.touches[0].clientX - swipeStart.x;
-        setSwipeOffset(deltaX);
+        const drag = dragRef.current;
+        if (!drag) return;
+        if (e.touches.length > 1) {
+            dragRef.current = null;
+            moveStage(0, 0, true);
+            return;
+        }
+        const touch = e.touches[0];
+        const dx = touch.clientX - drag.startX;
+        const dy = touch.clientY - drag.startY;
+        if (!drag.axis) {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) < DRAG_SLOP) return;
+            drag.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+        }
+        draggedRef.current = true;
+
+        const elapsed = Math.max(e.timeStamp - drag.lastTime, 1);
+        drag.velocityX = (touch.clientX - drag.lastX) / elapsed;
+        drag.velocityY = (touch.clientY - drag.lastY) / elapsed;
+        drag.lastX = touch.clientX;
+        drag.lastY = touch.clientY;
+        drag.lastTime = e.timeStamp;
+
+        if (drag.axis === 'x') {
+            // A single image only gives a little, so the drag still feels connected
+            drag.x = drag.baseX + (hasMultiple ? dx : dx * 0.25);
+            drag.y = 0;
+        } else {
+            drag.x = 0;
+            drag.y = drag.baseY + dy;
+        }
+        moveStage(drag.x, drag.y, false);
     };
 
     const handleTouchEnd = () => {
-        if (!swipeStart) return;
-        if (Math.abs(swipeOffset) > 60 && hasMultiple) {
-            goTo(swipeOffset > 0 ? currentIndex - 1 : currentIndex + 1);
+        const drag = dragRef.current;
+        dragRef.current = null;
+        if (!drag) return;
+
+        if (drag.axis === 'x' && hasMultiple) {
+            const flicked = Math.abs(drag.velocityX) > FLICK_SPEED && Math.sign(drag.velocityX) === Math.sign(drag.x);
+            if (Math.abs(drag.x) > SWIPE_DISTANCE || flicked) {
+                const step = drag.x < 0 ? 1 : -1;
+                goTo(currentIndex + step);
+                // The next image slides in from the side it was pulled from
+                moveStage(step * Math.min(window.innerWidth * 0.3, 160), 0, false);
+                requestAnimationFrame(() => requestAnimationFrame(() => moveStage(0, 0, true)));
+                return;
+            }
         }
-        setSwipeStart(null);
-        setSwipeOffset(0);
+
+        if (drag.axis === 'y') {
+            const flicked = Math.abs(drag.velocityY) > FLICK_SPEED && Math.sign(drag.velocityY) === Math.sign(drag.y);
+            if (Math.abs(drag.y) > DISMISS_DISTANCE || flicked) {
+                const direction = Math.sign(drag.y) || 1;
+                moveStage(0, direction * window.innerHeight * 0.6, true);
+                handleClose();
+                return;
+            }
+        }
+
+        moveStage(0, 0, true);
     };
 
     // Click backdrop to close (but not on image)
     const handleBackdropClick = (e: React.MouseEvent) => {
-        if (e.target === containerRef.current || (e.target as HTMLElement).classList.contains('lightbox-backdrop')) {
+        if (draggedRef.current) return;
+        if (e.target === containerRef.current || e.target === backdropRef.current) {
             handleClose();
         }
     };
@@ -170,31 +295,30 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
             role="dialog"
             aria-modal="true"
             aria-label={alt}
-            className="lightbox-backdrop"
+            className="fixed inset-0 z-9999 flex items-center justify-center overscroll-contain"
             onClick={handleBackdropClick}
             style={{
-                position: 'fixed',
-                inset: 0,
-                zIndex: 9999,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(0, 0, 0, 0.92)',
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)',
                 opacity: isEntering ? 0 : 1,
                 transition: 'opacity 0.25s ease',
+                // Gestures are handled here; pinch still zooms the page for a closer look
+                touchAction: 'pinch-zoom',
             }}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
         >
+            <div
+                ref={backdropRef}
+                className="absolute inset-0 bg-black/92 backdrop-blur-sm"
+            />
+
             {/* Close button */}
             <button
                 ref={closeRef}
                 type="button"
                 onClick={handleClose}
-                className={cn(CONTROL_CLASS, 'top-5 right-5')}
+                className={cn(CONTROL_CLASS, TOP, 'right-[max(1.25rem,env(safe-area-inset-right))]')}
                 aria-label="Close lightbox"
             >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -205,7 +329,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
             {/* Counter */}
             {hasMultiple && (
                 <div
-                    className="absolute top-6 left-1/2 -translate-x-1/2 text-xs tracking-[0.2em] uppercase font-body text-ink-faint"
+                    className={cn('absolute left-1/2 -translate-x-1/2 mt-1 text-xs tracking-[0.2em] uppercase tabular-nums font-body text-ink-faint', TOP)}
                 >
                     {currentIndex + 1} / {images.length}
                 </div>
@@ -217,7 +341,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                     <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); goTo(currentIndex - 1); }}
-                        className={cn(CONTROL_CLASS, 'left-4 top-1/2 -translate-y-1/2')}
+                        className={cn(CONTROL_CLASS, 'left-[max(1rem,env(safe-area-inset-left))] top-1/2 -translate-y-1/2')}
                         aria-label="Previous image"
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M15 18l-6-6 6-6" /></svg>
@@ -225,7 +349,7 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                     <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); goTo(currentIndex + 1); }}
-                        className={cn(CONTROL_CLASS, 'right-4 top-1/2 -translate-y-1/2')}
+                        className={cn(CONTROL_CLASS, 'right-[max(1rem,env(safe-area-inset-right))] top-1/2 -translate-y-1/2')}
                         aria-label="Next image"
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 18l6-6-6-6" /></svg>
@@ -235,13 +359,8 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
 
             {/* Image */}
             <div
-                className="flex items-center justify-center"
-                style={{
-                    maxWidth: '90vw',
-                    maxHeight: '85vh',
-                    transform: swipeOffset ? `translateX(${swipeOffset}px)` : undefined,
-                    transition: swipeOffset ? 'none' : 'transform 0.3s ease',
-                }}
+                ref={stageRef}
+                className="relative flex items-center justify-center max-w-[90vw] max-h-[85vh]"
             >
                 <div
                     className="relative"
@@ -277,23 +396,37 @@ export function Lightbox({ images, initialIndex, alt = 'Image', onClose }: Light
                 </div>
             </div>
 
-            {/* Dot indicators */}
+            {/* Dot indicators: a 2px bar inside a 24px-tall target */}
             {hasMultiple && (
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5">
+                <div className={cn('absolute left-1/2 -translate-x-1/2 flex gap-1.5', BOTTOM)}>
                     {images.map((_, i) => (
                         <button
                             key={i}
+                            type="button"
                             onClick={(e) => { e.stopPropagation(); goTo(i); }}
-                            className="w-8 h-0.5 border-none p-0 cursor-pointer transition-all duration-300"
-                            style={{
-                                backgroundColor: 'var(--color-ink-muted)',
-                                opacity: i === currentIndex ? 1 : 0.3,
-                            }}
+                            className={cn(
+                                'relative w-8 h-6 p-0 cursor-pointer transition-opacity duration-300 before:absolute before:inset-x-0 before:top-1/2 before:h-0.5 before:-translate-y-1/2 before:bg-ink-muted',
+                                i === currentIndex ? 'opacity-100' : 'opacity-30 hover:opacity-60',
+                            )}
                             aria-label={`View image ${i + 1}`}
+                            aria-current={i === currentIndex ? 'true' : undefined}
                         />
                     ))}
                 </div>
             )}
+
+            {/* Keyboard hints, only where there's a keyboard and room for them */}
+            <p
+                aria-hidden="true"
+                className={cn(
+                    'hidden lg:pointer-fine:flex absolute m-0 items-center gap-4 text-[0.65rem] tracking-[0.2em] uppercase font-body text-ink-faint',
+                    BOTTOM,
+                    'left-[max(1.25rem,env(safe-area-inset-left))]',
+                )}
+            >
+                {hasMultiple && <span className="flex items-center gap-1.5"><Kbd>←</Kbd><Kbd>→</Kbd> Browse</span>}
+                <span className="flex items-center gap-1.5"><Kbd>Esc</Kbd> Close</span>
+            </p>
         </div>,
         document.body
     );

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { apiUrl } from '../../config/api';
+import { apiUrl, newIdempotencyKey } from '../../config/api';
 
 interface ProjectFormData {
     title: string;
@@ -37,6 +37,8 @@ export function ProjectForm() {
     const [images, setImages] = useState<FileList | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    // Kept until a submit succeeds, so resubmitting after a timeout doesn't create the project twice
+    const [submissionKey, setSubmissionKey] = useState(newIdempotencyKey);
 
     // Auto-generate slug from title
     const generateSlug = (title: string) => {
@@ -105,6 +107,7 @@ export function ProjectForm() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Idempotency-Key': submissionKey,
                 },
                 credentials: 'include',
                 body: JSON.stringify({
@@ -154,7 +157,7 @@ export function ProjectForm() {
 
                     const imgRes = await fetch(apiUrl('/upload-image'), {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', 'Idempotency-Key': `${submissionKey}-${i}` },
                         credentials: 'include',
                         body: JSON.stringify({
                             type: 'project',
@@ -180,6 +183,7 @@ export function ProjectForm() {
                 setMessage({ type: 'success', text: 'Project created successfully!' });
             }
             setFormData(initialFormData);
+            setSubmissionKey(newIdempotencyKey());
             setIsSlugManuallyEdited(false);
             setImages(null);
             const fileInput = document.getElementById('images') as HTMLInputElement;

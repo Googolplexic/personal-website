@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import type { ImageSet } from '../../types';
 import { cn } from '../../utils/styles';
+import { exhibitTransition } from '../../utils/viewTransition';
+import { ImagePlaceholder } from '../ui/ImagePlaceholder';
 import { Lightbox, type LightboxImage } from '../ui/Lightbox';
 
 // The carousel spans the main column: about two thirds of the 90rem page on desktop, full width below
@@ -14,9 +16,11 @@ interface ProjectImageCarouselProps {
     imagesFull?: string[];
     imageSets?: Record<string, ImageSet>;
     title: string;
+    /** The piece's slug; the slide on show pairs with its listing card in a View Transition */
+    slug: string;
 }
 
-export function ProjectImageCarousel({ images: resolvedImages, imagesFull, imageSets, title }: ProjectImageCarouselProps) {
+export function ProjectImageCarousel({ images: resolvedImages, imagesFull, imageSets, title, slug }: ProjectImageCarouselProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -67,6 +71,10 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                         // The slide on show and the ones either side, so an arrow press finds the image ready
                         const distance = Math.abs(i - currentImageIndex);
                         const nearby = Math.min(distance, resolvedImages.length - distance) <= 1;
+                        const fitStyle = set ? {
+                            maxWidth: `min(100%, ${set.width}px)`,
+                            maxHeight: `min(100%, ${set.height}px)`,
+                        } : undefined;
                         return (
                             <button
                                 key={i}
@@ -74,8 +82,15 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                                 aria-haspopup="dialog"
                                 inert={i !== currentImageIndex}
                                 onClick={() => setLightboxIndex(i)}
-                                className="relative w-full h-full shrink-0 min-w-0 p-0 bg-transparent cursor-zoom-in"
+                                className="relative w-full h-full shrink-0 min-w-0 p-0 bg-transparent cursor-zoom-in vt-exhibit"
+                                style={exhibitTransition(slug, i === currentImageIndex)}
                             >
+                                <ImagePlaceholder
+                                    set={set}
+                                    fit="contain"
+                                    className="m-auto w-full h-full"
+                                    style={fitStyle}
+                                />
                                 {/* A definite width lets the browser reserve the image's height before it loads */}
                                 <img
                                     src={img}
@@ -85,10 +100,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
                                     data-fade
                                     className="absolute inset-0 m-auto w-full h-full object-contain"
-                                    style={set ? {
-                                        maxWidth: `min(100%, ${set.width}px)`,
-                                        maxHeight: `min(100%, ${set.height}px)`,
-                                    } : undefined}
+                                    style={fitStyle}
                                     loading={nearby ? 'eager' : 'lazy'}
                                     fetchPriority={i === 0 ? 'high' : undefined}
                                     width={set?.width}
@@ -117,7 +129,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M9 18l6-6-6-6" /></svg>
                     </button>
                     {/* Dot indicators */}
-                    <div className="flex justify-center gap-1.5 mt-4">
+                    <div className="flex justify-center gap-1.5 mt-1">
                         {resolvedImages.map((_, index) => (
                             <button
                                 key={index}
@@ -125,7 +137,8 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                                 aria-label={`View image ${index + 1}`}
                                 onClick={() => changeImage(index)}
                                 className={cn(
-                                    'w-10 h-0.5 bg-ink-muted transition-all duration-300 border-none focus:outline-hidden p-0 cursor-pointer',
+                                    // A 2px bar inside a 24px-tall target
+                                    'relative w-10 h-6 p-0 transition-all duration-300 border-none focus:outline-hidden cursor-pointer before:absolute before:inset-x-0 before:top-1/2 before:h-0.5 before:-translate-y-1/2 before:bg-ink-muted',
                                     index === currentImageIndex
                                         ? 'opacity-100'
                                         : 'opacity-30 hover:opacity-60'

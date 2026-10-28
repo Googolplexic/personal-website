@@ -60,7 +60,7 @@ export function ProjectDetail({ project, exhibit, next }: ProjectDetailProps) {
                 </>
             }
         >
-            <ProjectImageCarousel images={project.images || []} imagesFull={project.imagesFull} imageSets={project.imageSets} title={project.title} />
+            <ProjectImageCarousel images={project.images || []} imagesFull={project.imagesFull} imageSets={project.imageSets} title={project.title} slug={project.slug} />
             <MarkdownBody source={project.description} searchTerm={searchTerm} />
         </DetailLayout>
     );

@@ -1,6 +1,7 @@
 // GitHub API Admin System for Vercel
 // This replaces the local file-based admin server with GitHub API calls
 
+import { createHash } from 'node:crypto';
 import { Octokit } from '@octokit/rest';
 import { WEB_VARIANTS, variantPath } from '../scripts/image-variants.mjs';
 
@@ -176,9 +177,15 @@ export async function optimizeImageBuffer(imageBuffer) {
         .toBuffer();
 }
 
-// Helper function to upload images to GitHub
+/** The id git gives a file's contents, which GitHub reports as the file's sha. */
+export function gitBlobSha(buffer) {
+    return createHash('sha1').update(`blob ${buffer.length}\0`).update(buffer).digest('hex');
+}
+
+// Helper function to upload images to GitHub. Returns null without committing when the file already has these bytes.
 export async function uploadImageToGitHub(path, imageBuffer, message) {
     const existing = await getFileFromGitHub(path);
+    if (existing?.sha === gitBlobSha(imageBuffer)) return null;
     const params = {
         owner: REPO_OWNER,
         repo: REPO_NAME,

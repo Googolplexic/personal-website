@@ -5,6 +5,7 @@ import { Footer } from './Footer';
 import { PageTransition } from './PageTransition';
 import { DeferredAnalytics } from './DeferredAnalytics';
 import { BackToTop } from '../ui/BackToTop';
+import { CommandMenuHost } from '../command/CommandMenuHost';
 import { useCustomCursor } from '../../utils/useCustomCursor';
 import { useSpotlightPreference } from '../../useSpotlightPreference';
 
@@ -48,6 +49,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             </main>
             {!isAdmin && <Footer />}
             {!isAdmin && <BackToTop />}
+            {!isAdmin && <CommandMenuHost />}
             <DeferredAnalytics />
         </div>
     );
