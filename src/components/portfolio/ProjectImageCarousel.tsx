@@ -60,8 +60,8 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
 
     return (
         <div className="@container relative group">
-            {/* Main image display */}
-            <div className="relative w-full overflow-hidden bg-canvas" style={frameStyle}>
+            {/* The name sits on this frame, not a slide. The strip is translated, and a transformed ancestor makes Safari and Firefox ignore view-transition-name. */}
+            <div className="relative w-full overflow-hidden bg-canvas vt-exhibit" style={{ ...frameStyle, ...exhibitTransition(slug) }}>
                 <div
                     className="flex h-full transition-transform duration-500 ease-in-out"
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
@@ -82,8 +82,7 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                                 aria-haspopup="dialog"
                                 inert={i !== currentImageIndex}
                                 onClick={() => setLightboxIndex(i)}
-                                className="relative w-full h-full shrink-0 min-w-0 p-0 bg-transparent cursor-zoom-in vt-exhibit"
-                                style={exhibitTransition(slug, i === currentImageIndex)}
+                                className="relative w-full h-full shrink-0 min-w-0 p-0 bg-transparent cursor-zoom-in"
                             >
                                 <ImagePlaceholder
                                     set={set}

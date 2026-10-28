@@ -52,7 +52,7 @@ export function Navbar() {
                 </RouterLink>
 
                 {/* Desktop Navigation */}
-                <div className="hidden sm:flex items-center gap-10">
+                <div className="hidden sm:flex items-center gap-4 md:gap-6 lg:gap-10 shrink-0">
                     <NavLink to="/">Home</NavLink>
                     <NavLink to="/portfolio">Portfolio</NavLink>
                     <NavLink to="/origami">Origami</NavLink>
@@ -62,12 +62,13 @@ export function Navbar() {
                         onPointerEnter={preloadCommandMenu}
                         onFocus={preloadCommandMenu}
                         aria-keyshortcuts="Control+K Meta+K"
-                        className="group/search flex items-center gap-2.5 min-h-11 px-0 bg-transparent text-ink-faint transition-colors duration-300 hover:text-gold"
+                        className="group/search flex items-center gap-2.5 min-h-11 px-0 shrink-0 bg-transparent text-ink-faint transition-colors duration-300 hover:text-gold"
                     >
                         <SearchIcon />
                         <span className="sr-only">Search the site</span>
                         {/* Fixed width, so the label swapping to ⌘ after hydration doesn't move anything */}
-                        <Kbd className="w-12 transition-colors duration-300 group-hover/search:border-gold group-hover/search:text-gold">{shortcut}</Kbd>
+                        {/* Wide enough for "Ctrl K" in the fallback font, so it stays one line and ⌘ K doesn't shift the bar */}
+                        <Kbd className="w-[4.75rem] shrink-0 transition-colors duration-300 group-hover/search:border-gold group-hover/search:text-gold">{shortcut}</Kbd>
                     </button>
                 </div>
 

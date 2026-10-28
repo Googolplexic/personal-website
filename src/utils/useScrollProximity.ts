@@ -20,15 +20,20 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
         let initTimer: number | null = null;
         let idleId: number | null = null;
 
+        // Dim the text, not the card. Opacity below 1 on the card makes Safari and
+        // Firefox ignore the image's view-transition-name.
+        const parts = (item: HTMLElement) => item.querySelectorAll<HTMLElement>(':scope > :not(.vt-exhibit)');
+        const clearDim = (item: HTMLElement) => {
+            item.style.opacity = '';
+            item.style.filter = '';
+            parts(item).forEach((part) => { part.style.opacity = ''; });
+        };
+
         const update = () => {
             // Respect the site-wide spotlight preference: if disabled, clear any
             // inline dimming we may have applied and skip further work.
             if (document.documentElement.classList.contains('spotlight-disabled')) {
-                const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
-                items.forEach(item => {
-                    item.style.opacity = '';
-                    item.style.filter = '';
-                });
+                container.querySelectorAll<HTMLElement>('.spotlight-item').forEach(clearDim);
                 ticking = false;
                 return;
             }
@@ -43,8 +48,7 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
             items.forEach(item => {
                 const rect = item.getBoundingClientRect();
                 if (rect.bottom < -220 || rect.top > window.innerHeight + 220) {
-                    item.style.opacity = '';
-                    item.style.filter = '';
+                    clearDim(item);
                     return;
                 }
                 const itemCenter = rect.top + rect.height / 2;
@@ -64,8 +68,9 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
                 // Keep to opacity only; filter-based brightness is expensive on mobile.
                 const opacity = 0.75 + t * 0.25;
 
-                item.style.opacity = String(opacity);
+                item.style.opacity = '';
                 item.style.filter = '';
+                parts(item).forEach((part) => { part.style.opacity = opacity === 1 ? '' : String(opacity); });
             });
 
             ticking = false;
@@ -99,11 +104,7 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
             if (initTimer !== null) window.clearTimeout(initTimer);
             if (idleId !== null) window.cancelIdleCallback(idleId);
             // Clean up inline styles
-            const items = container.querySelectorAll<HTMLElement>('.spotlight-item');
-            items.forEach(item => {
-                item.style.opacity = '';
-                item.style.filter = '';
-            });
+            container.querySelectorAll<HTMLElement>('.spotlight-item').forEach(clearDim);
         };
     }, [containerRef]);
 }

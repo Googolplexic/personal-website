@@ -66,14 +66,14 @@
     z-index: 1;
   }
 
+  /* Opacity only. A filter (or any opacity below 1) on a card makes Safari and
+     Firefox drop the view-transition-name of the image inside it. */
   .spotlight-group:hover .spotlight-item:not(:hover) {
     opacity: 0.5;
-    filter: brightness(0.7) saturate(0.6);
   }
 
   .spotlight-group:hover .spotlight-item:hover {
     opacity: 1;
-    filter: brightness(1.08);
   }
 
   @media (hover: none), (pointer: coarse) {

@@ -13,6 +13,12 @@
     .page-enter { animation: none; }
   }
 
+  /* An opacity animation on the page wraps every image in a group, and Safari
+     and Firefox then ignore view-transition-name on the piece being opened. */
+  html:active-view-transition .page-enter {
+    animation: none;
+  }
+
   .stagger-hidden {
     opacity: 0 !important;
     transform: scale(0.97) !important;
@@ -33,7 +39,8 @@
 
   .scroll-reveal.revealed {
     opacity: 1;
-    transform: translateY(0);
+    /* none, not translateY(0): a transform on an ancestor makes some browsers ignore view-transition-name */
+    transform: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -61,6 +68,12 @@
 
   .img-fade img[data-fade][data-loaded] {
     animation: image-fade-in 0.2s var(--ease-gallery) forwards;
+  }
+
+  /* The fade's first frame is opacity 0. Capturing that makes the shared element arrive blank. */
+  html:active-view-transition .vt-exhibit img[data-fade][data-loaded] {
+    animation: none;
+    opacity: 1;
   }
 
   /* background-image, so a parent's bg-* colour utility doesn't hide it.
@@ -126,15 +139,12 @@
     }
   }
 
-  /* View Transitions: only the piece's image moves between pages. The page swaps
-     at once and fades in through .page-enter as it does on any other navigation. */
-  ::view-transition-old(root) {
-    animation: none;
-    opacity: 0;
-  }
-
+  /* View Transitions: only the piece's image moves between pages. The page itself
+     swaps at once. Duration 0 rather than animation: none, which drops the whole
+     transition in Safari. */
+  ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation: none;
+    animation-duration: 0s;
     mix-blend-mode: normal;
   }
 

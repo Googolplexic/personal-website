@@ -42,11 +42,26 @@ export function PageTransition({ children }: PageTransitionProps) {
             document.body.style.overflow = '';
             document.documentElement.classList.remove('scroll-locked');
             window.scrollTo(0, 0);
+
+            // The new snapshot is taken after this layout effect. A cached image
+            // is otherwise still on its fade-in first frame (opacity 0), so the
+            // shared element arrives blank in browsers that snapshot that frame.
+            if (document.documentElement.matches(':active-view-transition')) {
+                document.querySelectorAll<HTMLImageElement>('.vt-exhibit img[data-fade]').forEach((img) => {
+                    if (!img.complete) return;
+                    img.setAttribute('data-loaded', '');
+                    img.style.animation = 'none';
+                    img.style.opacity = '1';
+                });
+            }
         }
     }, [location.pathname]);
 
     return (
-        <div key={location.pathname} className={hasNavigated ? 'page-enter' : ''}>
+        <div
+            key={location.pathname}
+            className={hasNavigated && (typeof document === 'undefined' || !document.documentElement.matches(':active-view-transition')) ? 'page-enter' : ''}
+        >
             {children}
         </div>
     );

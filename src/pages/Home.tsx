@@ -41,10 +41,10 @@ const NAME_COLOR = '#e8e4de';
 function lightHero(section: HTMLElement, name: HTMLElement | null, clientX: number, clientY: number) {
     const spotlight = section.querySelector<HTMLElement>('.hero-spotlight');
     if (!spotlight) return;
-    spotlight.classList.add('visible');
     const rect = section.getBoundingClientRect();
-    spotlight.style.setProperty('--hero-x', `${((clientX - rect.left) / rect.width) * 100}%`);
-    spotlight.style.setProperty('--hero-y', `${((clientY - rect.top) / rect.height) * 100}%`);
+    spotlight.style.setProperty('--hero-x', `${clientX - rect.left}px`);
+    spotlight.style.setProperty('--hero-y', `${clientY - rect.top}px`);
+    spotlight.classList.add('visible');
 
     if (!name) return;
     const nameRect = name.getBoundingClientRect();

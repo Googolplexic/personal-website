@@ -23,6 +23,7 @@
     font-size: 0.65rem;
     font-weight: 400;
     font-family: var(--font-body);
+    white-space: nowrap;
     transition: color 0.3s ease;
     color: var(--color-ink-faint);
   }
@@ -53,11 +54,11 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    --hero-x: 50%;
-    --hero-y: 50%;
+    /* Pixels, set from the pointer. A percentage here would be the glow's own size. */
+    --hero-x: 0px;
+    --hero-y: 0px;
     opacity: 0;
     transition: opacity 0.5s ease;
-    contain: layout style;
   }
 
   .hero-spotlight.visible {
@@ -77,10 +78,10 @@
       rgba(255, 248, 230, 0.02) 55%,
       transparent 70%
     );
-    top: var(--hero-y);
-    left: var(--hero-x);
-    transform: translate(-50%, -50%);
-    will-change: transform;
+    top: 0;
+    left: 0;
+    /* Move the glow with transform. top/left on a layer promoted for transform never caught up until a later restyle. */
+    transform: translate(var(--hero-x), var(--hero-y)) translate(-50%, -50%);
   }
 
   .hero-spotlight::after {
