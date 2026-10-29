@@ -143,13 +143,25 @@
     }
   }
 
-  /* View Transitions: only the piece's image moves between pages. The page itself
-     swaps at once. Duration 0 rather than animation: none, which drops the whole
-     transition in Safari. */
+  /* View Transitions: the pages cross-fade, as .page-enter does without them,
+     while the piece's image moves between its card and its page. Avoid
+     animation: none on these, which drops the whole transition in Safari. */
+  @keyframes vt-fade-out {
+    to { opacity: 0; }
+  }
+
+  @keyframes vt-fade-in {
+    from { opacity: 0; }
+  }
+
+  @keyframes vt-hold {
+    from, to { opacity: 1; }
+  }
+
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation-duration: 0s;
-    mix-blend-mode: normal;
+    animation-duration: 0.3s;
+    animation-timing-function: var(--ease-gallery);
   }
 
   .vt-exhibit {
@@ -161,23 +173,32 @@
     animation-timing-function: var(--ease-gallery);
   }
 
-  /* The card and the carousel slide have different shapes; keep the picture whole in both */
+  /* The card and the carousel slide have different shapes; keep the picture whole in both.
+     The outgoing picture stays solid and the incoming one fades in over it, so
+     the image never thins out mid-flight, even if the new one is still decoding. */
   ::view-transition-old(.exhibit),
   ::view-transition-new(.exhibit) {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    animation-duration: 0.45s;
+    mix-blend-mode: normal;
   }
 
-  /* A named image with no partner on the other page just leaves or arrives with its page */
+  ::view-transition-old(.exhibit) {
+    animation: vt-hold 0.45s both;
+  }
+
+  ::view-transition-new(.exhibit) {
+    animation: vt-fade-in 0.3s var(--ease-gallery) both;
+  }
+
+  /* A named image with no partner on the other page leaves or arrives with its page */
   ::view-transition-old(.exhibit):only-child {
-    animation: none;
-    opacity: 0;
+    animation: vt-fade-out 0.3s var(--ease-gallery) both;
   }
 
   ::view-transition-new(.exhibit):only-child {
-    animation: none;
+    animation: vt-fade-in 0.3s var(--ease-gallery) both;
   }
 
   @media (prefers-reduced-motion: reduce) {

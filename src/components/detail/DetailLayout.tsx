@@ -1,8 +1,7 @@
-import { ReactNode, useRef } from 'react';
-import { Link, useViewTransitionState } from 'react-router';
+import { ReactNode } from 'react';
+import { Link } from 'react-router';
 import type { NextExhibit } from '../../types';
 import { useClientLocation } from '../../utils/useHydrated';
-import { exhibitTransition, rememberPreview } from '../../utils/viewTransition';
 import { Placard } from '../ui/Placard';
 
 /** Pages a visitor can open a piece from; Back returns to whichever one they came from. */
@@ -32,8 +31,6 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
     const backLabel = backTarget === '/' ? 'Back to Home' : 'Back to Gallery';
     const backDestination = backTarget !== '/' && location.search ? `${backTarget}${location.search}` : backTarget;
     const nextPath = `${section}/${next.slug}`;
-    const toNext = useViewTransitionState(nextPath);
-    const nextImageRef = useRef<HTMLImageElement>(null);
 
     return (
         <article className="pt-28 pb-20">
@@ -41,7 +38,9 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
                 <div className="col-span-full mb-8 lg:mb-12">
                     <Link
                         to={backDestination}
+                        state={{ restoreScroll: true }}
                         viewTransition
+                        prefetch="intent"
                         className="inline-flex items-center gap-2 min-h-11 text-xs tracking-[0.2em] uppercase font-body no-underline text-ink-faint transition-colors duration-300 hover:text-gold"
                     >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
@@ -75,13 +74,12 @@ export function DetailLayout({ section, exhibit, title, lead, details, children,
                         to={nextPath}
                         state={{ from: backTarget }}
                         viewTransition
-                        onClick={() => rememberPreview(next.slug, nextImageRef.current)}
+                        prefetch="intent"
                         className="group flex items-center gap-5 text-inherit no-underline"
                     >
                         {next.image && (
-                            <div className="w-20 h-20 shrink-0 overflow-hidden border border-solid border-line vt-exhibit" style={exhibitTransition(next.slug, toNext)}>
+                            <div className="w-20 h-20 shrink-0 overflow-hidden border border-solid border-line">
                                 <img
-                                    ref={nextImageRef}
                                     src={next.image}
                                     alt=""
                                     data-fade

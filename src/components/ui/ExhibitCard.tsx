@@ -107,6 +107,7 @@ export function ExhibitCard({ item, searchTerm = '', categoryLabel, priority = f
                             to={`${path}${queryString}`}
                             state={{ from: location.pathname }}
                             viewTransition
+                            prefetch="intent"
                             onClick={() => rememberPreview(item.slug, imageRef.current)}
                             className="text-inherit no-underline focus-visible:outline-none after:absolute after:inset-0 after:content-['']"
                         >

@@ -10,6 +10,18 @@ export function exhibitTransition(slug: string, active = true): CSSProperties | 
     return { viewTransitionName: `exhibit-${slug.replace(/[^a-zA-Z0-9_-]/g, '-')}` };
 }
 
+/**
+ * Unpairs images that are off screen, so a picture doesn't fly in from (or off
+ * to) somewhere the visitor can't see; it fades with its page instead.
+ */
+export function dropOffscreenNames() {
+    document.querySelectorAll<HTMLElement>('.vt-exhibit').forEach((el) => {
+        if (!el.style.viewTransitionName) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.bottom <= 0 || rect.top >= window.innerHeight) el.style.viewTransitionName = '';
+    });
+}
+
 const previews = new Map<string, string>();
 
 /** Remembers the copy of a piece's image already on screen when its link is followed. */

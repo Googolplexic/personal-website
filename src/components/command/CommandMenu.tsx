@@ -104,9 +104,12 @@ export function CommandMenu({ open, onClose, onExited }: { open: boolean; onClos
         return () => { current = false; };
     }, []);
 
-    // Focus goes to the input, and back to whatever had it when the menu closes
+    // Focus goes to the input, and back to whatever had it when the menu closes.
+    // Only if it was showing its focus ring then: a button last clicked with the
+    // mouse would otherwise light up as if tabbed to.
     useEffect(() => {
-        const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const active = document.activeElement;
+        const opener = active instanceof HTMLElement && active.matches(':focus-visible') ? active : null;
         inputRef.current?.focus();
         return () => opener?.focus();
     }, []);
@@ -166,7 +169,7 @@ export function CommandMenu({ open, onClose, onExited }: { open: boolean; onClos
                 const { path } = command.action;
                 requestClose(() => {
                     if (location.pathname === path) window.scrollTo({ top: 0, behavior: 'smooth' });
-                    else void navigate(path);
+                    else void navigate(path, { viewTransition: true });
                 });
                 break;
             }

@@ -32,6 +32,7 @@ export function Footer() {
             <div className="page-grid pt-12 pb-[calc(2rem+env(safe-area-inset-bottom))] gap-y-10">
                 <RouterLink
                     to="/"
+                    viewTransition
                     onClick={scrollIfSamePage('/')}
                     aria-label="CL, Coleman Lai, home"
                     className="col-span-full md:col-span-4 self-start font-signature text-2xl tracking-wide no-underline select-none text-ink transition-colors duration-300 hover:text-gold"
@@ -44,7 +45,7 @@ export function Footer() {
                         {NAV_LINKS.map(link => (
                             <li key={link.label}>
                                 {link.to ? (
-                                    <RouterLink to={link.to} onClick={scrollIfSamePage(link.to)} className={linkClass}>
+                                    <RouterLink to={link.to} viewTransition onClick={scrollIfSamePage(link.to)} className={linkClass}>
                                         {link.label}
                                     </RouterLink>
                                 ) : (

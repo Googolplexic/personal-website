@@ -43,6 +43,7 @@ export function Navbar() {
                 {/* CL Monogram */}
                 <RouterLink
                     to="/"
+                    viewTransition
                     onClick={() => { if (location.pathname === '/') window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                     aria-label="CL, Coleman Lai, home"
                     className="font-signature text-2xl tracking-wide no-underline select-none transition-colors duration-300 text-ink hover:text-gold"
@@ -66,7 +67,7 @@ export function Navbar() {
                         className="nav-link-gallery group/search flex items-center gap-2 min-h-11 px-0 shrink-0 bg-transparent cursor-pointer after:bottom-3 hover:text-gold focus-visible:outline-none focus-visible:text-gold focus-visible:after:w-full focus-visible:after:left-0"
                     >
                         <SearchIcon className="size-3.5" />
-                        <span>Search<span className="sr-only"> the site</span></span>
+                        <span className="sr-only">Search the site</span>
                         {/* Fixed width, so the label swapping to ⌘ K after hydration doesn't shift the links */}
                         <span className="w-[3.25rem] normal-case tracking-[0.08em]">
                             {shortcut}
@@ -124,6 +125,7 @@ function NavLink({ to, block = false, children }: { to: string; block?: boolean;
     return (
         <RouterLink
             to={to}
+            viewTransition
             onClick={() => { if (location.pathname === to) window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             aria-current={isActive ? 'page' : undefined}
             className={cn(

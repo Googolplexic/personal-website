@@ -34,6 +34,7 @@ export function Link({
         return (
             <RouterLink
                 to={to}
+                viewTransition
                 className={classes}
                 style={style}
                 onClick={onClick}
