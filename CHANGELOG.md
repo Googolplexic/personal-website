@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 for `package.json`. Site footer versioning follows git tags `vMAJOR.MINOR` plus
 commit offset (see `vite.config.ts`).
 
+## [3.1.0] - 2026-10-28
+
+### Added
+
+- Command menu (Ctrl/⌘+K, or the search button in the navbar) to jump to any project, origami piece or page, open the resume or social links, copy a link to the current page, or toggle the spotlight.
+- View Transitions: a card's image grows into its detail page and settles back into its card on the way back; other page changes cross-fade.
+- Blurred placeholders made at build time, shown while each image loads.
+- Lightbox: swipe or drag down to close, drags that can be caught mid-flight, keyboard shortcut hints and bigger tap targets.
+- Admin: undo after deleting, renames that show at once, and idempotency keys so a retried request isn't applied twice.
+
+### Changed
+
+- Balanced headline wrapping, no single-word last lines in body text, safe-area padding on notched phones and tabular figures in dates.
+- Going back to a listing returns to the same scroll position.
+- Images already in the browser cache show at once instead of fading in again.
+- Personal Website project: new screenshots and an updated write-up.
+- Dropped Lenis; the desktop scroll is no longer animated twice, and the pointer stays hidden while the custom cursor sits still.
+
+### Fixed
+
+- The hero spotlight works before the spotlight toggle is touched.
+- Page transitions in Safari and Firefox, and a one-frame flash before them.
+- The Ctrl K hint no longer wraps on narrow screens, and closing the command menu no longer leaves the search button highlighted.
+- Page changes, image loads and carousels no longer jump; narrow carousel frames are centred and portraits shrink inside a fixed frame.
+- Duplicate page URLs redirect to the canonical path.
+
 ## [3.0.0] - 2026-10-18
 
 ### Added
@@ -65,6 +91,7 @@ commit offset (see `vite.config.ts`).
 - Static RSS 2.0 feeds generated at build time: `/rss.xml`, `/rss-portfolio.xml`, `/rss-origami.xml` (`scripts/generate-rss.js`).
 - Feed discovery via `<link rel="alternate" type="application/rss+xml">` in `index.html` and notes in `public/robots.txt`.
 
+[3.1.0]: https://github.com/Googolplexic/personal-website/compare/v3.0...v3.1
 [3.0.0]: https://github.com/Googolplexic/personal-website/compare/v2.6...v3.0
 [2.6.0]: https://github.com/Googolplexic/personal-website/compare/v2.5...v2.6
 [2.5.0]: https://github.com/Googolplexic/personal-website/compare/v2.4...v2.5
