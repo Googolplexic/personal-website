@@ -22,6 +22,42 @@ export function dropOffscreenNames() {
     });
 }
 
+/**
+ * Phones animate going back themselves (the back gesture, Safari's swipe), and a
+ * View Transition on top would replay the page being left before showing the
+ * one returned to. There, going back swaps the page at once.
+ */
+export function skipTransitionsOnBrowserBack() {
+    const start = document.startViewTransition?.bind(document);
+    if (!start) return () => {};
+    let skipNext = false;
+    let timer = 0;
+
+    const onPop = (event: PopStateEvent) => {
+        if (!event.hasUAVisualTransition && !window.matchMedia('(pointer: coarse)').matches) return;
+        skipNext = true;
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => { skipNext = false; }, 1000);
+    };
+
+    document.startViewTransition = (update?: Parameters<typeof start>[0]) => {
+        const transition = start(update);
+        if (skipNext) {
+            skipNext = false;
+            transition.ready.catch(() => {});
+            transition.skipTransition();
+        }
+        return transition;
+    };
+    window.addEventListener('popstate', onPop, true);
+
+    return () => {
+        window.removeEventListener('popstate', onPop, true);
+        window.clearTimeout(timer);
+        document.startViewTransition = start;
+    };
+}
+
 const previews = new Map<string, string>();
 
 /** Remembers the copy of a piece's image already on screen when its link is followed. */

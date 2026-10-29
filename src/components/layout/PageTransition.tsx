@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState, ReactNode } from 'react';
 import { useLocation, useNavigation, useNavigationType } from 'react-router';
-import { dropOffscreenNames } from '../../utils/viewTransition';
+import { dropOffscreenNames, skipTransitionsOnBrowserBack } from '../../utils/viewTransition';
 
 interface PageTransitionProps {
     children: ReactNode;
@@ -23,13 +23,15 @@ export function PageTransition({ children }: PageTransitionProps) {
     const isFirstRender = useRef(true);
     const scrollKey = location.pathname + location.search;
     const scrollKeyRef = useRef(scrollKey);
-    // Decided once per page: no fade on initial load (it would delay LCP), nor
-    // under a View Transition, which already cross-fades the pages
+    // Decided once per page: no fade on initial load (it would delay LCP), under
+    // a View Transition, which already cross-fades the pages, or going back,
+    // where a phone has just animated the previous page in itself
     const [entered, setEntered] = useState({ path: location.pathname, fade: false });
     if (location.pathname !== entered.path) {
         setEntered({
             path: location.pathname,
-            fade: typeof document === 'undefined' || !document.documentElement.matches(':active-view-transition'),
+            fade: navigationType !== 'POP'
+                && (typeof document === 'undefined' || !document.documentElement.matches(':active-view-transition')),
         });
     }
 
@@ -39,7 +41,11 @@ export function PageTransition({ children }: PageTransitionProps) {
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
         const remember = () => scrollPositions.set(scrollKeyRef.current, window.scrollY);
         window.addEventListener('scroll', remember, { passive: true });
-        return () => window.removeEventListener('scroll', remember);
+        const restoreTransitions = skipTransitionsOnBrowserBack();
+        return () => {
+            window.removeEventListener('scroll', remember);
+            restoreTransitions();
+        };
     }, []);
 
     useLayoutEffect(() => {

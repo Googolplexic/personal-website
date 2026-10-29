@@ -85,7 +85,9 @@
 
   /* Wheel and trackpad stay native. Programmatic jumps pass behavior: 'smooth'
      themselves, so this does not hijack scrolling. */
-  html { scroll-behavior: auto; overflow-anchor: none; }
+  /* No grey tap box on phones: a card's link covers the whole card, so the box
+     would flash over all of it and be caught in the page transition */
+  html { scroll-behavior: auto; overflow-anchor: none; -webkit-tap-highlight-color: transparent; }
 
   /* Where the custom cursor runs, it becomes the scrollbar thumb at the right edge.
      The class is set before paint (root.tsx), so the page doesn't shift sideways. */
