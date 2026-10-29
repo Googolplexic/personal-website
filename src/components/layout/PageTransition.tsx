@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState, ReactNode } from 'react';
 import { useLocation, useNavigation, useNavigationType } from 'react-router';
-import { dropOffscreenNames, skipTransitionsOnBrowserBack } from '../../utils/viewTransition';
+import { dropOffscreenNames, skipFlashingTransitions } from '../../utils/viewTransition';
 
 interface PageTransitionProps {
     children: ReactNode;
@@ -41,7 +41,7 @@ export function PageTransition({ children }: PageTransitionProps) {
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
         const remember = () => scrollPositions.set(scrollKeyRef.current, window.scrollY);
         window.addEventListener('scroll', remember, { passive: true });
-        const restoreTransitions = skipTransitionsOnBrowserBack();
+        const restoreTransitions = skipFlashingTransitions();
         return () => {
             window.removeEventListener('scroll', remember);
             restoreTransitions();
@@ -78,7 +78,7 @@ export function PageTransition({ children }: PageTransitionProps) {
     }, [location.pathname, location.state, navigationType]);
 
     return (
-        <div key={location.pathname} className={entered.fade ? 'page-enter' : ''}>
+        <div key={location.pathname} data-page className={entered.fade ? 'page-enter' : ''}>
             {children}
         </div>
     );
