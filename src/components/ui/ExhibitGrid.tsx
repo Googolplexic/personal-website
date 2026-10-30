@@ -16,9 +16,11 @@ interface ExhibitGridProps {
     skipCount?: number;
     maxColumns?: 2 | 3;
     titleAs?: 'h2' | 'h3';
+    /** False when a parent already lights this grid, so two spotlights don't fight */
+    spotlight?: boolean;
 }
 
-export function ExhibitGrid({ items, searchTerm, showCategory = false, priority = true, skipCount = 1, maxColumns, titleAs }: ExhibitGridProps) {
+export function ExhibitGrid({ items, searchTerm, showCategory = false, priority = true, skipCount = 1, maxColumns, titleAs, spotlight = true }: ExhibitGridProps) {
     if (items.length === 0) {
         return (
             <p className="mt-8 font-body text-ink-muted">
@@ -28,7 +30,7 @@ export function ExhibitGrid({ items, searchTerm, showCategory = false, priority 
     }
 
     return (
-        <MasonrySpotlightGrid skipCount={skipCount} maxColumns={maxColumns}>
+        <MasonrySpotlightGrid skipCount={skipCount} maxColumns={maxColumns} spotlight={spotlight}>
             {items.map((item, i) => (
                 <ExhibitCard
                     key={item.slug}

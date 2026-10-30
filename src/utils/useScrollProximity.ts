@@ -6,8 +6,9 @@ import { useEffect, RefObject } from 'react';
  * Cards near the center are fully bright; cards near edges dim slightly.
  * On devices with hover (desktop), this is a no-op.
  */
-export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null>) {
+export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null>, enabled = true) {
     useEffect(() => {
+        if (!enabled) return;
         // Only activate on touch / no-hover devices
         // Using pointer: fine to avoid false positives on Chrome Android
         if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
@@ -16,7 +17,7 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
         if (!container) return;
 
         let ticking = false;
-        let enabled = false;
+        let started = false;
         let initTimer: number | null = null;
         let idleId: number | null = null;
 
@@ -77,7 +78,7 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
         };
 
         const onScroll = () => {
-            if (!enabled) return;
+            if (!started) return;
             if (!ticking) {
                 ticking = true;
                 requestAnimationFrame(update);
@@ -86,7 +87,7 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
 
         // Delay activation until browser is idle so this never competes with LCP.
         const enableAndRun = () => {
-            enabled = true;
+            started = true;
             requestAnimationFrame(() => {
                 requestAnimationFrame(update);
             });
@@ -106,5 +107,5 @@ export function useScrollProximity(containerRef: RefObject<HTMLDivElement | null
             // Clean up inline styles
             container.querySelectorAll<HTMLElement>('.spotlight-item').forEach(clearDim);
         };
-    }, [containerRef]);
+    }, [containerRef, enabled]);
 }

@@ -9,6 +9,8 @@ import { useScrollRevealClass } from '../utils/useScrollReveal';
 import { useCallback, useEffect, useRef } from 'react';
 import { HeroParticles } from '../components/ui/HeroParticles';
 import { useSpotlightPreference } from '../useSpotlightPreference';
+import { useScrollProximity } from '../utils/useScrollProximity';
+import { useSpotlight } from '../utils/useSpotlight';
 
 const CONNECT_LINKS: LinkSectionItem[] = [
     { name: 'Personal Email', value: 'coleman@colemanlai.com', href: 'mailto:coleman@colemanlai.com' },
@@ -97,6 +99,8 @@ export function Home({ featured }: HomeProps) {
     const pointerRef = useRef({ x: 0, y: 0 });
     const frameRef = useRef(0);
     const { enabled: spotlightEnabled } = useSpotlightPreference();
+    const { ref: featuredRef, onMouseMove: onFeaturedMove, onMouseEnter: onFeaturedEnter, onMouseLeave: onFeaturedLeave } = useSpotlight();
+    useScrollProximity(featuredRef);
     const [lead, ...rest] = featured;
 
     const handleHeroMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
@@ -204,16 +208,20 @@ export function Home({ featured }: HomeProps) {
                             A curated selection of my proudest works. Updated from time to time.
                         </p>
                     </SectionHeader>
-                    {lead && (
-                        <div className="col-span-full lg:col-span-9">
-                            <ExhibitCard item={lead} layout="lead" />
-                        </div>
-                    )}
-                    {rest.length > 0 && (
-                        <div className="col-span-full lg:col-start-4 lg:col-span-9 mt-16 lg:mt-24">
-                            <ExhibitGrid items={rest} priority={false} skipCount={0} maxColumns={2} />
-                        </div>
-                    )}
+                    <div
+                        ref={featuredRef}
+                        onMouseMove={onFeaturedMove}
+                        onMouseEnter={onFeaturedEnter}
+                        onMouseLeave={onFeaturedLeave}
+                        className="spotlight-group col-span-full lg:col-span-9"
+                    >
+                        {lead && <ExhibitCard item={lead} layout="lead" />}
+                        {rest.length > 0 && (
+                            <div className="mt-16 lg:mt-24">
+                                <ExhibitGrid items={rest} priority={false} skipCount={0} maxColumns={2} spotlight={false} />
+                            </div>
+                        )}
+                    </div>
                 </div>
             </ScrollSection>
         </>

@@ -67,17 +67,20 @@
   }
 
   /* Opacity only. A filter (or any opacity below 1) on a card makes Safari and
-     Firefox drop the view-transition-name of the image inside it. */
-  .spotlight-group:hover .spotlight-item:not(:hover) {
+     Firefox drop the view-transition-name of the image inside it.
+     data-lit is the card the pointer was last on, so crossing the gap between
+     cards doesn't drop every card to half brightness and bring one back. */
+  .spotlight-group:hover .spotlight-item:not(:hover):not([data-lit]) {
     opacity: 0.5;
   }
 
-  .spotlight-group:hover .spotlight-item:hover {
+  .spotlight-group:hover .spotlight-item:hover,
+  .spotlight-group:hover .spotlight-item[data-lit] {
     opacity: 1;
   }
 
   @media (hover: none), (pointer: coarse) {
-    .spotlight-group:hover .spotlight-item:not(:hover) {
+    .spotlight-group:hover .spotlight-item:not(:hover):not([data-lit]) {
       opacity: 1;
       filter: none;
     }

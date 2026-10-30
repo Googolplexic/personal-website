@@ -10,6 +10,8 @@ interface MasonrySpotlightGridProps {
     skipCount?: number;
     /** Caps the column count, for grids that share the row with a side label */
     maxColumns?: 2 | 3;
+    /** False when a parent already lights this grid, so two spotlights don't fight */
+    spotlight?: boolean;
 }
 
 /* ── responsive column count; breakpoints match .masonry-static ── */
@@ -41,11 +43,11 @@ function useColumnCount(): number | null {
  * reads left-to-right, row-by-row instead of column-by-column.
  * On mobile/touch devices, uses scroll-proximity dimming instead.
  */
-export function MasonrySpotlightGrid({ children, className = '', skipCount = 0, maxColumns = 3 }: MasonrySpotlightGridProps) {
-    const { ref, onMouseMove, onMouseEnter, onMouseLeave } = useSpotlight();
+export function MasonrySpotlightGrid({ children, className = '', skipCount = 0, maxColumns = 3, spotlight = true }: MasonrySpotlightGridProps) {
+    const { ref, onMouseMove, onMouseEnter, onMouseLeave } = useSpotlight(spotlight);
     const viewportColumns = useColumnCount();
     const colCount = viewportColumns === null ? null : Math.min(viewportColumns, maxColumns);
-    useScrollProximity(ref);
+    useScrollProximity(ref, spotlight);
     useStaggeredEntrance(ref, 80, skipCount, colCount);
 
     const items = Children.toArray(children);
@@ -62,10 +64,10 @@ export function MasonrySpotlightGrid({ children, className = '', skipCount = 0, 
     return (
         <div
             ref={ref}
-            onMouseMove={onMouseMove}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            className={`spotlight-group ${className}`}
+            onMouseMove={spotlight ? onMouseMove : undefined}
+            onMouseEnter={spotlight ? onMouseEnter : undefined}
+            onMouseLeave={spotlight ? onMouseLeave : undefined}
+            className={spotlight ? `spotlight-group ${className}` : className}
         >
             {colCount === null ? (
                 // Same columns as the masonry layout, so the first row doesn't move once it takes over
