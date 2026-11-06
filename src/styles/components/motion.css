@@ -43,6 +43,10 @@
     transform: none;
   }
 
+  .scroll-reveal.reveal-instant {
+    transition: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .scroll-reveal { opacity: 1; transform: none; }
   }
