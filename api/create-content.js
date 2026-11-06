@@ -1,5 +1,5 @@
 // Vercel serverless function to create projects/origami via GitHub API
-import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure, getFileFromGitHub } from './github-utils.js';
+import { updateFileInGitHub, generateProjectStructure, generateOrigamiStructure } from './github-utils.js';
 import { requireAdmin } from './auth-utils.js';
 import { withIdempotency } from './idempotency-utils.js';
 
@@ -29,13 +29,6 @@ export default withIdempotency(async function handler(req, res) {
                 slug = await createProject(data);
             } else {
                 return res.status(400).json({ error: 'Invalid type. Must be "origami" or "project"' });
-            }
-
-            // Update the lastmod cache for the new content
-            if (type === 'project') {
-                await updateLastModCache(`assets/projects/${slug}`, slug);
-            } else {
-                await updateLastModCache(`assets/origami/${data.category}/${slug}`, slug);
             }
 
             return res.status(200).json({
@@ -159,31 +152,5 @@ async function createProject(data) {
 
     // Images are uploaded separately via /api/upload-image to avoid payload size limits
     return slug;
-}
-
-/**
- * Updates the lastmod cache for a project
- */
-async function updateLastModCache(cacheKey, slug) {
-    try {
-        const existing = await getFileFromGitHub('lastmod-cache.json');
-        let currentCache = {};
-        if (existing?.content) {
-            const parsed = JSON.parse(existing.content);
-            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-                currentCache = parsed;
-            }
-        }
-
-        currentCache[cacheKey] = new Date().toISOString();
-        await updateFileInGitHub(
-            'lastmod-cache.json',
-            JSON.stringify(currentCache, null, 2),
-            `Update lastmod cache for ${slug}`,
-            existing?.sha || null
-        );
-    } catch (error) {
-        console.error('Error updating lastmod cache:', error);
-    }
 }
 

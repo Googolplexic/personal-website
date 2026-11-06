@@ -1,7 +1,8 @@
 /**
  * Sets package.json "version" to the same string as getSiteVersionFromGit().
  * Skips writes when resolution fails ("dev") so local/package.json is not clobbered.
- * Invoked via prebuild so builds stay aligned with git tags; run `pnpm sync-version` anytime.
+ * Run `pnpm sync-version` when cutting a release. Builds don't run it, since a
+ * version that moves with every commit would leave package.json changed after each build.
  */
 
 import fs from 'fs';

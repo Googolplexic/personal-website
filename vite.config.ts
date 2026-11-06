@@ -227,15 +227,15 @@ function sitemapPlugin(): Plugin {
 
 // Build metadata — inject git info + auto-version for footer display
 //
-// Version string: shared with package.json via scripts/site-version-from-git.mjs
-// (pnpm prebuild / sync-version). Logic: git describe v* --long, else GitHub API.
+// Version string: from scripts/site-version-from-git.mjs, which `pnpm sync-version`
+// also writes to package.json at a release. Logic: git describe v* --long, else GitHub API.
 //
 // Versioning uses git tags. To start a new version:
 //   1. Commit your changes
 //   2. git tag v2.4   (or v3.0, etc.)
 //   3. git push --tags
 // The third segment auto-increments with each commit after the tag.
-// e.g. 3 commits after tag v2.4 → 2.4.3 in the footer + package.json after build
+// e.g. 3 commits after tag v2.4 → 2.4.3 in the footer
 
 let gitHash = 'dev'
 let gitDate = new Date().toISOString().slice(0, 10)

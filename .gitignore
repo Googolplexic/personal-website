@@ -45,3 +45,6 @@ howard.js
 
 # Local notes
 docs/
+
+# Sitemap dates from local file times; every build rewrites it, and deploys start without it
+lastmod-cache.json
