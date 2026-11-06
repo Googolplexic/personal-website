@@ -60,40 +60,34 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
             : 'min(70svh, 44rem)',
     };
 
+    // The first picture pairs with the listing card, which is the picture's exact shape.
+    // Without its size, the frame stands in, and the picture changes shape on the way.
+    const pictureMorph = Boolean(imageSets?.[resolvedImages[0]]);
+
     return (
         <div className="@container relative group">
-            {/* The name sits on this frame, not a slide. The strip is translated, and a transformed ancestor makes Safari and Firefox ignore view-transition-name. */}
-            <div className="relative w-full overflow-hidden bg-canvas vt-exhibit" style={{ ...frameStyle, ...exhibitTransition(slug) }}>
+            <div
+                className={cn('relative w-full overflow-hidden bg-canvas', !pictureMorph && 'vt-exhibit')}
+                style={{ ...frameStyle, ...exhibitTransition(slug, !pictureMorph) }}
+            >
+                {/* No transform at the first slide: a transformed ancestor makes Safari and Firefox ignore view-transition-name */}
                 <div
                     className="flex h-full transition-transform duration-500 ease-in-out"
-                    style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                    style={{ transform: currentImageIndex ? `translateX(-${currentImageIndex * 100}%)` : undefined }}
                 >
                     {resolvedImages.map((img, i) => {
                         const set = imageSets?.[img];
                         // The slide on show and the ones either side, so an arrow press finds the image ready
                         const distance = Math.abs(i - currentImageIndex);
                         const nearby = Math.min(distance, resolvedImages.length - distance) <= 1;
-                        const fitStyle = set ? {
-                            maxWidth: `min(100%, ${set.width}px)`,
-                            maxHeight: `min(100%, ${set.height}px)`,
-                        } : undefined;
-                        return (
-                            <button
-                                key={i}
-                                type="button"
-                                aria-haspopup="dialog"
-                                inert={i !== currentImageIndex}
-                                onClick={() => setLightboxIndex(i)}
-                                className="relative w-full h-full shrink-0 min-w-0 p-0 bg-transparent cursor-zoom-in"
-                            >
+                        const picture = (
+                            <>
                                 <ImagePlaceholder
                                     set={set}
                                     preview={i === 0 ? preview : undefined}
                                     fit="contain"
                                     className="m-auto w-full h-full"
-                                    style={fitStyle}
                                 />
-                                {/* A definite width lets the browser reserve the image's height before it loads */}
                                 <img
                                     src={img}
                                     srcSet={set?.srcSet}
@@ -102,12 +96,36 @@ export function ProjectImageCarousel({ images: resolvedImages, imagesFull, image
                                     title={`${title} - Image ${i + 1}${resolvedImages.length > 1 ? ` of ${resolvedImages.length}` : ''}`}
                                     data-fade
                                     className="absolute inset-0 m-auto w-full h-full object-contain"
-                                    style={fitStyle}
                                     loading={nearby ? 'eager' : 'lazy'}
                                     fetchPriority={i === 0 ? 'high' : undefined}
                                     width={set?.width}
                                     height={set?.height}
                                 />
+                            </>
+                        );
+                        return (
+                            <button
+                                key={i}
+                                type="button"
+                                aria-haspopup="dialog"
+                                inert={i !== currentImageIndex}
+                                onClick={() => setLightboxIndex(i)}
+                                className="relative w-full h-full shrink-0 min-w-0 p-0 bg-transparent cursor-zoom-in"
+                                style={{ containerType: 'size' }}
+                            >
+                                {set ? (
+                                    // The picture's own box: as large as fits the slide, never past the file's size
+                                    <span
+                                        className="absolute inset-0 m-auto vt-exhibit"
+                                        style={{
+                                            width: `min(100cqw, 100cqh * ${set.width / set.height}, ${set.width}px)`,
+                                            height: `min(100cqh, 100cqw * ${set.height / set.width}, ${set.height}px)`,
+                                            ...exhibitTransition(slug, i === 0 && currentImageIndex === 0),
+                                        }}
+                                    >
+                                        {picture}
+                                    </span>
+                                ) : picture}
                             </button>
                         );
                     })}
