@@ -35,6 +35,35 @@ function fadeInPage() {
 }
 
 /**
+ * Turns each moving picture's size-and-position animation into a transform.
+ * The browser's own animates width and height, which runs on the main thread,
+ * so while the new page is busy loading Firefox holds the picture still and
+ * then jumps it along. A transform runs off the main thread. The card and the
+ * page's picture have the same shape, so the scale is the same both ways.
+ */
+function moveExhibitsByTransform() {
+    for (const animation of document.getAnimations()) {
+        const effect = animation.effect;
+        if (!(effect instanceof KeyframeEffect) || !effect.pseudoElement?.startsWith('::view-transition-group(exhibit-')) continue;
+        const [from] = effect.getKeyframes();
+        if (typeof from?.transform !== 'string' || typeof from.width !== 'string' || typeof from.height !== 'string') continue;
+        try {
+            effect.setKeyframes([]);
+            const end = getComputedStyle(document.documentElement, effect.pseudoElement);
+            const scaleX = parseFloat(from.width) / parseFloat(end.width);
+            const scaleY = parseFloat(from.height) / parseFloat(end.height);
+            if (!Number.isFinite(scaleX) || !Number.isFinite(scaleY)) throw new RangeError('no size to scale from');
+            effect.setKeyframes([
+                { transform: `${from.transform} scale(${scaleX}, ${scaleY})`, easing: end.animationTimingFunction },
+                { transform: end.transform },
+            ]);
+        } catch {
+            effect.setKeyframes([from]);
+        }
+    }
+}
+
+/**
  * Skips the View Transitions that would flash, so those pages swap at once
  * (with .page-enter's fade) instead:
  * - Phones animate going back themselves (the back gesture, Safari's swipe), and a
@@ -74,6 +103,8 @@ export function skipFlashingTransitions() {
         if (skipNext || (ios && scrollY > 0)) {
             skipNext = false;
             skip(transition);
+        } else {
+            transition.ready.then(moveExhibitsByTransform, () => {});
         }
         return transition;
     };

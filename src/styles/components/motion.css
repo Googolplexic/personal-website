@@ -168,9 +168,11 @@
     view-transition-class: exhibit;
   }
 
+  /* transform-origin: viewTransition.ts scales the group from its top-left corner */
   ::view-transition-group(.exhibit) {
     animation-duration: 0.45s;
     animation-timing-function: var(--ease-gallery);
+    transform-origin: 0 0;
   }
 
   /* The card and the carousel slide have different shapes; keep the picture whole in both.
